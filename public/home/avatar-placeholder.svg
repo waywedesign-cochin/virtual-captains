@@ -1,0 +1,10 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- PLACEHOLDER avatar — generated silhouette, not a real photo. Reused
+       across all testimonial cards until real headshots are supplied. -->
+  <circle cx="48" cy="48" r="48" fill="#2557d6" />
+  <circle cx="48" cy="40" r="16" fill="rgba(255,255,255,0.85)" />
+  <path
+    d="M16 88c1.5-19 14.5-32 32-32s30.5 13 32 32"
+    fill="rgba(255,255,255,0.85)"
+  />
+</svg>

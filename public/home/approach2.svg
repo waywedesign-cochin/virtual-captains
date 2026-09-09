@@ -1,0 +1,36 @@
+<svg width="949" height="317" viewBox="0 0 949 317" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- PLACEHOLDER illustration for the "Instant feedback" stage — simple
+       line-art matching approach1.svg's monoline aesthetic. Swap for a real
+       matching illustration when available. -->
+  <g stroke="#0a0b0d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- baseline connector, echoing approach1's continuous line motif -->
+    <path d="M40,255 C160,220 200,220 260,250 C330,285 420,285 480,240 C560,180 650,180 720,220 C780,252 850,252 909,225" stroke-opacity="0.35" stroke-width="1.75" />
+
+    <!-- speaking figure -->
+    <circle cx="150" cy="120" r="26" />
+    <path d="M150,146 L150,215" />
+    <path d="M150,215 L120,270" />
+    <path d="M150,215 L172,268" />
+    <path d="M150,168 L112,140" />
+    <path d="M150,160 L196,108" />
+
+    <!-- speech bubble with checkmark -->
+    <rect x="228" y="42" width="120" height="66" rx="16" />
+    <path d="M248,108 L232,132 L262,108" />
+    <path d="M258,72 L280,92 L318,58" stroke-width="3" />
+
+    <!-- gauge / meter -->
+    <path d="M500,232 A85,85 0 0 1 670,232" />
+    <path d="M500,232 L490,232" />
+    <path d="M670,232 L680,232" />
+    <path d="M585,232 L622,178" stroke-width="3" />
+    <circle cx="585" cy="232" r="7" fill="#0a0b0d" stroke="none" />
+
+    <!-- stopwatch, "instant" -->
+    <circle cx="800" cy="180" r="46" />
+    <path d="M800,180 L800,148" />
+    <path d="M800,180 L826,196" />
+    <path d="M786,122 L814,122" />
+    <path d="M800,122 L800,134" />
+  </g>
+</svg>

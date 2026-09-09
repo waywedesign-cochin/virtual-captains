@@ -1,0 +1,44 @@
+<svg width="949" height="317" viewBox="0 0 949 317" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- PLACEHOLDER illustration for the "Human evaluation" stage — simple
+       line-art matching approach1.svg's monoline aesthetic. Swap for a real
+       matching illustration when available. -->
+  <g stroke="#0a0b0d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- baseline connector, echoing approach1's continuous line motif -->
+    <path d="M40,255 C130,230 190,230 240,252 C320,288 430,288 500,250 C590,204 700,204 770,240 C830,268 870,268 909,248" stroke-opacity="0.35" stroke-width="1.75" />
+
+    <!-- seated coach, left -->
+    <circle cx="220" cy="130" r="26" />
+    <path d="M220,156 L220,210" />
+    <path d="M220,210 L185,250" />
+    <path d="M220,210 L245,252" />
+    <path d="M220,178 L268,205" />
+
+    <!-- seated rep, right -->
+    <circle cx="700" cy="130" r="26" />
+    <path d="M700,156 L700,210" />
+    <path d="M700,210 L665,252" />
+    <path d="M700,210 L735,250" />
+    <path d="M700,178 L652,205" />
+
+    <!-- table -->
+    <path d="M150,232 L790,232" stroke-width="3" />
+
+    <!-- clipboard with checklist between them -->
+    <rect x="405" y="150" width="120" height="150" rx="10" />
+    <path d="M440,150 L440,138 A5,5 0 0 1 445,133 L485,133 A5,5 0 0 1 490,138 L490,150" />
+    <path d="M425,190 L438,203 L455,180" stroke-width="3" />
+    <path d="M470,193 L505,193" />
+    <path d="M425,225 L438,238 L455,215" stroke-width="3" />
+    <path d="M470,228 L505,228" />
+    <path d="M425,258 L505,258" stroke-opacity="0.4" />
+
+    <!-- five stars above the clipboard -->
+    <g stroke-width="2">
+      <path d="M405,95 l4,9 10,1 -7,7 2,10 -9,-5 -9,5 2,-10 -7,-7 10,-1 z" />
+      <path d="M440,95 l4,9 10,1 -7,7 2,10 -9,-5 -9,5 2,-10 -7,-7 10,-1 z" />
+      <path d="M475,95 l4,9 10,1 -7,7 2,10 -9,-5 -9,5 2,-10 -7,-7 10,-1 z" />
+      <path d="M510,95 l4,9 10,1 -7,7 2,10 -9,-5 -9,5 2,-10 -7,-7 10,-1 z" />
+      <path d="M545,95 l4,9 10,1 -7,7 2,10 -9,-5 -9,5 2,-10 -7,-7 10,-1 z" />
+    </g>
+  </g>
+</svg>
