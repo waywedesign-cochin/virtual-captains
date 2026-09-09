@@ -445,6 +445,7 @@ export default function RoleplayToConversation() {
             executeRef.current,
             refineRef.current,
             bottomTextRef.current,
+            twoAudiencesContainerRef.current,
           ],
           {
             clearProps: "all",
@@ -476,7 +477,7 @@ export default function RoleplayToConversation() {
       // falls back to "nothing active," immediately undoing whatever the
       // vc:nav-override event just set.
       data-nav-override-zone="true"
-      className="relative min-h-screen overflow-hidden bg-white text-[#101010] lg:h-screen"
+      className="relative min-h-screen overflow-x-hidden overflow-y-visible bg-white text-[#101010] lg:overflow-hidden lg:h-screen"
     >
       {/* ============================================================
           DOT GRID BACKGROUND
@@ -636,9 +637,9 @@ export default function RoleplayToConversation() {
       ============================================================ */}
       <div 
         ref={twoAudiencesContainerRef} 
-        className="absolute inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none"
+        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-12 sm:mt-16 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none"
       >
-        <div className="pointer-events-auto w-full">
+        <div className="pointer-events-auto w-full h-full">
           <TwoAudiences ref={twoAudiencesRef} />
         </div>
       </div>

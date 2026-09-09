@@ -1,5 +1,11 @@
-import React, { forwardRef, useImperativeHandle, useRef } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 const ORG_ITEMS = [
   { title: "Groom Studio", desc: "Induction and onboarding", accent: false },
@@ -55,16 +61,103 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   const dot1Ref = useRef<HTMLSpanElement>(null);
   const dot2Ref = useRef<HTMLSpanElement>(null);
 
+  const [activeAudience, setActiveAudience] = useState<"orgs" | "individuals">(
+    "orgs",
+  );
+
+  const toggleAudience = (target: "orgs" | "individuals") => {
+    setActiveAudience(target);
+    if (target === "orgs") {
+      gsap.to(orgsTextRef.current, {
+        opacity: 1,
+        y: 0,
+        rotate: 0,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+      gsap.to(individualsTextRef.current, {
+        opacity: 0,
+        y: 40,
+        rotate: 5,
+        duration: 0.4,
+        ease: "power2.in",
+      });
+      gsap.to(dot1Ref.current, {
+        backgroundColor: "#ffffff",
+        borderColor: "transparent",
+        duration: 0.3,
+      });
+      gsap.to(dot2Ref.current, {
+        backgroundColor: "rgba(255,255,255,0.3)",
+        borderColor: "rgba(255,255,255,0.5)",
+        duration: 0.3,
+      });
+    } else {
+      gsap.to(orgsTextRef.current, {
+        opacity: 0,
+        y: -40,
+        rotate: -5,
+        duration: 0.4,
+        ease: "power2.in",
+      });
+      gsap.to(individualsTextRef.current, {
+        opacity: 1,
+        y: 0,
+        rotate: 0,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+      gsap.to(dot1Ref.current, {
+        backgroundColor: "rgba(255,255,255,0.3)",
+        borderColor: "rgba(255,255,255,0.5)",
+        duration: 0.3,
+      });
+      gsap.to(dot2Ref.current, {
+        backgroundColor: "#ffffff",
+        borderColor: "transparent",
+        duration: 0.3,
+      });
+    }
+  };
+
+  useGSAP(
+    () => {
+      // On mobile / tablet, ensure all content is immediately visible in flow
+      if (typeof window !== "undefined" && window.innerWidth < 1024) {
+        gsap.set(
+          [
+            topTitleRef.current,
+            headlineRef.current,
+            rhsContainerRef.current,
+            bottomNavRef.current,
+          ],
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            clearProps: "transform",
+          },
+        );
+        gsap.set(orgsTextRef.current, { opacity: 1, y: 0, rotate: 0 });
+        gsap.set(individualsTextRef.current, { opacity: 0, y: 40, rotate: 5 });
+      }
+    },
+    { scope: sectionRef },
+  );
+
   useImperativeHandle(ref, () => ({
     getTimeline: () => {
-      // 1. Initial States (Invisible inside the black hole)
+      // 1. Initial States for desktop pinned animation
       gsap.set(topTitleRef.current, { opacity: 0, y: -20 });
       gsap.set(bottomNavRef.current, { opacity: 0, y: 20 });
 
-      // Calculate exact X offset to perfectly center the headline
-      let moveX: string | number = "25vw"; // Fallback
-      if (headlineRef.current) {
-        // Ensure no transform is currently applied before measuring
+      // Calculate exact X offset to perfectly center the headline ONLY on desktop
+      let moveX: string | number = 0;
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth >= 1024 &&
+        headlineRef.current
+      ) {
         gsap.set(headlineRef.current, { clearProps: "transform" });
         const rect = headlineRef.current.getBoundingClientRect();
         const centerOfElement = rect.left + rect.width / 2;
@@ -72,16 +165,14 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         moveX = centerOfScreen - centerOfElement;
       }
 
-      // Push the single headline to the exact center of the screen initially
       gsap.set(headlineRef.current, { opacity: 0, x: moveX });
-
       gsap.set(rhsContainerRef.current, { opacity: 0, x: 40 });
       gsap.set(individualsTextRef.current, { opacity: 0, y: 80, rotate: 5 });
       gsap.set(orgsTextRef.current, { opacity: 1, y: 0, rotate: 0 });
 
       const tl = gsap.timeline();
 
-      // Phase 1: Fade in Top Title and Headline (Headline is currently sitting in the center)
+      // Phase 1: Fade in Top Title and Headline (Headline centered on desktop)
       tl.to(
         topTitleRef.current,
         { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
@@ -93,10 +184,10 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         0.2,
       );
 
-      // Brief pause to read the headline in the center
+      // Pause to read the centered headline
       tl.to({}, { duration: 1.0 });
 
-      // Phase 2: Slide the SAME headline to the left
+      // Phase 2: Slide headline to the left
       tl.to(
         headlineRef.current,
         { x: 0, duration: 1.2, ease: "power2.inOut" },
@@ -115,11 +206,10 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         "slide+=0.6",
       );
 
-      // Pause briefly for the Orgs state
+      // Pause for the Orgs state
       tl.to({}, { duration: 1.5 });
 
       // Phase 4: Carousel Rotation (Swap Orgs for Individuals)
-      // We animate the text to mimic a turning wheel, but leave the image static so it acts as the stable plane
       tl.to(
         orgsTextRef.current,
         {
@@ -128,13 +218,11 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
           rotate: -5,
           duration: 1,
           ease: "power2.in",
+          onStart: () => setActiveAudience("individuals"),
         },
         "rotate",
       );
 
-      // Starts right as orgsText finishes fading out (not mid-fade) so the
-      // two panels are never both partially visible at once — an earlier
-      // 0.5s overlap here made both texts read as double-exposed.
       tl.to(
         individualsTextRef.current,
         {
@@ -168,7 +256,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         "rotate+=1",
       );
 
-      // Final pause to hold on the second audience panel
+      // Final pause on the second audience panel
       tl.to({}, { duration: 0.8 });
 
       return tl;
@@ -179,14 +267,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   return (
     <section
       ref={sectionRef}
-      // No data-nav-section here on purpose: this section sits absolutely
-      // inset-0 inside RoleplayToConversation and shares its bounding rect
-      // for the whole pin, so a geometry-based nav trigger here would fire
-      // at the same instant as "The Promise". RoleplayToConversation's
-      // master timeline dispatches the "Choose Your Path" nav switch itself
-      // at the exact scroll progress where this section becomes visible.
-      className="relative z-10 w-full min-h-screen overflow-hidden bg-[#050608] rounded-3xl"
+      className="relative z-10 w-full h-full min-h-screen lg:min-h-0 lg:h-screen overflow-hidden bg-[#050608] lg:rounded-none flex flex-col justify-between"
     >
+      {/* Subtle dotted background grid */}
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-40"
         style={{
@@ -196,27 +279,23 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         }}
       />
 
-      <div className="relative z-10 mx-auto w-full h-full min-h-screen max-w-[1920px] px-6 py-14 sm:px-10 lg:px-16 lg:py-20 flex flex-col justify-between">
+      <div className="relative z-10 mx-auto w-full h-full max-w-[1920px] px-5 sm:px-10 lg:px-16 py-4 sm:py-6 lg:py-4 xl:py-6 flex flex-col justify-between flex-1 overflow-hidden">
+        {/* TOP EYEBROW */}
         <p
           ref={topTitleRef}
-          className="ta-eyebrow mb-10 pt-8 lg:pt-10 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/50 lg:mb-20"
+          className="ta-eyebrow pt-2 sm:pt-4 lg:pt-2 mb-2 sm:mb-3 lg:mb-2 text-center font-mono text-[9px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.15em] sm:tracking-[0.25em] text-white/50 max-w-xl mx-auto px-4 shrink-0"
         >
           Two Audiences &nbsp;·&nbsp; One Discipline &nbsp;:&nbsp; Execution
         </p>
 
-        <div className="relative z-10 flex-1 w-full flex items-center">
-          <div className="w-full grid items-center gap-10 sm:gap-16 lg:grid-cols-2 lg:gap-4">
-            {/* SINGLE HEADLINE */}
-            {/* lg:pl-32: clears the fixed SideNav's left-edge footprint once
-                the headline slides to its resting position at x:0 — the
-                outer container's own lg:px-16 wasn't enough on its own.
-                Unlike RoleplayToConversation's equivalent fix, this
-                container has no xl:px scale-up, so the extra padding must
-                stay constant rather than shrinking at xl. */}
-            <div className="lg:pl-32">
+        {/* MIDDLE ROW: HEADLINE & AUDIENCE CARD */}
+        <div className="relative z-10 flex-1 w-full flex items-center justify-center my-auto min-h-0">
+          <div className="w-full grid items-center gap-6 sm:gap-10 lg:grid-cols-2 lg:gap-8 xl:gap-12">
+            {/* LEFT COLUMN: HEADLINE */}
+            <div className="lg:pl-16 xl:pl-24 flex justify-center lg:block">
               <h2
                 ref={headlineRef}
-                className="w-full max-w-xl font-serif text-[clamp(1.85rem,3.4vw,3.5rem)] font-normal leading-[1.15] text-white"
+                className="inline-block max-w-xl font-serif text-[clamp(1.75rem,2.8vw,3.25rem)] font-normal leading-[1.16] text-white text-center lg:text-left"
               >
                 <span className="block">Turn training</span>
                 <span className="block">into measurable</span>
@@ -226,30 +305,66 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               </h2>
             </div>
 
-            {/* right: curved connector + wedge + org content */}
+            {/* RIGHT COLUMN: BACKGROUND SHAPE & AUDIENCE CONTENT */}
             <div
               ref={rhsContainerRef}
-              className="relative min-h-90 sm:min-h-115 w-full"
+              className="relative h-[410px] sm:h-[440px] lg:h-[460px] xl:h-[490px] w-full flex items-center"
             >
-              {/* image background wedge - Made larger and centered to act as the full background plane for the text */}
-              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 right-[-10%] w-[140%] h-[140%] lg:w-[150%] lg:h-[150%]">
+              {/* DESKTOP BACKGROUND WEDGE (Preserves natural 724:1084 aspect ratio, avoids squishing) */}
+              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 xl:-right-2 w-[140%] xl:w-[150%] h-[135%] xl:h-[145%] hidden lg:flex items-center justify-end">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/home/Vector1.png"
                   alt="Wedge background"
-                  className="h-full w-full object-contain object-center opacity-80 mix-blend-screen"
+                  className="h-full w-auto max-w-none object-contain opacity-35 mix-blend-screen select-none"
                 />
+              </div>
+
+              {/* DESKTOP AMBIENT BLUE RADIAL GLOW (Envelops all text in deep luminous blue light) */}
+              <div className="pointer-events-none absolute -inset-8 rounded-[36px] bg-[radial-gradient(ellipse_at_60%_50%,_rgba(29,99,237,0.38)_0%,_rgba(20,60,180,0.18)_50%,_transparent_75%)] blur-2xl hidden lg:block" />
+
+              {/* MOBILE & TABLET RESPONSIVE CONTAINER CARD (Active on screens < lg) */}
+              <div className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-3xl border border-white/10 bg-gradient-to-br from-[#1d63ed]/15 via-white/[0.03] to-transparent backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.45)] lg:hidden overflow-hidden">
+                <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-[#1d63ed]/25 blur-3xl" />
+                <div className="absolute -left-10 -bottom-10 h-64 w-64 rounded-full bg-[#1d63ed]/15 blur-3xl" />
               </div>
 
               {/* FIRST STATE: Organisations */}
               <div
                 ref={orgsTextRef}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-6 sm:gap-8 pl-4 sm:pl-12 lg:pl-20 xl:pl-28"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-[450px]"
               >
+                {/* Mobile Tab Switcher */}
+                <div className="flex lg:hidden items-center gap-2 mb-1">
+                  <button
+                    type="button"
+                    onClick={() => toggleAudience("orgs")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
+                      activeAudience === "orgs"
+                        ? "bg-white text-black"
+                        : "bg-white/10 text-white/60 hover:bg-white/15"
+                    }`}
+                  >
+                    For Organisations
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleAudience("individuals")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
+                      activeAudience === "individuals"
+                        ? "bg-white text-black"
+                        : "bg-white/10 text-white/60 hover:bg-white/15"
+                    }`}
+                  >
+                    For Individuals
+                  </button>
+                </div>
+
                 <div>
-                  <p className="font-serif text-[15px] sm:text-[17px] italic text-white/80">
+                  <p className="font-serif text-[15px] sm:text-[17px] italic text-white/85">
                     For Organisations
                   </p>
-                  <p className="mt-2 max-w-85 font-serif text-[clamp(1.2rem,2.2vw,1.8rem)] leading-[1.2] text-white">
+                  <p className="mt-0.5 font-serif text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
                     Equip your teams with{" "}
                     <span className="italic text-white/90">
                       real-world practice
@@ -257,17 +372,22 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                   </p>
                 </div>
 
-                <ul className="flex flex-col gap-4 sm:gap-6">
+                <ul className="flex flex-col gap-2.5 sm:gap-3">
                   {ORG_ITEMS.map((item) => (
-                    <li key={item.title} className="flex gap-4">
-                      <span className="mt-2.5 h-0.75 w-4 shrink-0 bg-[#2f6fe0]" />
+                    <li
+                      key={item.title}
+                      className="flex gap-3 sm:gap-3.5 items-start"
+                    >
+                      <span className="mt-1.5 h-0.5 w-3.5 shrink-0 bg-[#2f6fe0] rounded-full" />
                       <div>
                         <p
-                          className={`text-[15px] sm:text-[16px] font-semibold ${item.accent ? "text-[#1d63ed]" : "text-white"}`}
+                          className={`text-[13.5px] sm:text-[14.5px] font-semibold leading-tight ${
+                            item.accent ? "text-[#3b82f6]" : "text-white"
+                          }`}
                         >
                           {item.title}
                         </p>
-                        <p className="mt-0.5 max-w-[320px] text-[12.5px] sm:text-[13px] leading-relaxed text-white/60">
+                        <p className="mt-0.5 max-w-[320px] text-[11px] sm:text-[12px] leading-relaxed text-white/65">
                           {item.desc}
                         </p>
                       </div>
@@ -279,13 +399,39 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               {/* SECOND STATE: Individuals */}
               <div
                 ref={individualsTextRef}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-6 sm:gap-8 pl-4 sm:pl-12 lg:pl-20 xl:pl-28"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-[450px]"
               >
+                {/* Mobile Tab Switcher */}
+                <div className="flex lg:hidden items-center gap-2 mb-1">
+                  <button
+                    type="button"
+                    onClick={() => toggleAudience("orgs")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
+                      activeAudience === "orgs"
+                        ? "bg-white text-black"
+                        : "bg-white/10 text-white/60 hover:bg-white/15"
+                    }`}
+                  >
+                    For Organisations
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleAudience("individuals")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
+                      activeAudience === "individuals"
+                        ? "bg-white text-black"
+                        : "bg-white/10 text-white/60 hover:bg-white/15"
+                    }`}
+                  >
+                    For Individuals
+                  </button>
+                </div>
+
                 <div>
-                  <p className="font-serif text-[17px] italic text-white/80">
+                  <p className="font-serif text-[15px] sm:text-[17px] italic text-white/85">
                     For Individuals
                   </p>
-                  <p className="mt-2 max-w-85 font-serif text-[clamp(1.3rem,2.5vw,1.8rem)] leading-[1.2] text-white">
+                  <p className="mt-0.5 font-serif text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
                     Elevate your own{" "}
                     <span className="italic text-white/90">
                       closing capabilities
@@ -293,17 +439,22 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                   </p>
                 </div>
 
-                <ul className="flex flex-col gap-6">
+                <ul className="flex flex-col gap-2.5 sm:gap-3">
                   {INDIVIDUAL_ITEMS.map((item) => (
-                    <li key={item.title} className="flex gap-4">
-                      <span className="mt-2.5 h-0.75 w-4 shrink-0 bg-[#2f6fe0]" />
+                    <li
+                      key={item.title}
+                      className="flex gap-3 sm:gap-3.5 items-start"
+                    >
+                      <span className="mt-1.5 h-0.5 w-3.5 shrink-0 bg-[#2f6fe0] rounded-full" />
                       <div>
                         <p
-                          className={`text-[16px] font-semibold ${item.accent ? "text-[#1d63ed]" : "text-white"}`}
+                          className={`text-[13.5px] sm:text-[14.5px] font-semibold leading-tight ${
+                            item.accent ? "text-[#3b82f6]" : "text-white"
+                          }`}
                         >
                           {item.title}
                         </p>
-                        <p className="mt-0.5 max-w-[320px] text-[13px] leading-relaxed text-white/60">
+                        <p className="mt-0.5 max-w-[320px] text-[11px] sm:text-[12px] leading-relaxed text-white/65">
                           {item.desc}
                         </p>
                       </div>
@@ -314,28 +465,55 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* BOTTOM PAGINATION */}
-      <div
-        ref={bottomNavRef}
-        className="relative z-10 mt-12 flex flex-col items-center gap-5"
-      >
-        <button
-          type="button"
-          className="rounded-full border border-white/20 px-8 py-3.5 text-[13px] font-medium text-white transition-colors hover:bg-white hover:text-black cursor-pointer"
+        {/* BOTTOM PAGINATION & TOGGLE */}
+        <div
+          ref={bottomNavRef}
+          className="relative z-10 mt-2 sm:mt-3 lg:mt-2 flex flex-col items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-2"
         >
-          Build High-Performing Team
-        </button>
-        <div className="flex items-center gap-2">
-          <span
-            ref={dot1Ref}
-            className="h-2 w-2 rounded-full bg-white transition-transform"
-          />
-          <span
-            ref={dot2Ref}
-            className="h-2 w-2 rounded-full bg-white/30 border border-white/50 transition-transform"
-          />
+          <button
+            type="button"
+            onClick={() =>
+              toggleAudience(activeAudience === "orgs" ? "individuals" : "orgs")
+            }
+            className="rounded-full border border-white/20 bg-white/5 px-6 sm:px-8 py-2.5 sm:py-3 text-[12px] sm:text-[13px] font-medium text-white transition-all hover:bg-white hover:text-black cursor-pointer shadow-sm active:scale-95"
+          >
+            {activeAudience === "orgs"
+              ? "Build High-Performing Team"
+              : "Elevate Closing Capabilities"}
+          </button>
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              aria-label="View Organisations"
+              onClick={() => toggleAudience("orgs")}
+              className="p-1 cursor-pointer"
+            >
+              <span
+                ref={dot1Ref}
+                className={`block h-2 w-2 rounded-full transition-all ${
+                  activeAudience === "orgs"
+                    ? "bg-white scale-125"
+                    : "bg-white/30 border border-white/50"
+                }`}
+              />
+            </button>
+            <button
+              type="button"
+              aria-label="View Individuals"
+              onClick={() => toggleAudience("individuals")}
+              className="p-1 cursor-pointer"
+            >
+              <span
+                ref={dot2Ref}
+                className={`block h-2 w-2 rounded-full transition-all ${
+                  activeAudience === "individuals"
+                    ? "bg-white scale-125"
+                    : "bg-white/30 border border-white/50"
+                }`}
+              />
+            </button>
+          </div>
         </div>
       </div>
     </section>
