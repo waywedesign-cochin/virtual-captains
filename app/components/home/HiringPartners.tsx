@@ -8,87 +8,115 @@ import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(ScrollTrigger);
 
 type Bubble = {
-  label: string;
+  id: string;
+  name: string;
+  logo?: string;
+  badge?: {
+    primary: string;
+    sub?: string;
+  };
   /** Position in percent relative to the cluster circle */
   x: number;
   y: number;
   size: number;
   isAccent?: boolean;
-  fontSizeClass: string;
+  isFrosted?: boolean;
 };
 
+/**
+ * 4 partner logos from /public/home/ used once only:
+ * - MoonHive (/home/MoonHive -Logo.jpg.jpeg)
+ * - AHAD (/home/AHAD - LOGO.png)
+ * - Skylark (/home/be39b0cf2217e231f0988b7ac5933626.jpg.jpeg)
+ * - Sigma Life Unifirm (/home/Sigma Life Unifirm Logo Png (1).png)
+ * Excludes person.png, approach*.svg, Vector1.png, and SalesX logos as requested.
+ */
 const BUBBLES: Bubble[] = [
   {
-    // Large lead bubble (top-right)
-    label: "Logo",
-    x: 64,
-    y: 43,
+    // Largest partner logo (East) — MoonHive
+    id: "moonhive",
+    name: "MoonHive",
+    logo: "/home/MoonHive -Logo.jpg.jpeg",
+    x: 69,
+    y: 45,
     size: 126,
-    isAccent: false,
-    fontSizeClass: "text-xl sm:text-2xl",
   },
   {
-    // Medium-large bubble (middle-left)
-    label: "Logo",
-    x: 26,
-    y: 60,
-    size: 88,
-    isAccent: false,
-    fontSizeClass: "text-sm sm:text-base",
+    // Major partner logo (West) — AHAD
+    id: "ahad",
+    name: "AHAD",
+    logo: "/home/AHAD - LOGO.png",
+    x: 29,
+    y: 52,
+    size: 118,
   },
   {
-    // Top-center bubble
-    label: "Logo",
-    x: 35,
-    y: 31,
-    size: 72,
-    isAccent: false,
-    fontSizeClass: "text-xs sm:text-sm",
+    // Major partner logo (North) — Skylark
+    id: "skylark",
+    name: "Skylark",
+    logo: "/home/be39b0cf2217e231f0988b7ac5933626.jpg.jpeg",
+    x: 48,
+    y: 25,
+    size: 112,
   },
   {
-    // Bottom-left bubble
-    label: "Logo",
-    x: 30,
-    y: 77,
-    size: 64,
-    isAccent: false,
-    fontSizeClass: "text-[11px] sm:text-xs",
+    // Major partner logo (South) — Sigma Life Unifirm
+    id: "sigma",
+    name: "Sigma Life Unifirm",
+    logo: "/home/Sigma Life Unifirm Logo Png (1).png",
+    x: 52,
+    y: 73,
+    size: 116,
   },
   {
-    // Bottom-center/right bubble
-    label: "Logo",
-    x: 53,
-    y: 78,
-    size: 70,
-    isAccent: false,
-    fontSizeClass: "text-[11px] sm:text-xs",
-  },
-  {
-    // Small center-left bubble
-    label: "Logo",
-    x: 32,
-    y: 47,
-    size: 48,
-    isAccent: false,
-    fontSizeClass: "text-[10px]",
-  },
-  {
-    // Small lower-right bubble
-    label: "Logo",
-    x: 62,
-    y: 67,
-    size: 48,
-    isAccent: false,
-    fontSizeClass: "text-[10px]",
-  },
-  {
-    // ACCENT NEON YELLOW BUBBLE (Center / slightly lower-center)
-    label: "Logo",
-    x: 47,
-    y: 62,
-    size: 60,
+    // ACCENT FOCAL BUBBLE (Center badge: 50+ Partners)
+    id: "accent-center",
+    name: "Hiring Network",
+    badge: { primary: "50+", sub: "Partners" },
+    x: 48,
+    y: 48,
+    size: 86,
     isAccent: true,
-    fontSizeClass: "text-xs font-medium",
+  },
+  {
+    // Satellite bubble (South-West) — Global Network
+    id: "satellite-1",
+    name: "Global Network",
+    badge: { primary: "Global", sub: "Network" },
+    x: 26,
+    y: 70,
+    size: 64,
+    isFrosted: true,
+  },
+  {
+    // Satellite bubble (South-East) — +25 Hiring
+    id: "satellite-2",
+    name: "More Enterprises",
+    badge: { primary: "+25", sub: "Hiring" },
+    x: 72,
+    y: 67,
+    size: 58,
+    isFrosted: true,
+  },
+  {
+    // Satellite bubble (North-West) — Top Tier
+    id: "satellite-3",
+    name: "Top Tier",
+    badge: { primary: "Top", sub: "Tier" },
+    x: 28,
+    y: 32,
+    size: 60,
+    isFrosted: true,
+  },
+  {
+    // Satellite bubble (North-East) — 100% Verified
+    id: "satellite-4",
+    name: "Verified",
+    badge: { primary: "100%", sub: "Verified" },
+    x: 70,
+    y: 27,
+    size: 62,
+    isFrosted: true,
   },
 ];
 
@@ -107,14 +135,14 @@ export default function HiringPartners() {
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      gsap.set(headingRef.current, { opacity: 0, y: 28 });
-      gsap.set(clusterRef.current, { opacity: 0, scale: 0.92 });
-      gsap.set(bubbleRefs.current, { opacity: 0, scale: 0.4 });
+      gsap.set(headingRef.current, { opacity: 0, y: 35 });
+      gsap.set(clusterRef.current, { opacity: 0, scale: 0.85, rotate: -4 });
+      gsap.set(bubbleRefs.current, { opacity: 0, scale: 0, y: 24 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 70%",
+          start: "top 72%",
           once: true,
         },
       });
@@ -122,42 +150,44 @@ export default function HiringPartners() {
       tl.to(clusterRef.current, {
         opacity: 1,
         scale: 1,
-        duration: 0.9,
-        ease: "power2.out",
+        rotate: 0,
+        duration: 1.1,
+        ease: "power3.out",
       })
         .to(
           headingRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.9,
             ease: "power2.out",
           },
-          "-=0.6",
+          "-=0.7",
         )
         .to(
           bubbleRefs.current,
           {
             opacity: 1,
             scale: 1,
-            duration: 0.8,
-            stagger: { each: 0.07, from: "center" },
-            ease: "back.out(1.6)",
+            y: 0,
+            duration: 0.9,
+            stagger: { each: 0.08, from: "center" },
+            ease: "back.out(1.8)",
           },
-          "-=0.5",
+          "-=0.6",
         );
 
-      // Perpetual subtle float animation on each bubble
+      // Subtle organic micro-float animation keeping bubbles inside the circle
       bubbleRefs.current.forEach((el, i) => {
         if (!el) return;
         gsap.to(el, {
-          y: i % 2 === 0 ? -8 : 8,
-          x: i % 3 === 0 ? 5 : -5,
-          duration: 3 + (i % 4) * 0.7,
+          y: i % 2 === 0 ? -4 : 4,
+          x: i % 3 === 0 ? 3 : -3,
+          duration: 3.2 + (i % 4) * 0.6,
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
-          delay: i * 0.15,
+          delay: i * 0.12,
         });
       });
     },
@@ -190,35 +220,70 @@ export default function HiringPartners() {
         <div className="flex justify-center lg:col-span-7">
           <div
             ref={clusterRef}
-            className="relative aspect-square w-[min(410px,82vw)] rounded-full border border-black/15 bg-white/10 shadow-[0_12px_32px_-12px_rgba(0,0,0,0.06)] backdrop-blur-[2px]"
+            className="relative aspect-square w-[min(540px,92vw)] overflow-hidden rounded-full border border-black/10 bg-white/10 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.08)] backdrop-blur-[2px]"
           >
-            {/* Inner concentric ring */}
-            <div className="pointer-events-none absolute inset-2.5 rounded-full border border-black/10 sm:inset-3" />
+            {/* Outer concentric accent ring */}
+            <div className="pointer-events-none absolute inset-3 rounded-full border border-black/8 sm:inset-4" />
+            {/* Mid dashed orbit ring */}
+            <div className="pointer-events-none absolute inset-8 rounded-full border border-dashed border-black/10 sm:inset-10" />
+            {/* Inner faint guide circle */}
+            <div className="pointer-events-none absolute inset-20 rounded-full border border-black/5 sm:inset-24" />
+            {/* Center soft ambient glow */}
+            <div className="pointer-events-none absolute inset-[18%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0.15)_65%,transparent_100%)]" />
 
             {/* Floating Logo Bubbles */}
             {BUBBLES.map((bubble, i) => (
               <div
-                key={`bubble-${i}`}
+                key={bubble.id}
                 ref={(el) => {
                   bubbleRefs.current[i] = el;
                 }}
-                className={`absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-transform duration-300 hover:scale-105 ${
+                className={`group absolute flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition-all duration-300 ease-out hover:scale-108 hover:z-30 ${
                   bubble.isAccent
-                    ? "bg-[#e7ff3d] text-[#0a0b0f] shadow-[0_3px_18px_rgba(231,255,61,0.5)]"
-                    : "bg-[#d9d9d9] text-black/85 shadow-[0_6px_18px_-8px_rgba(0,0,0,0.22)]"
+                    ? "bg-white text-black border border-black/15 shadow-[0_10px_28px_-6px_rgba(0,0,0,0.12)] hover:bg-[#e7ff3d] hover:text-[#0a0b0d] hover:border-[#e7ff3d] hover:shadow-[0_4px_32px_rgba(231,255,61,0.75),0_0_16px_#e7ff3d]"
+                    : bubble.isFrosted
+                      ? "bg-white/70 text-black/85 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] border border-white/80 backdrop-blur-md hover:bg-white hover:text-[#2563eb] hover:border-[#2563eb]/40 hover:shadow-[0_12px_28px_-6px_rgba(37,99,235,0.25)]"
+                      : "bg-white p-1 sm:p-1.5 text-black shadow-[0_12px_28px_-6px_rgba(0,0,0,0.12)] border border-black/10 hover:shadow-[0_20px_40px_-8px_rgba(37,99,235,0.25),0_4px_16px_rgba(0,0,0,0.08)] hover:border-[#2563eb]/40"
                 }`}
                 style={{
                   left: `${bubble.x}%`,
                   top: `${bubble.y}%`,
-                  width: `clamp(${Math.round(bubble.size * 0.72)}px, ${(bubble.size / 4.1).toFixed(1)}vw, ${bubble.size}px)`,
-                  height: `clamp(${Math.round(bubble.size * 0.72)}px, ${(bubble.size / 4.1).toFixed(1)}vw, ${bubble.size}px)`,
+                  width: `clamp(${Math.round(bubble.size * 0.72)}px, ${(bubble.size / 4.2).toFixed(1)}vw, ${bubble.size}px)`,
+                  height: `clamp(${Math.round(bubble.size * 0.72)}px, ${(bubble.size / 4.2).toFixed(1)}vw, ${bubble.size}px)`,
                 }}
               >
-                <span
-                  className={`font-serif leading-none tracking-tight text-[clamp(11px,2vw,14px)] ${bubble.fontSizeClass}`}
-                >
-                  {bubble.label}
-                </span>
+                {bubble.logo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={bubble.logo}
+                    alt={bubble.name}
+                    className="h-[84%] w-[84%] object-contain select-none filter grayscale contrast-[1.7] brightness-90 opacity-95 transition-all duration-300 ease-out group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:opacity-100 group-hover:scale-108"
+                    loading="lazy"
+                  />
+                ) : bubble.badge ? (
+                  <div className="flex flex-col items-center justify-center text-center select-none px-1">
+                    <span
+                      className={`font-bold leading-none tracking-tight transition-colors duration-300 ${
+                        bubble.isAccent
+                          ? "font-sans text-[clamp(15px,2.2vw,20px)] text-[#0a0b0d]"
+                          : "font-sans text-[clamp(12px,1.7vw,15px)] text-black/90 group-hover:text-[#2563eb]"
+                      }`}
+                    >
+                      {bubble.badge.primary}
+                    </span>
+                    {bubble.badge.sub && (
+                      <span
+                        className={`mt-0.5 font-bold leading-none tracking-wider uppercase transition-colors duration-300 ${
+                          bubble.isAccent
+                            ? "text-[9px] sm:text-[10px] text-black/80"
+                            : "text-[7.5px] sm:text-[8.5px] text-black/60 group-hover:text-[#2563eb]/90"
+                        }`}
+                      >
+                        {bubble.badge.sub}
+                      </span>
+                    )}
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>
