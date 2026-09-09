@@ -55,8 +55,6 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   const dot1Ref = useRef<HTMLSpanElement>(null);
   const dot2Ref = useRef<HTMLSpanElement>(null);
 
-  const whiteIrisRef = useRef<HTMLDivElement>(null);
-
   useImperativeHandle(ref, () => ({
     getTimeline: () => {
       // 1. Initial States (Invisible inside the black hole)
@@ -80,7 +78,6 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
       gsap.set(rhsContainerRef.current, { opacity: 0, x: 40 });
       gsap.set(individualsTextRef.current, { opacity: 0, y: 80, rotate: 5 });
       gsap.set(orgsTextRef.current, { opacity: 1, y: 0, rotate: 0 });
-      gsap.set(whiteIrisRef.current, { scale: 0 });
 
       const tl = gsap.timeline();
 
@@ -151,25 +148,8 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         "rotate+=1",
       );
 
-      // Final pause
-      tl.to({}, { duration: 0.5 });
-
-      // Phase 5: THE WHITE IRIS — mirrors RoleplayToConversation's Phase 8
-      // black-hole zoom, inverted. Fades out this section's own foreground,
-      // then grows a white circle to swallow the screen. OurApproach (the
-      // very next section) is also white-background and sits immediately
-      // adjacent in normal flow, so this reads as one continuous motion with
-      // no visible seam once the pin releases right after.
-      tl.to(
-        [topTitleRef.current, headlineRef.current, rhsContainerRef.current, bottomNavRef.current],
-        { autoAlpha: 0, duration: 0.4 },
-      );
-
-      tl.to(
-        whiteIrisRef.current,
-        { scale: 24, duration: 1.4, ease: "expo.in" },
-        "<",
-      );
+      // Final pause to hold on the second audience panel
+      tl.to({}, { duration: 0.8 });
 
       return tl;
     },
@@ -205,7 +185,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         </p>
 
         <div className="relative z-10 flex-1 w-full flex items-center">
-          <div className="w-full grid items-center gap-16 lg:grid-cols-2 lg:gap-4">
+          <div className="w-full grid items-center gap-10 sm:gap-16 lg:grid-cols-2 lg:gap-4">
             
             {/* SINGLE HEADLINE */}
             {/* lg:pl-32: clears the fixed SideNav's left-edge footprint once
@@ -217,7 +197,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             <div className="lg:pl-32">
               <h2 
                 ref={headlineRef}
-                className="font-serif text-[clamp(2.5rem,4vw,3.5rem)] font-normal leading-[1.2] text-white w-max"
+                className="w-full max-w-xl font-serif text-[clamp(1.85rem,3.4vw,3.5rem)] font-normal leading-[1.15] text-white"
               >
                 <span className="block">Turn training</span>
                 <span className="block">into measurable</span>
@@ -228,9 +208,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             </div>
 
             {/* right: curved connector + wedge + org content */}
-            <div ref={rhsContainerRef} className="relative min-h-115 w-full">
+            <div ref={rhsContainerRef} className="relative min-h-90 sm:min-h-115 w-full">
               {/* image background wedge - Made larger and centered to act as the full background plane for the text */}
-              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-[10%] w-[140%] h-[140%] lg:w-[150%] lg:h-[150%]">
+              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 right-[-10%] w-[140%] h-[140%] lg:w-[150%] lg:h-[150%]">
                 <img
                   src="/home/Vector1.png"
                   alt="Wedge background"
@@ -241,13 +221,13 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               {/* FIRST STATE: Organisations */}
               <div
                 ref={orgsTextRef}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-8 pl-8 sm:pl-12 lg:pl-20 xl:pl-28"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-6 sm:gap-8 pl-4 sm:pl-12 lg:pl-20 xl:pl-28"
               >
                 <div>
-                  <p className="font-serif text-[17px] italic text-white/80">
+                  <p className="font-serif text-[15px] sm:text-[17px] italic text-white/80">
                     For Organisations
                   </p>
-                  <p className="mt-2 max-w-85 font-serif text-[clamp(1.3rem,2.5vw,1.8rem)] leading-[1.2] text-white">
+                  <p className="mt-2 max-w-85 font-serif text-[clamp(1.2rem,2.2vw,1.8rem)] leading-[1.2] text-white">
                     Equip your teams with{" "}
                     <span className="italic text-white/90">
                       real-world practice
@@ -255,17 +235,17 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                   </p>
                 </div>
 
-                <ul className="flex flex-col gap-6">
+                <ul className="flex flex-col gap-4 sm:gap-6">
                   {ORG_ITEMS.map((item) => (
                     <li key={item.title} className="flex gap-4">
                       <span className="mt-2.5 h-0.75 w-4 shrink-0 bg-[#2f6fe0]" />
                       <div>
                         <p
-                          className={`text-[16px] font-semibold ${item.accent ? "text-[#1d63ed]" : "text-white"}`}
+                          className={`text-[15px] sm:text-[16px] font-semibold ${item.accent ? "text-[#1d63ed]" : "text-white"}`}
                         >
                           {item.title}
                         </p>
-                        <p className="mt-0.5 max-w-[320px] text-[13px] leading-relaxed text-white/60">
+                        <p className="mt-0.5 max-w-[320px] text-[12.5px] sm:text-[13px] leading-relaxed text-white/60">
                           {item.desc}
                         </p>
                       </div>
@@ -277,7 +257,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               {/* SECOND STATE: Individuals */}
               <div
                 ref={individualsTextRef}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-8 pl-8 sm:pl-12 lg:pl-20 xl:pl-28"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-6 sm:gap-8 pl-4 sm:pl-12 lg:pl-20 xl:pl-28"
               >
                 <div>
                   <p className="font-serif text-[17px] italic text-white/80">
@@ -313,13 +293,6 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
           </div>
         </div>
       </div>
-
-      {/* WHITE IRIS — grows to swallow the screen at the very end of the
-          timeline, transitioning into OurApproach's white background. */}
-      <div
-        ref={whiteIrisRef}
-        className="pointer-events-none absolute left-1/2 top-1/2 z-30 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-      />
 
       {/* BOTTOM PAGINATION */}
       <div

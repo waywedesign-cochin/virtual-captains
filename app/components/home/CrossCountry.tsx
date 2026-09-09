@@ -17,7 +17,12 @@ type Location = {
 
 const LOCATIONS: Location[] = [
   { name: "Dubai", country: "United Arab Emirates", lon: 55.27, lat: 25.2 },
-  { name: "Abu Dhabi", country: "United Arab Emirates", lon: 54.37, lat: 24.45 },
+  {
+    name: "Abu Dhabi",
+    country: "United Arab Emirates",
+    lon: 54.37,
+    lat: 24.45,
+  },
   { name: "Riyadh", country: "Saudi Arabia", lon: 46.72, lat: 24.71 },
   { name: "Doha", country: "Qatar", lon: 51.53, lat: 25.29 },
   { name: "Manama", country: "Bahrain", lon: 50.59, lat: 26.23 },
@@ -68,7 +73,6 @@ export default function CrossCountry() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
   const globeWrapRef = useRef<HTMLDivElement>(null);
-  const blackCircleRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const progressRef = useRef(0);
@@ -165,24 +169,24 @@ export default function CrossCountry() {
           cy,
           baseRadius,
         );
-        sphere.addColorStop(0, `rgba(${ACCENT}, 0.1)`);
-        sphere.addColorStop(0.65, `rgba(${ACCENT}, 0.06)`);
-        sphere.addColorStop(1, `rgba(${ACCENT}, 0.02)`);
+        sphere.addColorStop(0, "rgba(255, 255, 255, 0.18)");
+        sphere.addColorStop(0.65, "rgba(255, 255, 255, 0.08)");
+        sphere.addColorStop(1, "rgba(255, 255, 255, 0.02)");
         ctx.beginPath();
         ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
         ctx.fillStyle = sphere;
         ctx.fill();
 
         // --- land ---------------------------------------------------------
-        const dotRadius = Math.max(0.7, baseRadius * 0.0075 * Math.sqrt(zoom));
+        const dotRadius = Math.max(0.75, baseRadius * 0.008 * Math.sqrt(zoom));
         for (const [lon, lat] of LAND_DOTS) {
           const point = project(lon, lat);
           if (!point) continue;
           // fade towards the limb so the sphere reads as a sphere
-          ctx.globalAlpha = 0.18 + 0.62 * point.depth;
+          ctx.globalAlpha = 0.25 + 0.75 * point.depth;
           ctx.beginPath();
           ctx.arc(point.x, point.y, dotRadius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgb(${ACCENT})`;
+          ctx.fillStyle = "#ffffff";
           ctx.fill();
         }
         ctx.globalAlpha = 1;
@@ -215,7 +219,7 @@ export default function CrossCountry() {
           const alpha = Math.min(1, point.depth * 1.6);
 
           // halo
-          ctx.globalAlpha = alpha * (isFocused ? 0.28 + 0.22 * pulse : 0.14);
+          ctx.globalAlpha = alpha * (isFocused ? 0.28 + 0.22 * pulse : 0.2);
           ctx.beginPath();
           ctx.arc(
             point.x,
@@ -224,14 +228,14 @@ export default function CrossCountry() {
             0,
             Math.PI * 2,
           );
-          ctx.fillStyle = isFocused ? HIGHLIGHT : `rgb(${ACCENT})`;
+          ctx.fillStyle = isFocused ? HIGHLIGHT : "rgba(255, 255, 255, 0.6)";
           ctx.fill();
 
           // core
           ctx.globalAlpha = alpha;
           ctx.beginPath();
           ctx.arc(point.x, point.y, isFocused ? 4 : 2.6, 0, Math.PI * 2);
-          ctx.fillStyle = isFocused ? HIGHLIGHT : `rgb(${ACCENT})`;
+          ctx.fillStyle = isFocused ? HIGHLIGHT : "#ffffff";
           ctx.fill();
 
           if (isFocused) {
@@ -245,42 +249,50 @@ export default function CrossCountry() {
             const labelAlpha = (activeLabel.weight - 0.35) / 0.65;
             ctx.globalAlpha = Math.min(1, labelAlpha) * alpha;
 
-            const leader = 26;
+            const leader = width < 480 ? 20 : 26;
             const labelY = point.y - leader;
-            const textX = point.x + leader + 16;
+            const isRightSide = point.x > cx;
+            const textX = isRightSide ? point.x - leader - 16 : point.x + leader + 16;
 
             ctx.beginPath();
-            ctx.moveTo(point.x + 6, point.y - 6);
-            ctx.lineTo(point.x + leader, labelY);
-            ctx.lineTo(point.x + leader + 10, labelY);
-            ctx.strokeStyle = "rgba(16,16,16,0.35)";
+            if (isRightSide) {
+              ctx.moveTo(point.x - 6, point.y - 6);
+              ctx.lineTo(point.x - leader, labelY);
+              ctx.lineTo(point.x - leader - 10, labelY);
+            } else {
+              ctx.moveTo(point.x + 6, point.y - 6);
+              ctx.lineTo(point.x + leader, labelY);
+              ctx.lineTo(point.x + leader + 10, labelY);
+            }
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
             ctx.lineWidth = 1;
             ctx.stroke();
 
-            ctx.textAlign = "left";
-
-            // white plate so the label stays readable over the land dots,
-            // same trick the oval diagram labels use in RoleplayToConversation
+            // white plate so the label stays readable over the land dots
             ctx.font = `600 13px ${fontSans}`;
             const nameWidth = ctx.measureText(location.name).width;
             ctx.font = `400 11px ${fontSans}`;
             const countryWidth = ctx.measureText(location.country).width;
             const plateWidth = Math.max(nameWidth, countryWidth) + 14;
 
-            ctx.fillStyle = "rgba(255,255,255,0.92)";
+            const plateX = isRightSide ? textX - plateWidth + 7 : textX - 7;
+            const contentX = isRightSide ? textX - plateWidth + 14 : textX;
+
+            ctx.fillStyle = "rgba(255,255,255,0.96)";
             ctx.beginPath();
-            ctx.roundRect(textX - 7, labelY - 17, plateWidth, 34, 4);
+            ctx.roundRect(plateX, labelY - 17, plateWidth, 34, 4);
             ctx.fill();
 
+            ctx.textAlign = "left";
             ctx.font = `600 13px ${fontSans}`;
             ctx.textBaseline = "bottom";
             ctx.fillStyle = "#101010";
-            ctx.fillText(location.name, textX, labelY - 1);
+            ctx.fillText(location.name, contentX, labelY - 1);
 
             ctx.font = `400 11px ${fontSans}`;
             ctx.textBaseline = "top";
-            ctx.fillStyle = "rgba(16,16,16,0.5)";
-            ctx.fillText(location.country, textX, labelY + 3);
+            ctx.fillStyle = "rgba(16,16,16,0.6)";
+            ctx.fillText(location.country, contentX, labelY + 3);
           }
         }
         ctx.globalAlpha = 1;
@@ -290,17 +302,20 @@ export default function CrossCountry() {
         // --- sphere outline (drawn over the clip, so it stays crisp) --------
         ctx.beginPath();
         ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(${ACCENT}, 0.18)`;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.28)";
         ctx.lineWidth = 1;
         ctx.stroke();
 
         // --- region caption (shown for the non-city waypoints) --------------
-        if (activeLabel && !LOCATIONS.some((l) => l.name === activeLabel.label)) {
+        if (
+          activeLabel &&
+          !LOCATIONS.some((l) => l.name === activeLabel.label)
+        ) {
           ctx.globalAlpha = activeLabel.weight;
           ctx.font = `500 11px ${fontSans}`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillStyle = "rgba(16,16,16,0.55)";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
           ctx.letterSpacing = "0.18em";
           ctx.fillText(activeLabel.label.toUpperCase(), cx, height - 10);
           ctx.letterSpacing = "0px";
@@ -344,17 +359,6 @@ export default function CrossCountry() {
           y: 20,
         });
         gsap.set(globeWrapRef.current, { opacity: 0, scale: 0.94 });
-        gsap.set(blackCircleRef.current, { scale: 0 });
-
-        // Mirrors the black-hole/white-iris transitions elsewhere on the
-        // page: a circle grows to swallow the screen in the last stretch of
-        // scroll, so the section hands off to Endorsement (already black)
-        // with no visible seam.
-        const IRIS_START_AT = 0.9;
-        const applyIris = (progress: number) => {
-          const t = Math.max(0, (progress - IRIS_START_AT) / (1 - IRIS_START_AT));
-          gsap.set(blackCircleRef.current, { scale: t * 30 });
-        };
 
         const intro = gsap.timeline({
           scrollTrigger: {
@@ -397,9 +401,12 @@ export default function CrossCountry() {
             scrub: 0.6,
             onUpdate: (self) => {
               progressRef.current = self.progress;
-              applyIris(self.progress);
             },
           });
+          const spacer = (trigger as unknown as { spacer?: HTMLElement }).spacer;
+          if (spacer) {
+            spacer.style.backgroundColor = "#ffffff";
+          }
           return () => trigger.kill();
         });
 
@@ -411,7 +418,6 @@ export default function CrossCountry() {
             scrub: 0.6,
             onUpdate: (self) => {
               progressRef.current = self.progress;
-              applyIris(self.progress);
             },
           });
           return () => trigger.kill();
@@ -435,35 +441,30 @@ export default function CrossCountry() {
       ref={sectionRef}
       data-nav-section="Cross Country"
       data-nav-theme="light"
-      className="relative flex min-h-svh w-full flex-col items-center justify-center overflow-hidden px-6 py-[clamp(28px,5vh,72px)] text-[#101010] sm:px-10 lg:px-16"
+      className="relative -mt-0.5 z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 py-[clamp(28px,5vh,72px)] text-[#101010] sm:px-10 lg:px-16"
       style={{
-        background: "linear-gradient(180deg, #ffffff 0%, #eaf1fd 55%, #dbe8fb 100%)",
+        background:
+          "linear-gradient(180deg, #ffffff 0%, #9fc3fa 20%, #205ee0 48%, #0d286e 75%, #050608 100%)",
       }}
     >
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-50"
+        className="pointer-events-none absolute inset-0 z-0 opacity-40"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.13) 0.65px, transparent 0.65px)",
+            "radial-gradient(rgba(0,0,0,0.1) 0.65px, transparent 0.65px)",
           backgroundSize: "9px 9px",
         }}
-      />
-
-      {/* grows to swallow the screen at the tail of the globe journey,
-          handing off to Endorsement's black background with no seam */}
-      <div
-        ref={blackCircleRef}
-        className="pointer-events-none absolute left-1/2 top-1/2 z-30 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#050608]"
       />
 
       <div className="relative z-10 flex w-full max-w-[1920px] flex-col items-center">
         <h2
           ref={headingRef}
-          className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2]"
+          className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2] text-[#101010]"
         >
           <span className="block">Empowering sales</span>
           <span className="block">
-            professionals <span className="italic text-[#3478e5]">worldwide</span>
+            professionals{" "}
+            <span className="italic text-[#2563eb]">worldwide</span>
           </span>
         </h2>
 
@@ -471,15 +472,16 @@ export default function CrossCountry() {
           ref={globeWrapRef}
           className="mt-[clamp(12px,2.5vh,36px)] aspect-square w-[min(620px,56vh,88vw)]"
         >
-          <canvas ref={canvasRef} className="h-full w-full" />
+          <canvas ref={canvasRef} className="h-full w-full " />
         </div>
 
         <p
           ref={paragraphRef}
-          className="mx-auto mt-[clamp(12px,2.5vh,32px)] max-w-150 text-center font-sans text-[13px] leading-relaxed text-black/60 sm:text-[14px]"
+          className="mx-auto mt-[clamp(12px,2.5vh,32px)] max-w-150 text-center font-sans text-[13px] leading-relaxed text-white/85 sm:text-[14px]"
         >
-          From high-growth markets to global enterprises, we help individuals and
-          organisations build sales capabilities that drive real business impact.
+          From high-growth markets to global enterprises, we help individuals
+          and organisations build sales capabilities that drive real business
+          impact.
         </p>
       </div>
     </section>

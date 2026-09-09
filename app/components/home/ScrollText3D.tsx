@@ -159,12 +159,22 @@ export default function ScrollText3D() {
       // nav isn't rendered at all, so no clamp is needed there.
       const NAV_SAFE_LEFT_PX = 200;
       const getSafeX = (vwValue: string) => {
-        const px = (parseFloat(vwValue) / 100) * window.innerWidth;
-        if (window.innerWidth >= 1024 && px < 0) {
+        let px = (parseFloat(vwValue) / 100) * window.innerWidth;
+        if (window.innerWidth < 768) {
+          px = px * 0.45;
+        } else if (window.innerWidth >= 1024 && px < 0) {
           const minPx = NAV_SAFE_LEFT_PX - window.innerWidth / 2;
           return Math.max(px, minPx);
         }
         return px;
+      };
+
+      const getSafeY = (vhValue: string) => {
+        const vh = parseFloat(vhValue);
+        if (window.innerHeight < 700) {
+          return `${vh * 0.65}vh`;
+        }
+        return vhValue;
       };
 
       const tl = gsap.timeline({
@@ -186,7 +196,7 @@ export default function ScrollText3D() {
           xPercent: -50,
           yPercent: -50,
           x: getSafeX(STATS[i].x),
-          y: STATS[i].y,
+          y: getSafeY(STATS[i].y),
           z: -6000,
           opacity: 0,
         });

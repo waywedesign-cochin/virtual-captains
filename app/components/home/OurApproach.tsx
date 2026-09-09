@@ -173,7 +173,25 @@ export default function OurApproach() {
               setActiveArc(p < 0.34 ? 0 : p < 0.67 ? 1 : 2);
             },
           });
+          const spacer = (trigger as unknown as { spacer?: HTMLElement }).spacer;
+          if (spacer) {
+            spacer.style.backgroundColor = "#ffffff";
+          }
 
+          return () => trigger.kill();
+        });
+
+        mm.add("(max-width: 1023px)", () => {
+          const trigger = ScrollTrigger.create({
+            trigger: sectionRef.current,
+            start: "top 70%",
+            end: "bottom 30%",
+            scrub: true,
+            onUpdate: (self) => {
+              const p = self.progress;
+              setActiveArc(p < 0.34 ? 0 : p < 0.67 ? 1 : 2);
+            },
+          });
           return () => trigger.kill();
         });
       }
@@ -188,7 +206,7 @@ export default function OurApproach() {
       ref={sectionRef}
       data-nav-section="The Model"
       data-nav-theme="light"
-      className="relative flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-[clamp(28px,5vh,72px)] text-[#101010] sm:px-10 lg:px-16"
+      className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-[clamp(28px,5vh,72px)] text-[#101010] sm:px-10 lg:px-16"
     >
       {/* dot grid background, matching the rest of the site */}
       <div
@@ -272,7 +290,7 @@ export default function OurApproach() {
                 activeArc === i ? "opacity-100" : "pointer-events-none opacity-0"
               }`}
             >
-              <div className="w-full max-w-[min(860px,90vh)] lg:max-w-[min(860px,90vh,calc(100vw_-_560px))]">
+              <div className="w-full max-w-[min(860px,90vh)] lg:max-w-[min(860px,90vh,calc(100vw-560px))]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   ref={i === 0 ? illustrationRef : undefined}
@@ -307,18 +325,28 @@ export default function OurApproach() {
         </div>
 
         {/* the arc doesn't work as a floating right-edge element on small
-            screens, so its three stages become a plain list instead */}
-        <ul className="mx-auto mt-6 flex w-max flex-col items-start gap-2 lg:hidden">
-          {STAGES.map((stage) => (
-            <li
+            screens, so its three stages become an interactive stage selector */}
+        <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-2 px-3 lg:hidden">
+          {STAGES.map((stage, idx) => (
+            <button
               key={stage.label}
-              className="flex items-center gap-2.5 text-[11px] font-medium tracking-wide text-black/45"
+              type="button"
+              onClick={() => setActiveArc(idx)}
+              className={`flex cursor-pointer items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-medium transition-all duration-300 ${
+                activeArc === idx
+                  ? "bg-[#101010] text-[#e7ff3d] shadow-sm"
+                  : "bg-black/5 text-black/60 hover:bg-black/10"
+              }`}
             >
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-black/25" />
+              <span
+                className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                  activeArc === idx ? "bg-[#e7ff3d]" : "bg-black/30"
+                }`}
+              />
               {stage.label}
-            </li>
+            </button>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );

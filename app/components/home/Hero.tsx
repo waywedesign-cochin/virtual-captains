@@ -207,21 +207,21 @@ export default function Hero() {
       />
 
       {/* ---------- NAV (pinned top) ---------- */}
-      <nav className="relative z-3 flex items-center justify-between gap-3 px-5 pt-[clamp(16px,3vh,40px)] sm:px-10 lg:px-14">
-        <div className="hero-logo flex items-center gap-2.5">
-          <Logo className="h-12 w-52 shrink-0" />
+      <nav className="relative z-3 flex items-center justify-between gap-2 px-3 pt-[clamp(14px,3vh,40px)] xs:px-4 sm:gap-3 sm:px-10 lg:px-14">
+        <div className="hero-logo flex items-center gap-2">
+          <Logo className="h-8 w-32 shrink-0 sm:h-11 sm:w-48 lg:h-12 lg:w-52" />
         </div>
 
-        <div className="hero-nav-pill flex items-center gap-0.5 rounded-full bg-[#eef0f4] p-1 sm:p-1.5">
+        <div className="hero-nav-pill flex items-center gap-0.5 rounded-full bg-[#eef0f4] p-0.5 sm:p-1.5">
           <button
             type="button"
-            className="rounded-full px-3 py-1.5 text-[12px] font-medium text-[#20232b] transition-colors sm:px-5 sm:py-2 sm:text-[13.5px]"
+            className="rounded-full px-2.5 py-1 text-[11px] font-medium text-[#20232b] transition-colors sm:px-5 sm:py-2 sm:text-[13.5px]"
           >
             Home
           </button>
           <button
             type="button"
-            className="flex items-center gap-0.5 rounded-full bg-[#0a0b0d] px-3 py-1.5 text-[12px] font-medium text-[#e7ff3d] sm:px-5 sm:py-2 sm:text-[13.5px]"
+            className="flex items-center gap-0.5 rounded-full bg-[#0a0b0d] px-2.5 py-1 text-[11px] font-medium text-[#e7ff3d] sm:px-5 sm:py-2 sm:text-[13.5px]"
           >
             Role&nbsp;-&nbsp;play
           </button>
@@ -231,7 +231,7 @@ export default function Hero() {
           type="button"
           whileHover={{ backgroundColor: "#f5f6f9", color: "#050608" }}
           transition={{ duration: 0.35 }}
-          className="hero-book-btn inline-flex items-center justify-center whitespace-nowrap rounded-full border border-white/50 px-3.5 py-2.5 text-[10px] font-semibold tracking-wide text-white sm:px-6 sm:py-3 sm:text-[12.5px]"
+          className="hero-book-btn inline-flex items-center justify-center whitespace-nowrap rounded-full border border-white/50 px-2.5 py-1.5 text-[9.5px] font-semibold tracking-wider text-white sm:px-6 sm:py-3 sm:text-[12.5px]"
         >
           BOOK A CALL
         </motion.button>

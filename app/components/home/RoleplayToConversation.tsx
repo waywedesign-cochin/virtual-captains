@@ -160,7 +160,7 @@ export default function RoleplayToConversation() {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top top",
-            end: "+=7200", // Increased again to accommodate the new white-iris closing transition into OurApproach
+            end: "+=5200", // Normalized distance so unpin releases directly into OurApproach
             scrub: 0.35,
             pin: true,
             anticipatePin: 1,

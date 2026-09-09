@@ -51,7 +51,7 @@ export default function BookACallModal({
 
       <div
         ref={dialogRef}
-        className="relative z-10 w-full max-w-110 rounded-2xl border border-black/10 bg-white p-7 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.45)] sm:p-9"
+        className="relative z-10 w-full max-w-110 max-h-[90vh] overflow-y-auto rounded-2xl border border-black/10 bg-white p-6 sm:p-9 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.45)]"
       >
         <button
           type="button"

@@ -19,19 +19,16 @@ type Testimonial = {
   photo?: string;
 };
 
-// PLACEHOLDER avatar (public/home/avatar-placeholder.svg) — a generated
-// silhouette, not a real photo. Reused across every card below until real
-// headshots are supplied; swapping each entry's `photo` to a real file is
-// the only change needed later.
-const PLACEHOLDER_AVATAR = "/home/avatar-placeholder.svg";
+// Default avatar image for testimonials
+const PLACEHOLDER_AVATAR = "/home/person.png";
 
-/** PLACEHOLDER COPY — swap for the real quotes, names and roles. */
+/** Testimonials dataset — 5 cards for the 5-card perspective stack */
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "Our team is having better conversations and moving deals forward with confidence.",
+      "Our team is having better conversations and moving deals forward with confidence",
     name: "David John",
-    role: "Sales Director, Enterprise",
+    role: "Region",
     photo: PLACEHOLDER_AVATAR,
   },
   {
@@ -55,6 +52,13 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Talent Development Lead",
     photo: PLACEHOLDER_AVATAR,
   },
+  {
+    quote:
+      "Consistent pitch execution across distributed teams has been our biggest win this quarter.",
+    name: "Elena Rostova",
+    role: "Global VP of Sales",
+    photo: PLACEHOLDER_AVATAR,
+  },
 ];
 
 const AUTOPLAY_MS = 5200;
@@ -63,7 +67,7 @@ function Stars() {
   return (
     <div className="flex items-center gap-1" aria-label="5 out of 5 stars">
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-[#e7ff3d]">
+        <svg key={i} viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-white">
           <path d="M10 1.6l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.2l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" />
         </svg>
       ))}
@@ -86,6 +90,25 @@ export default function Endorsement() {
   const [active, setActive] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [onScreen, setOnScreen] = useState(false);
+
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        setActive((prev) => (prev + 1) % TESTIMONIALS.length);
+      } else {
+        setActive((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+      }
+    }
+    touchStartX.current = null;
+  };
 
   const go = useCallback((direction: number) => {
     setActive(
@@ -117,7 +140,8 @@ export default function Endorsement() {
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      gsap.set([eyebrowRef.current, headingRef.current], { opacity: 0, y: 20 });
+      if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
+      gsap.set(headingRef.current, { opacity: 0, y: 20 });
       gsap.set(stackRef.current, { opacity: 0, y: 40 });
 
       const tl = gsap.timeline({
@@ -128,22 +152,29 @@ export default function Endorsement() {
         },
       });
 
-      tl.to(eyebrowRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power2.out",
-      })
-        .to(
-          headingRef.current,
-          { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
-          "-=0.4",
-        )
-        .to(
-          stackRef.current,
-          { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-          "-=0.45",
-        );
+      if (eyebrowRef.current) {
+        tl.to(eyebrowRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      }
+
+      tl.to(
+        headingRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+        },
+        eyebrowRef.current ? "-=0.25" : undefined,
+      ).to(
+        stackRef.current,
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        "-=0.3",
+      );
     },
     { scope: sectionRef },
   );
@@ -153,44 +184,42 @@ export default function Endorsement() {
       ref={sectionRef}
       data-nav-section="Endorsement"
       data-nav-theme="dark"
-      className="relative flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-6 py-[clamp(40px,7vh,96px)] text-white sm:px-10 lg:px-16"
+      className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-4 py-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
     >
+      {/* Background Dot Grid */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-40"
+        className="pointer-events-none absolute inset-0 z-0 opacity-25"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)",
+            "radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 top-1/2 z-0 h-[70vh] -translate-y-1/2"
-        style={{
-          background:
-            "radial-gradient(60% 50% at 50% 50%, rgba(37,87,214,0.28) 0%, transparent 70%)",
         }}
       />
 
       <div className="relative z-10 flex w-full max-w-[1920px] flex-col items-center">
+        {/* ---------- EYEBROW ---------- */}
         <span
           ref={eyebrowRef}
-          className="mb-[clamp(12px,2.2vh,28px)] block text-center font-mono text-[10px] uppercase tracking-[0.2em] text-white/45 sm:tracking-[0.25em]"
+          className="mb-[clamp(12px,2vh,24px)] block text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/50"
         >
-          Our Partners &nbsp;·&nbsp; In Their Own Words
+          Social Proof &nbsp;·&nbsp; Enterprise &nbsp;·&nbsp; Individual &nbsp;·&nbsp; Global
         </span>
 
+        {/* ---------- HEADING ---------- */}
         <h2
           ref={headingRef}
-          className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2]"
+          className="max-w-2xl text-center font-serif text-[clamp(1.75rem,2.2vw+1.2vh,3rem)] font-normal leading-[1.18] text-white"
         >
-          Trusted by teams who <span className="italic text-[#6fa4ff]">sell for a living</span>
+          Our Partners, in Their Own Words.
         </h2>
 
         {/* ---------- CARD STACK ---------- */}
         <div
           ref={stackRef}
-          className="relative mt-[clamp(24px,4.5vh,64px)] flex w-full max-w-5xl items-center justify-center"
-          style={{ height: "clamp(300px, 42vh, 400px)" }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:44%] sm:[--fan-2:78%]"
+          style={{ height: "clamp(410px, 50vh, 460px)" }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
@@ -199,70 +228,110 @@ export default function Endorsement() {
             const raw = i - active;
             const half = TESTIMONIALS.length / 2;
             const offset =
-              raw > half ? raw - TESTIMONIALS.length : raw < -half ? raw + TESTIMONIALS.length : raw;
+              raw > half
+                ? raw - TESTIMONIALS.length
+                : raw < -half
+                  ? raw + TESTIMONIALS.length
+                  : raw;
             const distance = Math.abs(offset);
-            const isActive = offset === 0;
+            const isCenter = offset === 0;
+            const isNear = distance === 1;
+            const isFar = distance === 2;
+
+            // Responsive fanning percentages
+            const translateX =
+              offset === 0
+                ? "0%"
+                : offset === 1
+                  ? "var(--fan-1)"
+                  : offset === 2
+                    ? "var(--fan-2)"
+                    : offset === -1
+                      ? "calc(-1 * var(--fan-1))"
+                      : "calc(-1 * var(--fan-2))";
+
+            const scale = isCenter ? 1 : isNear ? 0.88 : 0.76;
+            const opacity = isCenter ? 1 : isNear ? 0.82 : isFar ? 0.48 : 0;
+            const zIndex = 30 - distance * 10;
 
             return (
               <article
                 key={item.name}
-                aria-hidden={!isActive}
-                className="absolute w-[min(92vw,420px)] rounded-2xl border border-white/10 p-6 transition-all duration-700 ease-out sm:p-7"
+                aria-hidden={!isCenter}
+                onClick={() => setActive(i)}
+                className={`absolute flex h-[390px] w-[min(88vw,320px)] sm:h-[420px] sm:w-[350px] cursor-pointer flex-col justify-between overflow-hidden rounded-[24px] p-6 sm:p-7 transition-all duration-700 ease-out`}
                 style={{
-                  // only the immediate neighbours peek out; anything further
-                  // back would land on top of them and collide. 0.55 (not
-                  // the earlier 0.32) so neighbours read as "next up," not
-                  // blocked out.
-                  transform: `translateX(${offset * 52}%) scale(${isActive ? 1 : 0.85})`,
-                  opacity: distance > 1 ? 0 : isActive ? 1 : 0.55,
-                  zIndex: TESTIMONIALS.length - distance,
-                  pointerEvents: isActive ? "auto" : "none",
-                  background: isActive
-                    ? "linear-gradient(160deg, #2557d6 0%, #14337f 60%, #0d2154 100%)"
-                    : "linear-gradient(160deg, #16243f 0%, #0d1526 100%)",
-                  boxShadow: isActive
-                    ? "0 30px 70px -20px rgba(37,87,214,0.55)"
-                    : "0 20px 40px -24px rgba(0,0,0,0.8)",
+                  transform: `translateX(${translateX}) scale(${scale})`,
+                  opacity,
+                  zIndex,
+                  pointerEvents: distance <= 2 ? "auto" : "none",
+                  background: isCenter
+                    ? "linear-gradient(165deg, #1d62f4 0%, #1653dc 50%, #1142b6 100%)"
+                    : isNear
+                      ? "linear-gradient(165deg, #13337e 0%, #0b2054 100%)"
+                      : "linear-gradient(165deg, #0d2254 0%, #071434 100%)",
+                  boxShadow: isCenter
+                    ? "0 20px 50px -12px rgba(29, 98, 244, 0.5)"
+                    : isNear
+                      ? "0 14px 36px -10px rgba(0, 0, 0, 0.65)"
+                      : "0 10px 24px -8px rgba(0, 0, 0, 0.75)",
+                  border: isCenter
+                    ? "1px solid rgba(255, 255, 255, 0.22)"
+                    : isNear
+                      ? "1px solid rgba(255, 255, 255, 0.1)"
+                      : "1px solid rgba(255, 255, 255, 0.05)",
                 }}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="h-7 w-7 fill-white/25"
-                  aria-hidden="true"
-                >
-                  <path d="M9.5 6C6.5 7.6 4.8 10.2 4.8 13.3c0 2.8 1.7 4.7 4 4.7 2 0 3.5-1.5 3.5-3.5 0-1.9-1.3-3.3-3.1-3.3-.4 0-.8.1-.9.1.3-1.4 1.7-3 3.4-4L9.5 6zm9 0c-3 1.6-4.7 4.2-4.7 7.3 0 2.8 1.7 4.7 4 4.7 2 0 3.5-1.5 3.5-3.5 0-1.9-1.3-3.3-3.1-3.3-.4 0-.8.1-.9.1.3-1.4 1.7-3 3.4-4L18.5 6z" />
-                </svg>
-
-                <p className="mt-4 font-serif text-[clamp(1rem,0.6vw+0.7vh,1.25rem)] leading-[1.45] text-white">
-                  {item.quote}
-                </p>
-
-                <div className="mt-6 flex items-center gap-3.5">
-                  {item.photo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.photo}
-                      alt={item.name}
-                      className="h-12 w-12 shrink-0 rounded-full object-cover"
+                {/* ---------- TOP LEFT: Outline Quote & Copy ---------- */}
+                <div className="relative z-10 flex flex-col">
+                  {/* Outline double-quote symbol */}
+                  <svg
+                    viewBox="0 0 44 36"
+                    fill="none"
+                    className="h-8 w-10 shrink-0 text-white/90"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M13 16C16.3137 16 19 18.6863 19 22C19 25.3137 16.3137 28 13 28C9.68629 28 7 25.3137 7 22C7 15 12 7 20 4"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
                     />
-                  ) : (
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/12 font-serif text-[15px] text-white/80">
-                      {item.name
-                        .split(" ")
-                        .map((part) => part[0])
-                        .join("")}
-                    </span>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate text-[14px] font-semibold text-white">
-                      {item.name}
-                    </p>
-                    <p className="truncate text-[12px] text-white/55">{item.role}</p>
-                  </div>
-                  <div className="ml-auto">
+                    <path
+                      d="M32 16C35.3137 16 38 18.6863 38 22C38 25.3137 38 28 32 28C28.6863 28 26 25.3137 26 22C26 15 31 7 39 4"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+
+                  <p className="mt-3.5 max-w-[185px] sm:max-w-[205px] font-serif text-[14px] sm:text-[15.5px] font-normal leading-[1.38] text-white">
+                    {item.quote}
+                  </p>
+                </div>
+
+                {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
+                <div className="relative z-10 mt-auto max-w-[170px] pt-3">
+                  <h4 className="font-serif text-[17px] sm:text-[18.5px] font-medium text-white tracking-wide">
+                    {item.name}
+                  </h4>
+                  <p className="mt-0.5 text-[12px] text-white/75 font-sans tracking-wide">
+                    {item.role}
+                  </p>
+                  <div className="mt-2">
                     <Stars />
                   </div>
                 </div>
+
+                {/* ---------- BOTTOM RIGHT: Cut-out portrait clipped at card bottom ---------- */}
+                {item.photo && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.photo}
+                    alt={item.name}
+                    className="pointer-events-none absolute -bottom-1 -right-2 h-[80%] max-h-[350px] w-[58%] select-none object-contain object-bottom z-0"
+                  />
+                )}
               </article>
             );
           })}
@@ -276,8 +345,15 @@ export default function Endorsement() {
             aria-label="Previous testimonial"
             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white"
           >
-            <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-2">
-              <path d="M15 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4 fill-none stroke-current stroke-2"
+            >
+              <path
+                d="M15 5l-7 7 7 7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
 
@@ -290,7 +366,9 @@ export default function Endorsement() {
                 aria-label={`Show testimonial from ${item.name}`}
                 aria-current={i === active}
                 className={`h-2 cursor-pointer rounded-full transition-all duration-500 ${
-                  i === active ? "w-6 bg-white" : "w-2 bg-white/30 hover:bg-white/60"
+                  i === active
+                    ? "w-6 bg-white"
+                    : "w-2 bg-white/30 hover:bg-white/60"
                 }`}
               />
             ))}
@@ -302,8 +380,15 @@ export default function Endorsement() {
             aria-label="Next testimonial"
             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white"
           >
-            <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-2">
-              <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4 fill-none stroke-current stroke-2"
+            >
+              <path
+                d="M9 5l7 7-7 7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>

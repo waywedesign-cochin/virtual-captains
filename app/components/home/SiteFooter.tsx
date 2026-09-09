@@ -149,7 +149,7 @@ export default function SiteFooter() {
       {/* ================= BOOK A CALL ================= */}
       <section
         ref={ctaSectionRef}
-        className="relative w-full overflow-hidden bg-white px-6 py-[clamp(56px,11vh,130px)] text-center sm:px-10"
+        className="relative -mt-px z-10 w-full overflow-hidden bg-white px-6 py-[clamp(56px,11vh,130px)] text-center sm:px-10"
       >
         <div
           className="pointer-events-none absolute inset-0 z-0 opacity-50"
@@ -216,23 +216,23 @@ export default function SiteFooter() {
               // footprint too — the nav stays bold on "Hiring Partners"
               // through the whole footer, so this isn't just a container-fit
               // problem, it needs real clearance from the page edge.
-              className="h-auto w-[min(1100px,76%)] object-contain"
+              className="h-auto w-[min(1100px,92%)] lg:w-[min(1100px,76%)] object-contain"
             />
           </div>
 
           <div
             ref={actionsRef}
-            className="mt-[clamp(28px,5vh,56px)] flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+            className="mt-[clamp(28px,5vh,56px)] flex w-full flex-wrap items-center justify-center gap-3 sm:gap-4 px-4"
           >
             <button
               type="button"
-              className="cursor-pointer rounded-full border border-white/45 px-7 py-3 text-[12.5px] font-medium text-white transition-colors hover:bg-white hover:text-[#0a1c52] sm:text-[13.5px]"
+              className="w-full sm:w-auto cursor-pointer rounded-full border border-white/45 px-7 py-3 text-[12.5px] font-medium text-white transition-colors hover:bg-white hover:text-[#0a1c52] sm:text-[13.5px]"
             >
               For Individuals
             </button>
             <button
               type="button"
-              className="cursor-pointer rounded-full border border-white/45 px-7 py-3 text-[12.5px] font-medium text-white transition-colors hover:bg-white hover:text-[#0a1c52] sm:text-[13.5px]"
+              className="w-full sm:w-auto cursor-pointer rounded-full border border-white/45 px-7 py-3 text-[12.5px] font-medium text-white transition-colors hover:bg-white hover:text-[#0a1c52] sm:text-[13.5px]"
             >
               For Organisations
             </button>
