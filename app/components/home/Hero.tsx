@@ -18,8 +18,7 @@ import Image from "next/image";
  *
  * Animation split:
  * - GSAP: page-load timeline, cursor-driven glow/grid parallax, the dot-grid
- *   proximity reveal, the magnetic pull on buttons, and the liquid-fill hover
- *   blob on the CTA pills.
+ *   proximity reveal, and the liquid-fill hover blob on the CTA pills.
  *
  * Dot-grid reveal:
  *   Two identical dot layers are stacked. The base layer is dim (0.16 white,
@@ -125,6 +124,7 @@ export default function Hero() {
           stagger: 0.14,
           duration: 0.9,
           ease: "back.out(1.6)",
+          clearProps: "all",
         },
         "-=0.5",
       );
@@ -439,25 +439,25 @@ function IndividualButton() {
     const text = textRef.current;
     if (!btn || !liquid || !bar || !text) return;
 
-    const mx = gsap.quickTo(btn, "x", { duration: 0.5, ease: "power3.out" });
-    const my = gsap.quickTo(btn, "y", { duration: 0.5, ease: "power3.out" });
+    // Ensure button is completely static in place
+    gsap.set(btn, { clearProps: "x,y,transform" });
 
     const onEnter = () => {
       gsap.to(liquid, {
         scaleX: 1,
-        duration: 0.52,
+        duration: 0.82,
         ease: "power2.out",
         overwrite: true,
       });
       gsap.to(text, {
         color: "#0a0b0d",
-        duration: 0.32,
+        duration: 0.45,
         ease: "power2.out",
         overwrite: true,
       });
       gsap.to(bar, {
         backgroundColor: "#0a0b0d",
-        duration: 0.32,
+        duration: 0.45,
         ease: "power2.out",
         overwrite: true,
       });
@@ -466,41 +466,30 @@ function IndividualButton() {
     const onLeave = () => {
       gsap.to(liquid, {
         scaleX: 0,
-        duration: 0.38,
-        ease: "power2.in",
+        duration: 0.58,
+        ease: "power2.inOut",
         overwrite: true,
       });
       gsap.to(text, {
         color: "#ffffff",
-        duration: 0.32,
-        ease: "power2.in",
+        duration: 0.45,
+        ease: "power2.inOut",
         overwrite: true,
       });
       gsap.to(bar, {
         backgroundColor: "#e7ff3d",
-        duration: 0.32,
-        ease: "power2.in",
+        duration: 0.45,
+        ease: "power2.inOut",
         overwrite: true,
       });
-
-      mx(0);
-      my(0);
-    };
-
-    const onMove = (e: PointerEvent) => {
-      const r = btn.getBoundingClientRect();
-      mx((e.clientX - r.left - r.width / 2) * 0.24);
-      my((e.clientY - r.top - r.height / 2) * 0.42);
     };
 
     btn.addEventListener("pointerenter", onEnter);
     btn.addEventListener("pointerleave", onLeave);
-    btn.addEventListener("pointermove", onMove);
 
     return () => {
       btn.removeEventListener("pointerenter", onEnter);
       btn.removeEventListener("pointerleave", onLeave);
-      btn.removeEventListener("pointermove", onMove);
     };
   }, []);
 
@@ -547,46 +536,48 @@ function OrganisationButton() {
     const bars = barRefs.current;
     if (!btn || !fill || !text || bars.some((b) => !b)) return;
 
-    const mx = gsap.quickTo(btn, "x", { duration: 0.5, ease: "power3.out" });
-    const my = gsap.quickTo(btn, "y", { duration: 0.5, ease: "power3.out" });
+    // Ensure button is completely static in place
+    gsap.set(btn, { clearProps: "x,y,transform" });
 
     const onEnter = () => {
       gsap.to(fill, {
         scaleX: 1,
-        duration: 0.56,
+        duration: 0.82,
         ease: "power2.out",
         overwrite: true,
       });
       gsap.to(text, {
         color: "#0a0b0d",
-        duration: 0.32,
+        duration: 0.45,
         ease: "power2.out",
         overwrite: true,
       });
 
       if (animTimelineRef.current) animTimelineRef.current.kill();
 
-      const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.3 });
+      // Slower, relaxed rhythmic wave animation for bars
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.6 });
       animTimelineRef.current = tl;
 
       tl.set(bars, { opacity: 0.25, backgroundColor: "#0a0b0d" })
-        .to(bars[0], { opacity: 1, duration: 0.16, ease: "power1.inOut" })
+        .to(bars[0], { opacity: 1, duration: 0.35, ease: "power1.inOut" })
         .to(
           bars[1],
-          { opacity: 1, duration: 0.16, ease: "power1.inOut" },
-          "-=0.04",
+          { opacity: 1, duration: 0.35, ease: "power1.inOut" },
+          "-=0.1",
         )
         .to(
           bars[2],
-          { opacity: 1, duration: 0.16, ease: "power1.inOut" },
-          "-=0.04",
+          { opacity: 1, duration: 0.35, ease: "power1.inOut" },
+          "-=0.1",
         )
         .to(
           bars[3],
-          { opacity: 1, duration: 0.16, ease: "power1.inOut" },
-          "-=0.04",
+          { opacity: 1, duration: 0.35, ease: "power1.inOut" },
+          "-=0.1",
         )
-        .to(bars, { opacity: 1, duration: 0.35 });
+        .to(bars, { opacity: 1, duration: 0.5, ease: "sine.inOut" })
+        .to(bars, { opacity: 0.35, duration: 0.4, ease: "sine.inOut" });
     };
 
     const onLeave = () => {
@@ -597,43 +588,32 @@ function OrganisationButton() {
 
       gsap.to(fill, {
         scaleX: 0,
-        duration: 0.38,
-        ease: "power2.in",
+        duration: 0.58,
+        ease: "power2.inOut",
         overwrite: true,
       });
       gsap.to(text, {
         color: "#ffffff",
-        duration: 0.32,
-        ease: "power2.in",
+        duration: 0.45,
+        ease: "power2.inOut",
         overwrite: true,
       });
       gsap.to(bars, {
         opacity: 1,
         backgroundColor: "#e7ff3d",
-        duration: 0.32,
-        ease: "power2.in",
+        duration: 0.45,
+        ease: "power2.inOut",
         overwrite: true,
       });
-
-      mx(0);
-      my(0);
-    };
-
-    const onMove = (e: PointerEvent) => {
-      const r = btn.getBoundingClientRect();
-      mx((e.clientX - r.left - r.width / 2) * 0.24);
-      my((e.clientY - r.top - r.height / 2) * 0.42);
     };
 
     btn.addEventListener("pointerenter", onEnter);
     btn.addEventListener("pointerleave", onLeave);
-    btn.addEventListener("pointermove", onMove);
 
     return () => {
       if (animTimelineRef.current) animTimelineRef.current.kill();
       btn.removeEventListener("pointerenter", onEnter);
       btn.removeEventListener("pointerleave", onLeave);
-      btn.removeEventListener("pointermove", onMove);
     };
   }, []);
 

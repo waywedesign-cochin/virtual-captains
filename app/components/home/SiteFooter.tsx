@@ -283,26 +283,26 @@ export default function SiteFooter() {
         className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-20 text-center sm:px-10"
       >
         <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-50"
+          className="pointer-events-none absolute inset-0 z-0 opacity-40"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(0,0,0,0.13) 0.65px, transparent 0.65px)",
+              "radial-gradient(rgba(0,0,0,0.12) 0.65px, transparent 0.65px)",
             backgroundSize: "9px 9px",
           }}
         />
-        {/* soft vignette so the dot grid doesn't feel flat edge-to-edge */}
+        {/* soft luminous vignette */}
         <div
           className="pointer-events-none absolute inset-0 z-0"
           style={{
             background:
-              "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 40%, rgba(255,255,255,0.9) 100%)",
+              "radial-gradient(ellipse 70% 55% at 50% 45%, transparent 35%, rgba(255,255,255,0.7) 100%)",
           }}
         />
 
         <div className="relative z-10 flex flex-col items-center gap-[clamp(18px,3vh,32px)]">
           <p
             ref={ctaEyebrowRef}
-            className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/45 sm:text-[12px]"
+            className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/60 sm:text-[12px]"
           >
             Ready when you are
           </p>
@@ -311,7 +311,7 @@ export default function SiteFooter() {
             ref={ctaRef}
             type="button"
             onClick={() => setIsBookingOpen(true)}
-            className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-black/25 px-[clamp(34px,7vw,90px)] py-[clamp(14px,2.4vh,26px)] font-serif text-[clamp(1.4rem,3.4vw,2.75rem)] leading-none transition-colors duration-300 hover:border-black/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-4"
+            className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-black/25 bg-white/80 backdrop-blur-md px-[clamp(34px,7vw,90px)] py-[clamp(14px,2.4vh,26px)] font-serif text-[clamp(1.4rem,3.4vw,2.75rem)] leading-none transition-all duration-300 hover:border-black/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-4"
             aria-label="Book a call with Virtual Captains"
           >
             <span
@@ -346,26 +346,30 @@ export default function SiteFooter() {
       <footer
         ref={footerRef}
         id="resources"
-        className="relative flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
+        className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
         style={{
           background:
-            "linear-gradient(160deg, #0a1c52 0%, #1544ac 45%, #2f6fe0 100%)",
+            "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)",
         }}
       >
-        {/* animated dot mesh, same language as the CTA band above */}
+        {/* animated dot mesh, seamlessly fading in as the blue deepens */}
         <div
           className="pointer-events-none absolute inset-0 z-0 opacity-20"
           style={{
             backgroundImage:
               "radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)",
             backgroundSize: "26px 26px",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 20%, black 40%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 20%, black 40%)",
           }}
         />
 
         {/* floating gradient orbs for depth */}
         <div
           ref={orb1Ref}
-          className="pointer-events-none absolute -left-24 -top-24 z-0 h-85 w-85 rounded-full opacity-30 blur-3xl sm:h-105 sm:w-105"
+          className="pointer-events-none absolute -left-24 top-[22%] z-0 h-85 w-85 rounded-full opacity-30 blur-3xl sm:h-105 sm:w-105"
           style={{
             background:
               "radial-gradient(circle, #e7ff3d 0%, transparent 70%)",
@@ -379,9 +383,6 @@ export default function SiteFooter() {
               "radial-gradient(circle, #7fb0ff 0%, transparent 70%)",
           }}
         />
-
-        {/* top hairline fade so the pin transition doesn't hard-cut */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-24 bg-linear-to-b from-black/10 to-transparent" />
 
         <div className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center">
           {/* Stage: wordmark and nav buttons occupy the exact same footprint,
