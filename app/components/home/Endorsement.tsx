@@ -141,14 +141,19 @@ export default function Endorsement() {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
-      gsap.set(headingRef.current, { opacity: 0, y: 20 });
+      gsap.set(headingRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        y: 20,
+        transformOrigin: "center center",
+      });
       gsap.set(stackRef.current, { opacity: 0, y: 40 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 70%",
-          once: true,
+          toggleActions: "play none none reverse",
         },
       });
 
@@ -166,8 +171,12 @@ export default function Endorsement() {
         {
           opacity: 1,
           y: 0,
-          duration: 0.6,
-          ease: "power2.out",
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+          ],
         },
         eyebrowRef.current ? "-=0.25" : undefined,
       ).to(

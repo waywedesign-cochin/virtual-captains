@@ -1,139 +1,191 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Partner = {
+type CirclePod = {
   id: string;
   name: string;
-  src: string;
+  isCenter: boolean;
+  left: number; // percentage from container left
+  top: number; // percentage from container top
+  size: number; // percentage width & height of container
+  bg: string;
+  logoSrc?: string;
+  fallbackText: string;
+  fontSize?: string;
 };
 
 /**
- * ONLY the 4 partner logos from /public/home/ — nothing from outside:
- * 1. MoonHive (/home/MoonHive -Logo.jpg.jpeg)
- * 2. AHAD (/home/AHAD - LOGO.png)
- * 3. Skylark (/home/skylark_information_technologies_logo.jpg.jpeg)
- * 4. Sigma Life Unifirm (/home/Sigma Life Unifirm Logo Png (1).png)
+ * 9 Circular Pods matching the exact geometry and layout of the design mockup:
+ * - Center: Vibrant yellow circle with Logo
+ * - Top-Right: Extra-large grey circle with MoonHive
+ * - Mid-Left: Large grey circle with AHAD
+ * - Top: Medium-large grey circle with Skylark
+ * - Bottom-Right: Medium grey circle with Sigma Life
+ * - Bottom-Left: Medium-small grey circle with SalesX
+ * - Mid-Right: Small grey circle with Logo
+ * - Upper-Center-Left: Tiny grey circle with Logo
+ *
+ * All positions are pre-calculated to ensure 100% collision-free gaps
+ * and clean containment inside the double border rings without using transform offsets.
  */
-const PARTNERS: Partner[] = [
+const PODS: CirclePod[] = [
+  // 1. Center Yellow Circle (Exact center from mockup: [49.7%, 57.4%], diam: 14.6%)
   {
-    id: "moonhive",
-    name: "MoonHive",
-    src: "/home/MoonHive -Logo.jpg.jpeg",
+    id: "center-yellow",
+    name: "Virtual Captains",
+    isCenter: true,
+    left: 42.4,
+    top: 50.1,
+    size: 14.6,
+    bg: "#e2fd00", // Vibrant signature lime yellow
+    fallbackText: "Logo",
+    fontSize: "clamp(10px, 1.6vw, 14px)",
   },
-  {
-    id: "ahad",
-    name: "AHAD",
-    src: "/home/AHAD - LOGO.png",
-  },
-  {
-    id: "skylark",
-    name: "Skylark",
-    src: "/home/skylark_information_technologies_logo.jpg.jpeg",
-  },
-  {
-    id: "sigma",
-    name: "Sigma Life Unifirm",
-    src: "/home/Sigma Life Unifirm Logo Png (1).png",
-  },
-];
 
-/**
- * 3 Symmetrical, balanced positions inside the normal circle (120° triad layout)
- * This allows 3 logos to be prominently displayed at a time, while the 4th logo
- * rotates in by vanishing one by one slowly.
- */
-const SLOTS = [
-  { id: "top", x: 50, y: 28 },
-  { id: "bottom-right", x: 69, y: 65 },
-  { id: "bottom-left", x: 31, y: 65 },
+  // 2. Top-Right Extra Large Circle (The dominant circle: [72.0%, 36.7%], diam: 34.1%)
+  {
+    id: "pod-top-right",
+    name: "MoonHive",
+    isCenter: false,
+    left: 55.0,
+    top: 19.7,
+    size: 34.1,
+    bg: "#d9d9d9",
+    logoSrc: "/home/MoonHive -Logo.jpg.jpeg",
+    fallbackText: "Logo",
+  },
+
+  // 3. Mid-Left Large Circle ([20.25%, 56.2%], diam: 23.0%)
+  {
+    id: "pod-mid-left",
+    name: "AHAD",
+    isCenter: false,
+    left: 8.75,
+    top: 44.7,
+    size: 23.0,
+    bg: "#d9d9d9",
+    logoSrc: "/home/AHAD - LOGO.png",
+    fallbackText: "Logo",
+  },
+
+  // 4. Top Medium Circle ([39.9%, 16.9%], diam: 19.0%)
+  {
+    id: "pod-top",
+    name: "Skylark",
+    isCenter: false,
+    left: 30.4,
+    top: 7.4,
+    size: 19.0,
+    bg: "#d9d9d9",
+    logoSrc: "/home/skylark_information_technologies_logo.jpg.jpeg",
+    fallbackText: "Logo",
+  },
+
+  // 5. Upper-Center-Left Tiny Circle ([37.0%, 38.8%], diam: 12.8%)
+  {
+    id: "pod-upper-inner",
+    name: "Partner",
+    isCenter: false,
+    left: 30.6,
+    top: 32.4,
+    size: 12.8,
+    bg: "#d9d9d9",
+    fallbackText: "Logo",
+    fontSize: "clamp(8px, 1.2vw, 11px)",
+  },
+
+  // 6. Bottom-Left Medium-Small Circle ([31.9%, 79.8%], diam: 17.2%)
+  {
+    id: "pod-bottom-left",
+    name: "SalesX",
+    isCenter: false,
+    left: 23.3,
+    top: 71.2,
+    size: 17.2,
+    bg: "#d9d9d9",
+    logoSrc: "/home/SalesX Logo Final-01.png",
+    fallbackText: "Logo",
+  },
+
+  // 7. Bottom-Right Medium Circle ([62.1%, 82.1%], diam: 18.9%)
+  {
+    id: "pod-bottom-right",
+    name: "Sigma Life Unifirm",
+    isCenter: false,
+    left: 52.65,
+    top: 72.65,
+    size: 18.9,
+    bg: "#d9d9d9",
+    logoSrc: "/home/Sigma Life Unifirm Logo Png (1).png",
+    fallbackText: "Logo",
+  },
+
+  // 8. Mid-Right Small Circle ([80.2%, 67.5%], diam: 13.0%)
+  {
+    id: "pod-mid-right",
+    name: "Partner",
+    isCenter: false,
+    left: 73.7,
+    top: 61.0,
+    size: 13.0,
+    bg: "#d9d9d9",
+    fallbackText: "Logo",
+    fontSize: "clamp(8px, 1.2vw, 11px)",
+  },
 ];
 
 export default function HiringPartners() {
   const sectionRef = useRef<HTMLElement>(null);
-  const circleRef = useRef<HTMLDivElement>(null);
+  const clusterWrapperRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-
-  // Initial 3 slots showing partners 0, 1, 2 (the 4th waits in queue)
-  const [slotPartners, setSlotPartners] = useState<number[]>([0, 1, 2]);
-
-  // Which slot is currently in the slow vanishing transition
-  const [fadingSlot, setFadingSlot] = useState<number | null>(null);
-
-  const nextPartnerIndexRef = useRef(3);
-  const currentSlotToChangeRef = useRef(0);
-  const isHoveredRef = useRef(false);
-
-  // Slowly vanish one logo at a time and reveal the waiting partner from the pool
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isHoveredRef.current) return;
-
-      const slotToFade = currentSlotToChangeRef.current;
-      currentSlotToChangeRef.current = (slotToFade + 1) % SLOTS.length;
-
-      // 1. Vanish slowly
-      setFadingSlot(slotToFade);
-
-      // 2. After 550ms, swap in the next partner from the pool and softly appear
-      setTimeout(() => {
-        setSlotPartners((prev) => {
-          let nextP = nextPartnerIndexRef.current;
-          let attempts = 0;
-          while (prev.includes(nextP) && attempts < PARTNERS.length) {
-            nextP = (nextP + 1) % PARTNERS.length;
-            attempts++;
-          }
-          nextPartnerIndexRef.current = (nextP + 1) % PARTNERS.length;
-
-          const updated = [...prev];
-          updated[slotToFade] = nextP;
-          return updated;
-        });
-
-        requestAnimationFrame(() => {
-          setFadingSlot(null);
-        });
-      }, 550);
-    }, 3500);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useGSAP(
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      gsap.set(headingRef.current, { opacity: 0, y: 35 });
-      gsap.set(circleRef.current, { opacity: 0, scale: 0.9 });
+      gsap.set(headingRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        y: 20,
+        transformOrigin:
+          typeof window !== "undefined" && window.innerWidth >= 1024
+            ? "left center"
+            : "center center",
+      });
+      gsap.set(clusterWrapperRef.current, { opacity: 0, scale: 0.94 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 72%",
-          once: true,
+          toggleActions: "play none none reverse",
         },
       });
 
-      tl.to(circleRef.current, {
+      tl.to(clusterWrapperRef.current, {
         opacity: 1,
         scale: 1,
-        duration: 1.0,
+        duration: 0.85,
         ease: "power3.out",
       }).to(
         headingRef.current,
         {
           opacity: 1,
           y: 0,
-          duration: 0.9,
-          ease: "power2.out",
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+          ],
         },
-        "-=0.6",
+        "-=0.45",
       );
     },
     { scope: sectionRef },
@@ -162,58 +214,63 @@ export default function HiringPartners() {
       />
 
       <div className="relative z-10 mx-auto grid w-full max-w-310 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
-        {/* ---------- LEFT: CLEAN NORMAL CIRCLE WITH BALANCED LOGO PODS ---------- */}
+        {/* ---------- LEFT: EXACT MOCKUP CIRCLE CLUSTER ---------- */}
         <div className="flex justify-center lg:col-span-7">
           <div
-            ref={circleRef}
-            onMouseEnter={() => {
-              isHoveredRef.current = true;
-            }}
-            onMouseLeave={() => {
-              isHoveredRef.current = false;
-            }}
-            className="relative aspect-square w-[min(480px,90vw)] rounded-full border border-black/10 bg-white/40 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.08)] backdrop-blur-xs"
+            ref={clusterWrapperRef}
+            className="relative aspect-square w-[min(480px,88vw)] sm:w-[min(520px,90vw)] max-w-full select-none"
           >
-            {/* Minimal subtle inner guide rings */}
-            <div className="pointer-events-none absolute inset-6 rounded-full border border-black/5 sm:inset-8" />
-            <div className="pointer-events-none absolute inset-20 rounded-full border border-dashed border-black/6 sm:inset-24" />
+            {/* Outer subtle faint boundary ring */}
+            <div className="pointer-events-none absolute inset-0 rounded-full border border-black/15" />
 
-            {/* Ambient center soft glow */}
-            <div className="pointer-events-none absolute inset-[24%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.95)_0%,rgba(255,255,255,0.2)_60%,transparent_100%)]" />
-
-            {/* Clean Logo Pods */}
-            {SLOTS.map((slot, index) => {
-              const partnerIndex = slotPartners[index] ?? index;
-              const partner = PARTNERS[partnerIndex];
-              const isFading = fadingSlot === index;
-
-              return (
+            {/* Inner crisp thin boundary ring containing all pods */}
+            <div className="absolute inset-[3.5%] rounded-full border border-black/85 bg-white/20 backdrop-blur-[1px]">
+              {/* 8 Scattered Circular Pods matching mockup */}
+              {PODS.map((pod) => (
                 <div
-                  key={slot.id}
-                  className={`group absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full bg-white border border-black/8 shadow-[0_10px_28px_-6px_rgba(0,0,0,0.09)] p-3 sm:p-4 transition-all duration-600 ease-out cursor-pointer hover:scale-110 hover:shadow-[0_18px_38px_-8px_rgba(37,99,235,0.25),0_0_0_1.5px_rgba(37,99,235,0.35)] hover:z-20 w-28 h-28 sm:w-33 sm:h-33 ${
-                    isFading
-                      ? "opacity-0 scale-75 blur-xs"
-                      : "opacity-100 scale-100 blur-0"
+                  key={pod.id}
+                  className={`group absolute rounded-full flex items-center justify-center transition-transform duration-200 ease-out hover:scale-105 cursor-pointer select-none ${
+                    pod.isCenter
+                      ? "shadow-[0_1px_3px_rgba(0,0,0,0.12)] z-20"
+                      : "shadow-[0_1px_3px_rgba(0,0,0,0.06)] z-10"
                   }`}
                   style={{
-                    left: `${slot.x}%`,
-                    top: `${slot.y}%`,
+                    left: `${pod.left}%`,
+                    top: `${pod.top}%`,
+                    width: `${pod.size}%`,
+                    height: `${pod.size}%`,
+                    backgroundColor: pod.bg,
                   }}
-                  title={partner.name}
+                  title={pod.name}
                 >
-                  {/* Default: Black & White / Grayscale. Hover: Full authentic brand color! */}
-                  <div className="flex h-full w-full items-center justify-center filter grayscale contrast-125 opacity-75 transition-all duration-300 ease-out group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-105">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={partner.src}
-                      alt={partner.name}
-                      className="h-[75%] w-[80%] select-none object-contain"
-                      loading="lazy"
-                    />
-                  </div>
+                  {pod.isCenter ? (
+                    <span
+                      className="font-serif font-normal text-black select-none tracking-tight"
+                      style={{ fontSize: pod.fontSize }}
+                    >
+                      {pod.fallbackText}
+                    </span>
+                  ) : pod.logoSrc ? (
+                    <div className="flex h-full w-full items-center justify-center p-[16%]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={pod.logoSrc}
+                        alt={pod.name}
+                        className="max-h-[52%] max-w-[66%] object-contain filter grayscale contrast-125 opacity-85 mix-blend-multiply transition-all duration-300 group-hover:scale-105 group-hover:opacity-100"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <span
+                      className="font-serif font-normal text-[#101010] select-none tracking-tight"
+                      style={{ fontSize: pod.fontSize }}
+                    >
+                      {pod.fallbackText}
+                    </span>
+                  )}
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
 

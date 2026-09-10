@@ -7,6 +7,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
+}
+
 /**
  * Drives all scrolling through Lenis instead of the native wheel/touch
  * handler, then syncs it with GSAP's ticker so every ScrollTrigger-pinned
@@ -25,6 +31,8 @@ export default function SmoothScroll() {
       smoothWheel: true,
       syncTouch: true,
     });
+
+    window.__lenis = lenis;
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -52,6 +60,7 @@ export default function SmoothScroll() {
       window.clearTimeout(initialRefresh);
       gsap.ticker.remove(onTick);
       lenis.destroy();
+      delete window.__lenis;
     };
   }, []);
 

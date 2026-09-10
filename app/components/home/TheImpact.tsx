@@ -59,6 +59,8 @@ const TIMELINE_STATS: TimelineStat[] = [
  */
 export default function TheImpact() {
   const sectionRef = useRef<HTMLElement>(null);
+  const lineFillRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const desktopItemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const mobileItemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const valueRefs = useRef<Array<HTMLSpanElement | null>>([]);
@@ -71,6 +73,11 @@ export default function TheImpact() {
       ).matches;
 
       if (prefersReducedMotion) {
+        gsap.set(lineFillRef.current, { scaleX: 1 });
+        gsap.set(dotRefs.current, { opacity: 1, scale: 1 });
+        gsap.set(desktopItemRefs.current, { opacity: 1, scale: 1, y: 0 });
+        gsap.set(mobileItemRefs.current, { opacity: 1, scale: 1, y: 0 });
+
         TIMELINE_STATS.forEach((stat, i) => {
           const formatted = stat.value.toLocaleString("en-US");
           if (valueRefs.current[i]) valueRefs.current[i]!.textContent = formatted;
@@ -81,45 +88,114 @@ export default function TheImpact() {
       }
 
       // Initial states
+      gsap.set(lineFillRef.current, {
+        scaleX: 0,
+        transformOrigin: "left center",
+      });
+      gsap.set(dotRefs.current, {
+        opacity: 0,
+        scale: 0,
+        transformOrigin: "center center",
+      });
       gsap.set(desktopItemRefs.current, {
         opacity: 0,
-        y: (i) => (TIMELINE_STATS[i].position === "top" ? 24 : -24),
+        scale: 0.75,
+        y: (i) => (TIMELINE_STATS[i].position === "top" ? 22 : -22),
+        transformOrigin: (i) =>
+          TIMELINE_STATS[i].position === "top" ? "bottom left" : "top left",
       });
-      gsap.set(mobileItemRefs.current, { opacity: 0, y: 20 });
+      gsap.set(mobileItemRefs.current, {
+        opacity: 0,
+        scale: 0.85,
+        y: 20,
+        transformOrigin: "center center",
+      });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 70%",
-          once: true,
+          start: "top 72%",
+          toggleActions: "play none none reverse",
         },
       });
 
+      // 1. Line fill animation (laser line sweeps across)
       tl.to(
-        desktopItemRefs.current,
+        lineFillRef.current,
         {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power2.out",
-        },
-        0,
-      ).to(
-        mobileItemRefs.current,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power2.out",
+          scaleX: 1,
+          duration: 1.15,
+          ease: "power2.inOut",
         },
         0,
       );
 
-      // Number count-up animation
+      // 2. Points appear one by one as the line progresses
+      const POINT_TIMES = [0.12, 0.35, 0.58, 0.82, 1.05];
+
       TIMELINE_STATS.forEach((stat, i) => {
-        const desktopEl = valueRefs.current[i];
+        const pointTime = POINT_TIMES[i];
+        const dotEl = dotRefs.current[i];
+        const desktopEl = desktopItemRefs.current[i];
+        const valueEl = valueRefs.current[i];
+
+        // Glowing dot pops in
+        tl.to(
+          dotEl,
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.35,
+            ease: "back.out(2.5)",
+          },
+          pointTime,
+        );
+
+        // Stat content zooms in
+        tl.to(
+          desktopEl,
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.55,
+            ease: "back.out(1.35)",
+          },
+          pointTime + 0.04,
+        );
+
+        // Counter counts up
+        const counter = { value: 0 };
+        tl.to(
+          counter,
+          {
+            value: stat.value,
+            duration: 1.4,
+            ease: "power2.out",
+            onUpdate: () => {
+              const formatted = Math.round(counter.value).toLocaleString("en-US");
+              if (valueEl) valueEl.textContent = formatted;
+            },
+          },
+          pointTime + 0.04,
+        );
+      });
+
+      // Mobile items staggered zoom-in & count up
+      tl.to(
+        mobileItemRefs.current,
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.12,
+          ease: "back.out(1.2)",
+        },
+        0.2,
+      );
+
+      TIMELINE_STATS.forEach((stat, i) => {
         const mobileEl = mobileValueRefs.current[i];
         const counter = { value: 0 };
 
@@ -127,15 +203,14 @@ export default function TheImpact() {
           counter,
           {
             value: stat.value,
-            duration: 1.6,
+            duration: 1.4,
             ease: "power2.out",
             onUpdate: () => {
               const formatted = Math.round(counter.value).toLocaleString("en-US");
-              if (desktopEl) desktopEl.textContent = formatted;
               if (mobileEl) mobileEl.textContent = formatted;
             },
           },
-          0.15 + i * 0.08,
+          0.3 + i * 0.12,
         );
       });
     },
@@ -166,8 +241,14 @@ export default function TheImpact() {
 
       {/* ---------- DESKTOP: STAGGERED HORIZONTAL TIMELINE (lg and up) ---------- */}
       <div className="relative z-10 mx-auto hidden h-70 w-full max-w-340 lg:block">
-        {/* Continuous Horizontal Line */}
-        <div className="absolute inset-x-0 top-1/2 h-[1.5px] -translate-y-1/2 bg-[#3b82f6]/45 shadow-[0_0_10px_rgba(59,130,246,0.25)]" />
+        {/* Continuous Horizontal Track Line */}
+        <div className="absolute inset-x-0 top-1/2 h-[1.5px] -translate-y-1/2 bg-white/15" />
+
+        {/* Animated Fill Line (fills across from left to right) */}
+        <div
+          ref={lineFillRef}
+          className="absolute inset-x-0 top-1/2 h-[2.5px] -translate-y-1/2 bg-linear-to-r from-[#1d63ed] via-[#38bdf8] to-[#e7ff3d] shadow-[0_0_14px_rgba(56,189,248,0.85)] origin-left"
+        />
 
         {/* 5 Staggered Nodes with Neon Yellow Dots */}
         {TIMELINE_STATS.map((stat, i) => {
@@ -180,7 +261,12 @@ export default function TheImpact() {
               style={{ left: `${stat.leftPercent}%` }}
             >
               {/* Glowing Yellow Dot on the Line */}
-              <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#e7ff3d] shadow-[0_0_10px_#e7ff3d]" />
+              <span
+                ref={(el) => {
+                  dotRefs.current[i] = el;
+                }}
+                className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#e7ff3d] shadow-[0_0_12px_#e7ff3d,0_0_20px_rgba(231,255,61,0.7)]"
+              />
 
               {/* Stat Content (Above or Below the line) */}
               <div

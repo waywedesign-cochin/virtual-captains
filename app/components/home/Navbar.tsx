@@ -2,27 +2,29 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import BookACallModal from "./BookACallModal";
 
 export const NAV_ITEMS = [
-  { label: "About", href: "#about", id: "about" },
-  { label: "SalesX", href: "#salesx", id: "salesx" },
-  { label: "Programs", href: "#programs", id: "programs" },
-  { label: "Organisations", href: "#organisations", id: "organisations" },
-  { label: "Individuals", href: "#individuals", id: "individuals" },
-  { label: "Partner", href: "#partner", id: "partner" },
-  { label: "Resources", href: "#resources", id: "resources" },
+  { label: "About", href: "/about" },
+  { label: "SalesX", href: "/salesx" },
+  { label: "Programs", href: "/programs" },
+  { label: "Organisations", href: "/organisations" },
+  { label: "Individuals", href: "/individuals" },
+  { label: "Partner", href: "/partner" },
+  { label: "Resources", href: "/resources" },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isSticky, setIsSticky] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
-  // Scroll listener for sticky state, top progress line, and active section tracking
+  // Scroll listener for sticky capsule state and top progress line
   useEffect(() => {
     const onScroll = () => {
       const scrollY = window.scrollY;
@@ -32,33 +34,6 @@ export default function Navbar() {
         docHeight > 0 ? Math.min(Math.max(scrollY / docHeight, 0), 1) : 0;
       setScrollProgress(progress);
       setIsSticky(scrollY > 40);
-
-      // Section tracking:
-      // When at the top / Home (Hero section), no nav link should be active!
-      if (scrollY < window.innerHeight * 0.5) {
-        setActiveId(null);
-        return;
-      }
-
-      let currentActive: string | null = null;
-      const sectionIds = NAV_ITEMS.map((item) => item.id);
-
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const id = sectionIds[i];
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (
-            rect.top <= window.innerHeight * 0.45 &&
-            rect.bottom > window.innerHeight * 0.1
-          ) {
-            currentActive = id;
-            break;
-          }
-        }
-      }
-
-      setActiveId(currentActive);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -66,21 +41,6 @@ export default function Navbar() {
 
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    href: string,
-  ) => {
-    e.preventDefault();
-    setIsMobileMenuOpen(false);
-    const targetId = href.replace("#", "");
-    const targetEl = document.getElementById(targetId);
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: "smooth" });
-    } else if (href === "#about") {
-      window.scrollTo({ top: window.innerHeight * 0.85, behavior: "smooth" });
-    }
-  };
 
   return (
     <>
@@ -110,12 +70,12 @@ export default function Navbar() {
             ECHOFI SIGNATURE MORPHING HEADER GRID (.header-grid):
             - In Top State: Spans full container width, transparent background, clean spacing
             - In Sticky State: Shrinks into a centered 656px capsule pill with blur(27px),
-              containing Logo (left), 7 Dots (center), and CTA Button (right)
+              containing Logo (left), 7 Page Dots (center), and CTA Button (right)
           */}
           <div
-            className={`pointer-events-auto transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] flex items-center justify-between ${
+            className={`pointer-events-auto transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex items-center justify-between ${
               isSticky
-                ? "w-full max-w-164 rounded-full bg-linear-to-r from-white/[0.14] via-white/8 to-white/12 bg-[#14151a]/35 backdrop-blur-2xl border border-white/20 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.4),inset_0_1px_1.5px_0_rgba(255,255,255,0.3)] p-2 gap-3 sm:gap-5"
+                ? "w-full max-w-164 rounded-full bg-linear-to-r from-white/[0.14] via-white/8 to-white/12 bg-[#14151a]/35 hover:bg-[#07080c]/85 hover:from-black/50 hover:via-[#0b0d13]/65 hover:to-black/50 backdrop-blur-2xl border border-white/20 hover:border-white/30 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.4),inset_0_1px_1.5px_0_rgba(255,255,255,0.3)] hover:shadow-[0_20px_45px_-6px_rgba(0,0,0,0.65),inset_0_1px_2px_0_rgba(255,255,255,0.25)] p-2 gap-3 sm:gap-5"
                 : "w-full max-w-full rounded-full bg-transparent border border-transparent p-0 gap-4 sm:gap-8"
             }`}
           >
@@ -125,13 +85,9 @@ export default function Navbar() {
                 isSticky ? "pl-3 sm:pl-3.5" : "pl-0"
               }`}
             >
-              <a
+              <Link
                 href="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                  setActiveId(null);
-                }}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center select-none group cursor-pointer"
                 aria-label="Virtual Captains Home"
               >
@@ -145,60 +101,60 @@ export default function Navbar() {
                   }`}
                   priority
                 />
-              </a>
+              </Link>
             </div>
 
             {/* 2. CENTER: Navigation Links / Dots (.header-links-wrap) */}
-            {/* TOP STATE: Full Words (.header-links) */}
+            {/* TOP STATE: Full Words for distinct pages (.header-links) */}
             {!isSticky && (
               <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-8.5">
                 {NAV_ITEMS.map((item) => {
-                  const isActive = activeId === item.id;
+                  const isActive = pathname === item.href;
                   return (
-                    <a
+                    <Link
                       key={item.label}
                       href={item.href}
-                      onClick={(e) => handleNavClick(e, item.href)}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className={`relative py-1 text-[13.5px] lg:text-[14px] tracking-[-0.01em] transition-colors duration-200 select-none ${
                         isActive
-                          ? "text-white font-medium"
+                          ? "text-white font-medium shadow-[0_1px_0_0_#e7ff3d]"
                           : "text-white/65 hover:text-white font-normal"
                       }`}
                     >
                       {item.label}
-                    </a>
+                    </Link>
                   );
                 })}
               </nav>
             )}
 
-            {/* STICKY STATE: Exactly 7 Minimal White Dots Spaced Evenly across the Capsule */}
+            {/* STICKY STATE: Exactly 7 Minimal Dots representing the 7 Pages */}
             {isSticky && (
               <nav
                 className="flex items-center justify-center gap-1 sm:gap-2 px-1"
-                aria-label="Sticky Sections Navigation"
+                aria-label="Pages Navigation"
               >
                 {NAV_ITEMS.map((item, index) => {
-                  const isActive = activeId === item.id;
+                  const isActive = pathname === item.href;
                   const isHovered = hoveredIndex === index;
 
                   return (
-                    <a
+                    <Link
                       key={item.label}
                       href={item.href}
-                      onClick={(e) => handleNavClick(e, item.href)}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       onMouseEnter={() => setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
                       className="relative h-8 min-w-6 sm:min-w-7 flex items-center justify-center select-none cursor-pointer group"
                       aria-label={item.label}
                     >
-                      {/* Minimal 6px White Dot (.header-link-dot) */}
+                      {/* Minimal Dot (.header-link-dot) */}
                       <span
                         className={`block rounded-full transition-all duration-200 ${
                           isHovered
                             ? "h-1.75 w-1.75 bg-white scale-125 shadow-[0_0_8px_rgba(255,255,255,0.95)]"
                             : isActive
-                              ? "h-1.5 w-1.5 bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]"
+                              ? "h-1.5 w-1.5 bg-[#e7ff3d] shadow-[0_0_8px_rgba(231,255,61,0.9)]"
                               : "h-1.25 w-1.25 bg-white/45 group-hover:bg-white/85 group-hover:scale-120"
                         }`}
                       />
@@ -209,7 +165,7 @@ export default function Navbar() {
                           {item.label}
                         </span>
                       )}
-                    </a>
+                    </Link>
                   );
                 })}
               </nav>
@@ -222,34 +178,25 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsBookingOpen(true)}
-                  className="group relative isolate overflow-hidden rounded-full bg-[#0d0d0d] hover:bg-[#181818] border border-white/15 hover:border-white/40 px-5 sm:px-6 py-2.5 text-[13px] font-medium tracking-wide text-white transition-all duration-300 shadow-sm cursor-pointer select-none"
+                  className="hidden sm:inline-flex items-center justify-center rounded-full bg-[#111217] hover:bg-[#181920] border border-white/14 hover:border-white/28 px-5 py-2 text-[12px] xl:text-[13px] font-semibold text-white tracking-[0.02em] shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98"
                 >
-                  <span className="block transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-[-150%]">
-                    BOOK A CALL
-                  </span>
-                  <span className="absolute inset-0 flex items-center justify-center translate-y-[150%] transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-0 text-white font-semibold">
-                    BOOK A CALL
-                  </span>
+                  BOOK A CALL
                 </button>
               )}
 
-              {/* STICKY STATE BUTTON: Signature Lime Pill INSIDE the Capsule (.header-grid.on-sticky .btn) */}
+              {/* STICKY STATE BUTTON: Vibrant Glow Button */}
               {isSticky && (
                 <button
                   type="button"
                   onClick={() => setIsBookingOpen(true)}
-                  className="group relative isolate overflow-hidden rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-4 sm:px-5 py-2 text-[11.5px] sm:text-[12px] font-bold tracking-wider text-[#0a0b0d] shadow-[0_0_18px_rgba(231,255,61,0.35)] hover:shadow-[0_0_24px_rgba(231,255,61,0.55)] transition-all duration-300 cursor-pointer select-none"
+                  className="inline-flex items-center justify-center rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-3.5 sm:px-4.5 py-1.5 text-[11px] sm:text-[12px] font-bold text-[#0a0b0d] tracking-[0.02em] shadow-[0_0_16px_rgba(231,255,61,0.4)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98 shrink-0"
                 >
-                  <span className="block transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-[-150%]">
-                    BOOK A CALL
-                  </span>
-                  <span className="absolute inset-0 flex items-center justify-center translate-y-[150%] transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-0 text-white font-bold bg-[#0a0b0d]">
-                    BOOK A CALL
-                  </span>
+                  <span className="hidden sm:inline">BOOK A CALL</span>
+                  <span className="sm:hidden">BOOK</span>
                 </button>
               )}
 
-              {/* Mobile Hamburger Toggle (EchoFi 5-Dot Matrix) */}
+              {/* Mobile Hamburger Toggle */}
               {!isSticky && (
                 <button
                   type="button"
@@ -310,21 +257,24 @@ export default function Navbar() {
         {!isSticky && isMobileMenuOpen && (
           <div className="lg:hidden absolute top-full inset-x-4 mt-2 bg-[#0d0e12]/95 backdrop-blur-2xl border border-white/12 rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-300 pointer-events-auto">
             <div className="flex flex-col gap-2">
-              {NAV_ITEMS.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-[14px] font-medium transition-colors ${
-                    activeId === item.id
-                      ? "bg-white/10 text-[#e7ff3d]"
-                      : "text-white/70 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  <span className="text-white/30 text-xs">→</span>
-                </a>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-[14px] font-medium transition-colors ${
+                      isActive
+                        ? "bg-white/10 text-[#e7ff3d]"
+                        : "text-white/70 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    <span className="text-white/30 text-xs">→</span>
+                  </Link>
+                );
+              })}
 
               <div className="pt-2">
                 <button

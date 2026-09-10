@@ -58,26 +58,35 @@ export default function SiteFooter() {
 
       // ---------- CTA band ----------
       gsap.set(ctaEyebrowRef.current, { opacity: 0, y: 14 });
-      gsap.set(ctaRef.current, { opacity: 0, y: 26, scale: 0.96 });
+      gsap.set(ctaRef.current, { opacity: 0, scale: 0.65, y: 20 });
 
       const ctaTl = gsap.timeline({
         scrollTrigger: {
           trigger: ctaSectionRef.current,
           start: "top 78%",
-          once: true,
+          toggleActions: "play none none reverse",
         },
       });
       ctaTl
         .to(ctaEyebrowRef.current, {
           opacity: 1,
           y: 0,
-          duration: 0.6,
+          duration: 0.5,
           ease: "power3.out",
         })
         .to(
           ctaRef.current,
-          { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "power3.out" },
-          "-=0.35",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            keyframes: [
+              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+            ],
+          },
+          "-=0.25",
         );
 
       // idle breathing glow behind the CTA
@@ -271,7 +280,7 @@ export default function SiteFooter() {
       {/* ================= BOOK A CALL ================= */}
       <section
         ref={ctaSectionRef}
-        className="relative -mt-px z-10 w-full overflow-hidden bg-white px-6 py-[clamp(64px,12vh,150px)] text-center sm:px-10"
+        className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-20 text-center sm:px-10"
       >
         <div
           className="pointer-events-none absolute inset-0 z-0 opacity-50"

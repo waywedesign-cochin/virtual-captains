@@ -22,19 +22,19 @@ gsap.registerPlugin(ScrollTrigger);
 const PAGINATION_STEPS = [
   {
     number: 1,
-    label: "Heading",
+    label: "AI real-time rehearsal",
     x: 244.6,
     y: 73.2,
   },
   {
     number: 2,
-    label: "AI Rehearsal",
+    label: "Instant feedback",
     x: 185.0,
     y: 210.0,
   },
   {
     number: 3,
-    label: "Sub-text",
+    label: "Human evaluation",
     x: 244.6,
     y: 346.8,
   },
@@ -110,10 +110,14 @@ export default function OurApproach() {
       const total = end - start;
       const targets = [0.08, 0.5, 0.92];
       const targetScroll = start + targets[stepIndex] * total;
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
+      if (window.__lenis) {
+        window.__lenis.scrollTo(targetScroll, { duration: 1.2, lock: false });
+      } else {
+        window.scrollTo({
+          top: targetScroll,
+          behavior: "smooth",
+        });
+      }
     } else {
       applyStepStyles(stepIndex);
     }
@@ -149,8 +153,8 @@ export default function OurApproach() {
       });
       gsap.set([line1Ref.current, line2Ref.current], {
         opacity: 0,
-        scale: 0.72,
-        y: 15,
+        scale: 0.65,
+        y: 20,
         transformOrigin: "center center",
       });
       gsap.set(imageWrapperRef.current, {
@@ -167,7 +171,7 @@ export default function OurApproach() {
       });
 
       // ---------------------------------------------------------------------
-      // 1. ENTRANCE: Reveal Heading on approach with ZOOM-IN
+      // 1. ENTRANCE: Reveal Heading on approach with JUMPING ZOOM-IN
       // ---------------------------------------------------------------------
       const entranceTl = gsap.timeline({
         scrollTrigger: {
@@ -189,23 +193,29 @@ export default function OurApproach() {
           line1Ref.current,
           {
             opacity: 1,
-            scale: 1,
             y: 0,
-            duration: 0.75,
-            ease: "back.out(1.25)",
+            duration: 0.85,
+            keyframes: [
+              { scale: 1.16, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+            ],
           },
-          "-=0.3",
+          "-=0.25",
         )
         .to(
           line2Ref.current,
           {
             opacity: 1,
-            scale: 1,
             y: 0,
-            duration: 0.75,
-            ease: "back.out(1.25)",
+            duration: 0.85,
+            keyframes: [
+              { scale: 1.16, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+            ],
           },
-          "-=0.55",
+          "-=0.6",
         );
 
       const mm = gsap.matchMedia();
@@ -216,6 +226,7 @@ export default function OurApproach() {
       mm.add("(min-width: 1024px)", () => {
         const pinTl = gsap.timeline({
           scrollTrigger: {
+            id: "model-pin",
             trigger: sectionRef.current,
             start: "top top",
             end: "+=160%",
@@ -259,7 +270,9 @@ export default function OurApproach() {
         // Hold at end to view complete section comfortably
         pinTl.to({}, { duration: 0.15 });
 
-        const spacer = (pinTl.scrollTrigger as unknown as { spacer?: HTMLElement })?.spacer;
+        const spacer = (
+          pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
+        )?.spacer;
         if (spacer) {
           spacer.style.backgroundColor = "#ffffff";
         }
@@ -372,7 +385,7 @@ export default function OurApproach() {
                   textAnchor="end"
                   className="select-none font-sans transition-all duration-300 ease-out"
                   fill={isActive ? "#101010" : "rgba(0,0,0,0.4)"}
-                  fontSize={isActive ? "12" : "11"}
+                  fontSize={isActive ? "16" : "11"}
                   fontWeight={isActive ? "700" : "500"}
                   letterSpacing="0.02em"
                 >
@@ -426,7 +439,8 @@ export default function OurApproach() {
           ref={eyebrowRef}
           className="mb-[clamp(14px,2.5vh,36px)] block text-center font-mono text-[10px] uppercase tracking-[0.14em] text-black/50 sm:tracking-[0.25em]"
         >
-          AI &nbsp;·&nbsp; Human &nbsp;·&nbsp; Two Strengths &nbsp;·&nbsp; One Edge
+          AI &nbsp;·&nbsp; Human &nbsp;·&nbsp; Two Strengths &nbsp;·&nbsp; One
+          Edge
         </span>
 
         <h2 className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2]">

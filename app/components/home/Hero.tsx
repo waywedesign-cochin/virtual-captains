@@ -54,13 +54,15 @@ export default function Hero() {
       }
 
       // ---------- REPEATING TORCH COLOR SYSTEM ----------
+      // Smooth continuous chromatic cycle: Yellow -> Orange -> Red -> Violet -> Blue -> Cyan -> Lime -> Yellow
       const TORCH_PALETTE = [
-        { r: 56, g: 189, b: 248 }, // Electric Sky / Cyan (#38bdf8)
-        { r: 99, g: 102, b: 241 }, // Digital Indigo (#6366f1)
-        { r: 168, g: 85, b: 247 }, // Neon Violet (#a855f7)
-        { r: 20, g: 184, b: 166 }, // Oceanic Teal (#14b8a6)
-        { r: 231, g: 255, b: 61 }, // Signature Lime (#e7ff3d)
-        { r: 14, g: 165, b: 233 }, // Azure Blue (#0ea5e9)
+        { r: 255, g: 214, b: 10 },  // Radiant Golden Yellow (#ffd60a)
+        { r: 255, g: 120, b: 18 },  // Sunset Orange (#ff7812)
+        { r: 255, g: 42, b: 68 },   // Electric Coral Red (#ff2a44)
+        { r: 218, g: 60, b: 240 },  // Neon Magenta / Violet (#da3cf0)
+        { r: 42, g: 130, b: 255 },  // Electric Royal Blue (#2a82ff)
+        { r: 0, g: 228, b: 255 },   // Vivid Cyan (#00e4ff)
+        { r: 175, g: 255, b: 35 },  // Electric Lime (#afff23)
       ];
 
       const currentColor = { ...TORCH_PALETTE[0] };
@@ -73,13 +75,13 @@ export default function Hero() {
         const b = Math.round(currentColor.b);
 
         hero.style.setProperty("--torch-color", `rgb(${r}, ${g}, ${b})`);
-        hero.style.setProperty("--torch-core", `rgba(${r}, ${g}, ${b}, 0.24)`);
-        hero.style.setProperty("--torch-mid", `rgba(${r}, ${g}, ${b}, 0.09)`);
-        hero.style.setProperty("--torch-dim", `rgba(${r}, ${g}, ${b}, 0.02)`);
-        hero.style.setProperty("--torch-glow", `rgba(${r}, ${g}, ${b}, 0.42)`);
+        hero.style.setProperty("--torch-core", `rgba(${r}, ${g}, ${b}, 0.38)`);
+        hero.style.setProperty("--torch-mid", `rgba(${r}, ${g}, ${b}, 0.18)`);
+        hero.style.setProperty("--torch-dim", `rgba(${r}, ${g}, ${b}, 0.04)`);
+        hero.style.setProperty("--torch-glow", `rgba(${r}, ${g}, ${b}, 0.65)`);
         hero.style.setProperty(
           "--torch-glow-soft",
-          `rgba(${r}, ${g}, ${b}, 0.16)`,
+          `rgba(${r}, ${g}, ${b}, 0.32)`,
         );
       };
 
@@ -92,7 +94,7 @@ export default function Hero() {
           r: next.r,
           g: next.g,
           b: next.b,
-          duration: 3.6,
+          duration: 2.2,
           ease: "sine.inOut",
           onUpdate: updateTorchStyles,
         });
@@ -376,11 +378,11 @@ export default function Hero() {
             style={{
               opacity: 0,
               textShadow:
-                "0 0 16px rgba(255,255,255,0.8), 0 0 32px var(--torch-glow), 0 0 60px var(--torch-glow-soft)",
+                "0 0 16px rgba(255,255,255,0.9), 0 0 32px var(--torch-glow), 0 0 65px var(--torch-glow-soft), 0 0 100px var(--torch-core)",
               WebkitMaskImage:
-                "radial-gradient(circle clamp(90px, 11vw, 175px) at var(--mx, 50%) var(--my, 50%), black 0%, black 20%, transparent 100%)",
+                "radial-gradient(circle clamp(100px, 12vw, 195px) at var(--mx, 50%) var(--my, 50%), black 0%, black 25%, transparent 100%)",
               maskImage:
-                "radial-gradient(circle clamp(90px, 11vw, 175px) at var(--mx, 50%) var(--my, 50%), black 0%, black 20%, transparent 100%)",
+                "radial-gradient(circle clamp(100px, 12vw, 195px) at var(--mx, 50%) var(--my, 50%), black 0%, black 25%, transparent 100%)",
               WebkitMaskRepeat: "no-repeat",
               maskRepeat: "no-repeat",
             }}
@@ -391,11 +393,11 @@ export default function Hero() {
             </span>
             <span className="hero-line block px-2 -mx-2 py-0.5">
               <span
-                className="hero-word-highlight hero-accent-highlight inline-block italic px-2 -mx-2 transition-colors duration-300"
+                className="hero-word-highlight hero-accent-highlight inline-block italic px-2 -mx-2 transition-colors duration-200"
                 style={{
-                  color: "var(--torch-color, #8fd0ff)",
+                  color: "var(--torch-color, #ffd60a)",
                   textShadow:
-                    "0 0 20px var(--torch-glow), 0 0 45px var(--torch-glow-soft)",
+                    "0 0 22px var(--torch-glow), 0 0 50px var(--torch-glow-soft), 0 0 80px var(--torch-core)",
                 }}
               >
                 Uncertainty

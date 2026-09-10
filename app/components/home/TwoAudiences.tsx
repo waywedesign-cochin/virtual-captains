@@ -206,16 +206,33 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
 
       const tl = gsap.timeline();
 
-      // Phase 1: Fade in and ZOOM IN Top Title and Headline (Headline centered on desktop with text-center)
+      // Phase 1: Fade in and JUMPING ZOOM Top Title and Headline (Headline centered on desktop with text-center)
       tl.to(
         topTitleRef.current,
-        { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.75,
+          keyframes: [
+            { scale: 1.12, opacity: 1, duration: 0.38, ease: "power2.out" },
+            { scale: 0.95, duration: 0.18, ease: "sine.inOut" },
+            { scale: 1.0, duration: 0.19, ease: "power2.out" },
+          ],
+        },
         0,
       );
       tl.to(
         headlineRef.current,
-        { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" },
-        0.1,
+        {
+          opacity: 1,
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, duration: 0.21, ease: "power2.out" },
+          ],
+        },
+        0.08,
       );
 
       // Pause to read the centered headline (brisk)
