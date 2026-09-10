@@ -340,11 +340,11 @@ export default function OurApproach() {
     >
       {/* Dot grid background */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-50"
+        className="pointer-events-none absolute inset-0 z-0 opacity-80"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.13) 0.65px, transparent 0.65px)",
-          backgroundSize: "9px 9px",
+            "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
+          backgroundSize: "10px 10px",
         }}
       />
 
@@ -381,13 +381,14 @@ export default function OurApproach() {
                 {/* Step Label to the left of the bubble */}
                 <text
                   x={step.x - 18}
-                  y={step.y + 4}
+                  y={step.y + 5}
                   textAnchor="end"
-                  className="select-none font-sans transition-all duration-300 ease-out"
-                  fill={isActive ? "#101010" : "rgba(0,0,0,0.4)"}
-                  fontSize={isActive ? "16" : "11"}
-                  fontWeight={isActive ? "700" : "500"}
-                  letterSpacing="0.02em"
+                  className="select-none font-serif transition-all duration-300 ease-out"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                  fill={isActive ? "#101010" : "rgba(0,0,0,0.45)"}
+                  fontSize={isActive ? "20" : "14"}
+                  fontWeight={isActive ? "600" : "400"}
+                  letterSpacing="0.01em"
                 >
                   {step.label}
                 </text>
@@ -419,10 +420,11 @@ export default function OurApproach() {
                   x={step.x}
                   y={step.y + (isActive ? 3.5 : 3)}
                   textAnchor="middle"
-                  className="select-none font-sans transition-all duration-300 ease-out"
-                  fill={isActive ? "#0a0b0d" : "rgba(0,0,0,0.55)"}
-                  fontSize={isActive ? "10.5" : "9"}
-                  fontWeight={isActive ? "800" : "600"}
+                  className="select-none font-serif transition-all duration-300 ease-out"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                  fill={isActive ? "#0a0b0d" : "rgba(0,0,0,0.65)"}
+                  fontSize={isActive ? "12" : "10"}
+                  fontWeight="600"
                 >
                   {step.number}
                 </text>

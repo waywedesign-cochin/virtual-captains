@@ -197,10 +197,10 @@ export default function Endorsement() {
     >
       {/* Background Dot Grid */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-25"
+        className="pointer-events-none absolute inset-0 z-0 opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px)",
+            "radial-gradient(rgba(255,255,255,0.35) 1.2px, transparent 1.2px)",
           backgroundSize: "24px 24px",
         }}
       />

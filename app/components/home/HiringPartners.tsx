@@ -205,10 +205,10 @@ export default function HiringPartners() {
     >
       {/* Background Dot Grid */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-40"
+        className="pointer-events-none absolute inset-0 z-0 opacity-75"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px)",
+            "radial-gradient(rgba(0,0,0,0.22) 1.1px, transparent 1.1px)",
           backgroundSize: "14px 14px",
         }}
       />
@@ -229,10 +229,10 @@ export default function HiringPartners() {
               {PODS.map((pod) => (
                 <div
                   key={pod.id}
-                  className={`group absolute rounded-full flex items-center justify-center transition-transform duration-200 ease-out hover:scale-105 cursor-pointer select-none ${
+                  className={`group absolute rounded-full flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 cursor-pointer select-none ${
                     pod.isCenter
-                      ? "shadow-[0_1px_3px_rgba(0,0,0,0.12)] z-20"
-                      : "shadow-[0_1px_3px_rgba(0,0,0,0.06)] z-10"
+                      ? "shadow-[0_1px_3px_rgba(0,0,0,0.12)] z-20 hover:shadow-[0_4px_16px_rgba(226,253,0,0.45)]"
+                      : "shadow-[0_1px_3px_rgba(0,0,0,0.06)] z-10 hover:!bg-white hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] hover:z-30"
                   }`}
                   style={{
                     left: `${pod.left}%`,
@@ -245,7 +245,7 @@ export default function HiringPartners() {
                 >
                   {pod.isCenter ? (
                     <span
-                      className="font-serif font-normal text-black select-none tracking-tight"
+                      className="font-serif font-normal text-black select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
                       style={{ fontSize: pod.fontSize }}
                     >
                       {pod.fallbackText}
@@ -256,13 +256,13 @@ export default function HiringPartners() {
                       <img
                         src={pod.logoSrc}
                         alt={pod.name}
-                        className="max-h-[52%] max-w-[66%] object-contain filter grayscale contrast-125 opacity-85 mix-blend-multiply transition-all duration-300 group-hover:scale-105 group-hover:opacity-100"
+                        className="max-h-[52%] max-w-[66%] object-contain filter grayscale contrast-125 opacity-85 mix-blend-multiply transition-all duration-300 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-108"
                         loading="lazy"
                       />
                     </div>
                   ) : (
                     <span
-                      className="font-serif font-normal text-[#101010] select-none tracking-tight"
+                      className="font-serif font-normal text-[#101010] select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
                       style={{ fontSize: pod.fontSize }}
                     >
                       {pod.fallbackText}

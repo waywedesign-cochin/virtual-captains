@@ -283,11 +283,11 @@ export default function SiteFooter() {
         className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-20 text-center sm:px-10"
       >
         <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-40"
+          className="pointer-events-none absolute inset-0 z-0 opacity-80"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(0,0,0,0.12) 0.65px, transparent 0.65px)",
-            backgroundSize: "9px 9px",
+              "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
+            backgroundSize: "10px 10px",
           }}
         />
         {/* soft luminous vignette */}
@@ -354,15 +354,15 @@ export default function SiteFooter() {
       >
         {/* animated dot mesh, seamlessly fading in as the blue deepens */}
         <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-20"
+          className="pointer-events-none absolute inset-0 z-0 opacity-45"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)",
+              "radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px)",
             backgroundSize: "26px 26px",
             maskImage:
-              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 20%, black 40%)",
+              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
             WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 20%, black 40%)",
+              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
           }}
         />
 

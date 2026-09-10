@@ -685,11 +685,11 @@ export default function CrossCountry() {
       }}
     >
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-40"
+        className="pointer-events-none absolute inset-0 z-0 opacity-80"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.1) 0.65px, transparent 0.65px)",
-          backgroundSize: "9px 9px",
+            "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
+          backgroundSize: "10px 10px",
         }}
       />
 

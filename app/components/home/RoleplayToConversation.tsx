@@ -647,11 +647,11 @@ export default function RoleplayToConversation() {
       ============================================================ */}
 
       <div
-        className="pointer-events-none absolute inset-0 opacity-50"
+        className="pointer-events-none absolute inset-0 opacity-80"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.13) 0.65px, transparent 0.65px)",
-          backgroundSize: "9px 9px",
+            "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
+          backgroundSize: "10px 10px",
         }}
       />
 
@@ -822,7 +822,7 @@ export default function RoleplayToConversation() {
       ============================================================ */}
       <div 
         ref={twoAudiencesContainerRef} 
-        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-12 sm:mt-16 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none"
+        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-12 sm:mt-16 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none p-3 sm:p-4 lg:p-3 xl:p-4"
       >
         <div className="pointer-events-auto w-full h-full">
           <TwoAudiences ref={twoAudiencesRef} />

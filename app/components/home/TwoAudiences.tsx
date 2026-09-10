@@ -339,14 +339,14 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 w-full h-full min-h-screen lg:min-h-0 lg:h-screen overflow-hidden bg-[#050608] lg:rounded-none flex flex-col justify-between"
+      className="relative z-10 w-full h-full min-h-screen lg:min-h-0 lg:h-screen overflow-hidden bg-[#050608] rounded-2xl border border-white/10 flex flex-col justify-between shadow-2xl"
     >
       {/* Subtle dotted background grid */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-40"
+        className="pointer-events-none absolute inset-0 z-0 opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)",
+            "radial-gradient(rgba(255,255,255,0.35) 1.2px, transparent 1.2px)",
           backgroundSize: "24px 24px",
         }}
       />

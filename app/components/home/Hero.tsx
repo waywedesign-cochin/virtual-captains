@@ -312,12 +312,12 @@ export default function Hero() {
         className="pointer-events-none absolute -inset-10 z-1 will-change-transform"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.16) 1px, transparent 1.4px)",
+            "radial-gradient(rgba(255,255,255,0.36) 1.2px, transparent 1.6px)",
           backgroundSize: "26px 26px",
           maskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.5) 70%, transparent 100%)",
+            "linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.65) 75%, transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.5) 70%, transparent 100%)",
+            "linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.65) 75%, transparent 100%)",
         }}
       >
         {/*
@@ -332,7 +332,7 @@ export default function Hero() {
           style={{
             opacity: 0,
             backgroundImage:
-              "radial-gradient(rgba(255,255,255,0.42) 1.5px, transparent 2.1px)",
+              "radial-gradient(rgba(255,255,255,0.75) 1.8px, transparent 2.4px)",
             backgroundSize: "26px 26px",
             maskImage:
               "radial-gradient(circle clamp(260px, 30vw, 430px) at var(--dx, 50%) var(--dy, 50%), rgba(0,0,0,1) 0%, rgba(0,0,0,0.82) 15%, rgba(0,0,0,0.66) 30%, rgba(0,0,0,0.46) 45%, rgba(0,0,0,0.28) 60%, rgba(0,0,0,0.14) 75%, rgba(0,0,0,0.05) 88%, transparent 100%)",
