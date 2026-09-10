@@ -250,36 +250,46 @@ export default function Endorsement() {
                       ? "calc(-1 * var(--fan-1))"
                       : "calc(-1 * var(--fan-2))";
 
-            const scale = isCenter ? 1 : isNear ? 0.88 : 0.76;
-            const opacity = isCenter ? 1 : isNear ? 0.82 : isFar ? 0.48 : 0;
+            const scale = isCenter ? 1 : isNear ? 0.88 : isFar ? 0.76 : 0.65;
+            // Keep visible cards solid to eliminate see-through ghosting, and fade only at the outer wings
+            const opacity = isCenter ? 1 : isNear ? 0.95 : isFar ? 0.52 : 0;
             const zIndex = 30 - distance * 10;
+            // Cinematic depth-of-field blur: active card is razor-sharp, background cards are progressively blurred
+            const filter = isCenter
+              ? "blur(0px) brightness(1)"
+              : isNear
+                ? "blur(3px) brightness(0.68)"
+                : isFar
+                  ? "blur(6px) brightness(0.42)"
+                  : "blur(10px) brightness(0.2)";
 
             return (
               <article
                 key={item.name}
                 aria-hidden={!isCenter}
                 onClick={() => setActive(i)}
-                className={`absolute flex h-[390px] w-[min(88vw,320px)] sm:h-[420px] sm:w-[350px] cursor-pointer flex-col justify-between overflow-hidden rounded-[24px] p-6 sm:p-7 transition-all duration-700 ease-out`}
+                className={`absolute flex h-[390px] w-[min(88vw,320px)] sm:h-[420px] sm:w-[350px] cursor-pointer flex-col justify-between overflow-hidden rounded-[24px] p-6 sm:p-7 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
                 style={{
                   transform: `translateX(${translateX}) scale(${scale})`,
                   opacity,
+                  filter,
                   zIndex,
                   pointerEvents: distance <= 2 ? "auto" : "none",
                   background: isCenter
                     ? "linear-gradient(165deg, #1d62f4 0%, #1653dc 50%, #1142b6 100%)"
                     : isNear
-                      ? "linear-gradient(165deg, #13337e 0%, #0b2054 100%)"
-                      : "linear-gradient(165deg, #0d2254 0%, #071434 100%)",
+                      ? "linear-gradient(165deg, #0e2b6c 0%, #07173b 100%)"
+                      : "linear-gradient(165deg, #081738 0%, #040c20 100%)",
                   boxShadow: isCenter
-                    ? "0 20px 50px -12px rgba(29, 98, 244, 0.5)"
+                    ? "0 24px 60px -12px rgba(29, 98, 244, 0.55)"
                     : isNear
-                      ? "0 14px 36px -10px rgba(0, 0, 0, 0.65)"
-                      : "0 10px 24px -8px rgba(0, 0, 0, 0.75)",
+                      ? "0 14px 36px -10px rgba(0, 0, 0, 0.75)"
+                      : "0 10px 24px -8px rgba(0, 0, 0, 0.85)",
                   border: isCenter
-                    ? "1px solid rgba(255, 255, 255, 0.22)"
+                    ? "1px solid rgba(255, 255, 255, 0.25)"
                     : isNear
-                      ? "1px solid rgba(255, 255, 255, 0.1)"
-                      : "1px solid rgba(255, 255, 255, 0.05)",
+                      ? "1px solid rgba(255, 255, 255, 0.08)"
+                      : "1px solid rgba(255, 255, 255, 0.04)",
                 }}
               >
                 {/* ---------- TOP LEFT: Outline Quote & Copy ---------- */}
@@ -305,7 +315,7 @@ export default function Endorsement() {
                     />
                   </svg>
 
-                  <p className="mt-3.5 max-w-[185px] sm:max-w-[205px] font-serif text-[14px] sm:text-[15.5px] font-normal leading-[1.38] text-white">
+                  <p className={`mt-3.5 max-w-[185px] sm:max-w-[205px] font-serif text-[14px] sm:text-[15.5px] font-normal leading-[1.38] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
                     {item.quote}
                   </p>
                 </div>
@@ -329,7 +339,7 @@ export default function Endorsement() {
                   <img
                     src={item.photo}
                     alt={item.name}
-                    className="pointer-events-none absolute -bottom-1 -right-2 h-[80%] max-h-[350px] w-[58%] select-none object-contain object-bottom z-0"
+                    className={`pointer-events-none absolute -bottom-1 -right-2 h-[80%] max-h-[350px] w-[58%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
                   />
                 )}
               </article>

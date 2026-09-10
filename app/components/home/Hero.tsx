@@ -43,6 +43,7 @@ export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
+  const highlightRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -51,7 +52,7 @@ export default function Hero() {
 
     const ctx = gsap.context(() => {
       if (prefersReducedMotion) {
-        gsap.set(".hero-word, .hero-cta-pill, .hero-subnav a", {
+        gsap.set(".hero-word-base, .hero-word-highlight, .hero-cta-pill, .hero-subnav a", {
           opacity: 1,
           y: 0,
           clearProps: "all",
@@ -66,16 +67,16 @@ export default function Hero() {
         .from(".hero-nav-pill", { opacity: 0, y: -16, duration: 0.7 }, "<0.08")
         .from(".hero-book-btn", { opacity: 0, y: -16, duration: 0.7 }, "<0.08")
         .from(
-          ".hero-word",
+          ".hero-word-base, .hero-word-highlight",
           {
             opacity: 0,
-            y: 46,
-            rotateX: 35,
-            filter: "blur(6px)",
+            y: 36,
+            rotateX: 25,
             transformOrigin: "50% 100%",
             stagger: 0.045,
             duration: 1.1,
             ease: "expo.out",
+            clearProps: "all",
           },
           "-=0.25",
         )
@@ -97,10 +98,10 @@ export default function Hero() {
           "-=0.45",
         );
 
-      // ambient shimmer through the accent word
-      gsap.to(".hero-accent", {
-        backgroundPosition: "200% 0",
-        duration: 6,
+      // ambient gentle glow pulse on the accent word
+      gsap.to(".hero-accent-base", {
+        textShadow: "0 0 20px rgba(143,208,255,0.45)",
+        duration: 3,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
@@ -120,6 +121,7 @@ export default function Hero() {
 
       // ---------- CURSOR PARALLAX ----------
       const hero = heroRef.current;
+      const highlightLayer = highlightRef.current;
       if (hero && glowRef.current && dotsRef.current) {
         const glowX = gsap.quickTo(glowRef.current, "x", {
           duration: 1.1,
@@ -138,6 +140,24 @@ export default function Hero() {
           ease: "power3.out",
         });
 
+        // Spotlight setup
+        const spotPos = { x: window.innerWidth / 2, y: window.innerHeight / 2, opacity: 0 };
+        let spotlightX: ((val: number) => void) | null = null;
+        let spotlightY: ((val: number) => void) | null = null;
+        let spotlightOpacity: ((val: number) => void) | null = null;
+
+        if (highlightLayer) {
+          const updateMask = () => {
+            highlightLayer.style.setProperty("--mx", `${spotPos.x}px`);
+            highlightLayer.style.setProperty("--my", `${spotPos.y}px`);
+            highlightLayer.style.opacity = `${spotPos.opacity}`;
+          };
+          spotlightX = gsap.quickTo(spotPos, "x", { duration: 0.5, ease: "power3.out", onUpdate: updateMask });
+          spotlightY = gsap.quickTo(spotPos, "y", { duration: 0.5, ease: "power3.out", onUpdate: updateMask });
+          spotlightOpacity = gsap.quickTo(spotPos, "opacity", { duration: 0.5, ease: "power2.out", onUpdate: updateMask });
+          updateMask();
+        }
+
         const handleMove = (e: MouseEvent) => {
           const r = hero.getBoundingClientRect();
           const px = (e.clientX - r.left) / r.width - 0.5;
@@ -146,12 +166,23 @@ export default function Hero() {
           glowY(py * 220);
           dotsX(px * -18);
           dotsY(py * -14);
+
+          if (highlightLayer && spotlightX && spotlightY && spotlightOpacity) {
+            const hlRect = highlightLayer.getBoundingClientRect();
+            spotlightX(e.clientX - hlRect.left);
+            spotlightY(e.clientY - hlRect.top);
+            spotlightOpacity(1);
+          }
         };
         const handleLeave = () => {
           glowX(0);
           glowY(0);
           dotsX(0);
           dotsY(0);
+
+          if (spotlightOpacity) {
+            spotlightOpacity(0);
+          }
         };
 
         hero.addEventListener("mousemove", handleMove);
@@ -239,37 +270,78 @@ export default function Hero() {
 
       {/* ---------- HEADLINE (fills remaining space, vertically centered) ---------- */}
       <div className="relative z-3 flex flex-1 flex-col items-center justify-center px-5 py-6 text-center sm:px-8">
-        <h1 className="max-w-225 font-serif text-[clamp(1.75rem,2.4vw+2.6vh,4.25rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white">
-          <span className="block overflow-hidden px-1">
-            <span className="hero-word inline-block will-change-transform">
-              Turn
-            </span>{" "}
-            <span className="hero-word inline-block will-change-transform">
-              Sales
+        <div className="relative group">
+          {/* MAIN TEXT (Base - Restored to original brightness) */}
+          <h1 className="max-w-225 font-serif text-[clamp(1.75rem,2.4vw+2.6vh,4.25rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none px-4 py-2 -mx-4 -my-2">
+            <span className="hero-line block px-2 -mx-2 py-0.5">
+              <span className="hero-word-base inline-block">
+                Turn
+              </span>{" "}
+              <span className="hero-word-base inline-block">
+                Sales
+              </span>
             </span>
-          </span>
-          <span className="block overflow-hidden px-1">
-            <span className="hero-word hero-accent inline-block bg-size-[200%_auto] bg-linear-to-r from-[#8fd0ff] via-[#22a7ff] to-[#1c8ce0] bg-clip-text italic text-transparent will-change-transform">
-              Uncertainty
-            </span>{" "}
-            <span className="hero-word inline-block will-change-transform">
-              Into
+            <span className="hero-line block px-2 -mx-2 py-0.5">
+              <span className="hero-word-base hero-accent-base inline-block text-[#8fd0ff] italic px-2 -mx-2">
+                Uncertainty
+              </span>{" "}
+              <span className="hero-word-base inline-block">
+                Into
+              </span>
             </span>
-          </span>
-          <span className="block overflow-hidden px-1">
-            <span className="hero-word inline-block will-change-transform">
-              Sales
-            </span>{" "}
-            <span className="hero-word inline-block will-change-transform">
-              Readiness
+            <span className="hero-line block px-2 -mx-2 py-0.5">
+              <span className="hero-word-base inline-block">
+                Sales
+              </span>{" "}
+              <span className="hero-word-base inline-block">
+                Readiness
+              </span>
             </span>
-          </span>
-        </h1>
+          </h1>
 
-        {/* ---------- CTA PILLS (liquid-fill hover) ---------- */}
-        <div className="mt-[clamp(20px,4vh,38px)] flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <LiquidPillButton label="For Individuals" bars={[16]} />
-          <LiquidPillButton label="For Organisations" bars={[7, 16, 10, 13]} />
+          {/* HIGHLIGHT TEXT (Vibrant Glow Reveal) */}
+          <h1 
+            ref={highlightRef}
+            className="pointer-events-none absolute inset-0 max-w-225 font-serif text-[clamp(1.75rem,2.4vw+2.6vh,4.25rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none hidden sm:block [text-shadow:0_0_20px_rgba(255,255,255,0.7),0_0_40px_rgba(143,208,255,0.5)] px-4 py-2 -mx-4 -my-2"
+            style={{
+              opacity: 0,
+              WebkitMaskImage: "radial-gradient(circle clamp(150px, 19vw, 300px) at var(--mx, 50%) var(--my, 50%), black 0%, black 20%, transparent 100%)",
+              maskImage: "radial-gradient(circle clamp(150px, 19vw, 300px) at var(--mx, 50%) var(--my, 50%), black 0%, black 20%, transparent 100%)",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+            }}
+          >
+            <span className="hero-line block px-2 -mx-2 py-0.5">
+              <span className="hero-word-highlight inline-block">
+                Turn
+              </span>{" "}
+              <span className="hero-word-highlight inline-block">
+                Sales
+              </span>
+            </span>
+            <span className="hero-line block px-2 -mx-2 py-0.5">
+              <span className="hero-word-highlight hero-accent-highlight inline-block text-[#e6f4ff] [text-shadow:0_0_25px_rgba(143,208,255,0.9),0_0_50px_rgba(34,167,255,0.6)] italic px-2 -mx-2">
+                Uncertainty
+              </span>{" "}
+              <span className="hero-word-highlight inline-block">
+                Into
+              </span>
+            </span>
+            <span className="hero-line block px-2 -mx-2 py-0.5">
+              <span className="hero-word-highlight inline-block">
+                Sales
+              </span>{" "}
+              <span className="hero-word-highlight inline-block">
+                Readiness
+              </span>
+            </span>
+          </h1>
+        </div>
+
+        {/* ---------- CTA PILLS ---------- */}
+        <div className="mt-[clamp(20px,4vh,38px)] flex flex-wrap items-center justify-center gap-3 sm:gap-4 relative z-10">
+          <IndividualButton />
+          <OrganisationButton />
         </div>
       </div>
 
@@ -294,127 +366,92 @@ export default function Hero() {
 }
 
 /**
- * CTA pill with a cursor-anchored "liquid" fill: a circular blob is born at
- * the exact point the pointer enters, then grows past the button's diagonal
- * so — clipped by the pill's own rounded corners — it reads as the button
- * organically filling with color rather than a flat background swap. Text
- * and icon bars flip to dark ink at the same time for contrast against the
- * lime fill (the source design uses lime-on-dark everywhere else, so dark
- * text on lime keeps that same logic rather than going white-on-lime, which
- * has weak contrast — flip the two color values below if you'd rather keep
- * the label white).
+ * Button 1: "For Individuals"
+ * Single bar icon with liquid download progress fill animation:
+ * A liquid progress wave fills the pill smoothly from left to right,
+ * flipping the single bar and label to dark ink on hover.
  */
-function LiquidPillButton({ label, bars }: { label: string; bars: number[] }) {
+function IndividualButton() {
   const btnRef = useRef<HTMLButtonElement>(null);
-  const fillRef = useRef<HTMLSpanElement>(null);
+  const liquidRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
-  const barRefs = useRef<Array<HTMLSpanElement | null>>([]);
-
-  const isFilled = useRef(false);
 
   useEffect(() => {
     const btn = btnRef.current;
-    const fill = fillRef.current;
-    if (!btn || !fill) return;
+    const liquid = liquidRef.current;
+    const bar = barRef.current;
+    const text = textRef.current;
+    if (!btn || !liquid || !bar || !text) return;
 
     const mx = gsap.quickTo(btn, "x", { duration: 0.5, ease: "power3.out" });
     const my = gsap.quickTo(btn, "y", { duration: 0.5, ease: "power3.out" });
 
-    const growTo = (x: number, y: number) => {
-      if (isFilled.current) return;
-      isFilled.current = true;
-      gsap.killTweensOf([fill, textRef.current, ...barRefs.current]);
-      
-      const r = btn.getBoundingClientRect();
-      const size = Math.hypot(r.width, r.height) * 2.2;
-      gsap.set(fill, {
-        width: size,
-        height: size,
-        left: x,
-        top: y,
-        xPercent: -50,
-        yPercent: -50,
-      });
-      gsap.to(fill, { scale: 1, duration: 0.6, ease: "power3.out", overwrite: true });
-      gsap.to([textRef.current, ...barRefs.current], {
-        color: "#0a0b0f",
-        duration: 0.4,
+    const onEnter = () => {
+      // 1. Liquid fill sweeps from left to right like download progress
+      gsap.to(liquid, {
+        scaleX: 1,
+        duration: 0.52,
         ease: "power2.out",
         overwrite: true,
       });
-      gsap.to(barRefs.current, {
-        backgroundColor: "#0a0b0f",
-        duration: 0.4,
+
+      // 2. Single bar and text smoothly flip to dark ink
+      gsap.to(text, {
+        color: "#0a0b0d",
+        duration: 0.32,
+        ease: "power2.out",
+        overwrite: true,
+      });
+      gsap.to(bar, {
+        backgroundColor: "#0a0b0d",
+        duration: 0.32,
         ease: "power2.out",
         overwrite: true,
       });
     };
 
-    const shrinkFrom = (x: number, y: number) => {
-      if (!isFilled.current) return;
-      isFilled.current = false;
-      gsap.killTweensOf([fill, textRef.current, ...barRefs.current]);
-      
-      gsap.set(fill, { left: x, top: y });
-      gsap.to(fill, { scale: 0, duration: 0.4, ease: "power2.in", overwrite: true });
-      gsap.to([textRef.current, ...barRefs.current], {
+    const onLeave = () => {
+      // 1. Liquid drains back to left
+      gsap.to(liquid, {
+        scaleX: 0,
+        duration: 0.38,
+        ease: "power2.in",
+        overwrite: true,
+      });
+
+      // 2. Single bar and text return to default white and lime
+      gsap.to(text, {
         color: "#ffffff",
-        duration: 0.35,
+        duration: 0.32,
         ease: "power2.in",
         overwrite: true,
       });
-      gsap.to(barRefs.current, {
+      gsap.to(bar, {
         backgroundColor: "#e7ff3d",
-        duration: 0.35,
+        duration: 0.32,
         ease: "power2.in",
         overwrite: true,
       });
-    };
 
-    const onEnter = (e: PointerEvent) => {
-      const r = btn.getBoundingClientRect();
-      growTo(e.clientX - r.left, e.clientY - r.top);
-    };
-    const onLeave = (e: PointerEvent) => {
-      const r = btn.getBoundingClientRect();
-      shrinkFrom(e.clientX - r.left, e.clientY - r.top);
       mx(0);
       my(0);
     };
+
     const onMove = (e: PointerEvent) => {
       const r = btn.getBoundingClientRect();
-      mx((e.clientX - r.left - r.width / 2) * 0.28);
-      my((e.clientY - r.top - r.height / 2) * 0.5);
-    };
-
-    // Global safety net for missed pointerleave events
-    const onGlobalPointerMove = (e: PointerEvent) => {
-      const r = btn.getBoundingClientRect();
-      const isInside =
-        e.clientX >= r.left &&
-        e.clientX <= r.right &&
-        e.clientY >= r.top &&
-        e.clientY <= r.bottom;
-
-      if (isInside && !isFilled.current) {
-        growTo(e.clientX - r.left, e.clientY - r.top);
-      } else if (!isInside && isFilled.current) {
-        shrinkFrom(e.clientX - r.left, e.clientY - r.top);
-        mx(0);
-        my(0);
-      }
+      mx((e.clientX - r.left - r.width / 2) * 0.24);
+      my((e.clientY - r.top - r.height / 2) * 0.42);
     };
 
     btn.addEventListener("pointerenter", onEnter);
     btn.addEventListener("pointerleave", onLeave);
     btn.addEventListener("pointermove", onMove);
-    window.addEventListener("pointermove", onGlobalPointerMove);
 
     return () => {
       btn.removeEventListener("pointerenter", onEnter);
       btn.removeEventListener("pointerleave", onLeave);
       btn.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointermove", onGlobalPointerMove);
     };
   }, []);
 
@@ -422,27 +459,166 @@ function LiquidPillButton({ label, bars }: { label: string; bars: number[] }) {
     <button
       ref={btnRef}
       type="button"
-      className="hero-cta-pill relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/2 px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px]"
+      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/[0.03] px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] cursor-pointer select-none"
     >
+      {/* Liquid pill fill (sweeps left to right) */}
+      <span
+        ref={liquidRef}
+        className="pointer-events-none absolute inset-0 z-0 origin-left rounded-full bg-[#e7ff3d] shadow-[0_0_24px_rgba(231,255,61,0.35)]"
+        style={{ transform: "scaleX(0)" }}
+      />
+
+      {/* Single Bar Icon */}
+      <span className="relative z-10 flex h-4 items-center">
+        <span
+          ref={barRef}
+          className="block h-[14px] w-[3.5px] rounded-[1px] bg-[#e7ff3d] transition-colors"
+        />
+      </span>
+
+      <span ref={textRef} className="relative z-10 transition-colors">
+        For Individuals
+      </span>
+    </button>
+  );
+}
+
+/**
+ * Button 2: "For Organisations"
+ * 4 EQUALLY SIZED BARS with classic Windows-style loading animation:
+ * Each bar fills sequentially (bar 1 -> bar 2 -> bar 3 -> bar 4),
+ * and the full button bar fills up with lime #e7ff3d!
+ */
+function OrganisationButton() {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const fillRef = useRef<HTMLSpanElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const barRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const animTimelineRef = useRef<gsap.core.Timeline | null>(null);
+
+  useEffect(() => {
+    const btn = btnRef.current;
+    const fill = fillRef.current;
+    const text = textRef.current;
+    const bars = barRefs.current;
+    if (!btn || !fill || !text || bars.some((b) => !b)) return;
+
+    const mx = gsap.quickTo(btn, "x", { duration: 0.5, ease: "power3.out" });
+    const my = gsap.quickTo(btn, "y", { duration: 0.5, ease: "power3.out" });
+
+    const onEnter = () => {
+      // 1. Full pill bar fills from left to right like a loading progress bar
+      gsap.to(fill, {
+        scaleX: 1,
+        duration: 0.56,
+        ease: "power2.out",
+        overwrite: true,
+      });
+
+      // 2. Text smoothly flips to dark ink
+      gsap.to(text, {
+        color: "#0a0b0d",
+        duration: 0.32,
+        ease: "power2.out",
+        overwrite: true,
+      });
+
+      // 3. Classic Windows loading animation: 4 equal bars fill sequentially
+      if (animTimelineRef.current) animTimelineRef.current.kill();
+
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.3 });
+      animTimelineRef.current = tl;
+
+      // Start all bars in dimmed unlit state
+      tl.set(bars, { opacity: 0.25, backgroundColor: "#0a0b0d" })
+        .to(bars[0], { opacity: 1, duration: 0.16, ease: "power1.inOut" })
+        .to(bars[1], { opacity: 1, duration: 0.16, ease: "power1.inOut" }, "-=0.04")
+        .to(bars[2], { opacity: 1, duration: 0.16, ease: "power1.inOut" }, "-=0.04")
+        .to(bars[3], { opacity: 1, duration: 0.16, ease: "power1.inOut" }, "-=0.04")
+        .to(bars, { opacity: 1, duration: 0.35 });
+    };
+
+    const onLeave = () => {
+      if (animTimelineRef.current) {
+        animTimelineRef.current.kill();
+        animTimelineRef.current = null;
+      }
+
+      // Pill bar drains back to left
+      gsap.to(fill, {
+        scaleX: 0,
+        duration: 0.38,
+        ease: "power2.in",
+        overwrite: true,
+      });
+
+      // Text returns to white
+      gsap.to(text, {
+        color: "#ffffff",
+        duration: 0.32,
+        ease: "power2.in",
+        overwrite: true,
+      });
+
+      // Bars return to default idle lime color
+      gsap.to(bars, {
+        opacity: 1,
+        backgroundColor: "#e7ff3d",
+        duration: 0.32,
+        ease: "power2.in",
+        overwrite: true,
+      });
+
+      mx(0);
+      my(0);
+    };
+
+    const onMove = (e: PointerEvent) => {
+      const r = btn.getBoundingClientRect();
+      mx((e.clientX - r.left - r.width / 2) * 0.24);
+      my((e.clientY - r.top - r.height / 2) * 0.42);
+    };
+
+    btn.addEventListener("pointerenter", onEnter);
+    btn.addEventListener("pointerleave", onLeave);
+    btn.addEventListener("pointermove", onMove);
+
+    return () => {
+      if (animTimelineRef.current) animTimelineRef.current.kill();
+      btn.removeEventListener("pointerenter", onEnter);
+      btn.removeEventListener("pointerleave", onLeave);
+      btn.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+
+  return (
+    <button
+      ref={btnRef}
+      type="button"
+      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/[0.03] px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] select-none cursor-pointer"
+    >
+      {/* Full bar fill container (sweeps left to right) */}
       <span
         ref={fillRef}
-        className="pointer-events-none absolute z-0 rounded-full bg-[#e7ff3d]"
-        style={{ width: 0, height: 0, transform: "scale(0)" }}
+        className="pointer-events-none absolute inset-0 z-0 origin-left rounded-full bg-[#e7ff3d] shadow-[0_0_24px_rgba(231,255,61,0.35)]"
+        style={{ transform: "scaleX(0)" }}
       />
-      <span className="relative z-10 flex h-4 items-end gap-[2.5px]">
-        {bars.map((h, i) => (
+
+      {/* 4 EQUALLY SIZED BARS (Windows-style loading sequence) */}
+      <span className="relative z-10 flex h-4 items-center gap-[3px]">
+        {[0, 1, 2, 3].map((i) => (
           <span
             key={i}
             ref={(el) => {
               barRefs.current[i] = el;
             }}
-            className="block w-0.75 rounded-sm bg-[#e7ff3d]"
-            style={{ height: `${h}px` }}
+            className="block h-[14px] w-[3.5px] rounded-[1px] bg-[#e7ff3d] transition-colors"
           />
         ))}
       </span>
-      <span ref={textRef} className="relative z-10">
-        {label}
+
+      <span ref={textRef} className="relative z-10 transition-colors">
+        For Organisations
       </span>
     </button>
   );
