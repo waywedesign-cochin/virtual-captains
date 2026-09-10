@@ -58,6 +58,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   const headlineLine3Ref = useRef<HTMLSpanElement>(null);
 
   const rhsContainerRef = useRef<HTMLDivElement>(null);
+  const centerDividerRef = useRef<HTMLDivElement>(null);
   const orgsTextRef = useRef<HTMLDivElement>(null);
   const individualsTextRef = useRef<HTMLDivElement>(null);
 
@@ -136,6 +137,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             headlineLine3Ref.current,
             rhsContainerRef.current,
             bottomNavRef.current,
+            centerDividerRef.current,
           ],
           {
             opacity: 1,
@@ -157,6 +159,11 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
       // 1. Initial States for desktop pinned animation
       gsap.set(topTitleRef.current, { opacity: 0, scale: 0.85, y: -15 });
       gsap.set(bottomNavRef.current, { opacity: 0, y: 20 });
+      gsap.set(centerDividerRef.current, {
+        opacity: 0,
+        scaleY: 0,
+        transformOrigin: "center center",
+      });
 
       // Calculate exact X offset to perfectly center the headline ONLY on desktop
       let moveX: string | number = 0;
@@ -254,10 +261,15 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         "slide",
       );
 
-      // Phase 3: Slide in the RHS content (Wedge + Orgs Text) and Bottom Button
+      // Phase 3: Slide in the RHS content (Wedge + Orgs Text), Center Divider, and Bottom Button
       tl.to(
         rhsContainerRef.current,
         { opacity: 1, scale: 1, x: 0, duration: 0.7, ease: "power2.out" },
+        "slide+=0.2",
+      );
+      tl.to(
+        centerDividerRef.current,
+        { opacity: 1, scaleY: 1, duration: 0.75, ease: "power2.out" },
         "slide+=0.2",
       );
       tl.to(
@@ -350,7 +362,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
 
         {/* MIDDLE ROW: HEADLINE & AUDIENCE CARD */}
         <div className="relative z-10 flex-1 w-full flex items-center justify-center my-auto min-h-0">
-          <div className="w-full grid items-center gap-6 sm:gap-10 lg:grid-cols-2 lg:gap-8 xl:gap-12">
+          <div className="relative w-full grid items-center gap-6 sm:gap-10 lg:grid-cols-2 lg:gap-8 xl:gap-12">
             {/* LEFT COLUMN: HEADLINE */}
             <div className="lg:pl-16 xl:pl-24 flex justify-center lg:block">
               <h2
@@ -373,6 +385,37 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                   </span>
                 </span>
               </h2>
+            </div>
+
+            {/* CENTER DIVIDER: GLOWING YELLOW BUBBLE WITH CENTER LINE IN BETWEEN LHS & RHS */}
+            <div
+              ref={centerDividerRef}
+              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center justify-center h-[72%] max-h-[380px] z-20"
+              aria-hidden="true"
+            >
+              {/* Top line segment */}
+              <div className="w-[1.5px] flex-1 bg-linear-to-b from-transparent via-white/15 to-[#e7ff3d]/70 shadow-[0_0_8px_rgba(231,255,61,0.3)]" />
+
+              {/* Yellow bubble with line through its center */}
+              <div className="relative my-2 flex items-center justify-center">
+                {/* Luminous yellow ambient bloom */}
+                <div className="pointer-events-none absolute h-16 w-16 rounded-full bg-[#e7ff3d]/25 blur-xl" />
+
+                {/* Outer glass sphere / ring */}
+                <div className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#e7ff3d]/45 bg-[#e7ff3d]/10 backdrop-blur-md shadow-[0_0_20px_rgba(231,255,61,0.35),inset_0_0_12px_rgba(231,255,61,0.15)]">
+                  {/* Vertical line through the center of the bubble */}
+                  <div className="absolute inset-y-0 left-1/2 w-[1.5px] -translate-x-1/2 bg-[#e7ff3d] shadow-[0_0_6px_#e7ff3d]" />
+
+                  {/* Inner yellow core bubble */}
+                  <div className="relative z-10 flex h-4 w-4 items-center justify-center rounded-full bg-[#e7ff3d] shadow-[0_0_12px_#e7ff3d,0_0_24px_rgba(231,255,61,0.85)]">
+                    {/* Core center slit / line */}
+                    <div className="h-full w-[1.5px] bg-[#020617]/75" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom line segment */}
+              <div className="w-[1.5px] flex-1 bg-linear-to-b from-[#e7ff3d]/70 via-white/15 to-transparent shadow-[0_0_8px_rgba(231,255,61,0.3)]" />
             </div>
 
             {/* RIGHT COLUMN: BACKGROUND SHAPE & AUDIENCE CONTENT */}
