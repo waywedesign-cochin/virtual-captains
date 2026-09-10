@@ -145,6 +145,7 @@ export default function TheImpact() {
   return (
     <section
       ref={sectionRef}
+      id="organisations"
       data-nav-section="The Impact"
       data-nav-theme="dark"
       className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-6 pt-28 pb-20 text-white sm:px-10 lg:pt-36 lg:pb-28 lg:pl-36 lg:pr-16"

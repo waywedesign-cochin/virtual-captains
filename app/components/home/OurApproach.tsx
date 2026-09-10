@@ -68,21 +68,36 @@ export default function OurApproach() {
         clipPath: "inset(0 100% 0 0)",
         duration: 0.4,
       });
-      gsap.to(subtextWrapperRef.current, { opacity: 0, y: 20, duration: 0.4 });
+      gsap.to(subtextWrapperRef.current, {
+        opacity: 0,
+        scale: 0.9,
+        y: 20,
+        duration: 0.4,
+      });
     } else if (step === 1) {
       gsap.to(imageWrapperRef.current, { opacity: 1, duration: 0.4 });
       gsap.to(illustrationRef.current, {
         clipPath: "inset(0 0% 0 0)",
         duration: 0.5,
       });
-      gsap.to(subtextWrapperRef.current, { opacity: 0, y: 20, duration: 0.4 });
+      gsap.to(subtextWrapperRef.current, {
+        opacity: 0,
+        scale: 0.9,
+        y: 20,
+        duration: 0.4,
+      });
     } else if (step === 2) {
       gsap.to(imageWrapperRef.current, { opacity: 1, duration: 0.4 });
       gsap.to(illustrationRef.current, {
         clipPath: "inset(0 0% 0 0)",
         duration: 0.5,
       });
-      gsap.to(subtextWrapperRef.current, { opacity: 1, y: 0, duration: 0.5 });
+      gsap.to(subtextWrapperRef.current, {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        duration: 0.5,
+      });
     }
   };
 
@@ -119,16 +134,24 @@ export default function OurApproach() {
             imageWrapperRef.current,
             subtextWrapperRef.current,
           ],
-          { opacity: 1, y: 0 },
+          { opacity: 1, scale: 1, y: 0 },
         );
         gsap.set(illustrationRef.current, { clipPath: "none" });
         return;
       }
 
       // Initial state before entrance
-      gsap.set([eyebrowRef.current, line1Ref.current, line2Ref.current], {
+      gsap.set(eyebrowRef.current, {
         opacity: 0,
-        y: 24,
+        scale: 0.85,
+        y: -12,
+        transformOrigin: "center center",
+      });
+      gsap.set([line1Ref.current, line2Ref.current], {
+        opacity: 0,
+        scale: 0.72,
+        y: 15,
+        transformOrigin: "center center",
       });
       gsap.set(imageWrapperRef.current, {
         opacity: 0,
@@ -138,36 +161,51 @@ export default function OurApproach() {
       });
       gsap.set(subtextWrapperRef.current, {
         opacity: 0,
+        scale: 0.9,
         y: 20,
+        transformOrigin: "center center",
       });
 
       // ---------------------------------------------------------------------
-      // 1. ENTRANCE: Reveal Heading on approach
+      // 1. ENTRANCE: Reveal Heading on approach with ZOOM-IN
       // ---------------------------------------------------------------------
       const entranceTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 72%",
-          once: true,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
         },
       });
 
       entranceTl
         .to(eyebrowRef.current, {
           opacity: 1,
+          scale: 1,
           y: 0,
-          duration: 0.6,
+          duration: 0.55,
           ease: "power2.out",
         })
         .to(
           line1Ref.current,
-          { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" },
-          "-=0.35",
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.75,
+            ease: "back.out(1.25)",
+          },
+          "-=0.3",
         )
         .to(
           line2Ref.current,
-          { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" },
-          "-=0.42",
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.75,
+            ease: "back.out(1.25)",
+          },
+          "-=0.55",
         );
 
       const mm = gsap.matchMedia();
@@ -214,7 +252,7 @@ export default function OurApproach() {
         // Step 3: Reveal Sub-text between 0.55 and 0.85
         pinTl.to(
           subtextWrapperRef.current,
-          { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
+          { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" },
           0.55,
         );
 
@@ -267,7 +305,7 @@ export default function OurApproach() {
         );
         mobileTl.to(
           subtextWrapperRef.current,
-          { opacity: 1, y: 0, duration: 0.3 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" },
           0.55,
         );
 
@@ -282,6 +320,7 @@ export default function OurApproach() {
   return (
     <section
       ref={sectionRef}
+      id="about"
       data-nav-section="The Model"
       data-nav-theme="light"
       className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-[clamp(28px,5vh,72px)] text-[#101010] sm:px-10 lg:px-16"

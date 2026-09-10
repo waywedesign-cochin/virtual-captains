@@ -53,6 +53,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   const bottomNavRef = useRef<HTMLDivElement>(null);
 
   const headlineRef = useRef<HTMLHeadingElement>(null);
+  const headlineLine1Ref = useRef<HTMLSpanElement>(null);
+  const headlineLine2Ref = useRef<HTMLSpanElement>(null);
+  const headlineLine3Ref = useRef<HTMLSpanElement>(null);
 
   const rhsContainerRef = useRef<HTMLDivElement>(null);
   const orgsTextRef = useRef<HTMLDivElement>(null);
@@ -128,6 +131,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
           [
             topTitleRef.current,
             headlineRef.current,
+            headlineLine1Ref.current,
+            headlineLine2Ref.current,
+            headlineLine3Ref.current,
             rhsContainerRef.current,
             bottomNavRef.current,
           ],
@@ -135,7 +141,8 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             opacity: 1,
             x: 0,
             y: 0,
-            clearProps: "transform",
+            scale: 1,
+            clearProps: "all",
           },
         );
         gsap.set(orgsTextRef.current, { opacity: 1, y: 0, rotate: 0 });
@@ -148,75 +155,111 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   useImperativeHandle(ref, () => ({
     getTimeline: () => {
       // 1. Initial States for desktop pinned animation
-      gsap.set(topTitleRef.current, { opacity: 0, y: -20 });
+      gsap.set(topTitleRef.current, { opacity: 0, scale: 0.85, y: -15 });
       gsap.set(bottomNavRef.current, { opacity: 0, y: 20 });
 
       // Calculate exact X offset to perfectly center the headline ONLY on desktop
       let moveX: string | number = 0;
+      let line1ShiftX = 0;
+      let line2ShiftX = 0;
+      let line3ShiftX = 0;
+
       if (
         typeof window !== "undefined" &&
         window.innerWidth >= 1024 &&
         headlineRef.current
       ) {
-        gsap.set(headlineRef.current, { clearProps: "transform" });
+        gsap.set(headlineRef.current, { clearProps: "transform,scale,opacity" });
+        if (headlineLine1Ref.current) gsap.set(headlineLine1Ref.current, { clearProps: "transform" });
+        if (headlineLine2Ref.current) gsap.set(headlineLine2Ref.current, { clearProps: "transform" });
+        if (headlineLine3Ref.current) gsap.set(headlineLine3Ref.current, { clearProps: "transform" });
+
         const rect = headlineRef.current.getBoundingClientRect();
-        const centerOfElement = rect.left + rect.width / 2;
         const centerOfScreen = window.innerWidth / 2;
-        moveX = centerOfScreen - centerOfElement;
+
+        const w1 = headlineLine1Ref.current?.getBoundingClientRect().width || 0;
+        const w2 = headlineLine2Ref.current?.getBoundingClientRect().width || 0;
+        const w3 = headlineLine3Ref.current?.getBoundingClientRect().width || 0;
+        const maxWidth = Math.max(w1, w2, w3);
+
+        const centerOfWidest = rect.left + maxWidth / 2;
+        moveX = centerOfScreen - centerOfWidest;
+
+        line1ShiftX = Math.max(0, (maxWidth - w1) / 2);
+        line2ShiftX = Math.max(0, (maxWidth - w2) / 2);
+        line3ShiftX = Math.max(0, (maxWidth - w3) / 2);
       }
 
-      gsap.set(headlineRef.current, { opacity: 0, x: moveX });
-      gsap.set(rhsContainerRef.current, { opacity: 0, x: 40 });
-      gsap.set(individualsTextRef.current, { opacity: 0, y: 80, rotate: 5 });
+      gsap.set(headlineRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        x: moveX,
+        transformOrigin: "center center",
+      });
+      gsap.set(headlineLine1Ref.current, { x: line1ShiftX });
+      gsap.set(headlineLine2Ref.current, { x: line2ShiftX });
+      gsap.set(headlineLine3Ref.current, { x: line3ShiftX });
+
+      gsap.set(rhsContainerRef.current, { opacity: 0, scale: 0.9, x: 40 });
+      gsap.set(individualsTextRef.current, { opacity: 0, y: 60, rotate: 4 });
       gsap.set(orgsTextRef.current, { opacity: 1, y: 0, rotate: 0 });
 
       const tl = gsap.timeline();
 
-      // Phase 1: Fade in Top Title and Headline (Headline centered on desktop)
+      // Phase 1: Fade in and ZOOM IN Top Title and Headline (Headline centered on desktop with text-center)
       tl.to(
         topTitleRef.current,
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
+        { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: "power2.out" },
         0,
       );
       tl.to(
         headlineRef.current,
-        { opacity: 1, duration: 1, ease: "power2.out" },
-        0.2,
+        { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" },
+        0.1,
       );
 
-      // Pause to read the centered headline
-      tl.to({}, { duration: 1.0 });
+      // Pause to read the centered headline (brisk)
+      tl.to({}, { duration: 0.6 });
 
-      // Phase 2: Slide headline to the left
+      // Phase 2: Slide headline to the left AND glide text lines to text-left
       tl.to(
         headlineRef.current,
-        { x: 0, duration: 1.2, ease: "power2.inOut" },
+        { x: 0, duration: 0.8, ease: "power2.inOut" },
+        "slide",
+      );
+      tl.to(
+        [
+          headlineLine1Ref.current,
+          headlineLine2Ref.current,
+          headlineLine3Ref.current,
+        ],
+        { x: 0, duration: 0.8, ease: "power2.inOut" },
         "slide",
       );
 
       // Phase 3: Slide in the RHS content (Wedge + Orgs Text) and Bottom Button
       tl.to(
         rhsContainerRef.current,
-        { opacity: 1, x: 0, duration: 1, ease: "power2.out" },
-        "slide+=0.4",
+        { opacity: 1, scale: 1, x: 0, duration: 0.7, ease: "power2.out" },
+        "slide+=0.2",
       );
       tl.to(
         bottomNavRef.current,
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
-        "slide+=0.6",
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        "slide+=0.3",
       );
 
-      // Pause for the Orgs state
-      tl.to({}, { duration: 1.5 });
+      // Pause for the Orgs state (brisk)
+      tl.to({}, { duration: 0.8 });
 
       // Phase 4: Carousel Rotation (Swap Orgs for Individuals)
       tl.to(
         orgsTextRef.current,
         {
           opacity: 0,
-          y: -80,
-          rotate: -5,
-          duration: 1,
+          y: -60,
+          rotate: -4,
+          duration: 0.7,
           ease: "power2.in",
           onStart: () => setActiveAudience("individuals"),
         },
@@ -229,10 +272,10 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
           opacity: 1,
           y: 0,
           rotate: 0,
-          duration: 1,
+          duration: 0.7,
           ease: "power2.out",
         },
-        "rotate+=1",
+        "rotate+=0.7",
       );
 
       // Animate Pagination Dots
@@ -241,9 +284,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         {
           backgroundColor: "rgba(255,255,255,0.3)",
           borderColor: "rgba(255,255,255,0.5)",
-          duration: 0.5,
+          duration: 0.4,
         },
-        "rotate+=1",
+        "rotate+=0.7",
       );
 
       tl.to(
@@ -251,13 +294,13 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         {
           backgroundColor: "#ffffff",
           borderColor: "transparent",
-          duration: 0.5,
+          duration: 0.4,
         },
-        "rotate+=1",
+        "rotate+=0.7",
       );
 
       // Final pause on the second audience panel
-      tl.to({}, { duration: 0.8 });
+      tl.to({}, { duration: 0.5 });
 
       return tl;
     },
@@ -297,10 +340,20 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                 ref={headlineRef}
                 className="inline-block max-w-xl font-serif text-[clamp(1.75rem,2.8vw,3.25rem)] font-normal leading-[1.16] text-white text-center lg:text-left"
               >
-                <span className="block">Turn training</span>
-                <span className="block">into measurable</span>
+                <span className="block">
+                  <span ref={headlineLine1Ref} className="inline-block">
+                    Turn training
+                  </span>
+                </span>
+                <span className="block">
+                  <span ref={headlineLine2Ref} className="inline-block">
+                    into measurable
+                  </span>
+                </span>
                 <span className="block italic text-[#1d63ed]">
-                  sale performance
+                  <span ref={headlineLine3Ref} className="inline-block">
+                    sale performance
+                  </span>
                 </span>
               </h2>
             </div>
@@ -398,6 +451,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
 
               {/* SECOND STATE: Individuals */}
               <div
+                id="individuals"
                 ref={individualsTextRef}
                 className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-[450px]"
               >

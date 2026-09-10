@@ -336,6 +336,7 @@ export default function SiteFooter() {
           this one just hadn't needed it before the two-phase reveal. */}
       <footer
         ref={footerRef}
+        id="resources"
         className="relative flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
         style={{
           background:

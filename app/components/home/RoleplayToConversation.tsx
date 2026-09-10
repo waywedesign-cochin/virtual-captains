@@ -59,6 +59,8 @@ export default function RoleplayToConversation() {
   const refineRef = useRef<HTMLSpanElement>(null);
 
   const topRowRef = useRef<HTMLDivElement>(null);
+  const mainHeadingRef = useRef<HTMLHeadingElement>(null);
+  const eyebrowRef = useRef<HTMLSpanElement>(null);
   const diagramContainerRef = useRef<HTMLDivElement>(null);
   const diagramIntroRef = useRef<HTMLDivElement>(null);
   const bottomTextRef = useRef<HTMLDivElement>(null);
@@ -92,9 +94,10 @@ export default function RoleplayToConversation() {
           opacity: 0.2,
         });
 
-        // Diagram heading
+        // Diagram heading starts small & hidden
         gsap.set(diagramIntroRef.current, {
           autoAlpha: 0,
+          scale: 0.85,
           y: 15,
         });
 
@@ -110,7 +113,7 @@ export default function RoleplayToConversation() {
         );
 
         /*
-         * Texts start hidden and simply fade in when active.
+         * Texts start hidden and zoom in when active.
          */
         gsap.set(
           [
@@ -121,18 +124,30 @@ export default function RoleplayToConversation() {
           ],
           {
             opacity: 0,
+            scale: 0.7,
+            transformOrigin: "center center",
           },
         );
 
-        // Bottom caption
+        // Bottom caption starts small & hidden
         gsap.set(bottomTextRef.current, {
           autoAlpha: 0,
-          y: 20,
+          scale: 0.85,
+          y: 15,
         });
 
         // Set up the container overlap states for Desktop
         gsap.set(topRowRef.current, { autoAlpha: 1, y: 0 });
-        gsap.set(diagramContainerRef.current, { autoAlpha: 0, y: 40, scale: 0.95 });
+        gsap.set(mainHeadingRef.current, {
+          autoAlpha: 0,
+          scale: 0.75,
+          transformOrigin: "left center",
+        });
+        gsap.set(eyebrowRef.current, {
+          autoAlpha: 0,
+          y: -10,
+        });
+        gsap.set(diagramContainerRef.current, { autoAlpha: 0, y: 30, scale: 0.95 });
 
         /*
          * ============================================================
@@ -140,27 +155,13 @@ export default function RoleplayToConversation() {
          * ============================================================
          */
 
-        // TwoAudiences is absolutely positioned inset-0 of this section, so
-        // its own bounding rect is identical to this section's for the
-        // entire pin — a geometry-based ScrollTrigger on it would activate
-        // at the same instant as "The Promise" instead of when the black
-        // hole actually reveals it. So the side nav gets told explicitly,
-        // via a custom event, exactly when to switch labels — see the
-        // onUpdate below and SideNav's "vc:nav-override" listener.
-        //
-        // Starts at `null`, not `false`: this section no longer carries its
-        // own data-nav-section tag (see the JSX below), so nothing else will
-        // ever announce "The Promise" — it must be dispatched explicitly the
-        // first time onUpdate runs, and `null` guarantees the initial
-        // `isChoosePath === lastLabelWasChoosePath` check can't short-circuit
-        // that first dispatch by matching `false` on the very first tick.
         let lastLabelWasChoosePath: boolean | null = null;
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top top",
-            end: "+=5200", // Normalized distance so unpin releases directly into OurApproach
+            end: "+=3800", // Normalized brisk distance for faster scroll progression
             scrub: 0.35,
             pin: true,
             anticipatePin: 1,
@@ -182,11 +183,34 @@ export default function RoleplayToConversation() {
 
         /*
          * ============================================================
-         * PHASE 1 — WORD BY WORD RIGHT TEXT REVEAL
+         * PHASE 1 — MAIN HEADING ZOOM IN & RIGHT TEXT REVEAL
          * ============================================================
          */
 
-        const TOTAL_WORD_REVEAL_TIME = 3;
+        // Main heading "From Roleplays to Real Conversation" zooms in
+        tl.to(
+          mainHeadingRef.current,
+          {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          0,
+        );
+
+        tl.to(
+          eyebrowRef.current,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          0,
+        );
+
+        const TOTAL_WORD_REVEAL_TIME = 2.0;
 
         const staggerTime =
           (TOTAL_WORD_REVEAL_TIME - 0.1) / wordElements.length;
@@ -199,7 +223,7 @@ export default function RoleplayToConversation() {
             stagger: staggerTime,
             ease: "none",
           },
-          0,
+          0.2,
         );
 
         /*
@@ -208,31 +232,25 @@ export default function RoleplayToConversation() {
          * ============================================================
          */
         
-        const TRANSITION_START = TOTAL_WORD_REVEAL_TIME + 0.5;
-
-        // Declared up front (used again in Phase 8) because the master
-        // scrollTrigger's onUpdate below needs it to know exactly when the
-        // black hole has swallowed the screen and TwoAudiences takes over —
-        // that's the moment the side nav should switch from "The Promise" to
-        // "Choose Your Path".
-        const ZOOM_START = TRANSITION_START + 5.5;
-        const CHOOSE_YOUR_PATH_AT = ZOOM_START + 1.0;
+        const TRANSITION_START = TOTAL_WORD_REVEAL_TIME + 0.4;
+        const ZOOM_START = TRANSITION_START + 4.0;
+        const CHOOSE_YOUR_PATH_AT = ZOOM_START + 0.8;
 
         tl.to(
           topRowRef.current,
-          { autoAlpha: 0, y: -40, duration: 0.6, ease: "power2.inOut" },
-          TRANSITION_START
+          { autoAlpha: 0, y: -30, scale: 0.95, duration: 0.5, ease: "power2.inOut" },
+          TRANSITION_START,
         );
 
         tl.to(
           diagramContainerRef.current,
-          { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "power2.out" },
-          TRANSITION_START + 0.2
+          { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, ease: "power2.out" },
+          TRANSITION_START + 0.2,
         );
 
         /*
          * ============================================================
-         * PHASE 2 — DIAGRAM INTRO TEXT
+         * PHASE 2 — DIAGRAM INTRO TEXT (ZOOMS IN)
          * ============================================================
          */
 
@@ -240,110 +258,113 @@ export default function RoleplayToConversation() {
           diagramIntroRef.current,
           {
             autoAlpha: 1,
+            scale: 1,
             y: 0,
-            duration: 0.4,
-            ease: "power2.out",
+            duration: 0.45,
+            ease: "back.out(1.2)",
           },
-          TRANSITION_START + 0.5,
+          TRANSITION_START + 0.4,
         );
 
         /*
          * ============================================================
-         * PHASE 3 — REHEARSE
+         * PHASE 3 — REHEARSE (RING & ZOOM IN LABEL)
          * ============================================================
          */
 
         tl.fromTo(
           ring4Ref.current,
           { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.75, ease: "power2.out" },
-          TRANSITION_START + 1.0,
+          { autoAlpha: 1, duration: 0.55, ease: "power2.out" },
+          TRANSITION_START + 0.8,
         );
 
         tl.to(
           rehearseRef.current,
           {
             opacity: 1,
-            duration: 0.55,
-            ease: "power2.out",
+            scale: 1,
+            duration: 0.45,
+            ease: "back.out(1.3)",
           },
-          TRANSITION_START + 1.2,
+          TRANSITION_START + 1.0,
         );
-
-        tl.to({}, { duration: 0.4 });
 
         /*
          * ============================================================
-         * PHASE 4 — EXECUTE
+         * PHASE 4 — EXECUTE (RING & ZOOM IN LABEL)
          * ============================================================
          */
 
         tl.fromTo(
           ring3Ref.current,
           { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.75, ease: "power2.out" },
-          TRANSITION_START + 2.0,
+          { autoAlpha: 1, duration: 0.55, ease: "power2.out" },
+          TRANSITION_START + 1.6,
         );
 
         tl.to(
           executeRef.current,
           {
             opacity: 1,
-            duration: 0.55,
-            ease: "power2.out",
+            scale: 1,
+            duration: 0.45,
+            ease: "back.out(1.3)",
           },
-          TRANSITION_START + 2.2,
+          TRANSITION_START + 1.8,
         );
 
         /*
          * ============================================================
-         * PHASE 5 — VALUATE
+         * PHASE 5 — VALUATE (RING & ZOOM IN LABEL)
          * ============================================================
          */
 
         tl.fromTo(
           ring2Ref.current,
           { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.75, ease: "power2.out" },
-          TRANSITION_START + 2.9,
+          { autoAlpha: 1, duration: 0.55, ease: "power2.out" },
+          TRANSITION_START + 2.4,
         );
 
         tl.to(
           validateRef.current,
           {
             opacity: 1,
-            duration: 0.55,
-            ease: "power2.out",
+            scale: 1,
+            duration: 0.45,
+            ease: "back.out(1.3)",
           },
-          TRANSITION_START + 3.1,
+          TRANSITION_START + 2.6,
         );
 
         /*
          * ============================================================
-         * PHASE 6 — REFINE
+         * PHASE 6 — REFINE (RING & ZOOM IN LABEL)
          * ============================================================
          */
 
         tl.fromTo(
           ring1Ref.current,
           { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.75, ease: "power2.out" },
-          TRANSITION_START + 3.8,
+          { autoAlpha: 1, duration: 0.55, ease: "power2.out" },
+          TRANSITION_START + 3.1,
         );
 
         tl.to(
           refineRef.current,
           {
             opacity: 1,
-            duration: 0.55,
-            ease: "power2.out",
+            scale: 1,
+            duration: 0.45,
+            ease: "back.out(1.3)",
           },
-          TRANSITION_START + 3.9,
+          TRANSITION_START + 3.2,
         );
 
         /*
          * ============================================================
-         * PHASE 7 — FINAL CAPTION
+         * PHASE 7 — FINAL CAPTION (ZOOMS IN)
          * ============================================================
          */
 
@@ -351,11 +372,12 @@ export default function RoleplayToConversation() {
           bottomTextRef.current,
           {
             autoAlpha: 1,
+            scale: 1,
             y: 0,
-            duration: 0.55,
+            duration: 0.45,
             ease: "power2.out",
           },
-          TRANSITION_START + 4.4,
+          TRANSITION_START + 3.6,
         );
 
         /*
@@ -378,7 +400,7 @@ export default function RoleplayToConversation() {
             rehearseRef.current,
             topRowRef.current
           ],
-          { autoAlpha: 0, duration: 0.4 },
+          { autoAlpha: 0, duration: 0.35 },
           ZOOM_START,
         );
 
@@ -389,7 +411,7 @@ export default function RoleplayToConversation() {
             backgroundColor: "#050608",
             borderColor: "transparent",
             scale: 150, // Massive scale to swallow the screen
-            duration: 1.5,
+            duration: 1.1,
             ease: "expo.in", // Classic hyper-zoom acceleration
           },
           ZOOM_START,
@@ -406,13 +428,13 @@ export default function RoleplayToConversation() {
         // Finally, run the Two Audiences internal timeline (title sliding, disc rotating, etc)
         // Since TwoAudiences is now full-bleed pitch black, it perfectly continues the black hole transition!
         if (twoAudiencesRef.current) {
-          tl.add(twoAudiencesRef.current.getTimeline(), ZOOM_START + 1.2);
+          tl.add(twoAudiencesRef.current.getTimeline(), ZOOM_START + 0.9);
         }
 
         /*
          * Small final breathing movement to let the last scene sit for a moment.
          */
-        tl.to({}, { duration: 0.5 });
+        tl.to({}, { duration: 0.4 });
       });
 
       /*
@@ -436,10 +458,13 @@ export default function RoleplayToConversation() {
 
         gsap.set(
           [
+            mainHeadingRef.current,
+            eyebrowRef.current,
             diagramIntroRef.current,
             ring1Ref.current,
             ring2Ref.current,
             ring3Ref.current,
+            ring4Ref.current,
             validateRef.current,
             rehearseRef.current,
             executeRef.current,
@@ -463,6 +488,7 @@ export default function RoleplayToConversation() {
   return (
     <section
       ref={sectionRef}
+      id="salesx"
       // No data-nav-section here on purpose: this section's own bounding
       // rect stays under the viewport's 55% line for its entire pin,
       // including the whole time TwoAudiences (nested inside it) should be
@@ -508,14 +534,20 @@ export default function RoleplayToConversation() {
           // needed at xl since the container's own xl:px-[8%] already grows.
           className="relative z-20 w-full lg:col-start-1 lg:row-start-1 lg:flex lg:flex-col lg:justify-center lg:pl-32 xl:pl-8"
         >
-          <span className="mb-6 block font-mono text-[10px] uppercase tracking-[0.2em] text-black/65 sm:text-[11px] lg:mb-10 lg:text-[13px]">
+          <span
+            ref={eyebrowRef}
+            className="mb-6 block font-mono text-[10px] uppercase tracking-[0.2em] text-black/65 sm:text-[11px] lg:mb-10 lg:text-[13px]"
+          >
             What Drives Us
           </span>
 
           <div className="flex w-full flex-col justify-between gap-6 lg:flex-row lg:items-start lg:gap-10">
             {/* TOP LEFT TITLE */}
             <div className="w-full max-w-150 xl:max-w-175">
-              <h2 className="font-serif text-[clamp(1.5rem,2.5vw+1rem,3rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+              <h2
+                ref={mainHeadingRef}
+                className="font-serif text-[clamp(1.5rem,2.5vw+1rem,3rem)] font-normal leading-[1.05] tracking-[-0.04em]"
+              >
                 From Roleplays
                 <br />
                 to{" "}

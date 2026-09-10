@@ -439,6 +439,7 @@ export default function CrossCountry() {
   return (
     <section
       ref={sectionRef}
+      id="programs"
       data-nav-section="Cross Country"
       data-nav-theme="light"
       className="relative -mt-0.5 z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 py-[clamp(28px,5vh,72px)] text-[#101010] sm:px-10 lg:px-16"
