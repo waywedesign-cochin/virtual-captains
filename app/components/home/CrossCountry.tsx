@@ -351,38 +351,67 @@ export default function CrossCountry() {
 
       if (prefersReducedMotion) {
         // Land on the final pull-back framing and stay there.
+        gsap.set([headingRef.current, paragraphRef.current, globeWrapRef.current], {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        });
         progressRef.current = 1;
         draw(0);
       } else {
-        gsap.set([headingRef.current, paragraphRef.current], {
+        gsap.set(headingRef.current, {
           opacity: 0,
-          y: 20,
+          scale: 0.72,
+          y: 15,
+          transformOrigin: "center center",
         });
-        gsap.set(globeWrapRef.current, { opacity: 0, scale: 0.94 });
+        gsap.set(globeWrapRef.current, {
+          opacity: 0,
+          scale: 0.85,
+          transformOrigin: "center center",
+        });
+        gsap.set(paragraphRef.current, {
+          opacity: 0,
+          scale: 0.9,
+          y: 15,
+          transformOrigin: "center center",
+        });
 
         const intro = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 70%",
-            once: true,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
           },
         });
         intro
           .to(headingRef.current, {
             opacity: 1,
+            scale: 1,
             y: 0,
-            duration: 0.7,
-            ease: "power2.out",
+            duration: 0.75,
+            ease: "back.out(1.25)",
           })
           .to(
             globeWrapRef.current,
-            { opacity: 1, scale: 1, duration: 1, ease: "power2.out" },
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 0.9,
+              ease: "power2.out",
+            },
             "-=0.4",
           )
           .to(
             paragraphRef.current,
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-            "-=0.6",
+            {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+            },
+            "-=0.5",
           );
 
         const camera = { value: 0 };

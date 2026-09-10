@@ -161,7 +161,7 @@ export default function HiringPartners() {
         }}
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-[1240px] grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
+      <div className="relative z-10 mx-auto grid w-full max-w-310 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
         {/* ---------- LEFT: CLEAN NORMAL CIRCLE WITH BALANCED LOGO PODS ---------- */}
         <div className="flex justify-center lg:col-span-7">
           <div
@@ -172,7 +172,7 @@ export default function HiringPartners() {
             onMouseLeave={() => {
               isHoveredRef.current = false;
             }}
-            className="relative aspect-square w-[min(480px,90vw)] rounded-full border border-black/10 bg-white/40 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.08)] backdrop-blur-[4px]"
+            className="relative aspect-square w-[min(480px,90vw)] rounded-full border border-black/10 bg-white/40 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.08)] backdrop-blur-xs"
           >
             {/* Minimal subtle inner guide rings */}
             <div className="pointer-events-none absolute inset-6 rounded-full border border-black/5 sm:inset-8" />
@@ -190,7 +190,7 @@ export default function HiringPartners() {
               return (
                 <div
                   key={slot.id}
-                  className={`group absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full bg-white border border-black/8 shadow-[0_10px_28px_-6px_rgba(0,0,0,0.09)] p-3 sm:p-4 transition-all duration-600 ease-out cursor-pointer hover:scale-110 hover:shadow-[0_18px_38px_-8px_rgba(37,99,235,0.25),0_0_0_1.5px_rgba(37,99,235,0.35)] hover:z-20 w-[112px] h-[112px] sm:w-[132px] sm:h-[132px] ${
+                  className={`group absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full bg-white border border-black/8 shadow-[0_10px_28px_-6px_rgba(0,0,0,0.09)] p-3 sm:p-4 transition-all duration-600 ease-out cursor-pointer hover:scale-110 hover:shadow-[0_18px_38px_-8px_rgba(37,99,235,0.25),0_0_0_1.5px_rgba(37,99,235,0.35)] hover:z-20 w-28 h-28 sm:w-33 sm:h-33 ${
                     isFading
                       ? "opacity-0 scale-75 blur-xs"
                       : "opacity-100 scale-100 blur-0"

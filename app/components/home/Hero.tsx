@@ -506,7 +506,7 @@ function IndividualButton() {
     <button
       ref={btnRef}
       type="button"
-      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/[0.03] px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] cursor-pointer select-none"
+      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] cursor-pointer select-none"
     >
       <span
         ref={liquidRef}
@@ -517,7 +517,7 @@ function IndividualButton() {
       <span className="relative z-10 flex h-4 items-center">
         <span
           ref={barRef}
-          className="block h-[14px] w-[3.5px] rounded-[1px] bg-[#e7ff3d] transition-colors"
+          className="block h-3.5 w-[3.5px] rounded-[1px] bg-[#e7ff3d] transition-colors"
         />
       </span>
 
@@ -639,7 +639,7 @@ function OrganisationButton() {
     <button
       ref={btnRef}
       type="button"
-      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/[0.03] px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] select-none cursor-pointer"
+      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] select-none cursor-pointer"
     >
       <span
         ref={fillRef}
@@ -647,14 +647,14 @@ function OrganisationButton() {
         style={{ transform: "scaleX(0)" }}
       />
 
-      <span className="relative z-10 flex h-4 items-center gap-[3px]">
+      <span className="relative z-10 flex h-4 items-center gap-0.75">
         {[0, 1, 2, 3].map((i) => (
           <span
             key={i}
             ref={(el) => {
               barRefs.current[i] = el;
             }}
-            className="block h-[14px] w-[3.5px] rounded-[1px] bg-[#e7ff3d] transition-colors"
+            className="block h-3.5 w-[3.5px] rounded-[1px] bg-[#e7ff3d] transition-colors"
           />
         ))}
       </span>

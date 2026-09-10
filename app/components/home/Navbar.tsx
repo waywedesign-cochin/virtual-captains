@@ -85,7 +85,7 @@ export default function Navbar() {
   return (
     <>
       {/* Top Segmented Scroll Progress Bar (EchoFi prog-wrap) */}
-      <div className="fixed top-0 left-0 right-0 z-60 pointer-events-none h-[2px]">
+      <div className="fixed top-0 left-0 right-0 z-60 pointer-events-none h-0.5">
         <div
           className="h-full bg-linear-to-r from-[#38bdf8] via-[#e7ff3d] to-[#38bdf8] origin-left transition-transform duration-75 ease-out shadow-[0_0_8px_rgba(231,255,61,0.5)]"
           style={{ transform: `scaleX(${scrollProgress})` }}
@@ -105,7 +105,7 @@ export default function Navbar() {
           isSticky ? "pt-3 sm:pt-4" : "pt-5 sm:pt-6"
         }`}
       >
-        <div className="w-full max-w-[1488px] mx-auto px-4 sm:px-8 lg:px-12 flex justify-center">
+        <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 flex justify-center">
           {/*
             ECHOFI SIGNATURE MORPHING HEADER GRID (.header-grid):
             - In Top State: Spans full container width, transparent background, clean spacing
@@ -115,7 +115,7 @@ export default function Navbar() {
           <div
             className={`pointer-events-auto transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] flex items-center justify-between ${
               isSticky
-                ? "w-full max-w-[656px] rounded-full bg-linear-to-r from-white/[0.14] via-white/[0.08] to-white/[0.12] bg-[#14151a]/35 backdrop-blur-2xl border border-white/20 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.4),inset_0_1px_1.5px_0_rgba(255,255,255,0.3)] p-2 gap-3 sm:gap-5"
+                ? "w-full max-w-164 rounded-full bg-linear-to-r from-white/[0.14] via-white/8 to-white/12 bg-[#14151a]/35 backdrop-blur-2xl border border-white/20 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.4),inset_0_1px_1.5px_0_rgba(255,255,255,0.3)] p-2 gap-3 sm:gap-5"
                 : "w-full max-w-full rounded-full bg-transparent border border-transparent p-0 gap-4 sm:gap-8"
             }`}
           >
@@ -141,7 +141,7 @@ export default function Navbar() {
                   width={140}
                   height={28}
                   className={`w-auto object-contain transition-all duration-400 group-hover:scale-102 ${
-                    isSticky ? "h-[19px] sm:h-[21px]" : "h-[28px] sm:h-[32px]"
+                    isSticky ? "h-4.75 sm:h-5.25" : "h-7 sm:h-8"
                   }`}
                   priority
                 />
@@ -189,17 +189,17 @@ export default function Navbar() {
                       onClick={(e) => handleNavClick(e, item.href)}
                       onMouseEnter={() => setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
-                      className="relative h-8 min-w-[24px] sm:min-w-[28px] flex items-center justify-center select-none cursor-pointer group"
+                      className="relative h-8 min-w-6 sm:min-w-7 flex items-center justify-center select-none cursor-pointer group"
                       aria-label={item.label}
                     >
                       {/* Minimal 6px White Dot (.header-link-dot) */}
                       <span
                         className={`block rounded-full transition-all duration-200 ${
                           isHovered
-                            ? "h-[7px] w-[7px] bg-white scale-125 shadow-[0_0_8px_rgba(255,255,255,0.95)]"
+                            ? "h-1.75 w-1.75 bg-white scale-125 shadow-[0_0_8px_rgba(255,255,255,0.95)]"
                             : isActive
-                              ? "h-[6px] w-[6px] bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]"
-                              : "h-[5px] w-[5px] bg-white/45 group-hover:bg-white/85 group-hover:scale-120"
+                              ? "h-1.5 w-1.5 bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]"
+                              : "h-1.25 w-1.25 bg-white/45 group-hover:bg-white/85 group-hover:scale-120"
                         }`}
                       />
 
@@ -224,7 +224,7 @@ export default function Navbar() {
                   onClick={() => setIsBookingOpen(true)}
                   className="group relative isolate overflow-hidden rounded-full bg-[#0d0d0d] hover:bg-[#181818] border border-white/15 hover:border-white/40 px-5 sm:px-6 py-2.5 text-[13px] font-medium tracking-wide text-white transition-all duration-300 shadow-sm cursor-pointer select-none"
                 >
-                  <span className="block transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-[150%]">
+                  <span className="block transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-[-150%]">
                     BOOK A CALL
                   </span>
                   <span className="absolute inset-0 flex items-center justify-center translate-y-[150%] transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-0 text-white font-semibold">
@@ -240,7 +240,7 @@ export default function Navbar() {
                   onClick={() => setIsBookingOpen(true)}
                   className="group relative isolate overflow-hidden rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-4 sm:px-5 py-2 text-[11.5px] sm:text-[12px] font-bold tracking-wider text-[#0a0b0d] shadow-[0_0_18px_rgba(231,255,61,0.35)] hover:shadow-[0_0_24px_rgba(231,255,61,0.55)] transition-all duration-300 cursor-pointer select-none"
                 >
-                  <span className="block transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-[150%]">
+                  <span className="block transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-[-150%]">
                     BOOK A CALL
                   </span>
                   <span className="absolute inset-0 flex items-center justify-center translate-y-[150%] transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-0 text-white font-bold bg-[#0a0b0d]">
@@ -254,7 +254,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden relative flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white transition-colors hover:bg-white/10 cursor-pointer"
+                  className="lg:hidden relative flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/4 text-white transition-colors hover:bg-white/10 cursor-pointer"
                   aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                 >
                   <div

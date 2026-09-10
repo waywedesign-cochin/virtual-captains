@@ -268,7 +268,7 @@ export default function Endorsement() {
                 key={item.name}
                 aria-hidden={!isCenter}
                 onClick={() => setActive(i)}
-                className={`absolute flex h-[390px] w-[min(88vw,320px)] sm:h-[420px] sm:w-[350px] cursor-pointer flex-col justify-between overflow-hidden rounded-[24px] p-6 sm:p-7 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
+                className={`absolute flex h-97.5 w-[min(88vw,320px)] sm:h-105 sm:w-87.5 cursor-pointer flex-col justify-between overflow-hidden rounded-3xl p-6 sm:p-7 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
                 style={{
                   transform: `translateX(${translateX}) scale(${scale})`,
                   opacity,
@@ -315,13 +315,13 @@ export default function Endorsement() {
                     />
                   </svg>
 
-                  <p className={`mt-3.5 max-w-[185px] sm:max-w-[205px] font-serif text-[14px] sm:text-[15.5px] font-normal leading-[1.38] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
+                  <p className={`mt-3.5 max-w-46.25 sm:max-w-51.25 font-serif text-[14px] sm:text-[15.5px] font-normal leading-[1.38] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
                     {item.quote}
                   </p>
                 </div>
 
                 {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
-                <div className="relative z-10 mt-auto max-w-[170px] pt-3">
+                <div className="relative z-10 mt-auto max-w-42.5 pt-3">
                   <h4 className="font-serif text-[17px] sm:text-[18.5px] font-medium text-white tracking-wide">
                     {item.name}
                   </h4>
@@ -339,7 +339,7 @@ export default function Endorsement() {
                   <img
                     src={item.photo}
                     alt={item.name}
-                    className={`pointer-events-none absolute -bottom-1 -right-2 h-[80%] max-h-[350px] w-[58%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
+                    className={`pointer-events-none absolute -bottom-1 -right-2 h-[80%] max-h-87.5 w-[58%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
                   />
                 )}
               </article>

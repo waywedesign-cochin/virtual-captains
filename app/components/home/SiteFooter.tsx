@@ -356,7 +356,7 @@ export default function SiteFooter() {
         {/* floating gradient orbs for depth */}
         <div
           ref={orb1Ref}
-          className="pointer-events-none absolute -left-24 -top-24 z-0 h-[340px] w-[340px] rounded-full opacity-30 blur-3xl sm:h-[420px] sm:w-[420px]"
+          className="pointer-events-none absolute -left-24 -top-24 z-0 h-85 w-85 rounded-full opacity-30 blur-3xl sm:h-105 sm:w-105"
           style={{
             background:
               "radial-gradient(circle, #e7ff3d 0%, transparent 70%)",
@@ -364,7 +364,7 @@ export default function SiteFooter() {
         />
         <div
           ref={orb2Ref}
-          className="pointer-events-none absolute -bottom-32 -right-16 z-0 h-[300px] w-[300px] rounded-full opacity-25 blur-3xl sm:h-[380px] sm:w-[380px]"
+          className="pointer-events-none absolute -bottom-32 -right-16 z-0 h-75 w-75 rounded-full opacity-25 blur-3xl sm:h-95 sm:w-95"
           style={{
             background:
               "radial-gradient(circle, #7fb0ff 0%, transparent 70%)",
@@ -372,9 +372,9 @@ export default function SiteFooter() {
         />
 
         {/* top hairline fade so the pin transition doesn't hard-cut */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-24 bg-gradient-to-b from-black/10 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-24 bg-linear-to-b from-black/10 to-transparent" />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col items-center">
+        <div className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center">
           {/* Stage: wordmark and nav buttons occupy the exact same footprint,
               stacked on top of each other, so as the logo fades away the
               links are already sitting right where it was — no dead space,

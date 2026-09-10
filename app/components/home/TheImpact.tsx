@@ -165,7 +165,7 @@ export default function TheImpact() {
       />
 
       {/* ---------- DESKTOP: STAGGERED HORIZONTAL TIMELINE (lg and up) ---------- */}
-      <div className="relative z-10 mx-auto hidden h-[280px] w-full max-w-[1360px] lg:block">
+      <div className="relative z-10 mx-auto hidden h-70 w-full max-w-340 lg:block">
         {/* Continuous Horizontal Line */}
         <div className="absolute inset-x-0 top-1/2 h-[1.5px] -translate-y-1/2 bg-[#3b82f6]/45 shadow-[0_0_10px_rgba(59,130,246,0.25)]" />
 
@@ -203,7 +203,7 @@ export default function TheImpact() {
                   </span>
                   {stat.suffix}
                 </p>
-                <p className="mt-2 max-w-[200px] font-serif text-[clamp(0.95rem,1.15vw,1.18rem)] italic leading-tight text-white/90">
+                <p className="mt-2 max-w-50 font-serif text-[clamp(0.95rem,1.15vw,1.18rem)] italic leading-tight text-white/90">
                   {stat.label}
                 </p>
               </div>

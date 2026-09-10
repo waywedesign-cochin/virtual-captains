@@ -336,7 +336,7 @@ export default function OurApproach() {
       />
 
       {/* ---------- RIGHT-SIDE SCROLL-DRIVEN ARC & 3 BUBBLES ---------- */}
-      <div className="pointer-events-none absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:block h-[clamp(320px,48vh,440px)] w-[300px]">
+      <div className="pointer-events-none absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:block h-[clamp(320px,48vh,440px)] w-75">
         <svg viewBox="0 0 300 420" className="h-full w-full overflow-visible">
           {/* Subtle glow behind arc */}
           <path

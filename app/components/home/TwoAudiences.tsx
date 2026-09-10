@@ -361,7 +361,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             {/* RIGHT COLUMN: BACKGROUND SHAPE & AUDIENCE CONTENT */}
             <div
               ref={rhsContainerRef}
-              className="relative h-[410px] sm:h-[440px] lg:h-[460px] xl:h-[490px] w-full flex items-center"
+              className="relative h-102.5 sm:h-110 lg:h-115 xl:h-122.5 w-full flex items-center"
             >
               {/* DESKTOP BACKGROUND WEDGE (Preserves natural 724:1084 aspect ratio, avoids squishing) */}
               <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 xl:-right-2 w-[140%] xl:w-[150%] h-[135%] xl:h-[145%] hidden lg:flex items-center justify-end">
@@ -374,10 +374,10 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               </div>
 
               {/* DESKTOP AMBIENT BLUE RADIAL GLOW (Envelops all text in deep luminous blue light) */}
-              <div className="pointer-events-none absolute -inset-8 rounded-[36px] bg-[radial-gradient(ellipse_at_60%_50%,_rgba(29,99,237,0.38)_0%,_rgba(20,60,180,0.18)_50%,_transparent_75%)] blur-2xl hidden lg:block" />
+              <div className="pointer-events-none absolute -inset-8 rounded-[36px] bg-[radial-gradient(ellipse_at_60%_50%,rgba(29,99,237,0.38)_0%,rgba(20,60,180,0.18)_50%,transparent_75%)] blur-2xl hidden lg:block" />
 
               {/* MOBILE & TABLET RESPONSIVE CONTAINER CARD (Active on screens < lg) */}
-              <div className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-3xl border border-white/10 bg-gradient-to-br from-[#1d63ed]/15 via-white/[0.03] to-transparent backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.45)] lg:hidden overflow-hidden">
+              <div className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-3xl border border-white/10 bg-linear-to-br from-[#1d63ed]/15 via-white/3 to-transparent backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.45)] lg:hidden overflow-hidden">
                 <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-[#1d63ed]/25 blur-3xl" />
                 <div className="absolute -left-10 -bottom-10 h-64 w-64 rounded-full bg-[#1d63ed]/15 blur-3xl" />
               </div>
@@ -385,7 +385,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               {/* FIRST STATE: Organisations */}
               <div
                 ref={orgsTextRef}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-[450px]"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
               >
                 {/* Mobile Tab Switcher */}
                 <div className="flex lg:hidden items-center gap-2 mb-1">
@@ -453,7 +453,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               <div
                 id="individuals"
                 ref={individualsTextRef}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-[450px]"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
               >
                 {/* Mobile Tab Switcher */}
                 <div className="flex lg:hidden items-center gap-2 mb-1">
