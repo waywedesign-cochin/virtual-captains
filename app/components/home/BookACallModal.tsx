@@ -153,7 +153,7 @@ export default function BookACallModal({
               </div>
 
               <label className="flex flex-col gap-1.5 w-full">
-                <span className="text-[12px] font-medium text-black/70">Email</span>
+                <span className="text-[12px] font-medium text-black/70">Work Email</span>
                 <input
                   type="email"
                   required
@@ -186,24 +186,36 @@ export default function BookACallModal({
                 </div>
               </label>
 
-              {/* Conditional: Number of employees (Only for Organisation) */}
+              {/* Conditional: Fields Only for Organisation */}
               {audience === "organisation" && (
-                <label className="flex flex-col gap-1.5 w-full animate-in fade-in slide-in-from-top-2 duration-300">
-                  <span className="text-[12px] font-medium text-black/70">Number of Employees</span>
-                  <select
-                    required
-                    defaultValue=""
-                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
-                  >
-                    <option value="" disabled>Select an option</option>
-                    <option value="1-10">1-10</option>
-                    <option value="11-50">11-50</option>
-                    <option value="51-100">51-100</option>
-                    <option value="101-200">101-200</option>
-                    <option value="201-500">201-500</option>
-                    <option value="500+">500+</option>
-                  </select>
-                </label>
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <label className="flex flex-col gap-1.5 w-full">
+                    <span className="text-[12px] font-medium text-black/70">Your Role/Designation</span>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Sales Manager"
+                      className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                    />
+                  </label>
+                  
+                  <label className="flex flex-col gap-1.5 w-full">
+                    <span className="text-[12px] font-medium text-black/70">Number of Employees</span>
+                    <select
+                      required
+                      defaultValue=""
+                      className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
+                    >
+                      <option value="" disabled>Select an option</option>
+                      <option value="1-10">1-10</option>
+                      <option value="11-50">11-50</option>
+                      <option value="51-100">51-100</option>
+                      <option value="101-200">101-200</option>
+                      <option value="201-500">201-500</option>
+                      <option value="500+">500+</option>
+                    </select>
+                  </label>
+                </div>
               )}
 
               <label className="flex flex-col gap-1.5 w-full">

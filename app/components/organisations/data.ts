@@ -151,7 +151,7 @@ export const allProgrammes: ProgrammeItem[] = [
     badgeCategory: "First-Time Induction & Orientation",
     badgeMode: "Offline",
     badgeModeType: "offline",
-    title: "Every New Hire Prepared Before Their First Call",
+    title: "Turn New Hires Into Revenue-Ready Reps",
     description:
       "Groom Studio is a first-of-its-kind offline sales agent onboarding programme. Induction, orientation, brand immersion, and first-week roleplay come together in-studio, so every new hire is ready for the floor before their first live call.",
     ctaText: "Book Groom Studio Session",

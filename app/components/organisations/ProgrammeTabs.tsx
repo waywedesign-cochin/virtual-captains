@@ -103,7 +103,7 @@ export default function ProgrammeTabs() {
               </span>
             </div>
             <h3 className="text-3xl md:text-4xl font-bold text-[#2563eb] leading-tight">
-              Every New Hire Prepared Before Their First Call
+              Turn New Hires Into Revenue-Ready Reps
             </h3>
           </div>
           <div className="flex items-center">
