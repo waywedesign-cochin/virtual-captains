@@ -50,7 +50,12 @@ export default function SiteFooter() {
 
       if (reduceMotion) {
         gsap.set(
-          [ctaRef.current, wordmarkRef.current, actionsRef.current, legalRef.current],
+          [
+            ctaRef.current,
+            wordmarkRef.current,
+            actionsRef.current,
+            legalRef.current,
+          ],
           { opacity: 1, y: 0, x: 0, scale: 1 },
         );
         return;
@@ -81,7 +86,13 @@ export default function SiteFooter() {
             y: 0,
             duration: 0.85,
             keyframes: [
-              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              {
+                scale: 1.15,
+                opacity: 1,
+                y: -4,
+                duration: 0.42,
+                ease: "power2.out",
+              },
               { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
               { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
             ],
@@ -116,7 +127,12 @@ export default function SiteFooter() {
           xPercent: -50,
           yPercent: -50,
         });
-        gsap.to(fill, { scale: 1, duration: 0.6, ease: "power3.out", overwrite: true });
+        gsap.to(fill, {
+          scale: 1,
+          duration: 0.6,
+          ease: "power3.out",
+          overwrite: true,
+        });
         gsap.to(ctaLabelRef.current, {
           color: "#0a0b0f",
           duration: 0.35,
@@ -139,7 +155,12 @@ export default function SiteFooter() {
 
       const shrink = (x: number, y: number) => {
         gsap.set(fill, { left: x, top: y });
-        gsap.to(fill, { scale: 0, duration: 0.4, ease: "power2.in", overwrite: true });
+        gsap.to(fill, {
+          scale: 0,
+          duration: 0.4,
+          ease: "power2.in",
+          overwrite: true,
+        });
         gsap.to(ctaLabelRef.current, {
           color: "#101010",
           duration: 0.3,
@@ -329,7 +350,7 @@ export default function SiteFooter() {
               </span>
             </span>
           </button>
-          
+
           <p className="mt-2 text-center font-serif text-[clamp(1.25rem,2.5vw,2rem)] font-medium text-[#101010] tracking-tight">
             Great Conversations Create Greater Possibilities
           </p>
@@ -346,138 +367,145 @@ export default function SiteFooter() {
           this one just hadn't needed it before the two-phase reveal. */}
       <div className="w-full bg-[#06133a]">
         <footer
-        ref={footerRef}
-        id="resources"
-        className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
-        style={{
-          background:
-            "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)",
-        }}
-      >
-        {/* animated dot mesh, seamlessly fading in as the blue deepens */}
-        <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-45"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px)",
-            backgroundSize: "26px 26px",
-            maskImage:
-              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
-          }}
-        />
-
-        {/* floating gradient orbs for depth */}
-        <div
-          ref={orb1Ref}
-          className="pointer-events-none absolute -left-24 top-[22%] z-0 h-85 w-85 rounded-full opacity-30 blur-3xl sm:h-105 sm:w-105"
+          ref={footerRef}
+          id="resources"
+          className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
           style={{
             background:
-              "radial-gradient(circle, #e7ff3d 0%, transparent 70%)",
+              "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)",
           }}
-        />
-        <div
-          ref={orb2Ref}
-          className="pointer-events-none absolute -bottom-32 -right-16 z-0 h-75 w-75 rounded-full opacity-25 blur-3xl sm:h-95 sm:w-95"
-          style={{
-            background:
-              "radial-gradient(circle, #7fb0ff 0%, transparent 70%)",
-          }}
-        />
+        >
+          {/* animated dot mesh, seamlessly fading in as the blue deepens */}
+          <div
+            className="pointer-events-none absolute inset-0 z-0 opacity-45"
+            style={{
+              backgroundImage:
+                "radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px)",
+              backgroundSize: "26px 26px",
+              maskImage:
+                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
+            }}
+          />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center">
-          {/* Stage: wordmark and nav buttons occupy the exact same footprint,
+          {/* floating gradient orbs for depth */}
+          <div
+            ref={orb1Ref}
+            className="pointer-events-none absolute -left-24 top-[22%] z-0 h-85 w-85 rounded-full opacity-30 blur-3xl sm:h-105 sm:w-105"
+            style={{
+              background:
+                "radial-gradient(circle, #e7ff3d 0%, transparent 70%)",
+            }}
+          />
+          <div
+            ref={orb2Ref}
+            className="pointer-events-none absolute -bottom-32 -right-16 z-0 h-75 w-75 rounded-full opacity-25 blur-3xl sm:h-95 sm:w-95"
+            style={{
+              background:
+                "radial-gradient(circle, #7fb0ff 0%, transparent 70%)",
+            }}
+          />
+
+          <div className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center">
+            {/* Stage: wordmark and nav buttons occupy the exact same footprint,
               stacked on top of each other, so as the logo fades away the
               links are already sitting right where it was — no dead space,
               no slide-in-from-nowhere. */}
-          <div className="relative flex w-full items-center justify-center">
-            <div ref={wordmarkRef} className="flex w-full justify-center">
-              <Image
-                src="/home/logo.png"
-                alt="Virtual Captains"
-                width={1200}
-                height={240}
-                // w-[min(1100px,76%)]: sized against the padded container's
-                // own width, not the raw viewport (92vw ignored the container's
-                // lg:px-16 padding and overflowed past it at lg widths). 76%
-                // (not 92%) is deliberate: it leaves enough centering margin
-                // that the logo's left edge clears the fixed SideNav's ~160px
-                // footprint too — the nav stays bold on "Hiring Partners"
-                // through the whole footer, so this isn't just a container-fit
-                // problem, it needs real clearance from the page edge.
-                className="h-auto w-[min(1100px,92%)] drop-shadow-[0_8px_40px_rgba(0,0,0,0.25)] lg:w-[min(1100px,76%)] object-contain"
-                priority={false}
-              />
+            <div className="relative flex w-full items-center justify-center">
+              <div ref={wordmarkRef} className="flex w-full justify-center">
+                <Image
+                  src="/home/logo.png"
+                  alt="Virtual Captains"
+                  width={1200}
+                  height={240}
+                  // w-[min(1100px,76%)]: sized against the padded container's
+                  // own width, not the raw viewport (92vw ignored the container's
+                  // lg:px-16 padding and overflowed past it at lg widths). 76%
+                  // (not 92%) is deliberate: it leaves enough centering margin
+                  // that the logo's left edge clears the fixed SideNav's ~160px
+                  // footprint too — the nav stays bold on "Hiring Partners"
+                  // through the whole footer, so this isn't just a container-fit
+                  // problem, it needs real clearance from the page edge.
+                  className="h-auto w-[min(1100px,92%)] drop-shadow-[0_8px_40px_rgba(0,0,0,0.25)] lg:w-[min(1100px,76%)] object-contain"
+                  priority={false}
+                />
+              </div>
+
+              <div
+                ref={actionsRef}
+                className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-4 sm:gap-6"
+              >
+                <p className="text-center font-serif font-bold text-[clamp(1.5rem,3vw,2.5rem)] text-white tracking-tight drop-shadow-sm">
+                  Trusted Partner for <br /> People, Teams & Organizations
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                  <button
+                    type="button"
+                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                  >
+                    For Individuals
+                  </button>
+                  <button
+                    type="button"
+                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                  >
+                    For Organisations
+                  </button>
+                </div>
+                <p>
+                  Practical Support | Real-World Experience | Measurable Imapact
+                </p>
+              </div>
             </div>
 
             <div
-              ref={actionsRef}
-              className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-4 sm:gap-6"
+              ref={legalRef}
+              className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
             >
-              <p className="text-center font-serif font-bold text-[clamp(1.5rem,3vw,2.5rem)] text-white tracking-tight drop-shadow-sm">
-                Trusted Partner for People, Teams & Organizations.
+              <a
+                href="#"
+                className="order-2 transition-colors hover:text-white sm:order-1"
+              >
+                Privacy Policy
+              </a>
+              <p className="order-1 text-center sm:order-2">
+                © All Rights Reserved by Virtual Captains{" "}
+                {new Date().getFullYear()}
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-                <button
-                  type="button"
-                  className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
-                >
-                  For Individuals
-                </button>
-                <button
-                  type="button"
-                  className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
-                >
-                  For Organisations
-                </button>
-              </div>
+              <p className="order-3">
+                Built by <span className="text-white/85">Web WeDesign</span>
+              </p>
             </div>
           </div>
 
-          <div
-            ref={legalRef}
-            className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
-          >
-            <a
-              href="#"
-              className="order-2 transition-colors hover:text-white sm:order-1"
-            >
-              Privacy Policy
-            </a>
-            <p className="order-1 text-center sm:order-2">
-              © All Rights Reserved by Virtual Captains {new Date().getFullYear()}
-            </p>
-            <p className="order-3">
-              Built by <span className="text-white/85">Web WeDesign</span>
-            </p>
-          </div>
-        </div>
-
-        {/* back-to-top affordance, only meaningful once the footer content
+          {/* back-to-top affordance, only meaningful once the footer content
             has actually revealed */}
-        <button
-          ref={backToTopRef}
-          type="button"
-          onClick={scrollToTop}
-          aria-label="Back to top"
-          className="absolute bottom-6 right-6 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-[#0a1c52] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:bottom-8 sm:right-8"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className="h-5 w-5 fill-none stroke-current stroke-2"
+          <button
+            ref={backToTopRef}
+            type="button"
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className="absolute bottom-6 right-6 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-[#0a1c52] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:bottom-8 sm:right-8"
           >
-            <path
-              d="M12 19V5M5 12l7-7 7 7"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </footer>
+            <svg
+              viewBox="0 0 24 24"
+              className="h-5 w-5 fill-none stroke-current stroke-2"
+            >
+              <path
+                d="M12 19V5M5 12l7-7 7 7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </footer>
       </div>
 
-      <BookACallModal open={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
+      <BookACallModal
+        open={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+      />
     </>
   );
 }
