@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import Image from "next/image";
+import Link from "next/link";
 
 /**
  * Hero section for Virtual Captains.
@@ -427,7 +428,7 @@ export default function Hero() {
  * Button 1: "For Individuals"
  */
 function IndividualButton() {
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useRef<HTMLAnchorElement>(null);
   const liquidRef = useRef<HTMLSpanElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -494,9 +495,9 @@ function IndividualButton() {
   }, []);
 
   return (
-    <button
+    <Link
+      href="/individuals"
       ref={btnRef}
-      type="button"
       className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] cursor-pointer select-none"
     >
       <span
@@ -515,7 +516,7 @@ function IndividualButton() {
       <span ref={textRef} className="relative z-10 transition-colors">
         For Individuals
       </span>
-    </button>
+    </Link>
   );
 }
 
@@ -523,7 +524,7 @@ function IndividualButton() {
  * Button 2: "For Organisations"
  */
 function OrganisationButton() {
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useRef<HTMLAnchorElement>(null);
   const fillRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const barRefs = useRef<Array<HTMLSpanElement | null>>([]);
@@ -618,9 +619,9 @@ function OrganisationButton() {
   }, []);
 
   return (
-    <button
+    <Link
+      href="/organisations"
       ref={btnRef}
-      type="button"
       className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] select-none cursor-pointer"
     >
       <span
@@ -644,7 +645,7 @@ function OrganisationButton() {
       <span ref={textRef} className="relative z-10 transition-colors">
         For Organisations
       </span>
-    </button>
+    </Link>
   );
 }
 
