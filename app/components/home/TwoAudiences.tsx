@@ -390,7 +390,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             {/* CENTER DIVIDER: GLOWING YELLOW BUBBLE WITH CENTER LINE IN BETWEEN LHS & RHS */}
             <div
               ref={centerDividerRef}
-              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center justify-center h-[72%] max-h-[380px] z-20"
+              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center justify-center h-[72%] max-h-95 z-20"
               aria-hidden="true"
             >
               {/* Top line segment */}

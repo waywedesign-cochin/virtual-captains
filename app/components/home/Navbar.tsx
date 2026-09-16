@@ -106,7 +106,7 @@ export default function Navbar() {
 
             {/* 2. CENTER: Navigation Links / Dots (.header-links-wrap) */}
             {/* TOP STATE: Full Words for distinct pages (.header-links) */}
-            {!isSticky && (
+            {!isSticky && pathname !== '/individuals' && (
               <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-8.5">
                 {NAV_ITEMS.map((item) => {
                   const isActive = pathname === item.href;
@@ -131,7 +131,7 @@ export default function Navbar() {
             {/* STICKY STATE: Exactly 7 Minimal Dots representing the 7 Pages */}
             {isSticky && (
               <nav
-                className="flex items-center justify-center gap-1 sm:gap-2 px-1"
+                className={`flex items-center justify-center gap-1 sm:gap-2 px-1 ${pathname === '/individuals' ? 'lg:hidden' : ''}`}
                 aria-label="Pages Navigation"
               >
                 {NAV_ITEMS.map((item, index) => {
@@ -180,7 +180,7 @@ export default function Navbar() {
                   onClick={() => setIsBookingOpen(true)}
                   className="hidden sm:inline-flex items-center justify-center rounded-full bg-[#111217] hover:bg-[#181920] border border-white/14 hover:border-white/28 px-5 py-2 text-[12px] xl:text-[13px] font-semibold text-white tracking-[0.02em] shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98"
                 >
-                  BOOK A CALL
+                  LET'S CONNECT
                 </button>
               )}
 
@@ -191,8 +191,8 @@ export default function Navbar() {
                   onClick={() => setIsBookingOpen(true)}
                   className="inline-flex items-center justify-center rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-3.5 sm:px-4.5 py-1.5 text-[11px] sm:text-[12px] font-bold text-[#0a0b0d] tracking-[0.02em] shadow-[0_0_16px_rgba(231,255,61,0.4)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98 shrink-0"
                 >
-                  <span className="hidden sm:inline">BOOK A CALL</span>
-                  <span className="sm:hidden">BOOK</span>
+                  <span className="hidden sm:inline">LET'S CONNECT</span>
+                  <span className="sm:hidden">CONNECT</span>
                 </button>
               )}
 

@@ -312,7 +312,7 @@ export default function Hero() {
         className="pointer-events-none absolute -inset-10 z-1 will-change-transform"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.36) 1.2px, transparent 1.6px)",
+            "radial-gradient(rgba(255,255,255,0.16) 1.2px, transparent 1.6px)",
           backgroundSize: "26px 26px",
           maskImage:
             "linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.65) 75%, transparent 100%)",

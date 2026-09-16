@@ -232,7 +232,7 @@ export default function HiringPartners() {
                   className={`group absolute rounded-full flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 cursor-pointer select-none ${
                     pod.isCenter
                       ? "shadow-[0_1px_3px_rgba(0,0,0,0.12)] z-20 hover:shadow-[0_4px_16px_rgba(226,253,0,0.45)]"
-                      : "shadow-[0_1px_3px_rgba(0,0,0,0.06)] z-10 hover:!bg-white hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] hover:z-30"
+                      : "shadow-[0_1px_3px_rgba(0,0,0,0.06)] z-10 hover:bg-white! hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] hover:z-30"
                   }`}
                   style={{
                     left: `${pod.left}%`,

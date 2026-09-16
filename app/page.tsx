@@ -26,6 +26,12 @@ export default function Page() {
 
       <OurApproach />
       <CrossCountry />
+      {/* 
+        Corrected Wrapper: 
+        Uses relative positioning and a fixed minimum height so it takes up proper space 
+        in the scroll flow without overlapping the components above or below it.
+      */}
+
       <Endorsement />
       <TheImpact />
       <HiringPartners />

@@ -332,7 +332,7 @@ export default function SideNav() {
               itemRefs.current[i] = el;
             }}
             onClick={() => scrollToSection(i)}
-            className="pointer-events-auto cursor-pointer bg-transparent border-0 p-0 text-left whitespace-nowrap text-[11px] tracking-wide will-change-[filter,opacity] transition-transform duration-200 hover:scale-105 active:scale-95"
+            className={`pointer-events-auto cursor-pointer bg-transparent border-0 p-0 text-left whitespace-nowrap text-[11px] tracking-wide will-change-[filter,opacity] transition-all duration-200 hover:scale-105 hover:!opacity-100 hover:![filter:blur(0px)] active:scale-95 ${theme === "dark" ? "hover:!text-white" : "hover:!text-[#0a0b0d]"}`}
             aria-label={`Scroll to ${label}`}
           >
             {label}
