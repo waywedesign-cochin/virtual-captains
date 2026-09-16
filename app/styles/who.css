@@ -1,0 +1,65 @@
+/* ==========================================================================
+   Who this is for — remaining hand-authored mechanics only.
+
+   Everything else (layout, spacing, type, color) now lives as Tailwind
+   utility classes on WhoThisIsFor.tsx. What stays here is the one piece
+   that isn't safely expressible as plain utilities: the diagonal
+   mix-blend-mode sweep and its keyframe, plus the hue-rotate filter it
+   times against. `prefers-reduced-motion` collapses the animation to ~0 via
+   the global rule in base.css, no separate handling needed here.
+   ========================================================================== */
+
+[data-who-wave] img {
+  /* The slide switch drives this custom property; the base slide is
+     unfiltered. Same image throughout — only the tint changes. */
+  filter: hue-rotate(var(--wave-hue, 0deg));
+  transition: filter var(--dur-slow) var(--ease-out-expo);
+}
+
+/* A diagonal light sweeping bottom-right to top-left across the wave,
+   cyan through violet to magenta, timed with the hue change underneath so
+   it reads as carrying the new colour in rather than just tinting it.
+   Re-keyed per slide (see WhoThisIsFor.tsx) so the keyframe restarts from
+   its beginning every time rather than only playing once ever. A plain CSS
+   transition can't express a value that peaks then returns, hence an
+   animation instead. */
+.who__wave-sweep {
+  position: absolute;
+  inset: -25%;
+  pointer-events: none;
+  /* `color` takes the backdrop's luminosity but this layer's hue/saturation:
+     the white background (luminosity ~100%) stays white, but the mesh's own
+     lines — which have luminosity to take a tint — visibly recolour as the
+     band crosses them. `screen` only adds light and barely registers on a
+     mostly-white image; this is what actually reads as the sweep. */
+  mix-blend-mode: color;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 38%,
+    rgba(34, 211, 238, 0.92) 45%,
+    rgba(167, 139, 250, 0.95) 51%,
+    rgba(232, 90, 214, 0.92) 57%,
+    transparent 64%,
+    transparent 100%
+  );
+  background-size: 250% 250%;
+  animation: who-wave-sweep var(--dur-slow) var(--ease-out-expo) 1 both;
+}
+
+@keyframes who-wave-sweep {
+  0% {
+    background-position: 140% 140%;
+    opacity: 0;
+  }
+  38% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 1;
+  }
+  100% {
+    background-position: -40% -40%;
+    opacity: 0;
+  }
+}

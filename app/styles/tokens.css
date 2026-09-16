@@ -1,0 +1,197 @@
+/* ==========================================================================
+   Design tokens — sampled directly from the reference artboard (1512 x 5715)
+   ========================================================================== */
+
+:root {
+  /* ---- Reference frame -------------------------------------------------- */
+  --frame: 1512;
+  --frame-w: 1512px;
+
+  /* ---- Blues: hero atmosphere ------------------------------------------ */
+  --blue-300: #1064c2;
+  --blue-900: #0d0749;
+  --blue-950: #031c4c;
+
+  /* ---- Accents ---------------------------------------------------------- */
+  --cyan: #3ec6f5;
+  --pink: #e8749e;
+  --violet: #7b3fe4;
+  --magenta: #c6239e;
+  --electric: #1a5fd6;
+
+  /* ---- Neutrals --------------------------------------------------------- */
+  --white: #ffffff;
+  --ink: #0a0a0a;
+  --ink-soft: #2a2a2a;
+  --footer-muted: #2a6adb;
+
+  /* ---- Atmosphere gradients --------------------------------------------- */
+  /* The dark region is ONE continuous gradient spanning hero -> partner.
+     Do not split it per section or the seams become visible. */
+  /* Stops read off the reference at 200px intervals down the right edge (the
+     side the left-hand wash does not reach), so this is the true base gradient
+     with the wash factored out. Percentages are of the full 3119px dark run. */
+  --atmosphere: linear-gradient(
+    180deg,
+    #071e84 0%,
+    #092e97 9.6%,
+    #0832a1 16%,
+    #0631b3 22.4%,
+    #002ac2 28.9%,
+    #0127b7 35.3%,
+    #0323a7 41.7%,
+    #051e97 48.1%,
+    #071987 54.5%,
+    #081577 60.9%,
+    #0a1068 67.3%,
+    #0c0c58 73.7%,
+    #0d084c 80.2%,
+    #0d0647 86.6%,
+    #0d0544 93%,
+    #0e0644 100%
+  );
+
+  /* The hero's left-hand wash, separated into a horizontal colour ramp and a
+     vertical opacity mask — the reference's falloff is a hump in y and a
+     near-exponential decay in x, which no single radial reproduces. */
+  --hero-wash: radial-gradient(
+      52% 30% at 64% -2%,
+      rgba(40, 130, 255, 0.4) 0%,
+      rgba(40, 130, 255, 0.16) 52%,
+      rgba(40, 130, 255, 0) 88%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(20, 150, 240, 0.644) 0%,
+      rgba(20, 150, 240, 0.7) 16.5%,
+      rgba(20, 150, 240, 0.365) 33%,
+      rgba(20, 150, 240, 0.077) 66%,
+      rgba(20, 150, 240, 0.048) 83%,
+      rgba(20, 150, 240, 0) 100%
+    );
+
+  --hero-wash-mask: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.89) 0%,
+    rgba(0, 0, 0, 0.9) 12%,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 0.9) 50%,
+    rgba(0, 0, 0, 0.41) 70%,
+    rgba(0, 0, 0, 0.06) 90%,
+    rgba(0, 0, 0, 0) 100%
+  );
+
+  --footer-atmosphere: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f2f5fa 3%,
+    #cdd8ea 14%,
+    #92abd6 28%,
+    #3f77b1 46%,
+    #0b4098 60%,
+    #013392 66%,
+    #012a78 78%,
+    #04225f 88%,
+    #031c4c 100%
+  );
+
+  /* ---- Gradient text ---------------------------------------------------- */
+  --grad-hero-headline: linear-gradient(
+    96deg,
+    #8fc7f0 0%,
+    #5c94f8 22%,
+    #3560ef 52%,
+    #2544e7 74%,
+    #1120e7 100%
+  );
+  --grad-audience: linear-gradient(
+    92deg,
+    #3ec6f5 0%,
+    #5a8df0 28%,
+    #7b3fe4 62%,
+    #c6239e 100%
+  );
+  --grad-career: linear-gradient(93deg, #8b3dd8 0%, #a531c4 48%, #c6239e 100%);
+  --grad-cta-apply: linear-gradient(101deg, #7b2fd0 0%, #5b33d8 46%, #2e4be8 100%);
+  --grad-cta-partner: linear-gradient(101deg, #1b48d9 0%, #2f6bec 58%, #4d8cf5 100%);
+  --grad-book-call: linear-gradient(97deg, #21a6e8 0%, #1f74e4 52%, #1c50dd 100%);
+
+  /* ---- Glass ------------------------------------------------------------ */
+  /* Measured, not invented: in the reference the cards barely tint what is
+     behind them. The panel reads as glass because of the border, the blur and
+     a shallow dark-to-light diagonal — a heavier fill looks like a plain
+     translucent box, which is the usual glassmorphism mistake. */
+  --glass-fill-cool: linear-gradient(
+    118deg,
+    rgba(0, 6, 70, 0.075) 0%,
+    rgba(0, 10, 90, 0.02) 38%,
+    rgba(190, 215, 255, 0.045) 100%
+  );
+  --glass-fill-deep: linear-gradient(
+    118deg,
+    rgba(0, 0, 32, 0.2) 0%,
+    rgba(0, 4, 60, 0.08) 42%,
+    rgba(215, 230, 255, 0.06) 100%
+  );
+  --glass-border-cool: rgba(212, 232, 255, 0.48);
+  --glass-border-deep: rgba(206, 222, 255, 0.5);
+  /* The bloom around the Rehearse card is a dusty rose, matching its title. */
+  --glass-glow-deep: rgba(201, 121, 145, 0.3);
+  --glass-glow-deep-far: rgba(190, 115, 160, 0.16);
+  --glass-blur: 14px;
+
+  /* ---- Hairlines & nodes ------------------------------------------------ */
+  --hairline: rgba(198, 222, 255, 0.34);
+  --hairline-dim: rgba(160, 190, 245, 0.18);
+  --node: #eef6ff;
+
+  /* ---- Type ------------------------------------------------------------- */
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+
+  /* Every size below was solved, not estimated: the reference's ink width for
+     each string was measured, then divided by that string's advance width in
+     the actual Poppins weight. The vw term reproduces the value exactly at the
+     1512 reference width and scales down from there. */
+  --fs-hero-eyebrow: clamp(1.5rem, 2.745vw, 2.594rem); /* 41.5 */
+  --fs-hero-headline: clamp(2.5rem, 6.151vw, 5.8125rem); /* 93 */
+  --fs-cta-label: clamp(0.9375rem, 1.561vw, 1.475rem); /* 23.6 */
+  --fs-book-call: clamp(0.875rem, 1.435vw, 1.35625rem); /* 21.7 */
+  --fs-section-title: clamp(2.25rem, 6.349vw, 6rem); /* 96 */
+  --fs-statement-1: clamp(1.5rem, 4.101vw, 3.875rem); /* 62 */
+  --fs-statement-2: clamp(1.25rem, 2.778vw, 2.625rem); /* 42 */
+  --fs-card-one: clamp(0.875rem, 1.224vw, 1.15625rem); /* 18.5 */
+  --fs-card-two: clamp(0.9375rem, 1.501vw, 1.41875rem); /* 22.7 */
+  --fs-partner-title: clamp(2rem, 4.299vw, 4.0625rem); /* 65 */
+  --fs-hub: clamp(0.875rem, 1.343vw, 1.26875rem); /* 20.3 */
+  --fs-who-title: clamp(1.875rem, 4.332vw, 4.09375rem); /* 65.5 */
+  --fs-audience-title: clamp(1.75rem, 3.175vw, 3rem); /* 48 */
+  --fs-audience-sub: clamp(1.25rem, 2.07vw, 1.95625rem); /* 31.3 */
+  --fs-body: clamp(1rem, 1.495vw, 1.4125rem); /* 22.6 */
+  --fs-pill: clamp(1rem, 1.72vw, 1.625rem); /* 26 */
+  --fs-career: clamp(3rem, 7vw, 6.5rem);
+  --fs-footer-word: clamp(3.5rem, 11.839vw, 11.1875rem); /* 179 */
+  --fs-footer-link: clamp(1rem, 1.283vw, 1.2125rem); /* 19.4 */
+  --fs-footer-product: clamp(1.5rem, 2.573vw, 2.43125rem); /* 38.9 */
+  --fs-label: clamp(0.75rem, 0.93vw, 0.875rem);
+  --fs-meta: clamp(0.875rem, 1.257vw, 1.1875rem); /* 19 */
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-fast: 200ms;
+  --dur-base: 420ms;
+  --dur-slow: 900ms;
+
+  /* ---- Layout ----------------------------------------------------------- */
+  --gutter: clamp(1.25rem, 4.23vw, 4rem);
+  --radius-card: clamp(16px, 1.6vw, 24px);
+  --radius-box: 10px;
+  --radius-pill: 999px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --glass-blur: 0px;
+  }
+}

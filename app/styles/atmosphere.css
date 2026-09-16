@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Dark atmosphere
+
+   Hero, Curriculum and Partner Network sit inside ONE continuous gradient.
+   In the reference this gradient runs unbroken from y=208 to y=3119 — the
+   three sections are not separately-backgrounded blocks, they are content
+   floating in a single environment. Splitting it produces visible seams.
+
+   IMPORTANT: this element must never receive `transform`, `filter` or
+   `will-change`. It is the ancestor of every pinned ScrollTrigger section,
+   and any of those would create a containing block and break `position:
+   fixed` pinning.
+   ========================================================================== */
+
+.atmosphere {
+  position: relative;
+  isolation: isolate;
+  background-image: var(--atmosphere);
+}
+
+.atmosphere__wash {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: min(1000px, 66.14vw);
+  background-image: var(--hero-wash);
+  -webkit-mask-image: var(--hero-wash-mask);
+  mask-image: var(--hero-wash-mask);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.atmosphere__grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(
+      circle at 18% 22%,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0) 45%
+    ),
+    radial-gradient(
+      circle at 82% 68%,
+      rgba(120, 90, 255, 0.07) 0%,
+      rgba(120, 90, 255, 0) 50%
+    );
+}
+
+.atmosphere > .section {
+  position: relative;
+  z-index: 2;
+}

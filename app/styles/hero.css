@@ -1,0 +1,384 @@
+/* ==========================================================================
+   Hero
+
+   Reference frame: 1512 x 1000. Every offset below is a percentage of that
+   box so the composition holds its proportions as the frame scales.
+   ========================================================================== */
+
+.hero {
+  --hero-h: clamp(640px, 66.14vw, 1000px);
+  height: var(--hero-h);
+  min-height: 640px;
+  overflow: hidden;
+}
+
+.hero__frame {
+  height: 100%;
+}
+
+/* --- Header -------------------------------------------------------------- */
+.hero__header {
+  position: absolute;
+  inset: clamp(1.25rem, 2.91vw, 2.75rem) clamp(1.25rem, 3.84vw, 3.625rem) auto
+    clamp(1.25rem, 4.17vw, 3.9375rem);
+  z-index: 6;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* --- Silhouette ----------------------------------------------------------
+   PLACEHOLDER figure: a plain flat-fill SVG silhouette (see silhouette.svg),
+   not a photograph, so its softness comes from the fill's own gradient
+   rather than a simulated multiply blend. Swap the asset for a real
+   photograph when one is supplied; if it's a dark-on-light photo again,
+   bring back a baked-in-multiply treatment instead of raising this opacity.
+   -------------------------------------------------------------------------- */
+.hero__figure {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.6;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 97%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 97%
+  );
+}
+
+.hero__figure img {
+  width: 100%;
+  height: auto;
+}
+
+/* A cool bloom lifted behind the head, sitting under the multiply layer. */
+.hero__halo {
+  position: absolute;
+  top: 1%;
+  left: 50%;
+  z-index: 0;
+  width: clamp(200px, 19.8vw, 300px);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(96, 190, 255, 0.46) 0%,
+    rgba(70, 160, 255, 0.14) 44%,
+    rgba(70, 160, 255, 0) 72%
+  );
+}
+
+/* --- Orbit line system --------------------------------------------------- */
+/* One SVG, viewBox locked to the reference frame's upper band, so arcs,
+   nodes and labels scale together and stay spatially associated. */
+.hero__orbit {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 4;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.orbit__arc {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.orbit__arc--primary {
+  stroke: url(#orbitArcGradient);
+  stroke-width: 1.1;
+}
+
+.orbit__arc--secondary {
+  stroke: url(#orbitArcGradientSoft);
+  stroke-width: 1;
+}
+
+.orbit__arc--tertiary {
+  stroke: url(#orbitArcGradientFaint);
+  stroke-width: 1;
+}
+
+/* The travelling spark: a short bright segment with a warm-to-white
+   laser beam core cut with stroke-dasharray/dashoffset so a small
+   arc window slides continuously along the path.
+
+   Two paths share this role:
+     .orbit__comet-bloom — wide, Gaussian-blurred ambient halo
+     .orbit__comet        — crisp laser beam on top
+
+   Together they replicate the Fringe.us glowing line beam effect. */
+
+/* ── Ambient bloom (blurred glow halo) ─────────────────────────── */
+.orbit__comet-bloom {
+  fill: none;
+  stroke: url(#orbitCometGlow);
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+  filter: url(#orbitCometBloom);
+  mix-blend-mode: screen;
+}
+
+.orbit__comet-bloom[data-orbit-comet-bloom="primary"] {
+  stroke-width: 7;
+  opacity: 0.55;
+}
+
+.orbit__comet-bloom[data-orbit-comet-bloom="secondary"] {
+  stroke-width: 5;
+  opacity: 0.4;
+}
+
+/* ── Sharp crisp drawing line ────────────────────────────────────── */
+/* Same thin width as the arc so the growing line feels like the arc
+   itself is being drawn rather than a separate element sliding over it. */
+.orbit__comet {
+  fill: none;
+  stroke: url(#orbitCometTrail);
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+  /* Cool blue-white neon glow at the leading tip */
+  filter:
+    drop-shadow(0 0 2px rgba(147, 197, 253, 0.95))
+    drop-shadow(0 0 7px rgba(96, 165, 250, 0.6))
+    drop-shadow(0 0 16px rgba(59, 130, 246, 0.3));
+}
+
+.orbit__comet[data-orbit-comet="primary"] {
+  stroke-width: 1.5;
+}
+
+.orbit__comet[data-orbit-comet="secondary"] {
+  stroke-width: 1.1;
+  opacity: 0.85;
+}
+
+.orbit__comet[data-orbit-comet="tertiary"] {
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.orbit__node {
+  fill: var(--node);
+}
+
+.orbit__node-glow {
+  fill: url(#orbitNodeGlow);
+}
+
+.orbit__label {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 400;
+  fill: rgba(255, 255, 255, 0.92);
+  text-anchor: middle;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: fill var(--dur-fast) var(--ease-out-expo);
+}
+
+.orbit__label:hover {
+  fill: var(--white);
+}
+
+/* --- Copy ---------------------------------------------------------------- */
+.hero__copy {
+  position: absolute;
+  top: 35.4%;
+  left: 50%;
+  z-index: 5;
+  width: min(92%, 1180px);
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.hero__eyebrow {
+  font-size: var(--fs-hero-eyebrow);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: var(--white);
+}
+
+/* --reveal drives the entrance wipe. It rests at 100%, so the headline is
+   fully painted with no JavaScript — the animation only ever moves it from
+   below zero back to the state the stylesheet already describes. */
+.hero__headline {
+  --grad: var(--grad-hero-headline);
+  --reveal: 100%;
+  -webkit-mask-image: linear-gradient(
+    100deg,
+    #000 0%,
+    #000 var(--reveal),
+    rgba(0, 0, 0, 0) calc(var(--reveal) + 13%)
+  );
+  mask-image: linear-gradient(
+    100deg,
+    #000 0%,
+    #000 var(--reveal),
+    rgba(0, 0, 0, 0) calc(var(--reveal) + 13%)
+  );
+  margin-top: clamp(0.4rem, 0.86vw, 0.8125rem);
+  font-size: var(--fs-hero-headline);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  opacity: 0.88;
+}
+
+.hero__headline span {
+  display: block;
+}
+
+/* --- CTA system ---------------------------------------------------------- */
+.hero__cta {
+  position: absolute;
+  top: 72.8%;
+  left: 50%;
+  z-index: 5;
+  width: min(94%, 1060px);
+  transform: translateX(-50%);
+}
+
+.hero__cta-frame {
+  position: absolute;
+  top: -2%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 121%; /* 1284/1060 ~ 121% to scale correctly */
+  height: auto;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero__cta-underline {
+  width: 100%;
+  max-width: 835px;
+  margin-inline: auto;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.hero__cta-underline img {
+  width: 100%;
+  height: auto;
+}
+
+
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1023px) {
+  .hero {
+    --hero-h: clamp(620px, 86vw, 860px);
+  }
+
+  .hero__copy {
+    top: 34%;
+  }
+
+  .hero__cta {
+    top: 68%;
+  }
+
+  .orbit__label {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 767px) {
+  /* The absolute stage is replaced by ordinary flow: the header becomes a
+     normal first row instead of an overlay, so nothing can collide with the
+     headline no matter how tall the viewport is. */
+  .hero {
+    --hero-h: auto;
+    height: auto;
+    min-height: 100svh;
+    display: block;
+    /* The shared site Navbar is `position: fixed` and sits above every page,
+       including this one — it isn't part of Hero's own markup (that's the
+       now-unused .hero__header below), so nothing here reserves space for it
+       automatically. Below 768px .hero drops from the absolute desktop stage
+       into normal flow, and without this top clearance the headline starts
+       underneath the fixed navbar instead of below it. */
+    padding-block: clamp(5.5rem, 24vw, 7rem) 3.5rem;
+  }
+
+  .hero__header {
+    position: static;
+    inset: auto;
+    margin-bottom: clamp(3rem, 16vw, 5rem);
+    padding-inline: var(--gutter);
+  }
+
+  .hero__orbit {
+    opacity: 0.55;
+  }
+
+  .orbit__label,
+  .orbit__node,
+  .orbit__node-glow {
+    display: none;
+  }
+
+  .hero__figure {
+    opacity: 0.34;
+  }
+
+  .hero__copy,
+  .hero__cta {
+    position: static;
+    width: 100%;
+    padding-inline: var(--gutter);
+    transform: none;
+  }
+
+  .hero__cta {
+    margin-top: 2.5rem;
+  }
+
+  .hero__cta-frame {
+    display: none;
+  }
+
+  .hero__cta-bar {
+    flex-direction: column;
+    height: auto;
+    gap: 0.75rem;
+  }
+
+  .hero__cta-btn {
+    flex: none;
+    width: 100%;
+    height: 56px;
+    padding: 0;
+  }
+
+  .hero__cta-btn--apply,
+  .hero__cta-btn--partner {
+    --clip-open: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+    --clip-closed: polygon(4% 0, 4% 0, 0 100%, 0 100%);
+    clip-path: var(--clip-open);
+  }
+}

@@ -26,8 +26,8 @@ export default function SmoothScroll() {
     }
 
     const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
+      lerp: 0.07, // Replaced duration/easing with lerp for a more "liquid" and premium momentum feel
+      wheelMultiplier: 1,
       smoothWheel: true,
       syncTouch: true,
     });

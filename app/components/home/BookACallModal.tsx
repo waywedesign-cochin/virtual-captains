@@ -18,6 +18,7 @@ export default function BookACallModal({
   onClose: () => void;
 }) {
   const [submitted, setSubmitted] = useState(false);
+  const [audience, setAudience] = useState<"individual" | "organisation">("individual");
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,7 +33,10 @@ export default function BookACallModal({
 
   // Reset back to the form the next time it's opened.
   useEffect(() => {
-    if (open) setSubmitted(false);
+    if (open) {
+      setSubmitted(false);
+      setAudience("individual");
+    }
   }, [open]);
 
   if (!open) return null;
@@ -100,32 +104,114 @@ export default function BookACallModal({
             </p>
 
             <div className="mt-6 flex flex-col gap-4">
-              <label className="flex flex-col gap-1.5">
-                <span className="text-[12px] font-medium text-black/70">Name</span>
-                <input
-                  type="text"
-                  required
-                  placeholder="Jane Doe"
-                  className="rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
-                />
-              </label>
+              {/* Radio Group: Individual vs Organisation */}
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="audience"
+                    value="individual"
+                    checked={audience === "individual"}
+                    onChange={() => setAudience("individual")}
+                    className="accent-[#3478e5] w-4 h-4 cursor-pointer"
+                  />
+                  <span className="text-[13px] font-medium text-black/80">Individual</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="audience"
+                    value="organisation"
+                    checked={audience === "organisation"}
+                    onChange={() => setAudience("organisation")}
+                    className="accent-[#3478e5] w-4 h-4 cursor-pointer"
+                  />
+                  <span className="text-[13px] font-medium text-black/80">Organisation</span>
+                </label>
+              </div>
 
-              <label className="flex flex-col gap-1.5">
+              {/* First Name & Last Name */}
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
+                <label className="flex flex-1 flex-col gap-1.5 min-w-0">
+                  <span className="text-[12px] font-medium text-black/70">First Name</span>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Jane"
+                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                  />
+                </label>
+                <label className="flex flex-1 flex-col gap-1.5 min-w-0">
+                  <span className="text-[12px] font-medium text-black/70">Last Name</span>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Doe"
+                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                  />
+                </label>
+              </div>
+
+              <label className="flex flex-col gap-1.5 w-full">
                 <span className="text-[12px] font-medium text-black/70">Email</span>
                 <input
                   type="email"
                   required
                   placeholder="jane@company.com"
-                  className="rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                  className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
                 />
               </label>
 
-              <label className="flex flex-col gap-1.5">
+              {/* Phone with Country Code */}
+              <label className="flex flex-col gap-1.5 w-full">
+                <span className="text-[12px] font-medium text-black/70">Phone Number</span>
+                <div className="flex gap-2 w-full">
+                  <select
+                    className="w-[100px] shrink-0 rounded-lg border border-black/15 px-3 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
+                    defaultValue="+91"
+                  >
+                    <option value="+1">+1 (US)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+971">+971 (AE)</option>
+                    <option value="+65">+65 (SG)</option>
+                  </select>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="9876543210"
+                    className="flex-1 w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                  />
+                </div>
+              </label>
+
+              {/* Conditional: Number of employees (Only for Organisation) */}
+              {audience === "organisation" && (
+                <label className="flex flex-col gap-1.5 w-full animate-in fade-in slide-in-from-top-2 duration-300">
+                  <span className="text-[12px] font-medium text-black/70">Number of Employees</span>
+                  <select
+                    required
+                    defaultValue=""
+                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
+                  >
+                    <option value="" disabled>Select an option</option>
+                    <option value="1-10">1-10</option>
+                    <option value="11-50">11-50</option>
+                    <option value="51-100">51-100</option>
+                    <option value="101-200">101-200</option>
+                    <option value="201-500">201-500</option>
+                    <option value="500+">500+</option>
+                  </select>
+                </label>
+              )}
+
+              <label className="flex flex-col gap-1.5 w-full">
                 <span className="text-[12px] font-medium text-black/70">Message</span>
                 <textarea
-                  rows={3}
+                  rows={2}
                   placeholder="What would you like to talk about?"
-                  className="resize-none rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                  className="w-full min-w-0 resize-none rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
                 />
               </label>
             </div>

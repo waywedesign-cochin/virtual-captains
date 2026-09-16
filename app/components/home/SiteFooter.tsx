@@ -103,7 +103,7 @@ export default function SiteFooter() {
       const arrow = ctaArrowRef.current;
       if (!button || !fill) return;
 
-      gsap.set(arrow, { x: -8, opacity: 0 });
+      if (!button || !fill) return;
 
       const grow = (x: number, y: number) => {
         const rect = button.getBoundingClientRect();
@@ -124,8 +124,6 @@ export default function SiteFooter() {
           overwrite: true,
         });
         gsap.to(arrow, {
-          x: 0,
-          opacity: 1,
           color: "#0a0b0f",
           duration: 0.35,
           ease: "power2.out",
@@ -149,8 +147,7 @@ export default function SiteFooter() {
           overwrite: true,
         });
         gsap.to(arrow, {
-          x: -8,
-          opacity: 0,
+          color: "#101010",
           duration: 0.3,
           ease: "power2.in",
           overwrite: true,
@@ -332,6 +329,10 @@ export default function SiteFooter() {
               </span>
             </span>
           </button>
+          
+          <p className="mt-2 text-center font-serif text-[clamp(1.25rem,2.5vw,2rem)] font-medium text-[#101010] tracking-tight">
+            Great Conversations Create Greater Possibilities
+          </p>
         </div>
       </section>
 
@@ -343,7 +344,8 @@ export default function SiteFooter() {
           pin's `end` distance needs. Every other pinned section in this
           codebase already relies on the same margin via min-h-svh/h-screen;
           this one just hadn't needed it before the two-phase reveal. */}
-      <footer
+      <div className="w-full bg-[#06133a]">
+        <footer
         ref={footerRef}
         id="resources"
         className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
@@ -411,20 +413,25 @@ export default function SiteFooter() {
 
             <div
               ref={actionsRef}
-              className="absolute inset-0 flex flex-wrap items-center justify-center gap-3 px-4 sm:gap-4"
+              className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-4 sm:gap-6"
             >
-              <button
-                type="button"
-                className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
-              >
-                For Individuals
-              </button>
-              <button
-                type="button"
-                className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
-              >
-                For Organisations
-              </button>
+              <p className="text-center font-serif font-bold text-[clamp(1.5rem,3vw,2.5rem)] text-white tracking-tight drop-shadow-sm">
+                Trusted Partner for People, Teams & Organizations.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                >
+                  For Individuals
+                </button>
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                >
+                  For Organisations
+                </button>
+              </div>
             </div>
           </div>
 
@@ -456,9 +463,19 @@ export default function SiteFooter() {
           aria-label="Back to top"
           className="absolute bottom-6 right-6 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-[#0a1c52] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:bottom-8 sm:right-8"
         >
-          <span aria-hidden="true">&uarr;</span>
+          <svg
+            viewBox="0 0 24 24"
+            className="h-5 w-5 fill-none stroke-current stroke-2"
+          >
+            <path
+              d="M12 19V5M5 12l7-7 7 7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
       </footer>
+      </div>
 
       <BookACallModal open={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </>

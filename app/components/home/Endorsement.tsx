@@ -193,7 +193,7 @@ export default function Endorsement() {
       ref={sectionRef}
       data-nav-section="Endorsement"
       data-nav-theme="dark"
-      className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-4 py-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
+      className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-4 pt-[clamp(68px,12vh,152px)] pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
     >
       {/* Background Dot Grid */}
       <div

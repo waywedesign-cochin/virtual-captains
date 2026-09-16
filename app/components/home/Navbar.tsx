@@ -178,7 +178,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsBookingOpen(true)}
-                  className="hidden sm:inline-flex items-center justify-center rounded-full bg-[#111217] hover:bg-[#181920] border border-white/14 hover:border-white/28 px-5 py-2 text-[12px] xl:text-[13px] font-semibold text-white tracking-[0.02em] shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98"
+                  className="hidden sm:inline-flex items-center justify-center rounded-full bg-linear-to-r from-[#8fd0ff]/70 via-[#0f67d6]/95 to-[#0c5df5] hover:brightness-110 border border-white/15 hover:border-white/30 px-5 py-2 text-[12px] xl:text-[13px] font-semibold text-white tracking-[0.02em] shadow-[0_4px_16px_rgba(15,103,214,0.3)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98"
                 >
                   LET'S CONNECT
                 </button>

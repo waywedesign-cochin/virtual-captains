@@ -1,0 +1,235 @@
+/* ==========================================================================
+   Partner Network
+
+   Reference frame: 1512 x 919 (page y 2200 -> 3119).
+
+   Structure note: the destination boxes and the logos are deliberately two
+   separate layers. The boxes are empty frames; the logos live in their own
+   absolutely-positioned layer at matching coordinates. Phase 5 animates the
+   logo layer out of the hub and into those coordinates without ever touching
+   the frames' layout — which is what makes the transformation scrubbable and
+   exactly reversible.
+   ========================================================================== */
+
+.partner {
+  height: min(60.78vw, 919px);
+}
+
+.partner__title {
+  position: absolute;
+  top: 8.7%;
+  left: 8.47%;
+  z-index: 3;
+  font-size: var(--fs-partner-title);
+  font-weight: 300;
+  line-height: 1.185;
+  letter-spacing: -0.01em;
+  color: var(--white);
+}
+
+.partner__title span {
+  display: block;
+}
+
+/* --- Connector system ---------------------------------------------------- */
+.partner__lines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.partner__lines path {
+  fill: none;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.partner__lines .line--feed {
+  stroke: url(#partnerFeedGradient);
+}
+
+.partner__lines .line--container {
+  stroke: url(#partnerContainerGradient);
+}
+
+.partner__lines .line--floor {
+  stroke: url(#partnerFloorGradient);
+}
+
+.partner__lines .line--release {
+  stroke: url(#partnerReleaseGradient);
+}
+
+.partner__lines-group--compact {
+  display: none;
+}
+
+/* The release node is a DOM element, not an SVG circle, so it stays perfectly
+   round while the connector SVG stretches with the frame. */
+.partner__release-node {
+  position: absolute;
+  left: 49.67%;
+  top: 35.47%;
+  z-index: 3;
+  width: min(2.25vw, 34px);
+  height: min(2.25vw, 34px);
+  margin: min(-1.125vw, -17px) 0 0 min(-1.125vw, -17px);
+  background: var(--white);
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.08),
+    0 0 24px 2px rgba(190, 220, 255, 0.45);
+}
+
+/* --- Hub ----------------------------------------------------------------- */
+.partner__hub {
+  position: absolute;
+  left: 39.48%;
+  top: 10.34%;
+  z-index: 4;
+  width: 8.99%;
+  height: 13.82%;
+  display: grid;
+  place-items: center;
+  font-size: var(--fs-hub);
+  color: var(--white);
+  background: #0c57d1;
+  border-radius: clamp(12px, 1.6vw, 24px);
+  box-shadow: 0 18px 44px -18px rgba(10, 60, 190, 0.9);
+}
+
+/* The backing plate the reference layers behind the hub, offset down-right.
+   It is a sibling rather than a pseudo-element: the hub is a stacking context,
+   so a negative-z-index child would still paint over the hub's own background. */
+.partner__hub-plate {
+  position: absolute;
+  left: 39.48%;
+  top: 10.34%;
+  z-index: 3;
+  width: 8.99%;
+  height: 13.82%;
+  margin: 1.5% 0 0 0.7%;
+  background: rgba(20, 110, 110, 0.42);
+  border-radius: clamp(12px, 1.6vw, 24px);
+  transform: rotate(8deg);
+}
+
+/* --- Destination frames -------------------------------------------------- */
+.partner__slots {
+  position: absolute;
+  left: 11.9%;
+  top: 42.87%;
+  z-index: 2;
+  display: grid;
+  width: 73.08%;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 8.235%;
+  row-gap: min(4.16vw, 63px);
+}
+
+.partner__slot {
+  display: grid;
+  place-items: center;
+  height: min(7.28vw, 110px);
+  border: 1px solid rgba(12, 140, 245, 0.78);
+  border-radius: var(--radius-box);
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.partner__logo {
+  font-size: var(--fs-hub);
+  font-weight: 400;
+  color: rgba(150, 175, 235, 0.45);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1023px) {
+  .partner {
+    height: min(104vw, 1000px);
+  }
+
+  .partner__lines-group--wide {
+    display: none;
+  }
+
+  /* Below 1024 the enclosure is dropped: only the feed into the hub remains,
+     which keeps the transformation legible without a frame that would have to
+     be redrawn for every compact layout. */
+  .partner__lines-group--compact {
+    display: block;
+  }
+
+  .partner__lines-group--compact .line--container,
+  .partner__lines-group--compact .line--floor {
+    display: none;
+  }
+
+  .partner__release-node {
+    display: none;
+  }
+
+  .partner__title {
+    top: 6%;
+    left: var(--gutter);
+  }
+
+  /* Two columns of four — the destinations are re-composed, but the
+     grouped -> separate -> travel -> network idea is untouched. */
+  .partner__slots {
+    left: 50%;
+    top: 38%;
+    width: min(78%, 520px);
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 8%;
+    row-gap: min(4vw, 28px);
+    transform: translateX(-50%);
+  }
+
+  .partner__slot {
+    height: min(12vw, 86px);
+  }
+
+  .partner__hub {
+    left: 50%;
+    top: 21%;
+    width: min(22%, 132px);
+    height: min(14vw, 118px);
+    margin-left: min(-11%, -66px);
+  }
+}
+
+@media (max-width: 767px) {
+  .partner {
+    height: min(215vw, 840px);
+  }
+
+  .partner__title {
+    top: 3%;
+  }
+
+  .partner__hub {
+    top: 17%;
+    height: min(24vw, 100px);
+  }
+
+  .partner__slots {
+    top: 37%;
+    width: calc(100% - 2 * var(--gutter));
+    row-gap: min(3.5vw, 18px);
+  }
+
+  .partner__slot {
+    height: min(15vw, 72px);
+  }
+
+  .partner__lines {
+    opacity: 0.7;
+  }
+}

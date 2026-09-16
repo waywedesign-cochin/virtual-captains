@@ -335,9 +335,9 @@ export default function Hero() {
               "radial-gradient(rgba(255,255,255,0.75) 1.8px, transparent 2.4px)",
             backgroundSize: "26px 26px",
             maskImage:
-              "radial-gradient(circle clamp(260px, 30vw, 430px) at var(--dx, 50%) var(--dy, 50%), rgba(0,0,0,1) 0%, rgba(0,0,0,0.82) 15%, rgba(0,0,0,0.66) 30%, rgba(0,0,0,0.46) 45%, rgba(0,0,0,0.28) 60%, rgba(0,0,0,0.14) 75%, rgba(0,0,0,0.05) 88%, transparent 100%)",
+              "radial-gradient(circle clamp(130px, 15vw, 215px) at var(--dx, 50%) var(--dy, 50%), rgba(0,0,0,1) 0%, rgba(0,0,0,0.82) 15%, rgba(0,0,0,0.66) 30%, rgba(0,0,0,0.46) 45%, rgba(0,0,0,0.28) 60%, rgba(0,0,0,0.14) 75%, rgba(0,0,0,0.05) 88%, transparent 100%)",
             WebkitMaskImage:
-              "radial-gradient(circle clamp(260px, 30vw, 430px) at var(--dx, 50%) var(--dy, 50%), rgba(0,0,0,1) 0%, rgba(0,0,0,0.82) 15%, rgba(0,0,0,0.66) 30%, rgba(0,0,0,0.46) 45%, rgba(0,0,0,0.28) 60%, rgba(0,0,0,0.14) 75%, rgba(0,0,0,0.05) 88%, transparent 100%)",
+              "radial-gradient(circle clamp(130px, 15vw, 215px) at var(--dx, 50%) var(--dy, 50%), rgba(0,0,0,1) 0%, rgba(0,0,0,0.82) 15%, rgba(0,0,0,0.66) 30%, rgba(0,0,0,0.46) 45%, rgba(0,0,0,0.28) 60%, rgba(0,0,0,0.14) 75%, rgba(0,0,0,0.05) 88%, transparent 100%)",
             maskRepeat: "no-repeat",
             WebkitMaskRepeat: "no-repeat",
           }}
