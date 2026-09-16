@@ -22,8 +22,8 @@ export default function Hero() {
             <span className="text-[#E07C4F]">One Operating Partner.</span>
           </p>
           <p className="mt-3 text-sm leading-relaxed text-[#6B7280]">
-            From induction to audit to outbound, Virtual Captains sits inside
-            your revenue motion, not on the sidelines.
+            From induction to audit to outbound, Virtual Captains tackles the
+            areas that move performance.
           </p>
         </motion.div>
 

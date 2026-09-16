@@ -154,7 +154,7 @@ export const allProgrammes: ProgrammeItem[] = [
     title: "Turn New Hires Into Revenue-Ready Reps",
     description:
       "Groom Studio is a first-of-its-kind offline sales agent onboarding programme. Induction, orientation, brand immersion, and first-week roleplay come together in-studio, so every new hire is ready for the floor before their first live call.",
-    ctaText: "Book Groom Studio Session",
+    ctaText: "Get Started",
     ctaAction: "/book?program=groom-studio",
     accentColor: "#2563eb",
     cards: [

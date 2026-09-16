@@ -26,7 +26,8 @@ function renderStyledTitle(fullTitle: string) {
           aria-hidden="true"
           className="absolute -bottom-1 sm:-bottom-1.5 left-0 w-full h-1 sm:h-1.25 rounded-full bg-linear-to-r from-[#2563eb] via-[#60a5fa] to-white"
           style={{
-            background: "linear-gradient(to right, #2563eb, #60a5fa 70%, #ffffff 100%)",
+            background:
+              "linear-gradient(to right, #2563eb, #60a5fa 70%, #ffffff 100%)",
           }}
         />
       </span>
@@ -142,7 +143,7 @@ export default function GroomStudio() {
             const p = self.progress;
             const currentIdx = Math.min(
               numStages - 1,
-              Math.floor(p * numStages)
+              Math.floor(p * numStages),
             );
             setActiveTab(currentIdx);
           },
@@ -180,7 +181,7 @@ export default function GroomStudio() {
             stagger: 0.05,
             ease: "power2.in",
           },
-          outLabel
+          outLabel,
         );
 
         masterTl.to(
@@ -191,7 +192,7 @@ export default function GroomStudio() {
             duration: 0.4,
             ease: "power2.in",
           },
-          outLabel
+          outLabel,
         );
 
         masterTl.set(`.prog-slide-${i}`, { autoAlpha: 0, zIndex: 1 }, `+=0.05`);
@@ -210,7 +211,7 @@ export default function GroomStudio() {
             stagger: 0.06,
             ease: "power3.out",
           },
-          inLabel
+          inLabel,
         );
 
         masterTl.fromTo(
@@ -222,13 +223,13 @@ export default function GroomStudio() {
             duration: 0.5,
             ease: "power3.out",
           },
-          `${inLabel}+=0.08`
+          `${inLabel}+=0.08`,
         );
 
         masterTl.to({}, { duration: 0.4 });
       }
     },
-    { scope: trackRef }
+    { scope: trackRef },
   );
 
   return (
@@ -329,9 +330,9 @@ export default function GroomStudio() {
                           href={prog.ctaAction}
                           className="group inline-flex items-center gap-2 bg-white border border-slate-200/90 rounded-full pl-2 pr-3 sm:pr-3.5 py-1 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0"
                         >
-                          <div className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-[#8FE07A] flex items-center justify-center text-[#134A1E] font-bold text-[9px] sm:text-[10px]">
+                          {/* <div className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-[#8FE07A] flex items-center justify-center text-[#134A1E] font-bold text-[9px] sm:text-[10px]">
                             Book
-                          </div>
+                          </div> */}
                           <span className="text-[11px] sm:text-xs font-semibold text-slate-800">
                             {prog.ctaText}
                           </span>
@@ -375,8 +376,18 @@ export default function GroomStudio() {
                         aria-label="Previous card"
                         className="absolute left-0 sm:left-1 md:left-2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white/95 border border-slate-200 shadow-md flex items-center justify-center text-slate-700 hover:text-blue-600 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                       >
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                        <svg
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M15 19l-7-7 7-7"
+                          />
                         </svg>
                       </button>
 
@@ -425,8 +436,18 @@ export default function GroomStudio() {
                         aria-label="Next card"
                         className="absolute right-0 sm:right-1 md:right-2 z-30 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white/95 border border-slate-200 shadow-md flex items-center justify-center text-slate-700 hover:text-blue-600 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                       >
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                        <svg
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M9 5l7 7-7 7"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -440,8 +461,18 @@ export default function GroomStudio() {
                         aria-label="Previous card slide"
                         className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-slate-50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                       >
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                        <svg
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M15 19l-7-7 7-7"
+                          />
                         </svg>
                       </button>
 
@@ -469,8 +500,18 @@ export default function GroomStudio() {
                         aria-label="Next card slide"
                         className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-slate-50 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                       >
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                        <svg
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M9 5l7 7-7 7"
+                          />
                         </svg>
                       </button>
 

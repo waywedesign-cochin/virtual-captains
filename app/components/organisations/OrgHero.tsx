@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
@@ -11,6 +11,15 @@ if (typeof window !== "undefined") {
 
 export default function OrgHero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [wordIndex, setWordIndex] = useState(0);
+  const words = ["Revenue", "Retention", "Growth"];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex((prev) => (prev + 1) % words.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   useGSAP(
     () => {
@@ -123,9 +132,13 @@ export default function OrgHero() {
           {/* Main Title - No background card */}
           <div className="text-center z-10 hero-text">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-bold text-[#2563eb] mb-2 leading-[1.1] tracking-tight">
-              From Induction
-              <br />
-              to Revenue
+              <span className="block">From Induction</span>
+              <span className="flex items-center justify-center gap-[0.25em]">
+                <span>to</span>
+                <span key={wordIndex} className="text-[#f97316] animate-in fade-in zoom-in-95 duration-500 min-w-[3.5em] text-left">
+                  {words[wordIndex]}
+                </span>
+              </span>
             </h1>
             <h2 className="text-lg md:text-2xl text-black font-medium mt-4">
               Total Sales Floor Management
