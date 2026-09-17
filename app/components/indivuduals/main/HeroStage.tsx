@@ -27,7 +27,7 @@ export function HeroStage({ children }: { readonly children: ReactNode }) {
   );
 
   return (
-    <div className="frame hero__frame" ref={scope}>
+    <div className="frame hero__frame w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12" ref={scope}>
       {children}
     </div>
   );

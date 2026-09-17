@@ -97,7 +97,7 @@ export default function OrgHero() {
         {[1, 2, 3, 4].map((ring) => (
           <div
             key={ring}
-            className="hero-ring absolute rounded-full border-4 sm:border-[8px] md:border-[14px] lg:border-[16px] border-slate-200"
+            className="hero-ring absolute rounded-full border-4 sm:border-8 md:border-14 lg:border-16 border-slate-200"
             style={{
               width: `calc(10vw + ${ring * 9}vw)`,
               height: `calc(10vw + ${ring * 9}vw)`,

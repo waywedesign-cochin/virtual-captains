@@ -102,10 +102,10 @@ export default function OrgCTA() {
         </div>
 
         {/* Right Visuals - 2 Glow Gradients (Top-Right Blue & Bottom-Left Mint Green) + Frosted Glass Circle */}
-        <div className="relative w-full min-h-[320px] sm:min-h-[400px] md:min-h-[460px] flex items-center justify-center">
+        <div className="relative w-full min-h-80 sm:min-h-100 md:min-h-115 flex items-center justify-center">
           {/* 1. TOP-RIGHT Glowing Blue Gradient Orb */}
           <div
-            className="cta-gradient-blue absolute -top-8 -right-4 sm:-top-12 sm:right-2 md:-top-16 md:right-6 w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] md:w-[420px] md:h-[420px] rounded-full pointer-events-none transition-transform"
+            className="cta-gradient-blue absolute -top-8 -right-4 sm:-top-12 sm:right-2 md:-top-16 md:right-6 w-65 h-65 sm:w-85 sm:h-85 md:w-105 md:h-105 rounded-full pointer-events-none transition-transform"
             style={{
               background: "radial-gradient(circle, #3d74f6 0%, #4f83f7 50%, rgba(61, 116, 246, 0.4) 75%, transparent 100%)",
               filter: "blur(60px)",
@@ -115,7 +115,7 @@ export default function OrgCTA() {
 
           {/* 2. BOTTOM-LEFT Glowing Mint-Green Gradient Orb */}
           <div
-            className="cta-gradient-green absolute -bottom-8 -left-6 sm:-bottom-12 sm:-left-4 md:-bottom-14 md:left-2 w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[370px] md:h-[370px] rounded-full pointer-events-none transition-transform"
+            className="cta-gradient-green absolute -bottom-8 -left-6 sm:-bottom-12 sm:-left-4 md:-bottom-14 md:left-2 w-55 h-55 sm:w-75 sm:h-75 md:w-92.5 md:h-92.5 rounded-full pointer-events-none transition-transform"
             style={{
               background: "radial-gradient(circle, #52d69f 0%, #6ee7b7 55%, rgba(82, 214, 159, 0.4) 75%, transparent 100%)",
               filter: "blur(55px)",
@@ -127,7 +127,7 @@ export default function OrgCTA() {
           <Link
             href="/enroll"
             aria-label="Enroll Now"
-            className="cta-circle group relative z-20 w-[240px] h-[240px] sm:w-[290px] sm:h-[290px] md:w-[335px] md:h-[335px] lg:w-[365px] lg:h-[365px] rounded-full bg-white/25 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.08),inset_0_1px_2px_rgba(255,255,255,0.85)] flex items-center justify-center cursor-pointer transition-all duration-500 hover:scale-103 hover:bg-white/35 hover:shadow-[0_24px_60px_rgba(0,0,0,0.14),inset_0_1.5px_3px_rgba(255,255,255,0.95)]"
+            className="cta-circle group relative z-20 w-60 h-60 sm:w-72.5 sm:h-72.5 md:w-83.75 md:h-83.75 lg:w-91.25 lg:h-91.25 rounded-full bg-white/25 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.08),inset_0_1px_2px_rgba(255,255,255,0.85)] flex items-center justify-center cursor-pointer transition-all duration-500 hover:scale-103 hover:bg-white/35 hover:shadow-[0_24px_60px_rgba(0,0,0,0.14),inset_0_1.5px_3px_rgba(255,255,255,0.95)]"
           >
             <span className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-normal text-white tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.16)] group-hover:scale-105 transition-transform duration-300 select-none">
               Enroll Now

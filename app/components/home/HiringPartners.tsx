@@ -195,7 +195,7 @@ export default function HiringPartners() {
     <section
       ref={sectionRef}
       id="partner"
-      data-nav-section="Hiring Partners"
+      data-nav-section="Partner"
       data-nav-theme="light"
       className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-6 py-20 text-[#101010] sm:px-10 lg:py-28 lg:pl-36 lg:pr-16"
       style={{

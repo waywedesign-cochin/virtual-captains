@@ -640,7 +640,7 @@ export default function RoleplayToConversation() {
       // falls back to "nothing active," immediately undoing whatever the
       // vc:nav-override event just set.
       data-nav-override-zone="true"
-      className="relative min-h-screen overflow-x-hidden overflow-y-visible bg-white text-[#101010] lg:overflow-hidden lg:h-screen"
+      className="relative z-10 min-h-screen overflow-x-hidden overflow-y-visible bg-white text-[#101010] lg:overflow-hidden lg:h-screen -mt-px"
     >
       {/* ============================================================
           DOT GRID BACKGROUND
@@ -650,7 +650,7 @@ export default function RoleplayToConversation() {
         className="pointer-events-none absolute inset-0 opacity-80"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
+            "radial-gradient(rgba(0,0,0,0.22) 0.95px, transparent 0.95px)",
           backgroundSize: "10px 10px",
         }}
       />

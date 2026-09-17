@@ -150,7 +150,7 @@ export function CareerCta() {
         data-career-container=""
       >
         <h2
-          className="flex flex-col md:flex-row items-center justify-center w-full relative z-10 text-2xl md:text-4xl lg:text-5xl font-normal leading-[1.1] tracking-tight will-change-transform"
+          className="flex flex-col md:flex-row items-center justify-center w-full relative z-10 text-2xl md:text-4xl lg:text-5xl font-serif font-medium leading-[1.15] tracking-tight will-change-transform"
           id="career-heading"
         >
           <span
@@ -177,7 +177,7 @@ export function CareerCta() {
             data-career-right=""
             className="inline-flex flex-wrap md:flex-nowrap justify-center items-center gap-x-[1ch] md:whitespace-nowrap will-change-transform text-center"
           >
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 via-pink-500 to-pink-600">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 font-serif italic">
               {careerCta.accent}
             </span>
             <span>{careerCta.trail.trim()}</span>

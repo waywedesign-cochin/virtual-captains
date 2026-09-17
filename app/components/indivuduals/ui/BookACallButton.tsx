@@ -14,7 +14,8 @@ export function BookACallButton({ variant = "gradient" }: BookACallButtonProps) 
     // Premium yellow button matching navbar but larger, with black border
     className = "inline-flex items-center justify-center rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] border border-black px-8 py-4 text-base md:text-lg font-bold text-black tracking-[0.02em] shadow-[0_0_16px_rgba(231,255,61,0.4)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 shrink-0";
   } else if (variant === "white") {
-    className = "inline-flex items-center justify-center rounded-full bg-white hover:bg-gray-100 px-8 py-4 text-base md:text-lg font-bold text-black tracking-[0.02em] shadow-[0_4px_16px_rgba(255,255,255,0.3)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 shrink-0";
+    // White background, black text, and white border per exact specification
+    className = "inline-flex items-center justify-center rounded-full bg-white hover:bg-slate-50 border border-white px-8 py-4 text-base md:text-lg font-bold text-black tracking-[0.02em] shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.18)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 shrink-0";
   } else if (variant === "black") {
     className = "inline-flex items-center justify-center rounded-full bg-[#111217] hover:bg-[#181920] border border-white/14 hover:border-white/28 px-8 py-4 text-base md:text-lg font-bold text-white tracking-[0.02em] shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 shrink-0";
   }

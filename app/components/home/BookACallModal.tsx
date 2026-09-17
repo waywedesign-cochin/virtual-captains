@@ -167,7 +167,7 @@ export default function BookACallModal({
                 <span className="text-[12px] font-medium text-black/70">Phone Number</span>
                 <div className="flex gap-2 w-full">
                   <select
-                    className="w-[100px] shrink-0 rounded-lg border border-black/15 px-3 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
+                    className="w-25 shrink-0 rounded-lg border border-black/15 px-3 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
                     defaultValue="+91"
                   >
                     <option value="+1">+1 (US)</option>

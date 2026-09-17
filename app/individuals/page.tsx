@@ -14,7 +14,7 @@ export default function IndividualsPage() {
   return (
     <>
       <Navbar />
-      <main className="individuals-theme bg-[#0d0749] text-white">
+      <main className="individuals-theme bg-[#040507] text-white min-h-screen overflow-x-hidden">
         <HomeSections />
       </main>
     </>

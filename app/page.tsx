@@ -12,10 +12,11 @@ import TheImpact from "./components/home/TheImpact";
 
 export default function Page() {
   return (
-    <main className="block w-full">
+    <main className="block w-full bg-[#040507]">
       <Navbar />
       <SideNav />
       <Hero />
+      {/* 3D Text Section slides smoothly over Hero */}
       <ScrollText3D />
       <RoleplayToConversation />
 

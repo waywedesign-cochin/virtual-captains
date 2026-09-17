@@ -42,6 +42,19 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const connectHref = pathname === "/contact" ? "#contact-form" : "/contact";
+
+  const handleConnectClick = (e: React.MouseEvent) => {
+    setIsMobileMenuOpen(false);
+    if (pathname === "/contact") {
+      e.preventDefault();
+      const el = document.getElementById("contact-form");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <>
       {/* Top Segmented Scroll Progress Bar (EchoFi prog-wrap) */}
@@ -175,25 +188,25 @@ export default function Navbar() {
             <div className="flex items-center justify-end shrink-0 gap-2 sm:gap-3">
               {/* TOP STATE BUTTON: Solid Dark Glass Pill (.btn) */}
               {!isSticky && (
-                <button
-                  type="button"
-                  onClick={() => setIsBookingOpen(true)}
+                <Link
+                  href={connectHref}
+                  onClick={handleConnectClick}
                   className="hidden sm:inline-flex items-center justify-center rounded-full bg-linear-to-r from-[#8fd0ff]/70 via-[#0f67d6]/95 to-[#0c5df5] hover:brightness-110 border border-white/15 hover:border-white/30 px-5 py-2 text-[12px] xl:text-[13px] font-semibold text-white tracking-[0.02em] shadow-[0_4px_16px_rgba(15,103,214,0.3)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98"
                 >
                   LET'S CONNECT
-                </button>
+                </Link>
               )}
 
               {/* STICKY STATE BUTTON: Vibrant Glow Button */}
               {isSticky && (
-                <button
-                  type="button"
-                  onClick={() => setIsBookingOpen(true)}
+                <Link
+                  href={connectHref}
+                  onClick={handleConnectClick}
                   className="inline-flex items-center justify-center rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-3.5 sm:px-4.5 py-1.5 text-[11px] sm:text-[12px] font-bold text-[#0a0b0d] tracking-[0.02em] shadow-[0_0_16px_rgba(231,255,61,0.4)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98 shrink-0"
                 >
                   <span className="hidden sm:inline">LET'S CONNECT</span>
                   <span className="sm:hidden">CONNECT</span>
-                </button>
+                </Link>
               )}
 
               {/* Mobile Hamburger Toggle */}
@@ -277,16 +290,13 @@ export default function Navbar() {
               })}
 
               <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setIsBookingOpen(true);
-                  }}
-                  className="w-full rounded-xl bg-[#e7ff3d] hover:bg-[#d8f030] py-3 text-center text-[13px] font-bold text-[#0a0b0d] shadow-[0_0_20px_rgba(231,255,61,0.35)] cursor-pointer"
+                <Link
+                  href={connectHref}
+                  onClick={handleConnectClick}
+                  className="w-full flex items-center justify-center rounded-xl bg-[#e7ff3d] hover:bg-[#d8f030] py-3 text-center text-[13px] font-bold text-[#0a0b0d] shadow-[0_0_20px_rgba(231,255,61,0.35)] cursor-pointer"
                 >
                   BOOK A CALL
-                </button>
+                </Link>
               </div>
             </div>
           </div>

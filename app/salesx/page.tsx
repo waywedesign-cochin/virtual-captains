@@ -1,52 +1,53 @@
 import type { Metadata } from "next";
 import Navbar from "../components/home/Navbar";
-import SiteFooter from "../components/home/SiteFooter";
-import Link from "next/link";
+import SalesXHero from "../components/salesx/SalesXHero";
+import SalesXShowcase from "../components/salesx/SalesXShowcase";
+import SalesXMethod from "../components/salesx/SalesXMethod";
+import SalesXAudience from "../components/salesx/SalesXAudience";
+import SalesXResultsHub from "../components/salesx/SalesXResultsHub";
+import SalesXTestimonials from "../components/salesx/SalesXTestimonials";
+import SalesXPartnerCloud from "../components/salesx/SalesXPartnerCloud";
+import SalesXCTA from "../components/salesx/SalesXCTA";
+import SalesXFooter from "../components/salesx/SalesXFooter";
 
 export const metadata: Metadata = {
-  title: "SalesX | High-Velocity Execution Training",
+  title: "SalesX | High-Velocity AI Sales Simulation Engine",
   description:
-    "Execution training for top-tier revenue teams. Measure, simulate, and scale sales closing rates with AI personas.",
+    "Execution training for top-tier revenue teams. Measure, simulate, and scale sales closing rates with hyper-realistic AI buyer personas and real-time conviction telemetry.",
 };
 
 export default function SalesXPage() {
   return (
-    <main className="min-h-screen bg-[#07090e] text-white selection:bg-[#e7ff3d] selection:text-black">
+    <main className="min-h-screen bg-[#07090e] text-white selection:bg-[#38bdf8] selection:text-black">
+      {/* Top Main Navigation */}
       <Navbar />
 
-      <section className="relative pt-36 pb-24 px-6 sm:px-10 lg:px-16 max-w-6xl mx-auto flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#e7ff3d]/30 bg-[#e7ff3d]/10 px-3.5 py-1 text-xs font-semibold text-[#e7ff3d] backdrop-blur-md mb-6">
-          <span>SalesX Acceleration Platform</span>
-        </div>
+      {/* 1. Full Banner Video Hero with m.webm and Branding Pills */}
+      <SalesXHero />
 
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.15] max-w-4xl text-white">
-          Turn Sales Uncertainty Into{" "}
-          <span className="italic text-[#e7ff3d]">Predictable</span> Revenue
-        </h1>
+      {/* 2. 3-Layer Stacked Perspective Mockup Showcase */}
+      <SalesXShowcase />
 
-        <p className="mt-6 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
-          SalesX puts your account executives through high-pressure simulations
-          with hyper-realistic buyer personas, providing instant feedback and
-          quantifiable readiness scores before they ever hop on a live call.
-        </p>
+      {/* 3. The SalesX Method with Interactive Pinned Slides & 3 Vertical Indicator Dots */}
+      <SalesXMethod />
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/organisations"
-            className="rounded-full bg-[#e7ff3d] hover:bg-[#d4ed35] px-6 py-3 text-sm font-bold text-[#07090e] shadow-[0_0_24px_rgba(231,255,61,0.4)] transition-all"
-          >
-            Explore For Teams
-          </Link>
-          <Link
-            href="/individuals"
-            className="rounded-full border border-white/20 bg-white/5 hover:bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all"
-          >
-            Certification Track
-          </Link>
-        </div>
-      </section>
+      {/* Career Track for Individuals with Rotating Perspective Halo & Stacked Benefit Cards */}
+      <SalesXAudience />
 
-      <SiteFooter />
+      {/* Quantified Outcomes: Orbital Results Hub with 4 Satellite Telemetry Nodes */}
+      <SalesXResultsHub />
+
+      {/* Conversational Testimonials: Fixed Sticky Left & Real-Time Flowing Chat Bubbles */}
+      <SalesXTestimonials />
+
+      {/* Enterprise Partner Network: Dynamic Orbiting Ecosystem Cloud */}
+      <SalesXPartnerCloud />
+
+      {/* Ready to Redefine: High-Impact CTA with 5 Glowing Circular Metric Badges */}
+      <SalesXCTA />
+
+      {/* Dedicated SalesX Illuminated Footer */}
+      <SalesXFooter />
     </main>
   );
 }

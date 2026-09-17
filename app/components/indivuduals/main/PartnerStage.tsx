@@ -17,7 +17,7 @@ export function PartnerStage({ children }: { readonly children: ReactNode }) {
   );
 
   return (
-    <div className="frame" style={{ height: "100%" }} ref={scope}>
+    <div className="frame w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12" style={{ height: "100%" }} ref={scope}>
       {children}
     </div>
   );

@@ -205,18 +205,24 @@ export function WhoThisIsFor() {
       aria-labelledby="who-heading"
     >
       <div className="frame w-full max-w-372 px-4 sm:px-8 lg:px-12 mx-auto flex flex-col items-center">
+        <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-4 py-1.5 mb-3">
+          <span className="h-2 w-2 rounded-full bg-[#2563eb]" />
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-[#2563eb]">
+            Target Profiles
+          </span>
+        </div>
         <h2
-          className="text-center text-2xl md:text-3xl lg:text-4xl font-medium tracking-[-0.02em] text-(--ink)"
+          className="text-center text-3xl md:text-4xl lg:text-5xl font-serif font-medium tracking-tight text-(--ink)"
           id="who-heading"
         >
           Who Is This For
         </h2>
 
-        <div className="w-[85%] mt-6 md:mt-8 max-[1023px]:w-[calc(100%-2*var(--gutter))]">
+        <div className="w-[85%] mt-6 md:mt-10 max-[1023px]:w-[calc(100%-2*var(--gutter))]">
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-x-[min(3.97vw,60px)] items-center max-[1023px]:grid-cols-1 max-[1023px]:gap-y-[clamp(1.5rem,5vw,3rem)] max-[1023px]:justify-items-center max-[1023px]:text-center">
             {/* Wave Graphic */}
             <div
-              className="relative w-full overflow-hidden rounded-(--radius-box) h-[280px] sm:h-[350px] md:h-[400px] max-[1023px]:max-w-130 max-[767px]:max-w-full"
+              className="relative w-full overflow-hidden rounded-[28px] h-70 sm:h-87.5 md:h-100 max-[1023px]:max-w-130 max-[767px]:max-w-full shadow-[0_16px_36px_rgba(0,0,0,0.08)] border border-black/5"
               data-who-wave=""
               ref={waveRef}
               style={
@@ -247,7 +253,7 @@ export function WhoThisIsFor() {
             >
               {/* Invisible spacer to maintain container height for absolute children */}
               <div className="w-full invisible pointer-events-none opacity-0">
-                <p className="grad-text [--grad:var(--grad-audience)] text-2xl md:text-4xl lg:text-5xl font-normal leading-[1.1] tracking-[-0.01em]">
+                <p className="grad-text [--grad:var(--grad-audience)] text-2xl md:text-4xl lg:text-5xl font-serif font-normal leading-[1.1] tracking-[-0.01em]">
                   {audienceSlides[0].eyebrow}
                 </p>
                 <h3 className="mt-2 md:mt-4 text-lg md:text-xl font-medium tracking-[-0.01em]">
@@ -270,13 +276,13 @@ export function WhoThisIsFor() {
                   data-hue={slide.waveHue}
                 >
                   <p
-                    className="grad-text [--grad:var(--grad-audience)] text-2xl md:text-4xl lg:text-5xl font-normal leading-[1.1] tracking-[-0.01em] pb-1.5"
+                    className="grad-text [--grad:var(--grad-audience)] text-2xl md:text-4xl lg:text-5xl font-serif font-normal leading-[1.1] tracking-[-0.01em] pb-1.5"
                     data-who-eyebrow=""
                   >
                     {slide.eyebrow}
                   </p>
                   <h3
-                    className="mt-2 md:mt-4 text-lg md:text-xl font-medium tracking-[-0.01em] text-(--ink)"
+                    className="mt-2 md:mt-4 text-lg md:text-xl font-serif font-medium tracking-tight text-(--ink)"
                     data-who-slide-title=""
                   >
                     {slide.title}
@@ -288,8 +294,12 @@ export function WhoThisIsFor() {
                     {slide.body}
                   </p>
                   <div className="mt-6 md:mt-8 flex items-center justify-start max-[1023px]:justify-center">
-                    <Link href={slide.href} className="btn-pill">
-                      {slide.cta}
+                    <Link
+                      href={slide.href}
+                      className="group inline-flex items-center gap-2 rounded-full bg-[#0a0b0d] hover:bg-[#1c4fc0] text-white px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-all duration-200 hover:scale-102 active:scale-98"
+                    >
+                      <span>{slide.cta}</span>
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
                   </div>
                 </div>
@@ -298,7 +308,7 @@ export function WhoThisIsFor() {
           </div>
 
           <div
-            className="flex justify-center gap-2 md:gap-3 mt-8 relative z-10"
+            className="flex justify-center gap-2 md:gap-3 mt-10 relative z-10"
             role="tablist"
             aria-label="Audience segments"
           >
@@ -307,10 +317,9 @@ export function WhoThisIsFor() {
                 key={item.id}
                 type="button"
                 role="tab"
-                className="w-[clamp(11px,0.93vw,14px)] h-[clamp(11px,0.93vw,14px)] border-[1.5px] border-[#b9bec9] rounded-full transition-colors duration-(--dur-base) ease-(--ease-out-expo) aria-selected:bg-[#2563eb] aria-selected:border-[#2563eb]"
+                className="w-3 h-3 border-[1.5px] border-[#b9bec9] rounded-full transition-all duration-300 aria-selected:w-8 aria-selected:bg-[#2563eb] aria-selected:border-[#2563eb]"
                 aria-selected={index === 0}
                 aria-label={item.eyebrow}
-                // Buttons are now just visual indicators, scrolling controls the flow!
               />
             ))}
           </div>

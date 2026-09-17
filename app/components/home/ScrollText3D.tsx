@@ -9,8 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * 3D Starfield/Tunnel Text Animation
- * Texts emerge from a central vanishing point and fly rapidly past the camera,
- * mimicking a forward movement through space.
+ * Clean card slide-over presentation without any gradient overlays.
  */
 
 const STATS = [
@@ -139,6 +138,7 @@ const STATS = [
 export default function ScrollText3D() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(
@@ -187,6 +187,21 @@ export default function ScrollText3D() {
           scrub: 0.5, // Snappier scrub
         },
       });
+
+      // Fade out intro title as scroll begins
+      if (introRef.current) {
+        tl.to(
+          introRef.current,
+          {
+            opacity: 0,
+            scale: 0.85,
+            y: -40,
+            duration: 0.15,
+            ease: "power2.in",
+          },
+          0,
+        );
+      }
 
       textRefs.current.forEach((text, i) => {
         if (!text) return;
@@ -248,7 +263,10 @@ export default function ScrollText3D() {
   );
 
   return (
-    <div ref={sectionRef} className="w-full bg-white">
+    <div
+      ref={sectionRef}
+      className="relative z-10 w-full bg-white"
+    >
       <section
         className="relative h-screen w-full overflow-hidden"
         style={{ perspective: "1200px" }}
@@ -257,10 +275,24 @@ export default function ScrollText3D() {
           className="pointer-events-none absolute opacity-80 inset-0 z-0"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
+              "radial-gradient(rgba(0,0,0,0.22) 0.95px, transparent 0.95px)",
             backgroundSize: "10px 10px",
           }}
         />
+
+        {/* Intro title — visible before scroll animation begins */}
+        <div
+          ref={introRef}
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none"
+        >
+          <p className="text-[11px] sm:text-xs font-medium tracking-[0.25em] uppercase text-[#2557d6]/75 mb-3">
+            By the Numbers
+          </p>
+          <h2 className="font-serif text-[clamp(2rem,5vw,4rem)] font-bold text-[#0a0b0d] tracking-tight leading-tight text-center">
+            Impact That Speaks
+          </h2>
+          <div className="mt-4 h-0.75 w-12 rounded-full bg-[#2557d6]/30" />
+        </div>
 
         <div
           ref={containerRef}

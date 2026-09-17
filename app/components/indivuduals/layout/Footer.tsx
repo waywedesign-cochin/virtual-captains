@@ -47,9 +47,9 @@ export function Footer({ scrollingWord = "INDIVIDUALS" }: FooterProps) {
           `}} />
         </div>
 
-        <div className="frame w-full max-w-372 mx-auto">
+        <div className="frame w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
           <div
-            className="grid grid-cols-[39.95%_22.61%_24.96%_12.48%] items-start px-[6.35%_9.39%] max-[1023px]:grid-cols-2 max-[1023px]:gap-y-[clamp(2rem,6vw,3rem)] max-[1023px]:px-(--gutter) max-[600px]:grid-cols-1"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-8 lg:gap-12 items-start"
             data-footer-grid=""
           >
             <div className="[--logo-mark:clamp(3.5rem,5.32vw,5.03125rem)] [--logo-word:clamp(1.5rem,2.35vw,2.21875rem)] mt-[clamp(1rem,2.05vw,1.9375rem)] max-[1023px]:col-span-full max-[1023px]:mt-0">
@@ -58,7 +58,7 @@ export function Footer({ scrollingWord = "INDIVIDUALS" }: FooterProps) {
 
             {footerColumns.map((column) => (
               <nav
-                className="flex flex-col gap-[clamp(0.6rem,1.17vw,1.104rem)] text-(length:--fs-footer-link) text-[rgba(255,255,255,0.94)]"
+                className="flex flex-col gap-[clamp(0.6rem,1.17vw,1.104rem)] text-sm text-white/80"
                 key={column.id}
                 aria-label={column.id}
               >
@@ -66,7 +66,7 @@ export function Footer({ scrollingWord = "INDIVIDUALS" }: FooterProps) {
                   <Link
                     href={link.href}
                     key={link.label}
-                    className="w-fit transition-opacity duration-(--dur-fast) ease-(--ease-out-expo) hover:opacity-70"
+                    className="w-fit transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
                   </Link>
@@ -75,22 +75,22 @@ export function Footer({ scrollingWord = "INDIVIDUALS" }: FooterProps) {
             ))}
 
             <div>
-              <p className="mt-[max(-0.875rem,-0.93vw)] text-(length:--fs-footer-product) font-normal tracking-[-0.01em]">
+              <p className="text-sm font-medium text-white/90 tracking-tight">
                 {footerMeta.product}
               </p>
-              <div className="mt-[clamp(0.75rem,1.3vw,1.25rem)]">
-                <BookACallButton variant="glass" />
+              <div className="mt-4">
+                <BookACallButton variant="white" />
               </div>
             </div>
           </div>
 
           <div
-            className="flex items-center justify-between gap-[1rem_2rem] flex-wrap mt-[clamp(3rem,6.41vw,6.0625rem)] px-[18.45%_13.95%] text-(length:--fs-meta) text-(--footer-muted) max-[1023px]:justify-start max-[1023px]:px-(--gutter) max-[600px]:flex-col max-[600px]:items-start max-[600px]:gap-3"
+            className="flex items-center justify-between gap-4 flex-wrap mt-[clamp(3rem,6vw,5rem)] border-t border-white/10 pt-6 text-xs text-white/50"
             data-footer-bar=""
           >
             <Link
               href={footerMeta.privacy.href}
-              className="underline underline-offset-[3px] transition-colors duration-(--dur-fast) ease-(--ease-out-expo) hover:text-[#3f68c8]"
+              className="underline underline-offset-[3px] transition-colors duration-200 hover:text-white"
             >
               {footerMeta.privacy.label}
             </Link>
@@ -99,7 +99,7 @@ export function Footer({ scrollingWord = "INDIVIDUALS" }: FooterProps) {
               href={footerMeta.credit.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="underline underline-offset-[3px] transition-colors duration-(--dur-fast) ease-(--ease-out-expo) hover:text-[#3f68c8]"
+              className="underline underline-offset-[3px] transition-colors duration-200 hover:text-white"
             >
               {footerMeta.credit.label}
             </a>

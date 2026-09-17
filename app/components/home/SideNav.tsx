@@ -13,7 +13,7 @@ export const NAV_SECTIONS = [
   "Cross Country",
   "Endorsement",
   "The Impact",
-  "Hiring Partners",
+  "Partner",
 ] as const;
 
 type NavTheme = "light" | "dark";
@@ -120,7 +120,7 @@ export default function SideNav() {
         '[data-nav-section="The Impact"]',
       );
       const hiringEl = document.querySelector<HTMLElement>(
-        '[data-nav-section="Hiring Partners"]',
+        '[data-nav-section="Partner"]',
       );
       const footerEl = document.querySelector<HTMLElement>("footer");
 
@@ -291,9 +291,9 @@ export default function SideNav() {
         break;
       }
 
-      case 6: { // Hiring Partners
+      case 6: { // Partner
         const el = document.querySelector<HTMLElement>(
-          '[data-nav-section="Hiring Partners"]',
+          '[data-nav-section="Partner"]',
         );
         if (el) {
           targetY = el.getBoundingClientRect().top + currentScroll;
@@ -332,7 +332,7 @@ export default function SideNav() {
               itemRefs.current[i] = el;
             }}
             onClick={() => scrollToSection(i)}
-            className={`pointer-events-auto cursor-pointer bg-transparent border-0 p-0 text-left whitespace-nowrap text-[11px] tracking-wide will-change-[filter,opacity] transition-all duration-200 hover:scale-105 hover:!opacity-100 hover:![filter:blur(0px)] active:scale-95 ${theme === "dark" ? "hover:!text-white" : "hover:!text-[#0a0b0d]"}`}
+            className={`pointer-events-auto cursor-pointer bg-transparent border-0 p-0 text-left whitespace-nowrap text-[11px] tracking-wide will-change-[filter,opacity] transition-all duration-200 hover:scale-105 hover:opacity-100! hover:filter-[blur(0px)]! active:scale-95 ${theme === "dark" ? "hover:text-white!" : "hover:text-[#0a0b0d]!"}`}
             aria-label={`Scroll to ${label}`}
           >
             {label}

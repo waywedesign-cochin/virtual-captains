@@ -2,8 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Hero section for Virtual Captains.
@@ -56,13 +59,13 @@ export default function Hero() {
       // ---------- REPEATING TORCH COLOR SYSTEM ----------
       // Smooth continuous chromatic cycle: Yellow -> Orange -> Red -> Violet -> Blue -> Cyan -> Lime -> Yellow
       const TORCH_PALETTE = [
-        { r: 255, g: 214, b: 10 },  // Radiant Golden Yellow (#ffd60a)
-        { r: 255, g: 120, b: 18 },  // Sunset Orange (#ff7812)
-        { r: 255, g: 42, b: 68 },   // Electric Coral Red (#ff2a44)
-        { r: 218, g: 60, b: 240 },  // Neon Magenta / Violet (#da3cf0)
-        { r: 42, g: 130, b: 255 },  // Electric Royal Blue (#2a82ff)
-        { r: 0, g: 228, b: 255 },   // Vivid Cyan (#00e4ff)
-        { r: 175, g: 255, b: 35 },  // Electric Lime (#afff23)
+        { r: 255, g: 214, b: 10 }, // Radiant Golden Yellow (#ffd60a)
+        { r: 255, g: 120, b: 18 }, // Sunset Orange (#ff7812)
+        { r: 255, g: 42, b: 68 }, // Electric Coral Red (#ff2a44)
+        { r: 218, g: 60, b: 240 }, // Neon Magenta / Violet (#da3cf0)
+        { r: 42, g: 130, b: 255 }, // Electric Royal Blue (#2a82ff)
+        { r: 0, g: 228, b: 255 }, // Vivid Cyan (#00e4ff)
+        { r: 175, g: 255, b: 35 }, // Electric Lime (#afff23)
       ];
 
       const currentColor = { ...TORCH_PALETTE[0] };
@@ -280,6 +283,22 @@ export default function Hero() {
         hero.addEventListener("mousemove", handleMove);
         hero.addEventListener("mouseleave", handleLeave);
 
+        // Scroll-driven exit parallax: as ScrollText3D slides over, Hero curves its border, dims, and zooms out
+        gsap.to(hero, {
+          opacity: 0.5,
+          scale: 0.94,
+          borderRadius: "40px",
+          borderColor: "rgba(255, 255, 255, 0.16)",
+          boxShadow: "0 30px 70px rgba(0, 0, 0, 0.8)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: hero,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+
         return () => {
           gsap.ticker.remove(dotGlowTicker);
           hero.removeEventListener("mouseenter", handleEnter);
@@ -296,7 +315,8 @@ export default function Hero() {
     <section
       id="home"
       ref={heroRef}
-      className="relative mx-auto flex min-h-svh w-full max-w-[1920px] flex-col justify-center overflow-hidden rounded-b-[18px] bg-[#040507] pt-[clamp(110px,13vh,150px)] pb-[clamp(40px,6vh,75px)] sm:rounded-b-3xl lg:rounded-b-[28px]"
+      className="sticky top-0 z-0 mx-auto flex min-h-svh w-full max-w-[1920px] flex-col justify-center overflow-hidden bg-[#040507] border border-transparent pt-[clamp(110px,13vh,150px)] pb-[clamp(40px,6vh,75px)] origin-center will-change-[transform,opacity,border-radius]"
+      style={{ borderRadius: "0px" }}
     >
       {/* diagonal gradient base */}
       <div
@@ -349,7 +369,7 @@ export default function Hero() {
       <div className="relative z-3 flex flex-1 flex-col items-center justify-center px-5 py-6 text-center sm:px-8">
         <div className="relative group">
           {/* MAIN TEXT */}
-          <h1 className="max-w-225 font-serif text-[clamp(1.75rem,2.4vw+2.6vh,4.25rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none px-4 py-2 -mx-4 -my-2">
+          <h1 className="max-w-5xl font-serif text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none px-4 py-2 -mx-4 -my-2">
             <span className="hero-line block px-2 -mx-2 py-0.5">
               <span className="hero-word-base inline-block">Turn</span>{" "}
               <span className="hero-word-base inline-block">Sales</span>
@@ -375,7 +395,7 @@ export default function Hero() {
           {/* HIGHLIGHT TEXT (torch spotlight glow reveal) */}
           <h1
             ref={highlightRef}
-            className="pointer-events-none absolute inset-0 max-w-225 font-serif text-[clamp(1.75rem,2.4vw+2.6vh,4.25rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none hidden sm:block px-4 py-2 -mx-4 -my-2"
+            className="pointer-events-none absolute inset-0 max-w-5xl font-serif text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none hidden sm:block px-4 py-2 -mx-4 -my-2"
             style={{
               opacity: 0,
               textShadow:

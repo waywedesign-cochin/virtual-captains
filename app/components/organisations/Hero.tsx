@@ -7,15 +7,15 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#F2F3F7] via-white to-white px-5 pb-14 pt-6 sm:px-8 lg:px-12 lg:pb-20">
-      <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-10 lg:relative lg:min-h-[600px] lg:justify-center lg:gap-0">
+    <section className="relative overflow-hidden bg-linear-to-b from-[#F2F3F7] via-white to-white px-5 pb-14 pt-6 sm:px-8 lg:px-12 lg:pb-20">
+      <div className="mx-auto flex max-w-350 flex-col items-center gap-10 lg:relative lg:min-h-150 lg:justify-center lg:gap-0">
         {/* Left blurb — stacked on mobile, pinned left on desktop */}
         <motion.div
           initial={{ opacity: 0, x: -24 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: easeOut, delay: 0.15 }}
-          className="order-2 max-w-sm text-center lg:absolute lg:left-0 lg:top-1/2 lg:order-none lg:max-w-[210px] lg:-translate-y-1/2 lg:text-left"
+          className="order-2 max-w-sm text-center lg:absolute lg:left-0 lg:top-1/2 lg:order-0 lg:max-w-52.5 lg:-translate-y-1/2 lg:text-left"
         >
           <p className="text-[13px] font-extrabold uppercase leading-snug tracking-wide">
             <span className="text-[#2F4CDD]">Four Programmes, </span>
@@ -28,7 +28,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Centre: radar composition + headline */}
-        <div className="order-1 relative w-full lg:order-none">
+        <div className="order-1 relative w-full lg:order-0">
           <FloatingAvatars />
 
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
@@ -59,7 +59,7 @@ export default function Hero() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: easeOut, delay: 0.25 }}
-          className="order-3 flex gap-3 lg:absolute lg:right-0 lg:top-1/2 lg:order-none lg:-translate-y-1/2 lg:flex-col lg:items-end"
+          className="order-3 flex gap-3 lg:absolute lg:right-0 lg:top-1/2 lg:order-0 lg:-translate-y-1/2 lg:flex-col lg:items-end"
         >
           <button
             type="button"

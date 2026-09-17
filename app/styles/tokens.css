@@ -4,13 +4,13 @@
 
 :root {
   /* ---- Reference frame -------------------------------------------------- */
-  --frame: 1512;
-  --frame-w: 1512px;
+  --frame: 1488;
+  --frame-w: 93rem;
 
   /* ---- Blues: hero atmosphere ------------------------------------------ */
   --blue-300: #1064c2;
-  --blue-900: #0d0749;
-  --blue-950: #031c4c;
+  --blue-900: #06112c;
+  --blue-950: #040507;
 
   /* ---- Accents ---------------------------------------------------------- */
   --cyan: #3ec6f5;
@@ -27,28 +27,19 @@
 
   /* ---- Atmosphere gradients --------------------------------------------- */
   /* The dark region is ONE continuous gradient spanning hero -> partner.
-     Do not split it per section or the seams become visible. */
-  /* Stops read off the reference at 200px intervals down the right edge (the
-     side the left-hand wash does not reach), so this is the true base gradient
-     with the wash factored out. Percentages are of the full 3119px dark run. */
+     Harmonized with site-wide dark obsidian luxury (#040507). */
   --atmosphere: linear-gradient(
     180deg,
-    #071e84 0%,
-    #092e97 9.6%,
-    #0832a1 16%,
-    #0631b3 22.4%,
-    #002ac2 28.9%,
-    #0127b7 35.3%,
-    #0323a7 41.7%,
-    #051e97 48.1%,
-    #071987 54.5%,
-    #081577 60.9%,
-    #0a1068 67.3%,
-    #0c0c58 73.7%,
-    #0d084c 80.2%,
-    #0d0647 86.6%,
-    #0d0544 93%,
-    #0e0644 100%
+    #040507 0%,
+    #06112c 8%,
+    #081c52 18%,
+    #092672 28%,
+    #071f60 40%,
+    #06194e 54%,
+    #05133e 68%,
+    #040d2c 82%,
+    #04091e 92%,
+    #040507 100%
   );
 
   /* The hero's left-hand wash, separated into a horizontal colour ramp and a
