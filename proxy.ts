@@ -51,11 +51,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4. Redirect all other subpages to /under-development with referring path
-  const redirectUrl = new URL("/under-development", request.url);
-  redirectUrl.searchParams.set("from", pathname);
-
-  return NextResponse.redirect(redirectUrl);
+  // 4. Redirect all other subpages directly to /under-development
+  return NextResponse.redirect(new URL("/under-development", request.url));
 }
 
 export const middleware = proxy;
