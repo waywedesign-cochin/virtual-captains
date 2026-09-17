@@ -3,8 +3,7 @@ import UnderDevelopmentContent from "./UnderDevelopmentContent";
 
 export const metadata = {
   title: "Under Development | Virtual Captains",
-  description:
-    "This section is currently under active development. Return to the home page to explore Virtual Captains.",
+  description: "This page is under development.",
 };
 
 export default function UnderDevelopmentPage() {
