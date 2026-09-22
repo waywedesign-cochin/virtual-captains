@@ -26,10 +26,14 @@ export default function SmoothScroll() {
     }
 
     const lenis = new Lenis({
-      lerp: 0.07, // Replaced duration/easing with lerp for a more "liquid" and premium momentum feel
-      wheelMultiplier: 1,
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Silky exponential momentum decay
+      orientation: "vertical",
+      gestureOrientation: "vertical",
       smoothWheel: true,
-      syncTouch: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.2,
+      syncTouch: false, // Let native 120Hz touch/trackpads glide with zero drag
     });
 
     window.__lenis = lenis;

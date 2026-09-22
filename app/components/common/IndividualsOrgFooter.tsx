@@ -359,39 +359,27 @@ export default function IndividualsOrgFooter() {
                 ref={actionsRef}
                 className="absolute inset-0 flex flex-col justify-between py-2 sm:py-4 w-full pointer-events-none"
               >
-                {/* Header Row: Slogan & Micro-Pills */}
-                <div className="flex flex-col lg:flex-row items-center justify-between gap-4 border-b border-white/10 pb-5 w-full">
-                  <div className="text-center lg:text-left">
-                    <p className="font-serif font-bold text-xl sm:text-2xl lg:text-3xl text-white tracking-tight drop-shadow-sm">
-                      Trusted Partner for <span className="font-serif italic text-[#8fd0ff]">People, Teams & Organizations</span>
-                    </p>
-                    <p className="text-white/60 text-xs sm:text-[13px] mt-1">
-                      Total Sales Floor Management & High-Performance Revenue Coaching.
-                    </p>
-                  </div>
-
-                  {/* Styled Cool Micro-Pills */}
-                  <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2 sm:gap-2.5">
-                    {[
-                      { text: "Practical Support", dot: "#38bdf8", glow: "rgba(56,189,248,0.7)" },
-                      { text: "Real-World Experience", dot: "#e7ff3d", glow: "rgba(231,255,61,0.7)" },
-                      { text: "Measurable Impact", dot: "#8fd0ff", glow: "rgba(143,208,255,0.7)" },
-                    ].map((item) => (
-                      <div
-                        key={item.text}
-                        className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/4 backdrop-blur-md px-3.5 py-1.5 text-[11px] sm:text-xs font-medium text-white/85 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white hover:scale-105 select-none"
-                      >
-                        <span
-                          className="h-1.5 w-1.5 rounded-full transition-transform duration-300 group-hover:scale-125"
-                          style={{
-                            backgroundColor: item.dot,
-                            boxShadow: `0 0 8px ${item.glow}`,
-                          }}
-                        />
-                        <span className="tracking-wide">{item.text}</span>
-                      </div>
-                    ))}
-                  </div>
+                {/* Header Row: Micro-Pills */}
+                <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2 sm:gap-2.5 border-b border-white/10 pb-5 w-full">
+                  {[
+                    { text: "Practical Support", dot: "#38bdf8", glow: "rgba(56,189,248,0.7)" },
+                    { text: "Real-World Experience", dot: "#e7ff3d", glow: "rgba(231,255,61,0.7)" },
+                    { text: "Measurable Impact", dot: "#8fd0ff", glow: "rgba(143,208,255,0.7)" },
+                  ].map((item) => (
+                    <div
+                      key={item.text}
+                      className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/4 backdrop-blur-md px-3.5 py-1.5 text-[11px] sm:text-xs font-medium text-white/85 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white hover:scale-105 select-none"
+                    >
+                      <span
+                        className="h-1.5 w-1.5 rounded-full transition-transform duration-300 group-hover:scale-125"
+                        style={{
+                          backgroundColor: item.dot,
+                          boxShadow: `0 0 8px ${item.glow}`,
+                        }}
+                      />
+                      <span className="tracking-wide">{item.text}</span>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Multi-Column Links of Different Pages */}
@@ -434,6 +422,8 @@ export default function IndividualsOrgFooter() {
                       <Link href="/newsletter" className="w-fit transition-colors hover:text-white">Newsletter</Link>
                       <Link href="/contact" className="w-fit transition-colors hover:text-white">Contact Sales Floor</Link>
                       <Link href="/privacy" className="w-fit transition-colors hover:text-white">Privacy Policy</Link>
+                      <Link href="/terms" className="w-fit transition-colors hover:text-white">Terms &amp; Conditions</Link>
+                      <Link href="/refund" className="w-fit transition-colors hover:text-white">Refund / Cancellation</Link>
                     </nav>
                   </div>
 
@@ -464,12 +454,35 @@ export default function IndividualsOrgFooter() {
               ref={legalRef}
               className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
             >
-              <Link
-                href="/privacy"
-                className="order-2 transition-colors hover:text-white sm:order-1"
-              >
-                Privacy Policy
-              </Link>
+              <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
+                <Link
+                  href="/privacy"
+                  className="transition-colors hover:text-white"
+                >
+                  Privacy Policy
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/terms"
+                  className="transition-colors hover:text-white"
+                >
+                  Terms &amp; Conditions
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/refund"
+                  className="transition-colors hover:text-white"
+                >
+                  Refund Policy
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/refund#disclaimer"
+                  className="transition-colors hover:text-white"
+                >
+                  Disclaimer
+                </Link>
+              </div>
               <p className="order-1 text-center sm:order-2">
                 © All Rights Reserved by Virtual Captains{" "}
                 {new Date().getFullYear()}

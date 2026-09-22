@@ -1,101 +1,296 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface PartnerItem {
   id: string;
   name: string;
-  category: string;
-  coords: { x: string; y: string };
-  delay: string;
+  logoSrc: string;
+  filterClass?: string;
+  imgClass?: string;
+  // Symmetrical pixel offsets relative to exact center (0, 0)
+  offsetX: number;
+  offsetY: number;
+}
+
+// 5 Authentic Partner Cards arranged symmetrically around the center title with high visibility
+const partners: PartnerItem[] = [
+  // ── TOP TRIO (Y = -165px to -195px) ──
+  {
+    id: "p-ahad",
+    name: "AHAD",
+    logoSrc: "/partners/AHAD.png",
+    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
+    imgClass: "h-8 sm:h-10 w-auto max-w-[145px] sm:max-w-[170px]",
+    offsetX: -390,
+    offsetY: -165,
+  },
+  {
+    id: "p-jsr",
+    name: "JSR",
+    logoSrc: "/partners/JSR.png",
+    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
+    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[170px] py-2",
+    offsetX: 0,
+    offsetY: -195,
+  },
+  {
+    id: "p-skylark",
+    name: "Skylark",
+    logoSrc: "/partners/SKYLARK.png",
+    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
+    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[170px] py-2",
+    offsetX: 390,
+    offsetY: -165,
+  },
+
+  // ── BOTTOM PAIR (Y = +175px) ──
+  {
+    id: "p-moonhive",
+    name: "MoonHive",
+    logoSrc: "/partners/MOONHIV.png",
+    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
+    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[170px] py-2",
+    offsetX: -270,
+    offsetY: 175,
+  },
+  {
+    id: "p-unifirm",
+    name: "Unifirm",
+    logoSrc: "/partners/UNIFIRM.png",
+    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
+    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[180px] py-2",
+    offsetX: 270,
+    offsetY: 175,
+  },
+];
+
+// Helper to render crisp, authentic brand logos with high luminescence
+function PartnerBadgeContent({ p }: { p: PartnerItem }) {
+  return (
+    <div className="flex items-center justify-center w-full h-full px-3 py-2">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={p.logoSrc}
+        alt={p.name}
+        className={`${p.imgClass || "h-16 sm:h-24 w-auto"} ${p.filterClass || "brightness-0 invert opacity-95"} object-cover transition-all duration-300 group-hover:scale-105 group-hover:opacity-100 group-hover:drop-shadow-[0_0_14px_rgba(56,189,248,0.85)]`}
+        loading="lazy"
+      />
+    </div>
+  );
 }
 
 export default function SalesXPartnerCloud() {
-  const [hoveredPartner, setHoveredPartner] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const desktopCardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const mobileCardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [stageScale, setStageScale] = useState(1);
 
-  const partners: PartnerItem[] = [
-    { id: "p1", name: "Salesforce CRM", category: "CRM Integration", coords: { x: "-32%", y: "-130%" }, delay: "0.1s" },
-    { id: "p2", name: "HubSpot", category: "Inbound Pipeline", coords: { x: "28%", y: "-140%" }, delay: "0.2s" },
-    { id: "p3", name: "Gong.io", category: "Conversation Intelligence", coords: { x: "-55%", y: "-70%" }, delay: "0.15s" },
-    { id: "p4", name: "Outreach", category: "Sales Engagement", coords: { x: "55%", y: "-70%" }, delay: "0.25s" },
-    { id: "p5", name: "Stripe Billing", category: "Revenue Operations", coords: { x: "-68%", y: "0%" }, delay: "0.3s" },
-    { id: "p6", name: "Apollo.io", category: "Prospecting Data", coords: { x: "68%", y: "0%" }, delay: "0.35s" },
-    { id: "p7", name: "Salesloft", category: "Cadence Automation", coords: { x: "-50%", y: "80%" }, delay: "0.2s" },
-    { id: "p8", name: "ZoomInfo", category: "Buyer Intent Signal", coords: { x: "48%", y: "85%" }, delay: "0.4s" },
-    { id: "p9", name: "Snowflake", category: "Telemetry Warehouse", coords: { x: "-20%", y: "140%" }, delay: "0.25s" },
-    { id: "p10", name: "Slack", category: "Real-time Deal Alerts", coords: { x: "18%", y: "140%" }, delay: "0.3s" },
-    { id: "p11", name: "Datadog", category: "Uptime Telemetry", coords: { x: "0%", y: "-170%" }, delay: "0.45s" },
-    { id: "p12", name: "Notion", category: "Playbook Knowledge", coords: { x: "-5%", y: "185%" }, delay: "0.5s" },
-  ];
+  // Dynamically calculate responsive scale so systematic geometry stays intact
+  useEffect(() => {
+    const handleResize = () => {
+      if (!stageRef.current) return;
+      const w = stageRef.current.offsetWidth;
+      if (w < 1140 && w >= 768) {
+        setStageScale(Math.max(0.72, w / 1140));
+      } else {
+        setStageScale(1);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (prefersReducedMotion || !sectionRef.current) return;
+
+    const desktopCards = desktopCardsRef.current.filter(
+      Boolean,
+    ) as HTMLDivElement[];
+    const mobileCards = mobileCardsRef.current.filter(
+      Boolean,
+    ) as HTMLDivElement[];
+
+    // 1. Initial Hidden State: Center text is visible; cards start hidden behind center
+    desktopCards.forEach((card, idx) => {
+      const p = partners[idx];
+      // Offset originating from near center behind the title
+      const startX = -p.offsetX * 0.8;
+      const startY = -p.offsetY * 0.8;
+
+      gsap.set(card, {
+        opacity: 0,
+        scale: 0.15,
+        x: startX,
+        y: startY,
+        force3D: true,
+      });
+    });
+
+    if (mobileCards.length > 0) {
+      gsap.set(mobileCards, {
+        opacity: 0,
+        y: 20,
+        scale: 0.92,
+      });
+    }
+
+    // 2. Viewport Entrance Trigger
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 72%",
+        once: true,
+        onEnter: () => {
+          // Desktop: Radial bloom outward to exact symmetrical coordinates
+          if (desktopCards.length > 0) {
+            gsap.to(desktopCards, {
+              opacity: 1,
+              scale: 1,
+              x: 0,
+              y: 0,
+              duration: 1.05,
+              ease: "back.out(1.4)",
+              stagger: {
+                each: 0.045,
+                from: "center", // Symmetrical explosion outward!
+              },
+              onComplete: () => {
+                // Symmetrical zero-gravity floating oscillation
+                desktopCards.forEach((card, i) => {
+                  gsap.to(card, {
+                    y: "+=5",
+                    duration: 2.4 + (i % 3) * 0.5,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut",
+                    delay: (i % 4) * 0.15,
+                  });
+                });
+              },
+            });
+          }
+
+          // Mobile: Elegant slide up stagger
+          if (mobileCards.length > 0) {
+            gsap.to(mobileCards, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.75,
+              ease: "power2.out",
+              stagger: 0.04,
+            });
+          }
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="relative py-32 sm:py-44 overflow-hidden bg-[#07090e] border-t border-blue-950/40">
-      {/* Central Blue Ambient Radial Field */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-187.5 h-125 bg-blue-600/10 blur-[150px] pointer-events-none -z-10" />
+    <section
+      ref={sectionRef}
+      role="region"
+      aria-label="SalesX Partner Network and Ecosystem"
+      className="relative bg-[#030614] overflow-hidden py-24 sm:py-32 select-none"
+    >
+      {/* Central Blue Ambient Radial Glow matching reference image */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[950px] h-[350px] sm:h-[450px] lg:h-[550px] bg-radial from-[#1e40af]/25 via-[#0a1740]/15 to-transparent blur-[140px] pointer-events-none -z-10" />
 
-      <div className="w-full max-w-350 mx-auto px-4 sm:px-8 lg:px-12 text-center">
-        {/* Central Title with Surrounding Floating Cloud */}
-        <div className="relative min-h-115 sm:min-h-130 flex items-center justify-center">
-          {/* Central Title & Subtitle */}
-          <div className="relative z-20 max-w-xl mx-auto px-6 py-8 rounded-3xl bg-[#07090e]/80 backdrop-blur-md">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1 text-xs font-semibold text-[#38bdf8] backdrop-blur-md mb-4">
-              <span>Enterprise Ecosystem</span>
-            </div>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white">
+      {/* Subtle Starfield Dot Grid - Standardized Cosmic Grid Token */}
+      <div
+        className="absolute inset-0 opacity-15 pointer-events-none -z-10"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgba(147, 197, 253, 0.35) 1px, transparent 0)",
+          backgroundSize: "44px 44px",
+        }}
+      />
+
+      <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
+        {/* ── DESKTOP & TABLET: MATHEMATICALLY BALANCED 2-3-2-3-2 CONSTELLATION ── */}
+        <div
+          ref={stageRef}
+          className="hidden md:block relative w-full max-w-5xl xl:max-w-6xl mx-auto h-[620px] lg:h-[680px] xl:h-[720px]"
+        >
+          {/* Central Title & Subtitle (Absolute Dead Center) */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center select-none pointer-events-none px-4 w-full max-w-2xl">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-white font-sans drop-shadow-[0_0_35px_rgba(255,255,255,0.18)] whitespace-nowrap">
               Partner Network
             </h2>
-            <p className="mt-4 text-xs sm:text-sm text-slate-300 max-w-md mx-auto">
-              Sync simulation telemetry, readiness scores, and coaching insights
-              instantly with your existing revenue stack.
+            <p className="mt-4 sm:mt-5 text-xs sm:text-sm lg:text-base text-slate-200 font-light tracking-[0.28em] uppercase font-sans">
+              Grow Alongside SalesX
             </p>
           </div>
 
-          {/* Floating Partner Badges (Desktop Orbit Cloud) */}
-          <div className="hidden md:block absolute inset-0 pointer-events-none">
-            {partners.map((partner) => {
-              const isHovered = hoveredPartner === partner.id;
+          {/* 12 Floating Partner Cards (Bilateral & Vertical Reflection Symmetry) */}
+          <div className="absolute inset-0 pointer-events-none">
+            {partners.map((p, idx) => {
+              const xPos = p.offsetX * stageScale;
+              const yPos = p.offsetY * stageScale;
+
               return (
                 <div
-                  key={partner.id}
-                  className="absolute top-1/2 left-1/2 pointer-events-auto transition-transform duration-700 ease-out"
+                  key={p.id}
+                  ref={(el) => {
+                    desktopCardsRef.current[idx] = el;
+                  }}
+                  className="absolute pointer-events-auto cursor-pointer group will-change-transform"
                   style={{
-                    transform: `translate(calc(-50% + ${partner.coords.x}), calc(-50% + ${partner.coords.y}))`,
+                    left: `calc(50% + ${xPos}px)`,
+                    top: `calc(50% + ${yPos}px)`,
+                    transform: "translate(-50%, -50%)",
                   }}
                 >
-                  <div
-                    onMouseEnter={() => setHoveredPartner(partner.id)}
-                    onMouseLeave={() => setHoveredPartner(null)}
-                    className={`group cursor-pointer rounded-2xl border px-4 py-2 sm:py-2.5 backdrop-blur-xl transition-all duration-300 transform hover:scale-110 shadow-lg ${
-                      isHovered
-                        ? "border-[#38bdf8] bg-[#0c143d] shadow-[0_0_25px_rgba(56,189,248,0.5)] z-30"
-                        : "border-blue-500/25 bg-[#090d29]/80 hover:border-blue-400"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#38bdf8] group-hover:animate-ping" />
-                      <span className="text-xs sm:text-sm font-bold text-white tracking-wide">
-                        {partner.name}
-                      </span>
-                    </div>
-                    {isHovered && (
-                      <div className="text-[10px] text-[#38bdf8] text-left mt-0.5 font-medium animate-fadeIn">
-                        {partner.category}
-                      </div>
-                    )}
+                  <div className="relative w-48 sm:w-56 h-15 sm:h-17 px-5 sm:px-6 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/25 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-108 hover:-translate-y-1 overflow-hidden">
+                    {/* Ambient subtle backlight behind logo */}
+                    <div className="absolute inset-0 bg-radial from-sky-400/15 via-transparent to-transparent opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500 pointer-events-none" />
+
+                    <PartnerBadgeContent p={p} />
                   </div>
                 </div>
               );
             })}
           </div>
+        </div>
 
-          {/* Mobile Grid Layout for partner pills */}
-          <div className="md:hidden mt-8 grid grid-cols-2 gap-3 w-full max-w-md mx-auto">
-            {partners.slice(0, 8).map((p) => (
+        {/* ── MOBILE VIEW (Clean responsive systematically spaced grid) ── */}
+        <div className="md:hidden flex flex-col items-center text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-sans">
+            Partner Network
+          </h2>
+          <p className="mt-3 text-xs sm:text-sm text-slate-300 font-light tracking-[0.24em] uppercase font-sans">
+            Grow Alongside SalesX
+          </p>
+
+          <div className="grid grid-cols-2 gap-3.5 mt-10 w-full max-w-sm sm:max-w-md">
+            {partners.map((p, idx) => (
               <div
-                key={p.id}
-                className="rounded-xl border border-blue-500/20 bg-[#090e2a] px-3 py-2 text-center text-xs font-semibold text-white shadow"
+                key={`m-${p.id}`}
+                ref={(el) => {
+                  mobileCardsRef.current[idx] = el;
+                }}
+                className={`relative h-15 px-4 py-2 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/20 flex items-center justify-center shadow-lg overflow-hidden ${
+                  idx === partners.length - 1 && partners.length % 2 === 1
+                    ? "col-span-2 max-w-[220px] mx-auto w-full"
+                    : ""
+                }`}
               >
-                {p.name}
+                <div className="absolute inset-0 bg-radial from-sky-400/10 via-transparent to-transparent pointer-events-none" />
+                <PartnerBadgeContent p={p} />
               </div>
             ))}
           </div>

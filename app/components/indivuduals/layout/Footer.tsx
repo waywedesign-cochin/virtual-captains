@@ -88,12 +88,35 @@ export function Footer({ scrollingWord = "INDIVIDUALS" }: FooterProps) {
             className="flex items-center justify-between gap-4 flex-wrap mt-[clamp(3rem,6vw,5rem)] border-t border-white/10 pt-6 text-xs text-white/50"
             data-footer-bar=""
           >
-            <Link
-              href={footerMeta.privacy.href}
-              className="underline underline-offset-[3px] transition-colors duration-200 hover:text-white"
-            >
-              {footerMeta.privacy.label}
-            </Link>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Link
+                href={footerMeta.privacy.href}
+                className="underline underline-offset-[3px] transition-colors duration-200 hover:text-white"
+              >
+                {footerMeta.privacy.label}
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href={footerMeta.terms.href}
+                className="underline underline-offset-[3px] transition-colors duration-200 hover:text-white"
+              >
+                {footerMeta.terms.label}
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href={footerMeta.refund.href}
+                className="underline underline-offset-[3px] transition-colors duration-200 hover:text-white"
+              >
+                {footerMeta.refund.label}
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href={footerMeta.disclaimer.href}
+                className="underline underline-offset-[3px] transition-colors duration-200 hover:text-white"
+              >
+                {footerMeta.disclaimer.label}
+              </Link>
+            </div>
             <p>{footerMeta.copyright}</p>
             <a
               href={footerMeta.credit.href}

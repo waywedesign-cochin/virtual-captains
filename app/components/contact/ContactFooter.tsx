@@ -402,12 +402,35 @@ export default function ContactFooter() {
               ref={legalRef}
               className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
             >
-              <Link
-                href="/privacy"
-                className="order-2 transition-colors hover:text-white sm:order-1"
-              >
-                Privacy Policy
-              </Link>
+              <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
+                <Link
+                  href="/privacy"
+                  className="transition-colors hover:text-white"
+                >
+                  Privacy Policy
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/terms"
+                  className="transition-colors hover:text-white"
+                >
+                  Terms &amp; Conditions
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/refund"
+                  className="transition-colors hover:text-white"
+                >
+                  Refund Policy
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/refund#disclaimer"
+                  className="transition-colors hover:text-white"
+                >
+                  Disclaimer
+                </Link>
+              </div>
               <p className="order-1 text-center sm:order-2">
                 © All Rights Reserved by Virtual Captains{" "}
                 {new Date().getFullYear()}

@@ -123,14 +123,14 @@ export const partner = {
 } as const;
 
 const homeLogos = [
-  "/home/AHAD - LOGO.png",
-  "/home/MoonHive -Logo.jpg.jpeg",
-  "/home/SalesX Logo Final-01.png",
-  "/home/SalesX Logo Final-02.png",
-  "/home/Sigma Life Unifirm Logo Png (1).png",
-  "/home/logo.png",
-  "/home/skylark_information_technologies_logo.jpg.jpeg",
-  "/home/SalesX Logo Final White.png"
+  "/partners/AHAD.png",
+  "/partners/MOONHIV.png",
+  "/partners/JSR.png",
+  "/partners/SKYLARK.png",
+  "/partners/UNIFIRM.png",
+  "/partners/AHAD.png",
+  "/partners/MOONHIV.png",
+  "/partners/SKYLARK.png",
 ];
 
 /** Eight placeholder slots in a 4 x 2 grid, matching the reference. */
@@ -223,6 +223,9 @@ export const footerColumns: ReadonlyArray<FooterColumn> = [
 export const footerMeta = {
   product: "SalesX",
   privacy: { label: "Privacy Policy", href: "/privacy" },
+  terms: { label: "Terms & Conditions", href: "/terms" },
+  refund: { label: "Refund / Cancellation", href: "/refund" },
+  disclaimer: { label: "Disclaimer", href: "/refund#disclaimer" },
   copyright: `© All Rights Reserved by Virtual Captains ${new Date().getFullYear()}`,
   credit: { label: "Built By Way WeDesign", href: "https://waywedesign.com" },
 } as const;

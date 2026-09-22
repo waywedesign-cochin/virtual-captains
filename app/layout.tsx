@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-scroll-behavior="smooth"
       className={`${playfair.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white overflow-x-hidden">
+      <body className="min-h-full flex flex-col bg-white overflow-x-clip">
         <SmoothScroll />
         {children}
       </body>

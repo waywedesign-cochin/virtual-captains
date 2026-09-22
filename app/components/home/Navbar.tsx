@@ -58,7 +58,11 @@ export default function Navbar() {
   return (
     <>
       {/* Top Segmented Scroll Progress Bar (EchoFi prog-wrap) */}
-      <div className="fixed top-0 left-0 right-0 z-60 pointer-events-none h-0.5">
+      <div
+        className={`fixed top-0 left-0 right-0 z-60 pointer-events-none h-0.5 transition-opacity duration-200 ${
+          scrollProgress > 0.005 ? "opacity-100" : "opacity-0"
+        }`}
+      >
         <div
           className="h-full bg-linear-to-r from-[#38bdf8] via-[#e7ff3d] to-[#38bdf8] origin-left transition-transform duration-75 ease-out shadow-[0_0_8px_rgba(231,255,61,0.5)]"
           style={{ transform: `scaleX(${scrollProgress})` }}
@@ -88,14 +92,14 @@ export default function Navbar() {
           <div
             className={`pointer-events-auto transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex items-center justify-between ${
               isSticky
-                ? "w-full max-w-164 rounded-full bg-linear-to-r from-white/[0.14] via-white/8 to-white/12 bg-[#14151a]/35 hover:bg-[#07080c]/85 hover:from-black/50 hover:via-[#0b0d13]/65 hover:to-black/50 backdrop-blur-2xl border border-white/20 hover:border-white/30 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.4),inset_0_1px_1.5px_0_rgba(255,255,255,0.3)] hover:shadow-[0_20px_45px_-6px_rgba(0,0,0,0.65),inset_0_1px_2px_0_rgba(255,255,255,0.25)] p-2 gap-3 sm:gap-5"
+                ? "w-full max-w-164 rounded-full bg-linear-to-r from-white/[0.14] via-white/8 to-white/12 bg-[#14151a]/35 hover:bg-[#07080c]/85 hover:from-black/50 hover:via-[#0b0d13]/65 hover:to-black/50 backdrop-blur-2xl border border-white/20 hover:border-white/30 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.4),inset_0_1px_1.5px_0_rgba(255,255,255,0.3)] hover:shadow-[0_20px_45px_-6px_rgba(0,0,0,0.65),inset_0_1px_2px_0_rgba(255,255,255,0.25)] p-1.5 sm:p-2 px-3 sm:px-4 gap-2 sm:gap-5"
                 : "w-full max-w-full rounded-full bg-transparent border border-transparent p-0 gap-4 sm:gap-8"
             }`}
           >
             {/* 1. LEFT: Virtual Captains Logo (.header-logo-wrap) */}
             <div
               className={`flex items-center justify-start shrink-0 transition-all duration-400 ${
-                isSticky ? "pl-3 sm:pl-3.5" : "pl-0"
+                isSticky ? "pl-1 sm:pl-2" : "pl-0"
               }`}
             >
               <Link
@@ -110,7 +114,7 @@ export default function Navbar() {
                   width={140}
                   height={28}
                   className={`w-auto object-contain transition-all duration-400 group-hover:scale-102 ${
-                    isSticky ? "h-4.75 sm:h-5.25" : "h-7 sm:h-8"
+                    isSticky ? "h-4.5 sm:h-5.25" : "h-7 sm:h-8"
                   }`}
                   priority
                 />
@@ -141,10 +145,10 @@ export default function Navbar() {
               </nav>
             )}
 
-            {/* STICKY STATE: Exactly 7 Minimal Dots representing the 7 Pages */}
+            {/* STICKY STATE: Exactly 7 Minimal Dots representing the 7 Pages (Desktop / Tablet only) */}
             {isSticky && (
               <nav
-                className={`flex items-center justify-center gap-1 sm:gap-2 px-1 ${pathname === '/individuals' ? 'lg:hidden' : ''}`}
+                className={`hidden md:flex items-center justify-center gap-1 sm:gap-2 px-1 ${pathname === '/individuals' ? 'lg:hidden' : ''}`}
                 aria-label="Pages Navigation"
               >
                 {NAV_ITEMS.map((item, index) => {
@@ -184,7 +188,7 @@ export default function Navbar() {
               </nav>
             )}
 
-            {/* 3. RIGHT: "BOOK A CALL" Button + Mobile Toggle (.header-cta-wrap) */}
+            {/* 3. RIGHT: "CONNECT" Button + Mobile Toggle (.header-cta-wrap) */}
             <div className="flex items-center justify-end shrink-0 gap-2 sm:gap-3">
               {/* TOP STATE BUTTON: Solid Dark Glass Pill (.btn) */}
               {!isSticky && (
@@ -202,73 +206,77 @@ export default function Navbar() {
                 <Link
                   href={connectHref}
                   onClick={handleConnectClick}
-                  className="inline-flex items-center justify-center rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-3.5 sm:px-4.5 py-1.5 text-[11px] sm:text-[12px] font-bold text-[#0a0b0d] tracking-[0.02em] shadow-[0_0_16px_rgba(231,255,61,0.4)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98 shrink-0"
+                  className="inline-flex items-center justify-center rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-3 sm:px-4.5 py-1.5 text-[11px] sm:text-[12px] font-bold text-[#0a0b0d] tracking-[0.02em] shadow-[0_0_16px_rgba(231,255,61,0.4)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98 shrink-0"
                 >
                   <span className="hidden sm:inline">LET'S CONNECT</span>
                   <span className="sm:hidden">CONNECT</span>
                 </Link>
               )}
 
-              {/* Mobile Hamburger Toggle */}
-              {!isSticky && (
-                <button
-                  type="button"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden relative flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/4 text-white transition-colors hover:bg-white/10 cursor-pointer"
-                  aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              {/* Mobile Hamburger Toggle (Always available on mobile screens) */}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className={`lg:hidden relative flex items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all hover:bg-white/20 cursor-pointer shrink-0 ${
+                  isSticky ? "h-8 w-8" : "h-10 w-10"
+                }`}
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                <div
+                  className={`relative w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+                    isMobileMenuOpen ? "rotate-180" : "rotate-0"
+                  }`}
                 >
-                  <div
-                    className={`relative w-4 h-4 transition-transform duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] ${
-                      isMobileMenuOpen ? "rotate-180" : "rotate-0"
+                  {/* Center dot */}
+                  <span
+                    className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-white transition-all duration-300 ${
+                      isMobileMenuOpen
+                        ? "opacity-100 scale-100"
+                        : "opacity-100"
                     }`}
-                  >
-                    {/* Center dot */}
-                    <span
-                      className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-white transition-all duration-300 ${
-                        isMobileMenuOpen
-                          ? "opacity-100 scale-100"
-                          : "opacity-100"
-                      }`}
-                    />
-                    {/* Outer dots */}
-                    <span
-                      className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
-                        isMobileMenuOpen
-                          ? "top-0 left-0"
-                          : "top-1/2 left-0 -translate-y-1/2"
-                      }`}
-                    />
-                    <span
-                      className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
-                        isMobileMenuOpen
-                          ? "top-0 right-0"
-                          : "top-0 left-1/2 -translate-x-1/2"
-                      }`}
-                    />
-                    <span
-                      className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
-                        isMobileMenuOpen
-                          ? "bottom-0 left-0"
-                          : "bottom-0 left-1/2 -translate-x-1/2"
-                      }`}
-                    />
-                    <span
-                      className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
-                        isMobileMenuOpen
-                          ? "bottom-0 right-0"
-                          : "top-1/2 right-0 -translate-y-1/2"
-                      }`}
-                    />
-                  </div>
-                </button>
-              )}
+                  />
+                  {/* Outer dots */}
+                  <span
+                    className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
+                      isMobileMenuOpen
+                        ? "top-0 left-0"
+                        : "top-1/2 left-0 -translate-y-1/2"
+                    }`}
+                  />
+                  <span
+                    className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
+                      isMobileMenuOpen
+                        ? "top-0 right-0"
+                        : "top-0 left-1/2 -translate-x-1/2"
+                    }`}
+                  />
+                  <span
+                    className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
+                      isMobileMenuOpen
+                        ? "bottom-0 left-0"
+                        : "bottom-0 left-1/2 -translate-x-1/2"
+                    }`}
+                  />
+                  <span
+                    className={`absolute w-1 h-1 rounded-full bg-white transition-all duration-300 ${
+                      isMobileMenuOpen
+                        ? "bottom-0 right-0"
+                        : "top-1/2 right-0 -translate-y-1/2"
+                    }`}
+                  />
+                </div>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Dropdown Drawer (Top State) */}
-        {!isSticky && isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full inset-x-4 mt-2 bg-[#0d0e12]/95 backdrop-blur-2xl border border-white/12 rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-300 pointer-events-auto">
+        {/* Mobile Dropdown Drawer (Accessible in both top and sticky states) */}
+        {isMobileMenuOpen && (
+          <div
+            className={`lg:hidden absolute inset-x-4 bg-[#0d0e12]/95 backdrop-blur-2xl border border-white/12 rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-300 pointer-events-auto z-50 ${
+              isSticky ? "top-full mt-3 max-w-md mx-auto" : "top-full mt-2"
+            }`}
+          >
             <div className="flex flex-col gap-2">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href;
@@ -295,7 +303,7 @@ export default function Navbar() {
                   onClick={handleConnectClick}
                   className="w-full flex items-center justify-center rounded-xl bg-[#e7ff3d] hover:bg-[#d8f030] py-3 text-center text-[13px] font-bold text-[#0a0b0d] shadow-[0_0_20px_rgba(231,255,61,0.35)] cursor-pointer"
                 >
-                  BOOK A CALL
+                  LET'S CONNECT
                 </Link>
               </div>
             </div>

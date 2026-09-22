@@ -55,15 +55,18 @@ export function buildPartnerTimeline(scope: HTMLElement): void {
       }
       console.log("buildPartnerTimeline successfully found hub and logos", { hub, logos: logos.length });
 
-      const section = scope.closest('section') || scope;
+      const section = scope.closest("section") || scope;
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "top 50%", // Start when section reaches middle of screen
-          end: "+=100%",    // Scrub for 100% of height
+          start: "top top",
+          end: "+=120%",
           scrub: 1,
-          pin: false,       // Don't pin to avoid layout issues, just scrub
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
         },
         defaults: { ease: EASE.inOut },
       });

@@ -193,13 +193,21 @@ export default function SiteFooter() {
 
           {/* Legal / Copyright Row with Back to top */}
           <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 sm:flex-row text-xs text-white/50">
-            <div className="flex items-center gap-6">
-              <Link href="#" className="hover:text-white/80 transition-colors">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:justify-start">
+              <Link href="/privacy" className="hover:text-white/80 transition-colors">
                 Privacy Policy
               </Link>
               <span>·</span>
-              <Link href="#" className="hover:text-white/80 transition-colors">
-                Terms of Service
+              <Link href="/terms" className="hover:text-white/80 transition-colors">
+                Terms &amp; Conditions
+              </Link>
+              <span>·</span>
+              <Link href="/refund" className="hover:text-white/80 transition-colors">
+                Refund Policy
+              </Link>
+              <span>·</span>
+              <Link href="/refund#disclaimer" className="hover:text-white/80 transition-colors">
+                Disclaimer
               </Link>
             </div>
 

@@ -1,52 +1,67 @@
 import type { Metadata } from "next";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
-import Link from "next/link";
+
+import AboutHero from "../components/about/AboutHero";
+import AboutInsideWorld from "../components/about/AboutInsideWorld";
+import AboutFounder from "../components/about/AboutFounder";
+import AboutMetrics from "../components/about/AboutMetrics";
+import AboutPartners from "../components/about/AboutPartners";
+import AboutCertifications from "../components/about/AboutCertifications";
+import AboutVideoCTA from "../components/about/AboutVideoCTA";
 
 export const metadata: Metadata = {
   title: "About Virtual Captains | Conversational Sales Intelligence",
   description:
-    "We empower sales professionals and global organisations with AI simulation and real-world execution capabilities.",
+    "A smarter way to build sales capability at scale. We empower sales professionals and global organisations with AI simulation and real-world execution capabilities.",
 };
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[#07090e] text-white selection:bg-[#e7ff3d] selection:text-black">
+    <main className="min-h-screen bg-[#020B25] text-white selection:bg-[#e5ff00] selection:text-black">
       <Navbar />
 
-      <section className="relative pt-36 pb-24 px-6 sm:px-10 lg:px-16 max-w-6xl mx-auto flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1 text-xs font-medium text-[#e7ff3d] backdrop-blur-md mb-6">
-          <span>About Virtual Captains</span>
+      {/*
+       * Unified body canvas — all sections live inside one continuous
+       * background layer. No borders, no colour breaks, no separation.
+       */}
+      <div className="relative bg-[#020B25] overflow-x-clip">
+        {/* Shared ambient nebula glows that float across the whole page */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+          {/* Top-centre blue core */}
+          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] sm:w-[1100px] h-[700px] rounded-full bg-[#0f3591]/20 blur-[160px]" />
+          {/* Mid-page warm accent */}
+          <div className="absolute top-[35%] right-[-10%] w-[650px] sm:w-[850px] h-[650px] rounded-full bg-[#1a4fc8]/14 blur-[160px]" />
+          {/* Bottom-left cool glow */}
+          <div className="absolute bottom-[20%] left-[-10%] w-[600px] sm:w-[800px] h-[600px] rounded-full bg-[#0a2a80]/18 blur-[150px]" />
+          {/* Deep footer aura */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[950px] h-[500px] rounded-full bg-[#0d276b]/15 blur-[160px]" />
         </div>
 
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.15] max-w-4xl text-white">
-          Pioneering the Future of{" "}
-          <span className="italic text-[#38bdf8]">Conversational</span> Sales
-        </h1>
+        {/* 1. Hero Section: Single Centred Headline */}
+        <AboutHero />
 
-        <p className="mt-6 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
-          Virtual Captains bridges the gap between training and real-world sales performance.
-          Through AI-driven simulations and behavioral science, we help sales teams build
-          the confidence and muscle memory needed to close high-stakes deals.
-        </p>
+        {/* 2. Inside Our World: Looping Card & Rotating Half-Circle Animation */}
+        <AboutInsideWorld />
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/organisations"
-            className="rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all"
-          >
-            For Organisations
-          </Link>
-          <Link
-            href="/individuals"
-            className="rounded-full border border-white/20 bg-white/5 hover:bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-all"
-          >
-            For Individuals
-          </Link>
-        </div>
-      </section>
+        {/* 3. Founder Section: Arch Portrait, Constellation & Narrative Creed */}
+        <AboutFounder />
 
-      <SiteFooter />
+        {/* 4. Metrics Orbit Section: Tilted Ellipse & Global Impact Stats */}
+        <AboutMetrics />
+
+        {/* 5. Partner Network Section: 5 Real Partners Cluster & Narrative */}
+        <AboutPartners />
+
+        {/* 6. Certifications Section: Giant Watermark Title & 4 Rosette Star Badges */}
+        <AboutCertifications />
+
+        {/* 7. Video & Call to Action: YouTube Iframe & Concentric Book A Call Button */}
+        <AboutVideoCTA />
+      </div>
+
+      {/* Footer: Pure footer without duplicated CTA band */}
+      <SiteFooter showCTA={false} />
     </main>
   );
 }

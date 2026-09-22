@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -24,9 +25,14 @@ gsap.registerPlugin(ScrollTrigger);
  * mobile widths, and everything degrades gracefully under
  * prefers-reduced-motion.
  */
-export default function SiteFooter() {
+interface SiteFooterProps {
+  showCTA?: boolean;
+}
+
+export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const ctaSectionRef = useRef<HTMLElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
   const ctaFillRef = useRef<HTMLSpanElement>(null);
@@ -55,153 +61,162 @@ export default function SiteFooter() {
             wordmarkRef.current,
             actionsRef.current,
             legalRef.current,
-          ],
+          ].filter(Boolean),
           { opacity: 1, y: 0, x: 0, scale: 1 },
         );
         return;
       }
 
-      // ---------- CTA band ----------
-      gsap.set(ctaEyebrowRef.current, { opacity: 0, y: 14 });
-      gsap.set(ctaRef.current, { opacity: 0, scale: 0.65, y: 20 });
+      // ---------- CTA band (only when showCTA is enabled) ----------
+      let cleanupCTA: (() => void) | undefined;
 
-      const ctaTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ctaSectionRef.current,
-          start: "top 78%",
-          toggleActions: "play none none reverse",
-        },
-      });
-      ctaTl
-        .to(ctaEyebrowRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power3.out",
-        })
-        .to(
-          ctaRef.current,
-          {
+      if (showCTA && ctaSectionRef.current && ctaRef.current) {
+        gsap.set(ctaEyebrowRef.current, { opacity: 0, y: 14 });
+        gsap.set(ctaRef.current, { opacity: 0, scale: 0.65, y: 20 });
+
+        const ctaTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ctaSectionRef.current,
+            start: "top 78%",
+            toggleActions: "play none none reverse",
+          },
+        });
+        ctaTl
+          .to(ctaEyebrowRef.current, {
             opacity: 1,
             y: 0,
-            duration: 0.85,
-            keyframes: [
-              {
-                scale: 1.15,
-                opacity: 1,
-                y: -4,
-                duration: 0.42,
-                ease: "power2.out",
-              },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
-          },
-          "-=0.25",
-        );
+            duration: 0.5,
+            ease: "power3.out",
+          })
+          .to(
+            ctaRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              keyframes: [
+                {
+                  scale: 1.15,
+                  opacity: 1,
+                  y: -4,
+                  duration: 0.42,
+                  ease: "power2.out",
+                },
+                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+              ],
+            },
+            "-=0.25",
+          );
 
-      // idle breathing glow behind the CTA
-      gsap.to(ctaRef.current, {
-        boxShadow: "0 0 0 14px rgba(231,255,61,0.06)",
-        duration: 1.8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+        // idle breathing glow behind the CTA
+        gsap.to(ctaRef.current, {
+          boxShadow: "0 0 0 14px rgba(231,255,61,0.06)",
+          duration: 1.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
 
-      const button = ctaRef.current;
-      const fill = ctaFillRef.current;
-      const arrow = ctaArrowRef.current;
-      if (!button || !fill) return;
+        const button = ctaRef.current;
+        const fill = ctaFillRef.current;
+        const arrow = ctaArrowRef.current;
 
-      if (!button || !fill) return;
+        if (button && fill) {
+          const grow = (x: number, y: number) => {
+            const rect = button.getBoundingClientRect();
+            const size = Math.hypot(rect.width, rect.height) * 2.2;
+            gsap.set(fill, {
+              width: size,
+              height: size,
+              left: x,
+              top: y,
+              xPercent: -50,
+              yPercent: -50,
+            });
+            gsap.to(fill, {
+              scale: 1,
+              duration: 0.6,
+              ease: "power3.out",
+              overwrite: true,
+            });
+            gsap.to(ctaLabelRef.current, {
+              color: "#0a0b0f",
+              duration: 0.35,
+              ease: "power2.out",
+              overwrite: true,
+            });
+            gsap.to(arrow, {
+              color: "#0a0b0f",
+              duration: 0.35,
+              ease: "power2.out",
+              overwrite: true,
+            });
+            gsap.to(button, {
+              scale: 1.03,
+              duration: 0.4,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+          };
 
-      const grow = (x: number, y: number) => {
-        const rect = button.getBoundingClientRect();
-        const size = Math.hypot(rect.width, rect.height) * 2.2;
-        gsap.set(fill, {
-          width: size,
-          height: size,
-          left: x,
-          top: y,
-          xPercent: -50,
-          yPercent: -50,
-        });
-        gsap.to(fill, {
-          scale: 1,
-          duration: 0.6,
-          ease: "power3.out",
-          overwrite: true,
-        });
-        gsap.to(ctaLabelRef.current, {
-          color: "#0a0b0f",
-          duration: 0.35,
-          ease: "power2.out",
-          overwrite: true,
-        });
-        gsap.to(arrow, {
-          color: "#0a0b0f",
-          duration: 0.35,
-          ease: "power2.out",
-          overwrite: true,
-        });
-        gsap.to(button, {
-          scale: 1.03,
-          duration: 0.4,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
-      };
+          const shrink = (x: number, y: number) => {
+            gsap.set(fill, { left: x, top: y });
+            gsap.to(fill, {
+              scale: 0,
+              duration: 0.4,
+              ease: "power2.in",
+              overwrite: true,
+            });
+            gsap.to(ctaLabelRef.current, {
+              color: "#101010",
+              duration: 0.3,
+              ease: "power2.in",
+              overwrite: true,
+            });
+            gsap.to(arrow, {
+              color: "#101010",
+              duration: 0.3,
+              ease: "power2.in",
+              overwrite: true,
+            });
+            gsap.to(button, {
+              scale: 1,
+              duration: 0.4,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+          };
 
-      const shrink = (x: number, y: number) => {
-        gsap.set(fill, { left: x, top: y });
-        gsap.to(fill, {
-          scale: 0,
-          duration: 0.4,
-          ease: "power2.in",
-          overwrite: true,
-        });
-        gsap.to(ctaLabelRef.current, {
-          color: "#101010",
-          duration: 0.3,
-          ease: "power2.in",
-          overwrite: true,
-        });
-        gsap.to(arrow, {
-          color: "#101010",
-          duration: 0.3,
-          ease: "power2.in",
-          overwrite: true,
-        });
-        gsap.to(button, {
-          scale: 1,
-          duration: 0.4,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
-      };
+          const onEnter = (e: PointerEvent) => {
+            const rect = button.getBoundingClientRect();
+            grow(e.clientX - rect.left, e.clientY - rect.top);
+          };
+          const onMove = (e: PointerEvent) => {
+            const rect = button.getBoundingClientRect();
+            gsap.to(fill, {
+              left: e.clientX - rect.left,
+              top: e.clientY - rect.top,
+              duration: 0.5,
+              ease: "power3.out",
+            });
+          };
+          const onLeave = (e: PointerEvent) => {
+            const rect = button.getBoundingClientRect();
+            shrink(e.clientX - rect.left, e.clientY - rect.top);
+          };
 
-      const onEnter = (e: PointerEvent) => {
-        const rect = button.getBoundingClientRect();
-        grow(e.clientX - rect.left, e.clientY - rect.top);
-      };
-      const onMove = (e: PointerEvent) => {
-        const rect = button.getBoundingClientRect();
-        gsap.to(fill, {
-          left: e.clientX - rect.left,
-          top: e.clientY - rect.top,
-          duration: 0.5,
-          ease: "power3.out",
-        });
-      };
-      const onLeave = (e: PointerEvent) => {
-        const rect = button.getBoundingClientRect();
-        shrink(e.clientX - rect.left, e.clientY - rect.top);
-      };
+          button.addEventListener("pointerenter", onEnter);
+          button.addEventListener("pointermove", onMove);
+          button.addEventListener("pointerleave", onLeave);
 
-      button.addEventListener("pointerenter", onEnter);
-      button.addEventListener("pointermove", onMove);
-      button.addEventListener("pointerleave", onLeave);
+          cleanupCTA = () => {
+            button.removeEventListener("pointerenter", onEnter);
+            button.removeEventListener("pointermove", onMove);
+            button.removeEventListener("pointerleave", onLeave);
+          };
+        }
+      }
 
       // ---------- Floating orbs (idle drift) ----------
       if (orb1Ref.current) {
@@ -226,67 +241,63 @@ export default function SiteFooter() {
       }
 
       // ---------- Footer pinned reveal ----------
-      // The nav buttons sit absolutely centered in the exact same spot as
-      // the wordmark (see the stage wrapper in the JSX below), so the
-      // moment the logo has faded out, the links are already sitting right
-      // there rather than sliding in from off-screen into empty space.
       gsap.set(wordmarkRef.current, { opacity: 0, y: 30, scale: 1 });
       gsap.set(actionsRef.current, { opacity: 0, scale: 0.9, y: 12 });
       gsap.set(legalRef.current, { opacity: 0, x: 70 });
       gsap.set(backToTopRef.current, { opacity: 0, y: 12 });
 
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top top",
-            end: "+=100%",
-            pin: true,
-            scrub: 0.5,
-          },
-        })
-        .to(wordmarkRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.3,
-          ease: "power2.out",
-        })
-        .to({}, { duration: 0.25 }) // hold on the big wordmark for a beat
-        .to(wordmarkRef.current, {
-          opacity: 0,
-          scale: 0.85,
-          duration: 0.28,
-          ease: "power2.in",
-        })
-        .to(
-          actionsRef.current,
-          {
+      if (footerRef.current) {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: footerRef.current,
+              start: "top top",
+              end: "+=100%",
+              pin: true,
+              scrub: 0.5,
+            },
+          })
+          .to(wordmarkRef.current, {
             opacity: 1,
-            scale: 1,
             y: 0,
-            duration: 0.35,
-            ease: "back.out(1.6)",
-          },
-          "<0.08", // starts just after the logo begins vanishing, right in its place
-        )
-        .to(
-          legalRef.current,
-          { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" },
-          ">-0.1",
-        )
-        .to(
-          backToTopRef.current,
-          { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
-          "<0.1",
-        );
+            duration: 0.3,
+            ease: "power2.out",
+          })
+          .to({}, { duration: 0.25 }) // hold on the big wordmark for a beat
+          .to(wordmarkRef.current, {
+            opacity: 0,
+            scale: 0.85,
+            duration: 0.28,
+            ease: "power2.in",
+          })
+          .to(
+            actionsRef.current,
+            {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              duration: 0.35,
+              ease: "back.out(1.6)",
+            },
+            "<0.08",
+          )
+          .to(
+            legalRef.current,
+            { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" },
+            ">-0.1",
+          )
+          .to(
+            backToTopRef.current,
+            { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
+            "<0.1",
+          );
+      }
 
       return () => {
-        button.removeEventListener("pointerenter", onEnter);
-        button.removeEventListener("pointermove", onMove);
-        button.removeEventListener("pointerleave", onLeave);
+        cleanupCTA?.();
       };
     },
-    { scope: ctaSectionRef },
+    { scope: containerRef },
   );
 
   const scrollToTop = () => {
@@ -294,85 +305,81 @@ export default function SiteFooter() {
   };
 
   return (
-    <>
-      {/* ================= BOOK A CALL ================= */}
-      <section
-        ref={ctaSectionRef}
-        className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-20 text-center sm:px-10"
-      >
-        <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-80"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
-            backgroundSize: "10px 10px",
-          }}
-        />
-        {/* soft luminous vignette */}
-        <div
-          className="pointer-events-none absolute inset-0 z-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 55% at 50% 45%, transparent 35%, rgba(255,255,255,0.7) 100%)",
-          }}
-        />
+    <div ref={containerRef}>
+      {/* ================= BOOK A CALL (Optional) ================= */}
+      {showCTA && (
+        <section
+          ref={ctaSectionRef}
+          className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-20 text-center sm:px-10"
+        >
+          <div
+            className="pointer-events-none absolute inset-0 z-0 opacity-80"
+            style={{
+              backgroundImage:
+                "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
+              backgroundSize: "10px 10px",
+            }}
+          />
+          {/* soft luminous vignette */}
+          <div
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 55% at 50% 45%, transparent 35%, rgba(255,255,255,0.7) 100%)",
+            }}
+          />
 
-        <div className="relative z-10 flex flex-col items-center gap-[clamp(18px,3vh,32px)]">
-          <p
-            ref={ctaEyebrowRef}
-            className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/60 sm:text-[12px]"
-          >
-            Ready when you are
-          </p>
+          <div className="relative z-10 flex flex-col items-center gap-[clamp(18px,3vh,32px)]">
+            <p
+              ref={ctaEyebrowRef}
+              className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/60 sm:text-[12px]"
+            >
+              Ready when you are
+            </p>
 
-          <button
-            ref={ctaRef}
-            type="button"
-            onClick={() => setIsBookingOpen(true)}
-            className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-black/25 bg-white/80 backdrop-blur-md px-[clamp(34px,7vw,90px)] py-[clamp(14px,2.4vh,26px)] font-serif text-[clamp(1.4rem,3.4vw,2.75rem)] leading-none transition-all duration-300 hover:border-black/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-4"
-            aria-label="Book a call with Virtual Captains"
-          >
-            <span
-              ref={ctaFillRef}
-              className="pointer-events-none absolute z-0 rounded-full bg-[#e7ff3d]"
-              style={{ width: 0, height: 0, transform: "scale(0)" }}
-            />
-            <span className="relative z-10 inline-flex items-center gap-3">
-              <span ref={ctaLabelRef} className="text-[#101010]">
-                Book a Call
-              </span>
+            <button
+              ref={ctaRef}
+              type="button"
+              onClick={() => setIsBookingOpen(true)}
+              className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-black/25 bg-white/80 backdrop-blur-md px-[clamp(34px,7vw,90px)] py-[clamp(14px,2.4vh,26px)] font-serif text-[clamp(1.4rem,3.4vw,2.75rem)] leading-none transition-all duration-300 hover:border-black/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-4"
+              aria-label="Book a call with Virtual Captains"
+            >
               <span
-                ref={ctaArrowRef}
-                className="inline-block text-[0.75em]"
-                aria-hidden="true"
-              >
-                &rarr;
+                ref={ctaFillRef}
+                className="pointer-events-none absolute z-0 rounded-full bg-[#e7ff3d]"
+                style={{ width: 0, height: 0, transform: "scale(0)" }}
+              />
+              <span className="relative z-10 inline-flex items-center gap-3">
+                <span ref={ctaLabelRef} className="text-[#101010]">
+                  Book a Call
+                </span>
+                <span
+                  ref={ctaArrowRef}
+                  className="inline-block text-[0.75em]"
+                  aria-hidden="true"
+                >
+                  &rarr;
+                </span>
               </span>
-            </span>
-          </button>
+            </button>
 
-          <p className="mt-2 text-center font-serif text-[clamp(1.25rem,2.5vw,2rem)] font-medium text-[#101010] tracking-tight">
-            Great Conversations Create Greater Possibilities
-          </p>
-        </div>
-      </section>
+            <p className="mt-2 text-center font-serif text-[clamp(1.25rem,2.5vw,2rem)] font-medium text-[#101010] tracking-tight">
+              Great Conversations Create Greater Possibilities
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* ================= FOOTER ================= */}
-      {/* min-h-svh: this is the last element on the page and gets pinned —
-          GSAP can only fully complete a pin on the last page element if its
-          own natural (pre-pin) height already exceeds the viewport, since
-          there's no later content to supply the extra scrollable room the
-          pin's `end` distance needs. Every other pinned section in this
-          codebase already relies on the same margin via min-h-svh/h-screen;
-          this one just hadn't needed it before the two-phase reveal. */}
-      <div className="w-full bg-[#06133a]">
+      <div className={`w-full ${showCTA ? "bg-[#06133a]" : "bg-[#020B25]"}`}>
         <footer
           ref={footerRef}
           id="resources"
           className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
           style={{
-            background:
-              "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)",
+            background: showCTA
+              ? "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)"
+              : "linear-gradient(180deg, #020B25 0%, #05133d 35%, #081d58 65%, #06133a 100%)",
           }}
         >
           {/* animated dot mesh, seamlessly fading in as the blue deepens */}
@@ -440,22 +447,42 @@ export default function SiteFooter() {
                   Trusted Partner for <br /> People, Teams & Organizations
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-                  <button
-                    type="button"
+                  <Link
+                    href="/individuals"
                     className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
                   >
                     For Individuals
-                  </button>
-                  <button
-                    type="button"
+                  </Link>
+                  <Link
+                    href="/organisations"
                     className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
                   >
                     For Organisations
-                  </button>
+                  </Link>
                 </div>
-                <p>
-                  Practical Support | Real-World Experience | Measurable Imapact
-                </p>
+
+                {/* Styled Glowing Jewel Micro-Capsules: Practical Support | Real-World Experience | Measurable Impact */}
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-2 max-w-2xl mx-auto">
+                  {[
+                    { text: "Practical Support", dot: "#38bdf8", glow: "rgba(56,189,248,0.75)" },
+                    { text: "Real-World Experience", dot: "#e5ff00", glow: "rgba(229,255,0,0.75)" },
+                    { text: "Measurable Impact", dot: "#8fd0ff", glow: "rgba(143,208,255,0.75)" },
+                  ].map((item) => (
+                    <div
+                      key={item.text}
+                      className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs md:text-[12.5px] font-medium text-slate-200 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:border-white/40 hover:bg-white/12 hover:text-white hover:scale-105 select-none"
+                    >
+                      <span
+                        className="h-1.5 w-1.5 rounded-full transition-transform duration-300 group-hover:scale-125"
+                        style={{
+                          backgroundColor: item.dot,
+                          boxShadow: `0 0 8px ${item.glow}`,
+                        }}
+                      />
+                      <span className="tracking-wide">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -463,12 +490,35 @@ export default function SiteFooter() {
               ref={legalRef}
               className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
             >
-              <a
-                href="#"
-                className="order-2 transition-colors hover:text-white sm:order-1"
-              >
-                Privacy Policy
-              </a>
+              <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
+                <Link
+                  href="/privacy"
+                  className="transition-colors hover:text-white"
+                >
+                  Privacy Policy
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/terms"
+                  className="transition-colors hover:text-white"
+                >
+                  Terms &amp; Conditions
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/refund"
+                  className="transition-colors hover:text-white"
+                >
+                  Refund Policy
+                </Link>
+                <span className="text-white/30 select-none">·</span>
+                <Link
+                  href="/refund#disclaimer"
+                  className="transition-colors hover:text-white"
+                >
+                  Disclaimer
+                </Link>
+              </div>
               <p className="order-1 text-center sm:order-2">
                 © All Rights Reserved by Virtual Captains{" "}
                 {new Date().getFullYear()}
@@ -506,6 +556,6 @@ export default function SiteFooter() {
         open={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
       />
-    </>
+    </div>
   );
 }

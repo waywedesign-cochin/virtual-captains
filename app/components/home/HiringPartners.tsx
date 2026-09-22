@@ -16,23 +16,23 @@ type CirclePod = {
   size: number; // percentage width & height of container
   bg: string;
   logoSrc?: string;
+  invert?: boolean;
   fallbackText: string;
   fontSize?: string;
 };
 
 /**
- * 9 Circular Pods matching the exact geometry and layout of the design mockup:
+ * 8 Circular Pods matching the exact geometry and layout of the design mockup:
  * - Center: Vibrant yellow circle with Logo
- * - Top-Right: Extra-large grey circle with MoonHive
- * - Mid-Left: Large grey circle with AHAD
- * - Top: Medium-large grey circle with Skylark
- * - Bottom-Right: Medium grey circle with Sigma Life
- * - Bottom-Left: Medium-small grey circle with SalesX
+ * - Top-Right: Extra-large grey circle with MoonHive (/partners/MOONHIV.png)
+ * - Mid-Left: Large grey circle with AHAD (/partners/AHAD.png)
+ * - Top: Medium-large grey circle with Skylark (/partners/SKYLARK.png)
+ * - Bottom-Left: Medium-small grey circle with JSR (/partners/JSR.png)
+ * - Bottom-Right: Medium grey circle with Unifirm (/partners/UNIFIRM.png)
  * - Mid-Right: Small grey circle with Logo
  * - Upper-Center-Left: Tiny grey circle with Logo
  *
- * All positions are pre-calculated to ensure 100% collision-free gaps
- * and clean containment inside the double border rings without using transform offsets.
+ * All partner logos are sourced exclusively from public/partners/
  */
 const PODS: CirclePod[] = [
   // 1. Center Yellow Circle (Exact center from mockup: [49.7%, 57.4%], diam: 14.6%)
@@ -57,8 +57,8 @@ const PODS: CirclePod[] = [
     top: 19.7,
     size: 34.1,
     bg: "#d9d9d9",
-    logoSrc: "/home/MoonHive -Logo.jpg.jpeg",
-    fallbackText: "Logo",
+    logoSrc: "/partners/MOONHIV.png",
+    fallbackText: "MoonHive",
   },
 
   // 3. Mid-Left Large Circle ([20.25%, 56.2%], diam: 23.0%)
@@ -70,8 +70,8 @@ const PODS: CirclePod[] = [
     top: 44.7,
     size: 23.0,
     bg: "#d9d9d9",
-    logoSrc: "/home/AHAD - LOGO.png",
-    fallbackText: "Logo",
+    logoSrc: "/partners/AHAD.png",
+    fallbackText: "AHAD",
   },
 
   // 4. Top Medium Circle ([39.9%, 16.9%], diam: 19.0%)
@@ -83,8 +83,8 @@ const PODS: CirclePod[] = [
     top: 7.4,
     size: 19.0,
     bg: "#d9d9d9",
-    logoSrc: "/home/skylark_information_technologies_logo.jpg.jpeg",
-    fallbackText: "Logo",
+    logoSrc: "/partners/SKYLARK.png",
+    fallbackText: "Skylark",
   },
 
   // 5. Upper-Center-Left Tiny Circle ([37.0%, 38.8%], diam: 12.8%)
@@ -103,14 +103,15 @@ const PODS: CirclePod[] = [
   // 6. Bottom-Left Medium-Small Circle ([31.9%, 79.8%], diam: 17.2%)
   {
     id: "pod-bottom-left",
-    name: "SalesX",
+    name: "JSR",
     isCenter: false,
     left: 23.3,
     top: 71.2,
     size: 17.2,
     bg: "#d9d9d9",
-    logoSrc: "/home/SalesX Logo Final-01.png",
-    fallbackText: "Logo",
+    logoSrc: "/partners/JSR.png",
+    invert: true,
+    fallbackText: "JSR",
   },
 
   // 7. Bottom-Right Medium Circle ([62.1%, 82.1%], diam: 18.9%)
@@ -122,8 +123,9 @@ const PODS: CirclePod[] = [
     top: 72.65,
     size: 18.9,
     bg: "#d9d9d9",
-    logoSrc: "/home/Sigma Life Unifirm Logo Png (1).png",
-    fallbackText: "Logo",
+    logoSrc: "/partners/UNIFIRM.png",
+    invert: true,
+    fallbackText: "Unifirm",
   },
 
   // 8. Mid-Right Small Circle ([80.2%, 67.5%], diam: 13.0%)
@@ -256,7 +258,11 @@ export default function HiringPartners() {
                       <img
                         src={pod.logoSrc}
                         alt={pod.name}
-                        className="max-h-[52%] max-w-[66%] object-contain filter grayscale contrast-125 opacity-85 mix-blend-multiply transition-all duration-300 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 group-hover:scale-108"
+                        className={`max-h-[56%] max-w-[72%] object-contain transition-all duration-300 group-hover:scale-108 ${
+                          pod.invert
+                            ? "invert contrast-125 opacity-80 group-hover:opacity-100"
+                            : "contrast-105 opacity-90 group-hover:opacity-100"
+                        }`}
                         loading="lazy"
                       />
                     </div>
