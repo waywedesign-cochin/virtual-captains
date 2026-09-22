@@ -16,7 +16,7 @@ import type { NextRequest } from "next/server";
  * • Can also be controlled dynamically via environment variable:
  *   NEXT_PUBLIC_UNDER_DEVELOPMENT=true|false
  */
-export const UNDER_DEVELOPMENT_ACTIVE = false;
+export const UNDER_DEVELOPMENT_ACTIVE = true;
 
 export function proxy(request: NextRequest) {
   // Respect environment variable if provided, otherwise fallback to the toggle constant
