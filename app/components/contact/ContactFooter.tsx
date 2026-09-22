@@ -268,7 +268,7 @@ export default function ContactFooter() {
         <footer
           ref={footerRef}
           id="resources"
-          className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
+          className="relative -mt-px flex min-h-svh w-full flex-col justify-between overflow-hidden px-6 pt-[clamp(36px,6vh,72px)] pb-6 sm:pb-8 text-white sm:px-10 lg:px-16"
           style={{
             background:
               "linear-gradient(180deg, #040507 0%, #06112c 25%, #0e307e 55%, #0a1c52 82%, #06133a 100%)",
@@ -337,9 +337,10 @@ export default function ContactFooter() {
             }}
           />
 
-          <div className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center">
+          {/* Stage: Vertically centered in available viewport space */}
+          <div className="relative z-10 mx-auto flex w-full max-w-350 flex-1 flex-col items-center justify-center">
             {/* Stage: wordmark and nav buttons */}
-            <div className="relative flex w-full items-center justify-center">
+            <div className="relative flex w-full min-h-[220px] sm:min-h-[250px] md:min-h-[270px] items-center justify-center">
               <div ref={wordmarkRef} className="flex w-full justify-center">
                 <Image
                   src="/home/logo.png"
@@ -353,28 +354,28 @@ export default function ContactFooter() {
 
               <div
                 ref={actionsRef}
-                className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-4 sm:gap-6"
+                className="absolute inset-0 flex flex-col items-center justify-center gap-4 sm:gap-5 px-4"
               >
-                <p className="text-center font-serif font-bold text-[clamp(1.5rem,3vw,2.5rem)] text-white tracking-tight drop-shadow-sm">
+                <p className="text-center font-serif font-bold text-[clamp(1.4rem,2.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm">
                   Trusted Partner for <br /> People, Teams & Organizations
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                   <Link
                     href="/individuals"
-                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-6 sm:px-7 py-2.5 sm:py-3 text-[12px] sm:text-[13.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     For Individuals
                   </Link>
                   <Link
                     href="/organisations"
-                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-6 sm:px-7 py-2.5 sm:py-3 text-[12px] sm:text-[13.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     For Organisations
                   </Link>
                 </div>
 
                 {/* Styled Cool Micro-Pills */}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-2">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-1.5">
                   {[
                     { text: "Practical Support", dot: "#38bdf8", glow: "rgba(56,189,248,0.7)" },
                     { text: "Real-World Experience", dot: "#e7ff3d", glow: "rgba(231,255,61,0.7)" },
@@ -397,48 +398,49 @@ export default function ContactFooter() {
                 </div>
               </div>
             </div>
+          </div>
 
-            <div
-              ref={legalRef}
-              className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
-            >
-              <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
-                <Link
-                  href="/privacy"
-                  className="transition-colors hover:text-white"
-                >
-                  Privacy Policy
-                </Link>
-                <span className="text-white/30 select-none">·</span>
-                <Link
-                  href="/terms"
-                  className="transition-colors hover:text-white"
-                >
-                  Terms &amp; Conditions
-                </Link>
-                <span className="text-white/30 select-none">·</span>
-                <Link
-                  href="/refund"
-                  className="transition-colors hover:text-white"
-                >
-                  Refund Policy
-                </Link>
-                <span className="text-white/30 select-none">·</span>
-                <Link
-                  href="/refund#disclaimer"
-                  className="transition-colors hover:text-white"
-                >
-                  Disclaimer
-                </Link>
-              </div>
-              <p className="order-1 text-center sm:order-2">
-                © All Rights Reserved by Virtual Captains{" "}
-                {new Date().getFullYear()}
-              </p>
-              <p className="order-3">
-                Built by <span className="text-white/85">Web WeDesign</span>
-              </p>
+          {/* Legal / Copyright Bar: Cleanly anchored at the bottom with no dead void */}
+          <div
+            ref={legalRef}
+            className="relative z-10 mx-auto mt-auto flex w-full max-w-350 flex-col items-center gap-3 border-t border-white/15 pt-5 sm:pt-6 pb-1 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
+          >
+            <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
+              <Link
+                href="/privacy"
+                className="transition-colors hover:text-white"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href="/terms"
+                className="transition-colors hover:text-white"
+              >
+                Terms &amp; Conditions
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href="/refund"
+                className="transition-colors hover:text-white"
+              >
+                Refund Policy
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href="/refund#disclaimer"
+                className="transition-colors hover:text-white"
+              >
+                Disclaimer
+              </Link>
             </div>
+            <p className="order-1 text-center sm:order-2">
+              © All Rights Reserved by Virtual Captains{" "}
+              {new Date().getFullYear()}
+            </p>
+            <p className="order-3">
+              Built by <span className="text-white/85">Web WeDesign</span>
+            </p>
           </div>
 
           {/* back-to-top affordance */}

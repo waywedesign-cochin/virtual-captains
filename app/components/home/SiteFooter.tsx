@@ -375,11 +375,11 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
         <footer
           ref={footerRef}
           id="resources"
-          className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
+          className="relative -mt-px flex min-h-svh w-full flex-col justify-between overflow-hidden px-6 pt-[clamp(36px,6vh,72px)] pb-6 sm:pb-8 text-white sm:px-10 lg:px-16"
           style={{
             background: showCTA
               ? "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)"
-              : "linear-gradient(180deg, #020B25 0%, #05133d 35%, #081d58 65%, #06133a 100%)",
+              : "linear-gradient(180deg, #020B25 0%, #05133d 30%, #081d58 60%, #05133d 85%, #020B25 100%)",
           }}
         >
           {/* animated dot mesh, seamlessly fading in as the blue deepens */}
@@ -414,12 +414,13 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
             }}
           />
 
-          <div className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center">
+          {/* Main Stage: Vertically centered in available viewport space */}
+          <div className="relative z-10 mx-auto flex w-full max-w-350 flex-1 flex-col items-center justify-center">
             {/* Stage: wordmark and nav buttons occupy the exact same footprint,
               stacked on top of each other, so as the logo fades away the
               links are already sitting right where it was — no dead space,
               no slide-in-from-nowhere. */}
-            <div className="relative flex w-full items-center justify-center">
+            <div className="relative flex w-full min-h-[220px] sm:min-h-[250px] md:min-h-[270px] items-center justify-center">
               <div ref={wordmarkRef} className="flex w-full justify-center">
                 <Image
                   src="/home/logo.png"
@@ -441,28 +442,28 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
 
               <div
                 ref={actionsRef}
-                className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-4 sm:gap-6"
+                className="absolute inset-0 flex flex-col items-center justify-center gap-4 sm:gap-5 px-4"
               >
-                <p className="text-center font-serif font-bold text-[clamp(1.5rem,3vw,2.5rem)] text-white tracking-tight drop-shadow-sm">
+                <p className="text-center font-serif font-bold text-[clamp(1.4rem,2.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm">
                   Trusted Partner for <br /> People, Teams & Organizations
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                   <Link
                     href="/individuals"
-                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-6 sm:px-7 py-2.5 sm:py-3 text-[12px] sm:text-[13.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     For Individuals
                   </Link>
                   <Link
                     href="/organisations"
-                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-7 py-3 text-[12.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:text-[13.5px]"
+                    className="cursor-pointer rounded-full border border-white/45 bg-white/5 px-6 sm:px-7 py-2.5 sm:py-3 text-[12px] sm:text-[13.5px] font-medium text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#0a1c52] hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     For Organisations
                   </Link>
                 </div>
 
                 {/* Styled Glowing Jewel Micro-Capsules: Practical Support | Real-World Experience | Measurable Impact */}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-2 max-w-2xl mx-auto">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-1.5 max-w-2xl mx-auto">
                   {[
                     { text: "Practical Support", dot: "#38bdf8", glow: "rgba(56,189,248,0.75)" },
                     { text: "Real-World Experience", dot: "#e5ff00", glow: "rgba(229,255,0,0.75)" },
@@ -485,48 +486,49 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
                 </div>
               </div>
             </div>
+          </div>
 
-            <div
-              ref={legalRef}
-              className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
-            >
-              <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
-                <Link
-                  href="/privacy"
-                  className="transition-colors hover:text-white"
-                >
-                  Privacy Policy
-                </Link>
-                <span className="text-white/30 select-none">·</span>
-                <Link
-                  href="/terms"
-                  className="transition-colors hover:text-white"
-                >
-                  Terms &amp; Conditions
-                </Link>
-                <span className="text-white/30 select-none">·</span>
-                <Link
-                  href="/refund"
-                  className="transition-colors hover:text-white"
-                >
-                  Refund Policy
-                </Link>
-                <span className="text-white/30 select-none">·</span>
-                <Link
-                  href="/refund#disclaimer"
-                  className="transition-colors hover:text-white"
-                >
-                  Disclaimer
-                </Link>
-              </div>
-              <p className="order-1 text-center sm:order-2">
-                © All Rights Reserved by Virtual Captains{" "}
-                {new Date().getFullYear()}
-              </p>
-              <p className="order-3">
-                Built by <span className="text-white/85">Web WeDesign</span>
-              </p>
+          {/* Legal / Copyright Bar: Cleanly anchored at the bottom with no dead void */}
+          <div
+            ref={legalRef}
+            className="relative z-10 mx-auto mt-auto flex w-full max-w-350 flex-col items-center gap-3 border-t border-white/15 pt-5 sm:pt-6 pb-1 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
+          >
+            <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
+              <Link
+                href="/privacy"
+                className="transition-colors hover:text-white"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href="/terms"
+                className="transition-colors hover:text-white"
+              >
+                Terms &amp; Conditions
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href="/refund"
+                className="transition-colors hover:text-white"
+              >
+                Refund Policy
+              </Link>
+              <span className="text-white/30 select-none">·</span>
+              <Link
+                href="/refund#disclaimer"
+                className="transition-colors hover:text-white"
+              >
+                Disclaimer
+              </Link>
             </div>
+            <p className="order-1 text-center sm:order-2">
+              © All Rights Reserved by Virtual Captains{" "}
+              {new Date().getFullYear()}
+            </p>
+            <p className="order-3">
+              Built by <span className="text-white/85">Web WeDesign</span>
+            </p>
           </div>
 
           {/* back-to-top affordance, only meaningful once the footer content

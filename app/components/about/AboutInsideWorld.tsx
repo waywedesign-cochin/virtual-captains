@@ -113,6 +113,7 @@ export default function AboutInsideWorld() {
   // Smooth click navigation to jump scroll position to any pillar
   const scrollToPillar = useCallback(
     (index: number) => {
+      setActiveIndex(index);
       if (!containerRef.current || typeof window === "undefined") return;
       const rect = containerRef.current.getBoundingClientRect();
       const currentScrollY = window.scrollY;
@@ -126,6 +127,16 @@ export default function AboutInsideWorld() {
     },
     [numItems]
   );
+
+  const handlePrev = useCallback(() => {
+    const prevIdx = (activeIndex - 1 + numItems) % numItems;
+    scrollToPillar(prevIdx);
+  }, [activeIndex, numItems, scrollToPillar]);
+
+  const handleNext = useCallback(() => {
+    const nextIdx = (activeIndex + 1) % numItems;
+    scrollToPillar(nextIdx);
+  }, [activeIndex, numItems, scrollToPillar]);
 
   const activePillar = PILLARS[activeIndex];
 
@@ -227,36 +238,75 @@ export default function AboutInsideWorld() {
                       </p>
                     </div>
 
-                    {/* ── Continuous Scroll-Progress Pill Trackers ── */}
-                    <div className="mt-5 sm:mt-6 flex items-center justify-center lg:justify-start gap-2 pt-2">
-                      {PILLARS.map((p, idx) => {
-                        const isPast = idx < activeIndex;
-                        const isCurrent = idx === activeIndex;
-                        const fillWidth = isPast
-                          ? 100
-                          : isCurrent
-                          ? Math.round(segmentProgress * 100)
-                          : 0;
+                    {/* ── Unified Carousel Navigation: Left/Right Arrow Buttons & Progress Pills ── */}
+                    <div className="mt-5 sm:mt-6 flex items-center justify-between gap-2.5 pt-3 border-t border-white/10">
+                      {/* Left / Prev Arrow Button */}
+                      <button
+                        type="button"
+                        onClick={handlePrev}
+                        aria-label="Previous pillar"
+                        className="group/btn relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/15 bg-white/5 hover:bg-white/15 hover:border-[#e5ff00]/60 active:scale-90 transition-all duration-200 cursor-pointer text-slate-300 hover:text-[#e5ff00]"
+                      >
+                        <svg
+                          className="w-3.5 h-3.5 transition-transform group-hover/btn:-translate-x-0.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                      </button>
 
-                        return (
-                          <button
-                            key={p.id}
-                            type="button"
-                            onClick={() => scrollToPillar(idx)}
-                            aria-label={`Jump to ${p.title}`}
-                            className={`h-2 rounded-full relative overflow-hidden transition-all duration-200 cursor-pointer ${
-                              isCurrent
-                                ? "w-10 bg-white/15 ring-1 ring-[#e5ff00]/40"
-                                : "w-3 bg-white/20 hover:bg-white/40"
-                            }`}
-                          >
-                            <span
-                              style={{ width: `${fillWidth}%` }}
-                              className="absolute inset-y-0 left-0 bg-[#e5ff00] rounded-full transition-all duration-100 shadow-[0_0_8px_#e5ff00]"
-                            />
-                          </button>
-                        );
-                      })}
+                      {/* Continuous Scroll-Progress Pill Trackers */}
+                      <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                        {PILLARS.map((p, idx) => {
+                          const isPast = idx < activeIndex;
+                          const isCurrent = idx === activeIndex;
+                          const fillWidth = isPast
+                            ? 100
+                            : isCurrent
+                            ? Math.round(segmentProgress * 100)
+                            : 0;
+
+                          return (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => scrollToPillar(idx)}
+                              aria-label={`Jump to ${p.title}`}
+                              className={`h-2 rounded-full relative overflow-hidden transition-all duration-200 cursor-pointer ${
+                                isCurrent
+                                  ? "w-8 sm:w-10 bg-white/15 ring-1 ring-[#e5ff00]/40"
+                                  : "w-2.5 sm:w-3 bg-white/20 hover:bg-white/40"
+                              }`}
+                            >
+                              <span
+                                style={{ width: `${fillWidth}%` }}
+                                className="absolute inset-y-0 left-0 bg-[#e5ff00] rounded-full transition-all duration-100 shadow-[0_0_8px_#e5ff00]"
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Right / Next Arrow Button */}
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        aria-label="Next pillar"
+                        className="group/btn relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/15 bg-white/5 hover:bg-white/15 hover:border-[#e5ff00]/60 active:scale-90 transition-all duration-200 cursor-pointer text-slate-300 hover:text-[#e5ff00]"
+                      >
+                        <svg
+                          className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -356,36 +406,6 @@ export default function AboutInsideWorld() {
 
               </div>
 
-              {/* ── MOBILE CONTROLLER: Interactive progress pills for mobile screens ── */}
-              <div className="sm:hidden flex items-center justify-center gap-2 mt-4 w-full">
-                {PILLARS.map((pillar, idx) => {
-                  const isCurrent = idx === activeIndex;
-                  const isPast = idx < activeIndex;
-                  const fillWidth = isPast
-                    ? 100
-                    : isCurrent
-                    ? Math.round(segmentProgress * 100)
-                    : 0;
-
-                  return (
-                    <button
-                      key={`m-${pillar.id}`}
-                      onClick={() => scrollToPillar(idx)}
-                      className={`h-2.5 rounded-full relative overflow-hidden transition-all duration-200 ${
-                        isCurrent
-                          ? "w-10 bg-white/15 ring-1 ring-[#e5ff00]/50"
-                          : "w-3 bg-white/25 hover:bg-white/40"
-                      }`}
-                      aria-label={`Select ${pillar.title}`}
-                    >
-                      <span
-                        style={{ width: `${fillWidth}%` }}
-                        className="absolute inset-y-0 left-0 bg-[#e5ff00] rounded-full transition-all duration-100 shadow-[0_0_6px_#e5ff00]"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
 
             </div>
 

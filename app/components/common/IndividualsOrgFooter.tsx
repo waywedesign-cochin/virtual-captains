@@ -271,7 +271,7 @@ export default function IndividualsOrgFooter() {
         <footer
           ref={footerRef}
           id="resources"
-          className="relative -mt-px flex min-h-svh w-full flex-col justify-center overflow-hidden px-6 py-[clamp(48px,9vh,110px)] text-white sm:px-10 lg:px-16"
+          className="relative -mt-px flex min-h-svh w-full flex-col justify-between overflow-hidden px-6 pt-[clamp(36px,6vh,72px)] pb-6 sm:pb-8 text-white sm:px-10 lg:px-16"
           style={{
             background:
               "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)",
@@ -341,7 +341,8 @@ export default function IndividualsOrgFooter() {
             }}
           />
 
-          <div className="relative z-10 mx-auto flex w-full max-w-372 px-4 sm:px-8 lg:px-12 flex-col items-center">
+          {/* Stage: Vertically centered in available viewport space */}
+          <div className="relative z-10 mx-auto flex w-full max-w-372 px-4 sm:px-8 lg:px-12 flex-1 flex-col items-center justify-center">
             {/* Stage: wordmark and nav content */}
             <div className="relative flex w-full items-center justify-center min-h-115 sm:min-h-125 lg:min-h-130">
               <div ref={wordmarkRef} className="flex w-full justify-center items-center py-8 sm:py-16">
@@ -355,6 +356,7 @@ export default function IndividualsOrgFooter() {
                 />
               </div>
 
+              {/* Revealed 4-Column Directory Grid & Action Bar */}
               <div
                 ref={actionsRef}
                 className="absolute inset-0 flex flex-col justify-between py-2 sm:py-4 w-full pointer-events-none"
@@ -450,9 +452,10 @@ export default function IndividualsOrgFooter() {
               </div>
             </div>
 
+            {/* Legal / Copyright Bar: Cleanly anchored at the bottom with no dead void */}
             <div
               ref={legalRef}
-              className="mt-[clamp(32px,6vh,72px)] flex w-full flex-col items-center gap-3 border-t border-white/15 py-6 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
+              className="relative z-10 mx-auto mt-auto flex w-full max-w-372 px-4 sm:px-8 lg:px-12 flex-col items-center gap-3 border-t border-white/15 pt-5 sm:pt-6 pb-1 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
             >
               <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
                 <Link
