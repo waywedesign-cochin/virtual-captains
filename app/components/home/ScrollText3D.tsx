@@ -33,10 +33,10 @@ const STATS = [
     id: "15k",
     content: (
       <div className="flex flex-col items-center text-center">
-        <div className="whitespace-nowrap text-[clamp(3rem,10vw,6rem)] font-serif leading-none tracking-tight text-[#0a0b0d]">
+        <div className="whitespace-nowrap text-[clamp(3rem,10vw,6rem)] font-serif leading-none tracking-tight text-white">
           15,000+
         </div>
-        <div className="mt-1 whitespace-nowrap text-[clamp(1rem,2.5vw,2rem)] font-serif tracking-wide text-[#111]">
+        <div className="mt-1 whitespace-nowrap text-[clamp(1rem,2.5vw,2rem)] font-serif tracking-wide text-white/90">
           Professionals Trained
         </div>
       </div>
@@ -48,10 +48,10 @@ const STATS = [
     id: "cpd",
     content: (
       <div className="flex flex-col items-center text-center">
-        <div className="text-[clamp(1.5rem,5vw,3rem)] font-serif leading-none tracking-tight text-[#0a0b0d]">
+        <div className="text-[clamp(1.5rem,5vw,3rem)] font-serif leading-none tracking-tight text-white">
           CPD
         </div>
-        <div className="mt-0.5 text-[clamp(0.8rem,1.8vw,1.2rem)] font-serif tracking-wide text-[#555]">
+        <div className="mt-0.5 text-[clamp(0.8rem,1.8vw,1.2rem)] font-serif tracking-wide text-white/60">
           Accredited
         </div>
       </div>
@@ -78,10 +78,10 @@ const STATS = [
     id: "8",
     content: (
       <div className="flex flex-col items-center text-center">
-        <div className="text-[clamp(3.5rem,12vw,7rem)] font-serif leading-none tracking-tight text-[#0a0b0d]">
+        <div className="text-[clamp(3.5rem,12vw,7rem)] font-serif leading-none tracking-tight text-white">
           8+
         </div>
-        <div className="mt-1 text-[clamp(1.5rem,3.5vw,2.5rem)] font-serif tracking-wide text-[#111]">
+        <div className="mt-1 text-[clamp(1.5rem,3.5vw,2.5rem)] font-serif tracking-wide text-white/90">
           Countries
         </div>
       </div>
@@ -108,10 +108,10 @@ const STATS = [
     id: "custom",
     content: (
       <div className="flex flex-col items-center text-center">
-        <div className="text-[clamp(2.5rem,7vw,4.5rem)] font-serif leading-none tracking-tight text-[#0a0b0d]">
+        <div className="text-[clamp(2.5rem,7vw,4.5rem)] font-serif leading-none tracking-tight text-white">
           100%
         </div>
-        <div className="mt-1 whitespace-nowrap text-[clamp(1rem,2.5vw,1.5rem)] font-serif tracking-wide text-[#111]">
+        <div className="mt-1 whitespace-nowrap text-[clamp(1rem,2.5vw,1.5rem)] font-serif tracking-wide text-white/90">
           Custom Playbooks
         </div>
       </div>
@@ -266,26 +266,26 @@ export default function ScrollText3D() {
   return (
     <div
       ref={sectionRef}
-      className="relative z-10 w-full bg-white"
+      className="relative z-10 w-full bg-[#040507]"
     >
       <section
         className="relative h-screen w-full overflow-hidden"
         style={{ perspective: "1200px" }}
       >
-        <DottedBackground theme="light" />
+        <DottedBackground theme="dark" />
 
         {/* Intro title — visible before scroll animation begins */}
         <div
           ref={introRef}
           className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none"
         >
-          <p className="text-[11px] sm:text-xs font-medium tracking-[0.25em] uppercase text-[#2557d6]/75 mb-3">
+          <p className="text-[11px] sm:text-xs font-medium tracking-[0.25em] uppercase text-[#4d82f5]/75 mb-3">
             By the Numbers
           </p>
-          <h2 className="font-serif text-[clamp(2rem,5vw,4rem)] font-bold text-[#0a0b0d] tracking-tight leading-tight text-center">
+          <h2 className="font-serif text-[clamp(2rem,5vw,4rem)] font-bold text-white tracking-tight leading-tight text-center">
             Impact That Speaks
           </h2>
-          <div className="mt-4 h-0.75 w-12 rounded-full bg-[#2557d6]/30" />
+          <div className="mt-4 h-0.75 w-12 rounded-full bg-[#2557d6]/50" />
         </div>
 
         <div

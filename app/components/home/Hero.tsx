@@ -283,21 +283,7 @@ export default function Hero() {
         hero.addEventListener("mousemove", handleMove);
         hero.addEventListener("mouseleave", handleLeave);
 
-        // Scroll-driven exit parallax: as ScrollText3D slides over, Hero curves its border, dims, and zooms out
-        gsap.to(hero, {
-          opacity: 0.5,
-          scale: 0.94,
-          borderRadius: "40px",
-          borderColor: "rgba(255, 255, 255, 0.16)",
-          boxShadow: "0 30px 70px rgba(0, 0, 0, 0.8)",
-          ease: "none",
-          scrollTrigger: {
-            trigger: hero,
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
+        // (Removed scroll-driven exit parallax curtain effect)
 
         return () => {
           gsap.ticker.remove(dotGlowTicker);
@@ -315,7 +301,7 @@ export default function Hero() {
     <section
       id="home"
       ref={heroRef}
-      className="sticky top-0 z-0 mx-auto flex min-h-svh w-full max-w-[1920px] flex-col justify-center overflow-hidden bg-[#040507] border border-transparent pt-[clamp(110px,13vh,150px)] pb-[clamp(40px,6vh,75px)] origin-center will-change-[transform,opacity,border-radius]"
+      className="relative z-0 mx-auto flex min-h-svh w-full max-w-[1920px] flex-col justify-center overflow-hidden bg-[#040507] border border-transparent pt-[clamp(110px,13vh,150px)] pb-[clamp(40px,6vh,75px)] origin-center will-change-[transform,opacity,border-radius]"
       style={{ borderRadius: "0px" }}
     >
       {/* diagonal gradient base */}

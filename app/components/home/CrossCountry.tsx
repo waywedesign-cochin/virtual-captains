@@ -629,7 +629,7 @@ export default function CrossCountry() {
             "-=0.5",
           );
 
-        // Desktop pins and flies the camera along JOURNEY + Curtain Exit Parallax
+        // Desktop: Pinned camera journey — no curtain exit
         mm.add("(min-width: 1024px)", () => {
           const pinTl = gsap.timeline({
             scrollTrigger: {
@@ -641,35 +641,13 @@ export default function CrossCountry() {
               anticipatePin: 1,
               scrub: 0.6,
               onUpdate: (self) => {
-                const p = self.progress;
-                if (p <= 0.80) {
-                  progressRef.current = p / 0.80;
-                } else {
-                  progressRef.current = 1.0;
-                }
+                progressRef.current = self.progress;
               },
             },
           });
 
-          // 1. Give room for the camera journey
+          // Give room for the camera journey
           pinTl.to({}, { duration: 3.2 });
-
-          // 2. Scroll-driven exit parallax: as Endorsement slides over,
-          // CrossCountry curves its border, dims, and zooms out into 3D space
-          pinTl.to(sectionRef.current, {
-            opacity: 0.5,
-            scale: 0.94,
-            borderRadius: "40px",
-            duration: 0.8,
-            ease: "none",
-          });
-
-          const spacer = (
-            pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
-          )?.spacer;
-          if (spacer) {
-            spacer.style.backgroundColor = "#040507";
-          }
 
           return () => pinTl.kill();
         });
@@ -705,21 +683,20 @@ export default function CrossCountry() {
       ref={sectionRef}
       id="programs"
       data-nav-section="Cross Country"
-      data-nav-theme="light"
-      className="relative z-30 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-[clamp(24px,4vh,60px)] text-[#101010] sm:px-8 lg:px-16 lg:-mt-[100vh] origin-center will-change-[transform,opacity,border-radius]"
+      data-nav-theme="dark"
+      className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-[clamp(24px,4vh,60px)] text-white sm:px-8 lg:px-16"
       style={{
-        borderRadius: "0px",
         background:
-          "linear-gradient(180deg, #ffffff 0%, #9fc3fa 20%, #205ee0 48%, #0d286e 75%, #050608 100%)",
+          "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
       }}
     >
       {/* Subtle Dotted Background Grid (matching second section) */}
-      <DottedBackground theme="light" />
+      <DottedBackground theme="dark" />
 
       <div className="relative z-10 flex w-full max-w-[1920px] flex-col items-center">
         <h2
           ref={headingRef}
-          className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2] text-[#101010]"
+          className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2] text-white"
         >
           <span className="block">Empowering sales</span>
           <span className="block">

@@ -209,10 +209,8 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 w-full h-full min-h-screen lg:min-h-0 lg:h-screen overflow-hidden bg-[#050608] rounded-2xl border border-white/10 flex flex-col justify-between shadow-2xl"
+      className="relative z-10 w-full h-full min-h-screen lg:min-h-0 lg:h-screen overflow-hidden flex flex-col justify-between"
     >
-      {/* Subtle dotted background grid (matching second section) */}
-      <DottedBackground theme="dark" opacity={0.08} />
 
       <div className="relative z-10 mx-auto w-full h-full max-w-[1920px] px-5 sm:px-10 lg:px-16 py-4 sm:py-6 lg:py-4 xl:py-6 flex flex-col justify-between flex-1 overflow-hidden">
         {/* TOP EYEBROW */}

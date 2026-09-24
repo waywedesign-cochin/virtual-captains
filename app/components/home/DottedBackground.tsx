@@ -20,13 +20,13 @@ interface DottedBackgroundProps {
  */
 export default function DottedBackground({
   theme = "light",
-  opacity = 0.08,
+  opacity = 0.16,
   className = "",
   dotColor,
-  size = 32,
-  cx = 2,
-  cy = 2,
-  r = 1,
+  size = 26,
+  cx = 1.2,
+  cy = 1.2,
+  r = 1.2,
 }: DottedBackgroundProps) {
   const rawId = useId();
   const cleanId = rawId.replace(/[^a-zA-Z0-9]/g, "");

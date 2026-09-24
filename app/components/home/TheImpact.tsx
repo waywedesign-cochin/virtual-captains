@@ -118,9 +118,9 @@ export default function TheImpact() {
 
       const mm = gsap.matchMedia();
 
-      // Desktop: Pinned scroll-scrubbed timeline (Right to Left Laser Sweep)
+      // Desktop: Pinned scroll-scrubbed timeline (Right to Left Laser Sweep) — no curtain exit
       mm.add("(min-width: 1024px)", () => {
-        const pinTl = gsap.timeline({
+        const tl = gsap.timeline({
           scrollTrigger: {
             id: "impact-pin",
             trigger: sectionRef.current,
@@ -135,7 +135,7 @@ export default function TheImpact() {
         });
 
         // 1. Laser line sweeps from right to left
-        pinTl.to(
+        tl.to(
           lineFillRef.current,
           {
             scaleX: 1,
@@ -147,11 +147,11 @@ export default function TheImpact() {
 
         // 2. Reveal points in right-to-left order as laser reaches each node
         const REVERSE_POINTS = [
-          { index: 4, distFromRight: 0.12 }, // leftPercent: 88%
-          { index: 3, distFromRight: 0.32 }, // leftPercent: 68%
-          { index: 2, distFromRight: 0.52 }, // leftPercent: 48%
-          { index: 1, distFromRight: 0.72 }, // leftPercent: 28%
-          { index: 0, distFromRight: 0.92 }, // leftPercent: 8%
+          { index: 4, distFromRight: 0.12 },
+          { index: 3, distFromRight: 0.32 },
+          { index: 2, distFromRight: 0.52 },
+          { index: 1, distFromRight: 0.72 },
+          { index: 0, distFromRight: 0.92 },
         ];
 
         REVERSE_POINTS.forEach(({ index, distFromRight }) => {
@@ -161,8 +161,7 @@ export default function TheImpact() {
           const desktopEl = desktopItemRefs.current[index];
           const valueEl = valueRefs.current[index];
 
-          // Glowing dot pops in
-          pinTl.to(
+          tl.to(
             dotEl,
             {
               opacity: 1,
@@ -173,8 +172,7 @@ export default function TheImpact() {
             hitTime,
           );
 
-          // Stat content zooms in
-          pinTl.to(
+          tl.to(
             desktopEl,
             {
               opacity: 1,
@@ -186,9 +184,8 @@ export default function TheImpact() {
             hitTime + 0.02,
           );
 
-          // Live number count scrubbed with scroll
           const counter = { val: 0 };
-          pinTl.to(
+          tl.to(
             counter,
             {
               val: stat.value,
@@ -204,17 +201,7 @@ export default function TheImpact() {
           );
         });
 
-        // Hold full stats briefly so user can view all numbers before unpinning
-        pinTl.to({}, { duration: 0.4 });
-
-        const spacer = (
-          pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
-        )?.spacer;
-        if (spacer) {
-          spacer.style.backgroundColor = "#1f5be0";
-        }
-
-        return () => pinTl.kill();
+        return () => tl.kill();
       });
 
       // Mobile & Tablet: Scroll-triggered / scrubbed cards
@@ -275,15 +262,14 @@ export default function TheImpact() {
       id="organisations"
       data-nav-section="The Impact"
       data-nav-theme="dark"
-      className="relative z-50 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-20 text-white sm:px-10 lg:pl-36 lg:pr-16 lg:py-0 lg:-mt-[100vh] origin-center will-change-[transform,opacity,border-radius]"
+      className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-20 text-white sm:px-10 lg:pl-36 lg:pr-16 lg:py-0"
       style={{
-        borderRadius: "0px",
         background:
-          "linear-gradient(180deg, #050608 0%, #050608 15%, #08173e 35%, #103ba0 65%, #1852cf 85%, #1f5be0 100%)",
+          "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
       }}
     >
       {/* Background Dot Grid (matching second section) */}
-      <DottedBackground theme="dark" opacity={0.08} />
+      <DottedBackground theme="dark" />
 
       {/* ---------- DESKTOP: STAGGERED HORIZONTAL TIMELINE (lg and up) ---------- */}
       <div className="relative z-10 mx-auto hidden h-70 w-full max-w-340 lg:block">
