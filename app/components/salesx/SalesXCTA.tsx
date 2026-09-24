@@ -24,7 +24,13 @@ export default function SalesXCTA() {
     const ctx = gsap.context(() => {
       // 1. Initial entrance states
       if (headingRef.current) {
-        gsap.set(headingRef.current, { opacity: 0, y: 36 });
+        gsap.set(headingRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+          force3D: true,
+        });
       }
       if (textRef.current) {
         gsap.set(textRef.current, { opacity: 0, x: -32 });
@@ -42,15 +48,21 @@ export default function SalesXCTA() {
         onEnter: () => {
           const tl = gsap.timeline();
 
-          // Heading reveal
+          // Heading signature reveal
           if (headingRef.current) {
             tl.to(
               headingRef.current,
               {
                 opacity: 1,
                 y: 0,
-                duration: 0.9,
-                ease: "power3.out",
+                duration: 0.85,
+                ease: "none",
+                force3D: true,
+                keyframes: [
+                  { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+                  { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+                  { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+                ],
               },
               0
             );

@@ -3,10 +3,12 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import BookACallModal from "./BookACallModal";
+import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,9 +29,20 @@ gsap.registerPlugin(ScrollTrigger);
  */
 interface SiteFooterProps {
   showCTA?: boolean;
+  theme?: "default" | "subtle" | "dark" | "light-blue";
 }
 
-export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
+export default function SiteFooter({
+  showCTA = true,
+  theme,
+}: SiteFooterProps) {
+  const pathname = usePathname();
+  const isLightBlue =
+    theme === "light-blue" ||
+    pathname === "/individuals" ||
+    showCTA ||
+    theme === "default";
+
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,6 +54,9 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
   const ctaEyebrowRef = useRef<HTMLParagraphElement>(null);
 
   const footerRef = useRef<HTMLElement>(null);
+  const footerDotsRef = useRef<HTMLDivElement>(null);
+  const footerDotsGlowRef = useRef<HTMLDivElement>(null);
+  const footerTorchAuraRef = useRef<HTMLDivElement>(null);
   const wordmarkRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
   const legalRef = useRef<HTMLDivElement>(null);
@@ -242,7 +258,7 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
 
       // ---------- Footer pinned reveal ----------
       gsap.set(wordmarkRef.current, { opacity: 0, y: 30, scale: 1 });
-      gsap.set(actionsRef.current, { opacity: 0, scale: 0.9, y: 12 });
+      gsap.set(actionsRef.current, { opacity: 0, scale: 0.9, y: 12, pointerEvents: "none" });
       gsap.set(legalRef.current, { opacity: 0, x: 70 });
       gsap.set(backToTopRef.current, { opacity: 0, y: 12 });
 
@@ -255,6 +271,8 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
               end: "+=100%",
               pin: true,
               scrub: 0.5,
+              anticipatePin: 1,
+              refreshPriority: -1,
             },
           })
           .to(wordmarkRef.current, {
@@ -276,6 +294,7 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
               opacity: 1,
               scale: 1,
               y: 0,
+              pointerEvents: "auto",
               duration: 0.35,
               ease: "back.out(1.6)",
             },
@@ -293,8 +312,129 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
           );
       }
 
+      // ---------- FOOTER CHROMATIC TORCH COLOR SYSTEM ----------
+      const TORCH_PALETTE = [
+        { r: 56, g: 189, b: 248 }, // Electric Cyan (#38bdf8)
+        { r: 231, g: 255, b: 61 }, // Electric Lime (#e7ff3d)
+        { r: 143, g: 208, b: 255 }, // Sky Ice Blue (#8fd0ff)
+        { r: 42, g: 130, b: 255 }, // Royal Blue (#2a82ff)
+        { r: 218, g: 60, b: 240 }, // Neon Violet (#da3cf0)
+        { r: 255, g: 214, b: 10 }, // Radiant Yellow (#ffd60a)
+        { r: 255, g: 120, b: 18 }, // Sunset Orange (#ff7812)
+      ];
+
+      const torchColorObj = { ...TORCH_PALETTE[0] };
+      const setGlowCssVar = () => {
+        if (!footerRef.current) return;
+        const { r, g, b } = torchColorObj;
+        footerRef.current.style.setProperty(
+          "--torch-color",
+          `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`
+        );
+        footerRef.current.style.setProperty(
+          "--torch-glow",
+          `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.95)`
+        );
+        footerRef.current.style.setProperty(
+          "--torch-glow-soft",
+          `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.28)`
+        );
+        footerRef.current.style.setProperty(
+          "--torch-dim",
+          `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.08)`
+        );
+      };
+      setGlowCssVar();
+
+      const colorTl = gsap.timeline({ repeat: -1 });
+      for (let i = 0; i < TORCH_PALETTE.length; i++) {
+        const next = TORCH_PALETTE[(i + 1) % TORCH_PALETTE.length];
+        colorTl.to(torchColorObj, {
+          r: next.r,
+          g: next.g,
+          b: next.b,
+          duration: 3.2,
+          ease: "sine.inOut",
+          onUpdate: setGlowCssVar,
+        });
+      }
+
+      // ---------- FOOTER TORCH DOTS PROXIMITY REVEAL ----------
+      const dotsGlow = footerDotsGlowRef.current;
+      const torchAura = footerTorchAuraRef.current;
+      const footer = footerRef.current;
+      let onFooterEnter: ((e: PointerEvent) => void) | null = null;
+      let onFooterMove: ((e: PointerEvent) => void) | null = null;
+      let onFooterLeave: ((e: PointerEvent) => void) | null = null;
+
+      if (footer && dotsGlow) {
+        const dotGlow = { x: -9999, y: -9999, opacity: 0 };
+
+        const applyDotGlow = () => {
+          if (!dotsGlow) return;
+          dotsGlow.style.setProperty("--dx", `${dotGlow.x}px`);
+          dotsGlow.style.setProperty("--dy", `${dotGlow.y}px`);
+          dotsGlow.style.opacity = `${dotGlow.opacity}`;
+          if (torchAura) {
+            torchAura.style.setProperty("--dx", `${dotGlow.x}px`);
+            torchAura.style.setProperty("--dy", `${dotGlow.y}px`);
+            torchAura.style.opacity = `${dotGlow.opacity * 0.75}`;
+          }
+        };
+
+        const dotGlowX = gsap.quickTo(dotGlow, "x", {
+          duration: 0.25,
+          ease: "power2.out",
+          onUpdate: applyDotGlow,
+        });
+        const dotGlowY = gsap.quickTo(dotGlow, "y", {
+          duration: 0.25,
+          ease: "power2.out",
+          onUpdate: applyDotGlow,
+        });
+        const dotGlowOpacity = gsap.quickTo(dotGlow, "opacity", {
+          duration: 0.35,
+          ease: "power2.out",
+          onUpdate: applyDotGlow,
+        });
+
+        onFooterEnter = (e: PointerEvent) => {
+          const r = footer.getBoundingClientRect();
+          const cx = e.clientX - r.left;
+          const cy = e.clientY - r.top;
+          dotGlow.x = cx;
+          dotGlow.y = cy;
+          dotGlow.opacity = 1;
+          applyDotGlow();
+          dotGlowX(cx);
+          dotGlowY(cy);
+          dotGlowOpacity(1);
+        };
+
+        onFooterMove = (e: PointerEvent) => {
+          const r = footer.getBoundingClientRect();
+          const cx = e.clientX - r.left;
+          const cy = e.clientY - r.top;
+          dotGlowX(cx);
+          dotGlowY(cy);
+          dotGlowOpacity(1);
+        };
+
+        onFooterLeave = () => {
+          dotGlowOpacity(0);
+        };
+
+        footer.addEventListener("pointerenter", onFooterEnter);
+        footer.addEventListener("pointermove", onFooterMove);
+        footer.addEventListener("pointerleave", onFooterLeave);
+      }
+
       return () => {
         cleanupCTA?.();
+        colorTl.kill();
+        if (footer && onFooterEnter) footer.removeEventListener("pointerenter", onFooterEnter);
+        if (footer && onFooterMove) footer.removeEventListener("pointermove", onFooterMove);
+        if (footer && onFooterLeave) footer.removeEventListener("pointerleave", onFooterLeave);
       };
     },
     { scope: containerRef },
@@ -312,14 +452,8 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
           ref={ctaSectionRef}
           className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-20 text-center sm:px-10"
         >
-          <div
-            className="pointer-events-none absolute inset-0 z-0 opacity-80"
-            style={{
-              backgroundImage:
-                "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
-              backgroundSize: "10px 10px",
-            }}
-          />
+          {/* Subtle Dotted Background (matching second section) */}
+          <DottedBackground theme="light" />
           {/* soft luminous vignette */}
           <div
             className="pointer-events-none absolute inset-0 z-0"
@@ -371,30 +505,61 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
       )}
 
       {/* ================= FOOTER ================= */}
-      <div className={`w-full ${showCTA ? "bg-[#06133a]" : "bg-[#020B25]"}`}>
+      <div className={`w-full ${isLightBlue ? "bg-[#06133a]" : "bg-[#020B25]"}`}>
         <footer
           ref={footerRef}
           id="resources"
-          className="relative -mt-px flex min-h-svh w-full flex-col justify-between overflow-hidden px-6 pt-[clamp(36px,6vh,72px)] pb-6 sm:pb-8 text-white sm:px-10 lg:px-16"
+          className="relative -mt-px flex min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 lg:px-16 pt-[clamp(36px,6vh,72px)] pb-6 sm:pb-8 text-white"
           style={{
-            background: showCTA
+            background: isLightBlue
               ? "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)"
-              : "linear-gradient(180deg, #020B25 0%, #05133d 30%, #081d58 60%, #05133d 85%, #020B25 100%)",
+              : "#020B25",
           }}
         >
-          {/* animated dot mesh, seamlessly fading in as the blue deepens */}
+          {/* Torch Aura Glow Layer */}
           <div
-            className="pointer-events-none absolute inset-0 z-0 opacity-45"
+            ref={footerTorchAuraRef}
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{
+              opacity: 0,
+              background:
+                "radial-gradient(220px circle at var(--dx, -9999px) var(--dy, -9999px), var(--torch-glow-soft, rgba(56,189,248,0.25)) 0%, var(--torch-dim, rgba(231,255,61,0.06)) 50%, transparent 75%)",
+              maskImage:
+                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 18%, black 45%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 18%, black 45%)",
+            }}
+          />
+
+          {/* Dot Grid System with Torch Glow Proximity */}
+          <div
+            ref={footerDotsRef}
+            className="pointer-events-none absolute inset-0 z-0"
             style={{
               backgroundImage:
-                "radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px)",
-              backgroundSize: "26px 26px",
+                "radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)",
+              backgroundSize: "32px 32px",
               maskImage:
                 "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
               WebkitMaskImage:
                 "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
             }}
-          />
+          >
+            <div
+              ref={footerDotsGlowRef}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                opacity: 0,
+                backgroundImage:
+                  "radial-gradient(var(--torch-color, rgba(255,255,255,0.95)) 1.5px, transparent 2.4px)",
+                backgroundSize: "32px 32px",
+                maskImage:
+                  "radial-gradient(180px circle at var(--dx, -9999px) var(--dy, -9999px), rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, transparent 70%)",
+                WebkitMaskImage:
+                  "radial-gradient(180px circle at var(--dx, -9999px) var(--dy, -9999px), rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, transparent 70%)",
+              }}
+            />
+          </div>
 
           {/* floating gradient orbs for depth */}
           <div
@@ -420,7 +585,7 @@ export default function SiteFooter({ showCTA = true }: SiteFooterProps) {
               stacked on top of each other, so as the logo fades away the
               links are already sitting right where it was — no dead space,
               no slide-in-from-nowhere. */}
-            <div className="relative flex w-full min-h-[220px] sm:min-h-[250px] md:min-h-[270px] items-center justify-center">
+            <div className="relative flex w-full min-h-55 sm:min-h-62.5 md:min-h-67.5 items-center justify-center">
               <div ref={wordmarkRef} className="flex w-full justify-center">
                 <Image
                   src="/home/logo.png"

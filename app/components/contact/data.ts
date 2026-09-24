@@ -13,7 +13,8 @@ export const siteNavLinks = [
   { label: "Organisations", href: "/organisations" },
   { label: "Individuals", href: "/individuals" },
   { label: "Partner", href: "/partner" },
-  { label: "Resources", href: "/resources" },
+  { label: "News & Updates", href: "/news-and-updates" },
+  { label: "Blogs", href: "/blogs" },
 ] as const;
 
 export type Office = {

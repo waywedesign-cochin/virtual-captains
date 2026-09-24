@@ -163,8 +163,19 @@ export default function AboutInsideWorld() {
         style={{ position: "sticky", top: 0, height: "100vh", width: "100%" }}
         className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#020B25] select-none"
       >
+        {/* Continuous Dot Grid System matching the page canvas */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-20"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(255,255,255,0.065) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+
         {/* Ambient Cosmic Background Nebula */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-radial from-[#0e3085]/35 via-[#061845]/20 to-transparent blur-[150px] pointer-events-none -z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-225 h-125 bg-radial from-[#0e3085]/35 via-[#061845]/20 to-transparent blur-[150px] pointer-events-none -z-10" />
 
         {/* Outer Max-Width Container */}
         <div className="w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 lg:px-8 xl:px-12 relative z-10">
@@ -173,9 +184,9 @@ export default function AboutInsideWorld() {
             {/* ── LEFT COLUMN: Narrative & Stage Progress ── */}
             <div className="lg:col-span-5 xl:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left pr-0 lg:pr-4 xl:pr-6 max-w-xl mx-auto lg:mx-0 w-full">
               {/* Section Kicker Pill */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 mb-4 shadow-[0_0_16px_rgba(229,255,0,0.12)]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#e5ff00] animate-pulse shadow-[0_0_6px_#e5ff00]" />
-                <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#e5ff00]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 mb-4 shadow-[0_0_16px_rgba(243,252,0,0.12)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-[#D08817] to-[#F3FC00] animate-pulse shadow-[0_0_6px_#F3FC00]" />
+                <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                   Core Foundations
                 </span>
               </div>
@@ -184,9 +195,9 @@ export default function AboutInsideWorld() {
                 Inside Our World
               </h2>
 
-              {/* Paragraph 1 with Italic Lime "Demo text" */}
+              {/* Paragraph 1 with Italic Gradient "Demo text" */}
               <p className="mt-3 sm:mt-5 lg:mt-4 xl:mt-6 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed text-center lg:text-left">
-                <span className="text-[#e5ff00] italic font-medium mr-1.5 select-none drop-shadow-[0_0_12px_rgba(229,255,0,0.35)]">
+                <span className="font-medium mr-1.5 select-none bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent italic drop-shadow-[0_0_12px_rgba(243,252,0,0.35)]">
                   Demo text
                 </span>
                 At Virtual Captains, we believe great sales are built on more than
@@ -211,15 +222,15 @@ export default function AboutInsideWorld() {
               <div className="relative flex items-center justify-center lg:justify-end xl:justify-start gap-3 sm:gap-4 md:gap-5 lg:gap-4 xl:gap-7 w-full max-w-xl lg:max-w-none">
                 
                 {/* ── The Liquid Glass Card ── */}
-                <div className="relative z-10 w-full sm:w-[340px] md:w-[360px] lg:w-[330px] xl:w-[390px] 2xl:w-[430px] shrink-0 rounded-[24px] sm:rounded-[28px] p-[1.5px] bg-gradient-to-br from-indigo-500/40 via-blue-500/20 to-purple-500/40 shadow-[0_16px_45px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] overflow-hidden">
+                <div className="relative z-10 w-full sm:w-85 md:w-90 lg:w-82.5 xl:w-97.5 2xl:w-107.5 shrink-0 rounded-3xl sm:rounded-[28px] p-[1.5px] bg-linear-to-br from-indigo-500/40 via-blue-500/20 to-purple-500/40 shadow-[0_16px_45px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] overflow-hidden">
                   {/* Specular Shimmer Beam */}
                   <div
                     ref={shimmerRef}
                     aria-hidden="true"
-                    className="pointer-events-none absolute -inset-y-full w-28 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12 blur-xs -translate-x-full"
+                    className="pointer-events-none absolute -inset-y-full w-28 bg-linear-to-r from-transparent via-white/25 to-transparent skew-x-12 blur-xs -translate-x-full"
                   />
 
-                  <div className="rounded-[22.5px] sm:rounded-[26.5px] bg-[#030d2d]/90 border border-white/10 p-5 sm:p-7 lg:p-6 xl:p-8 2xl:p-9 min-h-[210px] sm:min-h-[240px] lg:min-h-[230px] xl:min-h-[250px] flex flex-col justify-between backdrop-blur-2xl text-center lg:text-left">
+                  <div className="rounded-[22.5px] sm:rounded-[26.5px] bg-[#030d2d]/90 border border-white/10 p-5 sm:p-7 lg:p-6 xl:p-8 2xl:p-9 min-h-52.5 sm:min-h-60 lg:min-h-57.5 xl:min-h-62.5 flex flex-col justify-between backdrop-blur-2xl text-center lg:text-left">
                     <div ref={cardContentRef} className="will-change-transform">
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-bold tracking-tight text-white font-sans text-center lg:text-left">
@@ -231,7 +242,7 @@ export default function AboutInsideWorld() {
                       </div>
 
                       <p className="mt-2.5 sm:mt-4 lg:mt-3.5 xl:mt-5 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] text-slate-200 leading-relaxed font-sans text-center lg:text-left">
-                        <span className="text-[#e5ff00] italic font-medium mr-1.5 select-none drop-shadow-[0_0_10px_rgba(229,255,0,0.3)]">
+                        <span className="font-medium mr-1.5 select-none bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent italic drop-shadow-[0_0_10px_rgba(243,252,0,0.3)]">
                           {activePillar.tag}
                         </span>
                         {activePillar.description}
@@ -245,7 +256,7 @@ export default function AboutInsideWorld() {
                         type="button"
                         onClick={handlePrev}
                         aria-label="Previous pillar"
-                        className="group/btn relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/15 bg-white/5 hover:bg-white/15 hover:border-[#e5ff00]/60 active:scale-90 transition-all duration-200 cursor-pointer text-slate-300 hover:text-[#e5ff00]"
+                        className="group/btn relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/15 bg-white/5 hover:bg-white/15 hover:border-[#F3FC00]/60 active:scale-90 transition-all duration-200 cursor-pointer text-slate-300 hover:text-[#F3FC00]"
                       >
                         <svg
                           className="w-3.5 h-3.5 transition-transform group-hover/btn:-translate-x-0.5"
@@ -277,13 +288,13 @@ export default function AboutInsideWorld() {
                               aria-label={`Jump to ${p.title}`}
                               className={`h-2 rounded-full relative overflow-hidden transition-all duration-200 cursor-pointer ${
                                 isCurrent
-                                  ? "w-8 sm:w-10 bg-white/15 ring-1 ring-[#e5ff00]/40"
+                                  ? "w-8 sm:w-10 bg-white/15 ring-1 ring-[#F3FC00]/40"
                                   : "w-2.5 sm:w-3 bg-white/20 hover:bg-white/40"
                               }`}
                             >
                               <span
                                 style={{ width: `${fillWidth}%` }}
-                                className="absolute inset-y-0 left-0 bg-[#e5ff00] rounded-full transition-all duration-100 shadow-[0_0_8px_#e5ff00]"
+                                className="absolute inset-y-0 left-0 bg-linear-to-r from-[#D08817] to-[#F3FC00] rounded-full transition-all duration-100 shadow-[0_0_8px_#F3FC00]"
                               />
                             </button>
                           );
@@ -295,7 +306,7 @@ export default function AboutInsideWorld() {
                         type="button"
                         onClick={handleNext}
                         aria-label="Next pillar"
-                        className="group/btn relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/15 bg-white/5 hover:bg-white/15 hover:border-[#e5ff00]/60 active:scale-90 transition-all duration-200 cursor-pointer text-slate-300 hover:text-[#e5ff00]"
+                        className="group/btn relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/15 bg-white/5 hover:bg-white/15 hover:border-[#F3FC00]/60 active:scale-90 transition-all duration-200 cursor-pointer text-slate-300 hover:text-[#F3FC00]"
                       >
                         <svg
                           className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5"
@@ -312,7 +323,7 @@ export default function AboutInsideWorld() {
                 </div>
 
                 {/* ── Exact Arc with Locked Apex Dot & Scroll-Driven Energy Beam ── */}
-                <div className="hidden sm:block shrink-0 relative w-[90px] sm:w-[110px] md:w-[125px] lg:w-[105px] xl:w-[145px] 2xl:w-[175px] h-[320px] sm:h-[360px] md:h-[390px] lg:h-[350px] xl:h-[410px] 2xl:h-[450px] select-none pointer-events-none">
+                <div className="hidden sm:block shrink-0 relative w-22.5 sm:w-27.5 md:w-31.25 lg:w-26.25 xl:w-36.25 2xl:w-43.75 h-80 sm:h-90 md:h-97.5 lg:h-87.5 xl:h-102.5 2xl:h-112.5 select-none pointer-events-none">
                   <svg
                     viewBox="0 0 200 460"
                     className="w-full h-full overflow-visible"
@@ -331,7 +342,12 @@ export default function AboutInsideWorld() {
                       <linearGradient id="curveBeamGlow" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" stopColor="rgba(255,255,255,0)" />
                         <stop offset="50%" stopColor="rgba(255,255,255,0.95)" />
-                        <stop offset="100%" stopColor="rgba(229,255,0,0.85)" />
+                        <stop offset="100%" stopColor="rgba(243,252,0,0.85)" />
+                      </linearGradient>
+
+                      <linearGradient id="apexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#D08817" />
+                        <stop offset="100%" stopColor="#F3FC00" />
                       </linearGradient>
 
                       <filter id="beamDropGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -373,17 +389,17 @@ export default function AboutInsideWorld() {
                         cx="27.05"
                         cy="230"
                         r="9"
-                        fill="rgba(229,255,0,0.22)"
+                        fill="rgba(243,252,0,0.22)"
                         filter="url(#beamDropGlow)"
                         className="animate-pulse"
                       />
-                      {/* Outer Dark Ring with Lime Border */}
+                      {/* Outer Dark Ring with Gradient Border */}
                       <circle
                         cx="27.05"
                         cy="230"
                         r="5.5"
                         fill="#020B25"
-                        stroke="#e5ff00"
+                        stroke="url(#apexGrad)"
                         strokeWidth="1.75"
                       />
                       {/* Luminous Center Dot */}
@@ -391,7 +407,7 @@ export default function AboutInsideWorld() {
                         cx="27.05"
                         cy="230"
                         r="3"
-                        fill="#e5ff00"
+                        fill="url(#apexGrad)"
                       />
                       {/* Inner High-Intensity Spark */}
                       <circle

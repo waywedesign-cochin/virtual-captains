@@ -6,8 +6,9 @@ export const navLinks = [
   { label: "SalesX", href: "/salesx" },
   { label: "Programs", href: "/programs" },
   { label: "Individuals", href: "/individuals" },
-  { label: "Partner", href: "/partner" },
-  { label: "Resources", href: "/resources" },
+  { label: "Partner with Us", href: "/partner" },
+  { label: "News & Updates", href: "/news-and-updates" },
+  { label: "Blogs", href: "/blogs" },
 ] as const;
 
 export type Avatar = {
@@ -165,7 +166,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Every Agent Walks Away With A Documented Activity Report, Setting Up Their Revenue Manager.",
         highlight: "Verified Day-One Output",
-        bgClass: "bg-[#82d6c3]",
+        bgClass: "bg-linear-to-br from-emerald-600 via-teal-700 to-emerald-950 text-white shadow-emerald-900/30",
       },
       {
         id: "gs-induction",
@@ -174,7 +175,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "New Agents Learn Your Brand, Product, And ICP Straight From Working Sellers, Not Slide Decks.",
         highlight: "Live Roleplay & Scenarios",
-        bgClass: "bg-[#2f70ed]",
+        bgClass: "bg-linear-to-br from-blue-600 via-blue-700 to-indigo-950 text-white shadow-blue-900/30",
       },
       {
         id: "gs-orientation",
@@ -183,7 +184,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Directory, Tooling, Playbook, And Clear Manager Expectations All Fall Into Place Within The First Week.",
         highlight: "100% Floor Readiness",
-        bgClass: "bg-[#db8364]",
+        bgClass: "bg-linear-to-br from-amber-500 via-amber-600 to-orange-950 text-white shadow-amber-900/30",
       },
       {
         id: "gs-roleplay",
@@ -192,7 +193,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Realistic objection drills, dialer simulations, and live coaching before reps ever touch a live customer lead.",
         highlight: "Zero Risk Practice",
-        bgClass: "bg-[#71c4f0]",
+        bgClass: "bg-linear-to-br from-sky-600 via-cyan-700 to-slate-900 text-white shadow-sky-900/30",
       },
     ],
   },
@@ -216,7 +217,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Stage-By-Stage Drop-Off Analysis Locating Exact Bottlenecks From Lead Capture To Closed-Won.",
         highlight: "Conversion Drop-off Mapping",
-        bgClass: "bg-[#78cadc]",
+        bgClass: "bg-linear-to-br from-cyan-600 via-teal-700 to-cyan-950 text-white shadow-cyan-900/30",
       },
       {
         id: "sa-call",
@@ -225,7 +226,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Deep Audit Of 100+ Live Sales Call Recordings Evaluating Objection Handling, Clarity, And Closing Leverage.",
         highlight: "Scored Benchmark Matrix",
-        bgClass: "bg-[#0284c7]",
+        bgClass: "bg-linear-to-br from-blue-600 via-blue-700 to-indigo-950 text-white shadow-blue-900/30",
       },
       {
         id: "sa-action",
@@ -234,7 +235,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Prioritized 30-Day Corrective Roadmap With Revised Pitch Scripts, Objection Cheatsheets, And Cadences.",
         highlight: "Immediate Win Milestones",
-        bgClass: "bg-[#93a2e8]",
+        bgClass: "bg-linear-to-br from-indigo-500 via-indigo-600 to-slate-900 text-white shadow-indigo-900/30",
       },
       {
         id: "sa-cadence",
@@ -243,7 +244,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Assessment Of CRM Adoption, Dialer Efficiency, And Email Sequence Response Rates Across The Rep Floor.",
         highlight: "Workflow Speed Gain",
-        bgClass: "bg-[#65bfa7]",
+        bgClass: "bg-linear-to-br from-teal-600 via-emerald-700 to-teal-950 text-white shadow-teal-900/30",
       },
     ],
   },
@@ -267,7 +268,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Multi-Source Buyer Intent Enrichment Pinpointing Verified Decision-Makers Matching Your Ideal Profile.",
         highlight: "Zero Waste Account Lists",
-        bgClass: "bg-[#d98bb8]",
+        bgClass: "bg-linear-to-br from-rose-600 via-pink-700 to-rose-950 text-white shadow-rose-900/30",
       },
       {
         id: "ob-cadence",
@@ -276,7 +277,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "High-Cadence Phone, Email, And LinkedIn Sequences Converting Cold Prospects Into Enthusiastic Buyers.",
         highlight: "3.2x Average Meeting Yield",
-        bgClass: "bg-[#ea580c]",
+        bgClass: "bg-linear-to-br from-orange-600 via-amber-700 to-red-950 text-white shadow-orange-900/30",
       },
       {
         id: "ob-handoff",
@@ -285,7 +286,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Strict BANT-Verified Prospects Booked Directly Onto Your Account Executives' Diaries With Complete Logs.",
         highlight: "Guaranteed Show-Up Rate",
-        bgClass: "bg-[#e2936a]",
+        bgClass: "bg-linear-to-br from-amber-600 via-orange-700 to-amber-950 text-white shadow-amber-900/30",
       },
       {
         id: "ob-personalization",
@@ -294,7 +295,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Dynamic Pitch Angles Tailored To Specific Industry Triggers, Funding Rounds, And Executive Movements.",
         highlight: "High Response Ratio",
-        bgClass: "bg-[#d8a85c]",
+        bgClass: "bg-linear-to-br from-yellow-600 via-amber-700 to-amber-950 text-white shadow-amber-900/30",
       },
     ],
   },
@@ -318,7 +319,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Instinctive Frameworks Turning Knee-Jerk Pushbacks, Budget Freezes, And Stalls Into Closing Opportunities.",
         highlight: "Live Simulation Drills",
-        bgClass: "bg-[#b89fe8]",
+        bgClass: "bg-linear-to-br from-purple-600 via-violet-700 to-purple-950 text-white shadow-purple-900/30",
       },
       {
         id: "st-closing",
@@ -327,7 +328,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Mastering Multi-Stakeholder Consensus, Champion Empowerment, And Margin Defense In High-Stakes Deals.",
         highlight: "Margin Protection Playbook",
-        bgClass: "bg-[#7c3aed]",
+        bgClass: "bg-linear-to-br from-indigo-600 via-indigo-700 to-slate-950 text-white shadow-indigo-900/30",
       },
       {
         id: "st-coaching",
@@ -336,7 +337,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Equip Revenue Leaders With Structured 1-On-1 Inspection Templates, Sprint Reviews, And Coaching Models.",
         highlight: "Sustained Team Retention",
-        bgClass: "bg-[#82d6c3]",
+        bgClass: "bg-linear-to-br from-emerald-600 via-teal-700 to-emerald-950 text-white shadow-emerald-900/30",
       },
       {
         id: "st-discovery",
@@ -345,7 +346,7 @@ export const allProgrammes: ProgrammeItem[] = [
         description:
           "Frameworks To Uncover Business Pain, Quantify Operational Loss, And Position Deals As Non-Discretionary.",
         highlight: "Higher Average Deal Size",
-        bgClass: "bg-[#60a5fa]",
+        bgClass: "bg-linear-to-br from-blue-600 via-blue-700 to-indigo-950 text-white shadow-blue-900/30",
       },
     ],
   },

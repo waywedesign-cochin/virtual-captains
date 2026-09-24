@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import DottedBackground from "./DottedBackground";
 
 const ORG_ITEMS = [
   { title: "Groom Studio", desc: "Induction and onboarding", accent: false },
@@ -65,234 +66,85 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   const dot1Ref = useRef<HTMLSpanElement>(null);
   const dot2Ref = useRef<HTMLSpanElement>(null);
 
+  const scrubTimelineRef = useRef<gsap.core.Timeline | null>(null);
+
   const [activeAudience, setActiveAudience] = useState<"orgs" | "individuals">(
     "orgs",
   );
 
   const toggleAudience = (target: "orgs" | "individuals") => {
     setActiveAudience(target);
-    if (target === "orgs") {
-      gsap.to(orgsTextRef.current, {
-        opacity: 1,
-        y: 0,
-        rotate: 0,
-        duration: 0.5,
+    if (scrubTimelineRef.current) {
+      gsap.to(scrubTimelineRef.current, {
+        progress: target === "orgs" ? 0 : 1,
+        duration: 0.45,
         ease: "power2.out",
-      });
-      gsap.to(individualsTextRef.current, {
-        opacity: 0,
-        y: 40,
-        rotate: 5,
-        duration: 0.4,
-        ease: "power2.in",
-      });
-      gsap.to(dot1Ref.current, {
-        backgroundColor: "#ffffff",
-        borderColor: "transparent",
-        duration: 0.3,
-      });
-      gsap.to(dot2Ref.current, {
-        backgroundColor: "rgba(255,255,255,0.3)",
-        borderColor: "rgba(255,255,255,0.5)",
-        duration: 0.3,
-      });
-    } else {
-      gsap.to(orgsTextRef.current, {
-        opacity: 0,
-        y: -40,
-        rotate: -5,
-        duration: 0.4,
-        ease: "power2.in",
-      });
-      gsap.to(individualsTextRef.current, {
-        opacity: 1,
-        y: 0,
-        rotate: 0,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-      gsap.to(dot1Ref.current, {
-        backgroundColor: "rgba(255,255,255,0.3)",
-        borderColor: "rgba(255,255,255,0.5)",
-        duration: 0.3,
-      });
-      gsap.to(dot2Ref.current, {
-        backgroundColor: "#ffffff",
-        borderColor: "transparent",
-        duration: 0.3,
+        overwrite: "auto",
       });
     }
   };
 
   useGSAP(
     () => {
-      // On mobile / tablet, ensure all content is immediately visible in flow
-      if (typeof window !== "undefined" && window.innerWidth < 1024) {
-        gsap.set(
-          [
-            topTitleRef.current,
-            headlineRef.current,
-            headlineLine1Ref.current,
-            headlineLine2Ref.current,
-            headlineLine3Ref.current,
-            rhsContainerRef.current,
-            bottomNavRef.current,
-            centerDividerRef.current,
-          ],
-          {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            scale: 1,
-            clearProps: "all",
-          },
-        );
-        gsap.set(orgsTextRef.current, { opacity: 1, y: 0, rotate: 0 });
-        gsap.set(individualsTextRef.current, { opacity: 0, y: 40, rotate: 5 });
-      }
-    },
-    { scope: sectionRef },
-  );
-
-  useImperativeHandle(ref, () => ({
-    getTimeline: () => {
-      // 1. Initial States for desktop pinned animation
-      gsap.set(topTitleRef.current, { opacity: 0, scale: 0.85, y: -15 });
-      gsap.set(bottomNavRef.current, { opacity: 0, y: 20 });
-      gsap.set(centerDividerRef.current, {
-        opacity: 0,
-        scaleY: 0,
-        transformOrigin: "center center",
-      });
-
-      // Calculate exact X offset to perfectly center the headline ONLY on desktop
-      let moveX: string | number = 0;
-      let line1ShiftX = 0;
-      let line2ShiftX = 0;
-      let line3ShiftX = 0;
-
-      if (
-        typeof window !== "undefined" &&
-        window.innerWidth >= 1024 &&
-        headlineRef.current
-      ) {
-        gsap.set(headlineRef.current, { clearProps: "transform,scale,opacity" });
-        if (headlineLine1Ref.current) gsap.set(headlineLine1Ref.current, { clearProps: "transform" });
-        if (headlineLine2Ref.current) gsap.set(headlineLine2Ref.current, { clearProps: "transform" });
-        if (headlineLine3Ref.current) gsap.set(headlineLine3Ref.current, { clearProps: "transform" });
-
-        const rect = headlineRef.current.getBoundingClientRect();
-        const centerOfScreen = window.innerWidth / 2;
-
-        const w1 = headlineLine1Ref.current?.getBoundingClientRect().width || 0;
-        const w2 = headlineLine2Ref.current?.getBoundingClientRect().width || 0;
-        const w3 = headlineLine3Ref.current?.getBoundingClientRect().width || 0;
-        const maxWidth = Math.max(w1, w2, w3);
-
-        const centerOfWidest = rect.left + maxWidth / 2;
-        moveX = centerOfScreen - centerOfWidest;
-
-        line1ShiftX = Math.max(0, (maxWidth - w1) / 2);
-        line2ShiftX = Math.max(0, (maxWidth - w2) / 2);
-        line3ShiftX = Math.max(0, (maxWidth - w3) / 2);
-      }
-
-      gsap.set(headlineRef.current, {
-        opacity: 0,
-        scale: 0.65,
-        x: moveX,
-        transformOrigin: "center center",
-      });
-      gsap.set(headlineLine1Ref.current, { x: line1ShiftX });
-      gsap.set(headlineLine2Ref.current, { x: line2ShiftX });
-      gsap.set(headlineLine3Ref.current, { x: line3ShiftX });
-
-      gsap.set(rhsContainerRef.current, { opacity: 0, scale: 0.9, x: 40 });
-      gsap.set(individualsTextRef.current, { opacity: 0, y: 60, rotate: 4 });
-      gsap.set(orgsTextRef.current, { opacity: 1, y: 0, rotate: 0 });
-
-      const tl = gsap.timeline();
-
-      // Phase 1: Fade in and JUMPING ZOOM Top Title and Headline (Headline centered on desktop with text-center)
-      tl.to(
-        topTitleRef.current,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.75,
-          keyframes: [
-            { scale: 1.12, opacity: 1, duration: 0.38, ease: "power2.out" },
-            { scale: 0.95, duration: 0.18, ease: "sine.inOut" },
-            { scale: 1.0, duration: 0.19, ease: "power2.out" },
-          ],
-        },
-        0,
-      );
-      tl.to(
-        headlineRef.current,
-        {
-          opacity: 1,
-          duration: 0.85,
-          keyframes: [
-            { scale: 1.15, opacity: 1, duration: 0.42, ease: "power2.out" },
-            { scale: 0.94, duration: 0.22, ease: "sine.inOut" },
-            { scale: 1.0, duration: 0.21, ease: "power2.out" },
-          ],
-        },
-        0.08,
-      );
-
-      // Pause to read the centered headline (brisk)
-      tl.to({}, { duration: 0.6 });
-
-      // Phase 2: Slide headline to the left AND glide text lines to text-left
-      tl.to(
-        headlineRef.current,
-        { x: 0, duration: 0.8, ease: "power2.inOut" },
-        "slide",
-      );
-      tl.to(
+      // 1. Ensure layout elements are cleanly positioned & visible for Stage 2
+      gsap.set(
         [
+          topTitleRef.current,
+          headlineRef.current,
           headlineLine1Ref.current,
           headlineLine2Ref.current,
           headlineLine3Ref.current,
+          rhsContainerRef.current,
+          bottomNavRef.current,
+          centerDividerRef.current,
         ],
-        { x: 0, duration: 0.8, ease: "power2.inOut" },
-        "slide",
+        {
+          opacity: 1,
+          x: 0,
+          y: 0,
+          scale: 1,
+          clearProps: "transform",
+        },
       );
 
-      // Phase 3: Slide in the RHS content (Wedge + Orgs Text), Center Divider, and Bottom Button
-      tl.to(
-        rhsContainerRef.current,
-        { opacity: 1, scale: 1, x: 0, duration: 0.7, ease: "power2.out" },
-        "slide+=0.2",
-      );
-      tl.to(
-        centerDividerRef.current,
-        { opacity: 1, scaleY: 1, duration: 0.75, ease: "power2.out" },
-        "slide+=0.2",
-      );
-      tl.to(
-        bottomNavRef.current,
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "slide+=0.3",
-      );
+      // 2. Set initial audience states: Organisations visible, Individuals hidden
+      gsap.set(orgsTextRef.current, {
+        opacity: 1,
+        y: 0,
+        rotate: 0,
+        pointerEvents: "auto",
+      });
+      gsap.set(individualsTextRef.current, {
+        opacity: 0,
+        y: 35,
+        rotate: 4,
+        pointerEvents: "none",
+      });
+      gsap.set(dot1Ref.current, {
+        backgroundColor: "#ffffff",
+        borderColor: "transparent",
+        scale: 1.25,
+      });
+      gsap.set(dot2Ref.current, {
+        backgroundColor: "rgba(255,255,255,0.3)",
+        borderColor: "rgba(255,255,255,0.5)",
+        scale: 1,
+      });
 
-      // Pause for the Orgs state (brisk)
-      tl.to({}, { duration: 0.8 });
+      // 3. Build smooth scrub timeline for audience crossfade (progress 0 = Orgs, progress 1 = Individuals)
+      const tl = gsap.timeline({ paused: true });
 
-      // Phase 4: Carousel Rotation (Swap Orgs for Individuals)
       tl.to(
         orgsTextRef.current,
         {
           opacity: 0,
-          y: -60,
+          y: -35,
           rotate: -4,
-          duration: 0.7,
-          ease: "power2.in",
-          onStart: () => setActiveAudience("individuals"),
+          pointerEvents: "none",
+          duration: 0.4,
+          ease: "power2.inOut",
         },
-        "rotate",
+        0.3,
       );
 
       tl.to(
@@ -301,21 +153,23 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
           opacity: 1,
           y: 0,
           rotate: 0,
-          duration: 0.7,
-          ease: "power2.out",
+          pointerEvents: "auto",
+          duration: 0.4,
+          ease: "power2.inOut",
         },
-        "rotate+=0.7",
+        0.3,
       );
 
-      // Animate Pagination Dots
       tl.to(
         dot1Ref.current,
         {
           backgroundColor: "rgba(255,255,255,0.3)",
           borderColor: "rgba(255,255,255,0.5)",
+          scale: 1,
           duration: 0.4,
+          ease: "power2.inOut",
         },
-        "rotate+=0.7",
+        0.3,
       );
 
       tl.to(
@@ -323,17 +177,33 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         {
           backgroundColor: "#ffffff",
           borderColor: "transparent",
+          scale: 1.25,
           duration: 0.4,
+          ease: "power2.inOut",
         },
-        "rotate+=0.7",
+        0.3,
       );
 
-      // Final pause on the second audience panel
-      tl.to({}, { duration: 0.5 });
-
-      return tl;
+      scrubTimelineRef.current = tl;
     },
-    jumpToProgress: (progress: number) => {},
+    { scope: sectionRef },
+  );
+
+  useImperativeHandle(ref, () => ({
+    getTimeline: () => {
+      return scrubTimelineRef.current || gsap.timeline();
+    },
+    jumpToProgress: (progress: number) => {
+      const clamped = Math.max(0, Math.min(1, progress));
+      if (scrubTimelineRef.current) {
+        scrubTimelineRef.current.progress(clamped);
+      }
+      if (clamped >= 0.5) {
+        setActiveAudience((prev) => (prev !== "individuals" ? "individuals" : prev));
+      } else {
+        setActiveAudience((prev) => (prev !== "orgs" ? "orgs" : prev));
+      }
+    },
   }));
 
   return (
@@ -341,15 +211,8 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
       ref={sectionRef}
       className="relative z-10 w-full h-full min-h-screen lg:min-h-0 lg:h-screen overflow-hidden bg-[#050608] rounded-2xl border border-white/10 flex flex-col justify-between shadow-2xl"
     >
-      {/* Subtle dotted background grid */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-70"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.35) 1.2px, transparent 1.2px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
+      {/* Subtle dotted background grid (matching second section) */}
+      <DottedBackground theme="dark" opacity={0.08} />
 
       <div className="relative z-10 mx-auto w-full h-full max-w-[1920px] px-5 sm:px-10 lg:px-16 py-4 sm:py-6 lg:py-4 xl:py-6 flex flex-col justify-between flex-1 overflow-hidden">
         {/* TOP EYEBROW */}
@@ -445,6 +308,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               {/* FIRST STATE: Organisations */}
               <div
                 ref={orgsTextRef}
+                style={{ opacity: 1 }}
                 className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
               >
                 {/* Mobile Tab Switcher */}
@@ -513,6 +377,11 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               <div
                 id="individuals"
                 ref={individualsTextRef}
+                style={{
+                  opacity: 0,
+                  pointerEvents: "none",
+                  transform: "translateY(35px) rotate(4deg)",
+                }}
                 className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
               >
                 {/* Mobile Tab Switcher */}

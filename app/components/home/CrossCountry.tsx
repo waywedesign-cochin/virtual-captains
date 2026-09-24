@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { LAND_DOTS } from "./globeDots";
+import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -684,14 +685,8 @@ export default function CrossCountry() {
           "linear-gradient(180deg, #ffffff 0%, #9fc3fa 20%, #205ee0 48%, #0d286e 75%, #050608 100%)",
       }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-80"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
-          backgroundSize: "10px 10px",
-        }}
-      />
+      {/* Subtle Dotted Background Grid (matching second section) */}
+      <DottedBackground theme="light" />
 
       <div className="relative z-10 flex w-full max-w-[1920px] flex-col items-center">
         <h2

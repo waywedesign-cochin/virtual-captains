@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface ResultCircle {
   id: string;
@@ -10,7 +16,47 @@ interface ResultCircle {
 }
 
 export default function SalesXResultsHub() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const [hoveredCircle, setHoveredCircle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const ctx = gsap.context(() => {
+      if (headingRef.current && sectionRef.current) {
+        gsap.set(headingRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+          force3D: true,
+        });
+
+        ScrollTrigger.create({
+          trigger: sectionRef.current,
+          start: "top 75%",
+          once: true,
+          onEnter: () => {
+            gsap.to(headingRef.current, {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              ease: "none",
+              force3D: true,
+              keyframes: [
+                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+              ],
+            });
+          },
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const circles: ResultCircle[] = [
     {
@@ -41,6 +87,7 @@ export default function SalesXResultsHub() {
 
   return (
     <section
+      ref={sectionRef}
       role="region"
       aria-label="Quantified SalesX Outcomes and Results Hub"
       className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-[#030612]"
@@ -112,7 +159,10 @@ export default function SalesXResultsHub() {
 
           {/* ── Central Circle: Results ── */}
           <div className="relative z-10 flex h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 items-center justify-center rounded-full border border-blue-500/50 bg-[#070b1e]/90 shadow-[0_0_40px_rgba(30,58,138,0.4)] backdrop-blur-xl">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white font-sans">
+            <h2
+              ref={headingRef}
+              className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white font-sans will-change-transform"
+            >
               Results
             </h2>
           </div>

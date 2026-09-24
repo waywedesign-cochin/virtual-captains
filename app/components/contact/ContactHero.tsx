@@ -333,22 +333,24 @@ export default function ContactHero() {
             ref={headlineRef}
             className="font-serif text-[clamp(2.2rem,4vw+1rem,4.5rem)] font-medium leading-[1.12] tracking-tight text-white select-none will-change-transform"
           >
-            Let&apos;s Build Your{" "}
-            <span className="italic text-[#8fd0ff] drop-shadow-[0_0_30px_rgba(143,208,255,0.45)]">
+            <span className="transition-colors duration-300 group-hover:text-[#38bdf8] group-hover:drop-shadow-[0_0_24px_rgba(56,189,248,0.6)]">
+              Let&apos;s Build Your
+            </span>{" "}
+            <span className="italic text-[#8fd0ff] drop-shadow-[0_0_30px_rgba(143,208,255,0.45)] transition-all duration-300 group-hover:text-[#e7ff3d] group-hover:drop-shadow-[0_0_30px_rgba(231,255,61,0.6)]">
               Sales Floor
             </span>{" "}
-            Together
+            <span className="transition-colors duration-300 group-hover:text-[#38bdf8] group-hover:drop-shadow-[0_0_24px_rgba(56,189,248,0.6)]">
+              Together
+            </span>
           </h1>
 
           {/* Torch Spotlight Highlight Layer (illuminates on hover near text) */}
           <h1
             ref={highlightRef}
             aria-hidden
-            className="pointer-events-none absolute inset-0 font-serif text-[clamp(2.2rem,4vw+1rem,4.5rem)] font-medium leading-[1.12] tracking-tight text-white select-none hidden sm:block will-change-transform"
+            className="pointer-events-none absolute inset-0 font-serif text-[clamp(2.2rem,4vw+1rem,4.5rem)] font-medium leading-[1.12] tracking-tight select-none hidden sm:block will-change-transform"
             style={{
               opacity: 0,
-              textShadow:
-                "0 0 16px rgba(255,255,255,0.9), 0 0 32px rgba(56,189,248,0.8), 0 0 65px rgba(231,255,61,0.5)",
               WebkitMaskImage:
                 "radial-gradient(circle clamp(110px, 14vw, 210px) at var(--mx, 50%) var(--my, 50%), black 0%, black 30%, transparent 100%)",
               maskImage:
@@ -357,17 +359,33 @@ export default function ContactHero() {
               maskRepeat: "no-repeat",
             }}
           >
-            Let&apos;s Build Your{" "}
+            <span
+              style={{
+                color: "#38bdf8",
+                textShadow:
+                  "0 0 20px rgba(56,189,248,0.95), 0 0 40px rgba(56,189,248,0.7)",
+              }}
+            >
+              Let&apos;s Build Your
+            </span>{" "}
             <span
               className="italic"
               style={{
                 color: "#e7ff3d",
-                textShadow: "0 0 24px #e7ff3d, 0 0 50px rgba(231,255,61,0.6)",
+                textShadow: "0 0 24px #e7ff3d, 0 0 50px rgba(231,255,61,0.7)",
               }}
             >
               Sales Floor
             </span>{" "}
-            Together
+            <span
+              style={{
+                color: "#38bdf8",
+                textShadow:
+                  "0 0 20px rgba(56,189,248,0.95), 0 0 40px rgba(56,189,248,0.7)",
+              }}
+            >
+              Together
+            </span>
           </h1>
         </div>
 

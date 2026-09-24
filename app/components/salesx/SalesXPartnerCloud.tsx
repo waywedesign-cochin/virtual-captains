@@ -89,6 +89,8 @@ function PartnerBadgeContent({ p }: { p: PartnerItem }) {
 export default function SalesXPartnerCloud() {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const desktopHeadingRef = useRef<HTMLHeadingElement>(null);
+  const mobileHeadingRef = useRef<HTMLHeadingElement>(null);
   const desktopCardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const mobileCardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [stageScale, setStageScale] = useState(1);
@@ -122,6 +124,26 @@ export default function SalesXPartnerCloud() {
       Boolean,
     ) as HTMLDivElement[];
 
+    // 0. Initial Headings State: Signature spring reveal
+    if (desktopHeadingRef.current) {
+      gsap.set(desktopHeadingRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        y: 20,
+        transformOrigin: "center center",
+        force3D: true,
+      });
+    }
+    if (mobileHeadingRef.current) {
+      gsap.set(mobileHeadingRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        y: 20,
+        transformOrigin: "center center",
+        force3D: true,
+      });
+    }
+
     // 1. Initial Hidden State: Center text is visible; cards start hidden behind center
     desktopCards.forEach((card, idx) => {
       const p = partners[idx];
@@ -153,6 +175,23 @@ export default function SalesXPartnerCloud() {
         start: "top 72%",
         once: true,
         onEnter: () => {
+          // Headings signature jumping zoom-in reveal
+          const headings = [desktopHeadingRef.current, mobileHeadingRef.current].filter(Boolean);
+          if (headings.length > 0) {
+            gsap.to(headings, {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              ease: "none",
+              force3D: true,
+              keyframes: [
+                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+              ],
+            });
+          }
+
           // Desktop: Radial bloom outward to exact symmetrical coordinates
           if (desktopCards.length > 0) {
             gsap.to(desktopCards, {
@@ -228,7 +267,10 @@ export default function SalesXPartnerCloud() {
         >
           {/* Central Title & Subtitle (Absolute Dead Center) */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center select-none pointer-events-none px-4 w-full max-w-2xl">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-white font-sans drop-shadow-[0_0_35px_rgba(255,255,255,0.18)] whitespace-nowrap">
+            <h2
+              ref={desktopHeadingRef}
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-white font-sans drop-shadow-[0_0_35px_rgba(255,255,255,0.18)] whitespace-nowrap will-change-transform"
+            >
               Partner Network
             </h2>
             <p className="mt-4 sm:mt-5 text-xs sm:text-sm lg:text-base text-slate-200 font-light tracking-[0.28em] uppercase font-sans">
@@ -269,7 +311,10 @@ export default function SalesXPartnerCloud() {
 
         {/* ── MOBILE VIEW (Clean responsive systematically spaced grid) ── */}
         <div className="md:hidden flex flex-col items-center text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-sans">
+          <h2
+            ref={mobileHeadingRef}
+            className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-sans will-change-transform"
+          >
             Partner Network
           </h2>
           <p className="mt-3 text-xs sm:text-sm text-slate-300 font-light tracking-[0.24em] uppercase font-sans">

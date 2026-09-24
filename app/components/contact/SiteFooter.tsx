@@ -153,16 +153,30 @@ export default function SiteFooter() {
                 Programs
               </p>
               <ul className="flex flex-col gap-2.5 text-xs sm:text-sm text-white/70 font-medium">
-                {NAV_ITEMS.slice(4).map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                      className="transition-colors hover:text-[#e7ff3d]"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
+                {NAV_ITEMS.slice(4).map((item) => {
+                  if (item.children && item.children.length > 0) {
+                    return item.children.map((child) => (
+                      <li key={child.label}>
+                        <Link
+                          href={child.href}
+                          className="transition-colors hover:text-[#e7ff3d]"
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    ));
+                  }
+                  return (
+                    <li key={item.label}>
+                      <Link
+                        href={item.href}
+                        className="transition-colors hover:text-[#e7ff3d]"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
                 <li>
                   <Link
                     href="/contact"

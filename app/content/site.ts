@@ -8,7 +8,7 @@ import type {
 
 export const site = {
   name: "Virtual Captains",
-  bookACall: { label: "Book A Call", href: "/book-a-call" },
+  bookACall: { label: "Book A Call", href: "/contact" },
 } as const;
 
 /* --------------------------------------------------------------------------
@@ -24,16 +24,16 @@ export const site = {
 export const orbitLabels: ReadonlyArray<OrbitLabel> = [
   { label: "About", href: "/about", angle: -30.8 },
   { label: "SalesX", href: "/salesx", angle: -19.75 },
-  { label: "Program", href: "/program", angle: -7.3 },
+  { label: "Programs", href: "/programs", angle: -7.3 },
   { label: "Organisations", href: "/organisations", angle: 7.8 },
   { label: "Partner", href: "/partner", angle: 21.3 },
-  { label: "Resources", href: "/resources", angle: 33.0 },
+  { label: "Resources", href: "/news-and-updates", angle: 33.0 },
 ];
 
 export const hero = {
   eyebrow: "Launch Your Career as a",
   headline: ["High-Performing", "Seller"],
-  primaryCta: { label: "Apply to Next Cohort", href: "/apply" },
+  primaryCta: { label: "Apply to Next Cohort", href: "/contact" },
   secondaryCta: { label: "Partner Network", href: "/partner" },
 } as const;
 
@@ -156,7 +156,7 @@ export const audienceSlides: ReadonlyArray<AudienceSlide> = [
     title: "The High-Velocity On-Ramp",
     body: "Launch directly into high-paying sales, business development, and GTM roles without waiting through months of low-level onboarding.",
     cta: "Enroll Now",
-    href: "/apply",
+    href: "/contact",
     image: "/inidividuals/wave.webp",
     waveHue: 0,
   },
@@ -166,7 +166,7 @@ export const audienceSlides: ReadonlyArray<AudienceSlide> = [
     title: "The Second-Act Accelerator",
     body: "Convert the domain expertise you already have into quota-carrying revenue work, with a structured bridge from your current craft into enterprise selling.",
     cta: "Enroll Now",
-    href: "/apply",
+    href: "/contact",
     image: "/inidividuals/wave.webp",
     waveHue: -38,
     placeholder: true,
@@ -177,7 +177,7 @@ export const audienceSlides: ReadonlyArray<AudienceSlide> = [
     title: "The Quota-Breaker Program",
     body: "Already selling but plateaued. Rebuild your discovery, multithreading and negotiation reps against live scenarios until the numbers move.",
     cta: "Enroll Now",
-    href: "/apply",
+    href: "/contact",
     image: "/inidividuals/wave.webp",
     waveHue: 42,
     placeholder: true,

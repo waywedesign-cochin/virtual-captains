@@ -83,22 +83,22 @@ export default function SalesXHero() {
       {/* Full-bleed Background Video - Permanently Muted with Hardware Acceleration */}
       <video
         ref={videoRef}
-        src="/salesx/m.webm"
+        src="/salesx/m.mp4"
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none will-change-transform"
+        className="absolute inset-0 w-full h-full object-cover object-bottom select-none pointer-events-none will-change-transform"
       />
 
       {/* Ambient Vignette & Gradient Seamless Transition to Next Section */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_45%,rgba(2,5,20,0.55)_100%)] pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-32 sm:h-44 bg-linear-to-t from-[#020514] via-[#020514]/75 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-20 sm:h-28 bg-linear-to-t from-[#020514] via-[#020514]/60 to-transparent pointer-events-none" />
 
       {/* Top Center Floating Brand Switcher Pill: Liquid Glassmorphism */}
       <div
         ref={brandPillRef}
-        className="absolute top-20 sm:top-24 md:top-28 left-1/2 -translate-x-1/2 z-30 select-none will-change-transform"
+        className="absolute top-5 sm:top-6 md:top-7 left-1/2 -translate-x-1/2 z-30 select-none will-change-transform"
       >
         <div className="relative group">
           {/* Ambient Liquid Glass Outer Glow */}

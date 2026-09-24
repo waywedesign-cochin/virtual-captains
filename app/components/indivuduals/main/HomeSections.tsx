@@ -1,5 +1,5 @@
 import { DarkAtmosphere } from "../layout/DarkAtmosphere";
-import IndividualsOrgFooter from "@/components/common/IndividualsOrgFooter";
+import SiteFooter from "@/components/home/SiteFooter";
 import { CareerCta } from "./CareerCta";
 import { Curriculum } from "./Curriculum";
 
@@ -17,7 +17,7 @@ export function HomeSections() {
       </DarkAtmosphere>
       <WhoThisIsFor />
       <CareerCta />
-      <IndividualsOrgFooter />
+      <SiteFooter showCTA={false} theme="light-blue" />
     </>
   );
 }

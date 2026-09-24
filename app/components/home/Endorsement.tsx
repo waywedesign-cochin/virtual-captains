@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -195,15 +196,8 @@ export default function Endorsement() {
       data-nav-theme="dark"
       className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-4 pt-[clamp(68px,12vh,152px)] pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
     >
-      {/* Background Dot Grid */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-70"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.35) 1.2px, transparent 1.2px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
+      {/* Background Dot Grid (matching second section) */}
+      <DottedBackground theme="dark" opacity={0.08} />
 
       <div className="relative z-10 flex w-full max-w-[1920px] flex-col items-center">
         {/* ---------- EYEBROW ---------- */}

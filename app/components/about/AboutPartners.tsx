@@ -55,79 +55,121 @@ const PARTNERS: Partner[] = [
   },
 ];
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   TickerRow – one horizontal marquee row.
+   direction : "left" | "right"
+   rowOpacity : overall dim level (top/bottom rows use 0.35, middle uses 1)
+   spotlight  : if true a CSS mask-image creates a centre "light zone" so any
+                card that passes through the middle naturally brightens — no
+                single static card is pinned as the hero.
+   ───────────────────────────────────────────────────────────────────────────── */
+function TickerRow({
+  items,
+  direction = "left",
+  speed = 24,
+  rowOpacity = 1,
+  spotlight = false,
+}: {
+  items: Partner[];
+  direction?: "left" | "right";
+  speed?: number;
+  rowOpacity?: number;
+  spotlight?: boolean;
+}) {
+  const looped = [...items, ...items, ...items, ...items];
+  const uk = `${direction}-${speed}`;
+
+  // CSS mask: edges fully transparent → centre 40% fully opaque
+  // Only applied to the featured middle row so cards "emerge" through a window
+  const spotlightMask = spotlight
+    ? "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.9) 22%, black 38%, black 62%, rgba(0,0,0,0.9) 78%, transparent 100%)"
+    : undefined;
+
+  return (
+    <>
+      <style>{`
+        @keyframes vcTkL-${uk} { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+        @keyframes vcTkR-${uk} { 0% { transform:translateX(-50%); } 100% { transform:translateX(0); } }
+        .vc-tk-${uk} { animation: ${direction === "left" ? `vcTkL-${uk}` : `vcTkR-${uk}`} ${speed}s linear infinite; }
+      `}</style>
+
+      <div
+        className="relative overflow-hidden w-full"
+        style={{
+          opacity: rowOpacity,
+          WebkitMaskImage: spotlightMask,
+          maskImage: spotlightMask,
+        }}
+      >
+        {/* Left edge fade (used for non-spotlight rows) */}
+        {!spotlight && (
+          <>
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10"
+              style={{ background: "linear-gradient(to right, #020B25 10%, transparent)" }} />
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10"
+              style={{ background: "linear-gradient(to left, #020B25 10%, transparent)" }} />
+          </>
+        )}
+
+        <div className={`vc-tk-${uk} flex gap-6 w-max will-change-transform py-1.5`}>
+          {looped.map((p, i) => (
+            <div
+              key={`${p.id}-${i}`}
+              className="relative shrink-0 h-20 w-40 rounded-xl
+                bg-linear-to-b from-white/10 via-white/5 to-white/2 backdrop-blur-xl
+                border border-white/12
+                flex items-center justify-center px-5 overflow-hidden
+                shadow-[0_6px_24px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.15)]"
+            >
+              <Image
+                src={p.logoSrc} alt={p.name}
+                width={p.width} height={p.height}
+                className="max-h-6 w-auto object-contain brightness-0 invert opacity-90 pointer-events-none"
+                draggable={false}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+
 export default function AboutPartners() {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const textRef    = useRef<HTMLDivElement>(null);
+  const tickerRef  = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion || !sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      const validCards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
+      const targets = [headingRef.current, textRef.current, tickerRef.current].filter(
+        (el): el is HTMLHeadingElement | HTMLDivElement => el !== null
+      );
+      if (targets.length === 0) return;
 
-      gsap.set(headingRef.current, {
-        opacity: 0,
-        scale: 0.68,
-        y: 20,
-        transformOrigin: "center center",
-      });
-      gsap.set(textRef.current, { opacity: 0, y: 30 });
-      gsap.set(validCards, { opacity: 0, scale: 0.88, y: 25 });
-
+      gsap.set(targets, { opacity: 0, y: 28 });
       ScrollTrigger.create({
         trigger: sectionRef.current,
-        start: "top 72%",
+        start: "top 75%",
         once: true,
         onEnter: () => {
-          const tl = gsap.timeline({
-            defaults: { ease: "power3.out" },
-            onComplete: () => {
-              // Engage subtle continuous floating physics in zero gravity
-              validCards.forEach((card, idx) => {
-                gsap.to(card, {
-                  y: idx % 2 === 0 ? -6 : 6,
-                  duration: 2.6 + (idx % 3) * 0.4,
-                  repeat: -1,
-                  yoyo: true,
-                  ease: "sine.inOut",
-                  delay: idx * 0.15,
-                });
-              });
-            },
-          });
-
-          tl.to(
-            headingRef.current,
-            {
+          const activeTargets = [headingRef.current, textRef.current, tickerRef.current].filter(
+            (el): el is HTMLHeadingElement | HTMLDivElement => el !== null
+          );
+          if (activeTargets.length > 0) {
+            gsap.to(activeTargets, {
               opacity: 1,
               y: 0,
-              duration: 0.85,
-              keyframes: [
-                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
-            },
-            0
-          )
-            .to(textRef.current, { opacity: 1, y: 0, duration: 0.9 }, 0.18)
-            .to(
-              validCards,
-              {
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                duration: 0.9,
-                stagger: 0.1,
-                ease: "back.out(1.35)",
-              },
-              0.25
-            );
+              duration: 0.9,
+              stagger: 0.15,
+              ease: "power3.out",
+            });
+          }
         },
       });
     }, sectionRef);
@@ -140,15 +182,14 @@ export default function AboutPartners() {
       ref={sectionRef}
       role="region"
       aria-label="Partner Network"
-      className="relative w-full overflow-hidden py-14 sm:py-20 md:py-24 lg:py-20 xl:py-28 select-none flex flex-col items-center justify-center"
+      className="relative w-full overflow-hidden py-14 sm:py-20 md:py-24 lg:py-20 xl:py-28 select-none"
     >
-      {/* ── Central Blue Radial Ambient Lighting ── */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] sm:w-[1050px] lg:w-[1350px] h-[500px] sm:h-[700px] bg-radial from-[#13378e]/35 via-[#081c54]/18 to-transparent blur-[140px] pointer-events-none -z-10" />
+      {/* Ambient blue glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-187.5 sm:w-262.5 lg:w-337.5 h-125 sm:h-175 bg-[radial-gradient(ellipse_at_center,rgba(19,55,142,0.35)_0%,rgba(8,28,84,0.18)_50%,transparent_100%)] blur-[140px] pointer-events-none -z-10" />
 
-      {/* Standard Navbar max-width Container (max-w-372) */}
-      <div className="w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 lg:px-8 xl:px-12 relative z-10">
-        
-        {/* ── 1. Top Centered Heading ── */}
+      <div className="w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 xl:px-12 relative z-10">
+
+        {/* Heading */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-14 xl:mb-16">
           <h2
             ref={headingRef}
@@ -158,26 +199,23 @@ export default function AboutPartners() {
           </h2>
         </div>
 
-        {/* ── 2. Two-Column Body: Description (Left) & Staggered Cards (Right) ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-10 xl:gap-14 items-center">
-          
-          {/* Left Column: Mission Description */}
+        {/* Two-column body */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 xl:gap-12 items-center">
+
+          {/* Left: description copy */}
           <div
             ref={textRef}
-            className="lg:col-span-5 flex flex-col items-center text-center lg:items-start lg:text-left pr-0 lg:pr-4 xl:pr-6 will-change-transform max-w-xl mx-auto lg:mx-0 w-full"
+            className="lg:col-span-5 flex flex-col items-center text-center lg:items-start lg:text-left max-w-xl mx-auto lg:mx-0 w-full will-change-transform"
           >
-            {/* Paragraph 1 with Italic Lime "Demo text" */}
-            <p className="text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed text-center lg:text-left">
-              <span className="text-[#e5ff00] italic font-medium mr-1.5 select-none drop-shadow-[0_0_10px_rgba(229,255,0,0.35)]">
+            <p className="text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed">
+              <span className="font-medium mr-1.5 select-none bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent italic drop-shadow-[0_0_10px_rgba(243,252,0,0.35)]">
                 Demo text
               </span>
               At Virtual Captains, we believe great sales are built on more than
               scripts and techniques. They are built on clarity, strategy,
               confidence, and the right human approach.
             </p>
-
-            {/* Paragraph 2 */}
-            <p className="mt-4 sm:mt-6 lg:mt-4 xl:mt-7 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-300/90 font-sans leading-relaxed text-center lg:text-left">
+            <p className="mt-4 sm:mt-6 lg:mt-4 xl:mt-7 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-300/90 font-sans leading-relaxed">
               We are a team of Sales Strategists and Trainers dedicated to
               helping businesses build stronger sales teams and create
               meaningful, measurable growth. Through industry-driven insights,
@@ -187,87 +225,20 @@ export default function AboutPartners() {
             </p>
           </div>
 
-          {/* Right Column: 5 Partner Logo Cards in Staggered Constellation Layout */}
-          <div className="lg:col-span-7 relative flex items-center justify-center w-full">
-            
-            {/* Desktop / Tablet Staggered Constellation Layout */}
-            <div className="hidden sm:flex flex-col gap-3.5 sm:gap-4 md:gap-5 w-full max-w-xl mx-auto items-center">
-              
-              {/* Row 1: 2 Cards (JSR, Skylark) */}
-              <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-10 lg:gap-10 xl:gap-14 w-full">
-                {PARTNERS.slice(0, 2).map((p, idx) => (
-                  <div
-                    key={p.id}
-                    ref={(el) => {
-                      cardsRef.current[idx] = el;
-                    }}
-                    className="relative w-36 sm:w-44 md:w-50 lg:w-46 xl:w-52 h-14 sm:h-16 md:h-18 px-4 sm:px-5 rounded-2xl md:rounded-3xl bg-linear-to-b from-white/12 via-white/6 to-white/2 border border-white/20 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.4)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-106 hover:-translate-y-1 cursor-pointer group will-change-transform overflow-hidden"
-                  >
-                    {/* Ambient subtle backlight behind logo */}
-                    <div className="absolute inset-0 bg-radial from-sky-400/15 via-transparent to-transparent opacity-50 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500 pointer-events-none" />
-
-                    <Image
-                      src={p.logoSrc}
-                      alt={p.name}
-                      width={p.width}
-                      height={p.height}
-                      className="max-h-6 sm:max-h-7.5 md:max-h-8 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-all duration-300 pointer-events-none"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Row 2: 3 Cards (AHAD, MoonHive, Unifirm) */}
-              <div className="flex items-center justify-center gap-2.5 sm:gap-3 md:gap-4 lg:gap-3.5 xl:gap-4.5 w-full">
-                {PARTNERS.slice(2, 5).map((p, idx) => (
-                  <div
-                    key={p.id}
-                    ref={(el) => {
-                      cardsRef.current[idx + 2] = el;
-                    }}
-                    className="relative w-28 sm:w-34 md:w-42 lg:w-38 xl:w-46 h-13 sm:h-15 md:h-17 px-3 sm:px-4 rounded-2xl md:rounded-3xl bg-linear-to-b from-white/12 via-white/6 to-white/2 border border-white/20 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.4)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-106 hover:-translate-y-1 cursor-pointer group will-change-transform overflow-hidden"
-                  >
-                    {/* Ambient subtle backlight behind logo */}
-                    <div className="absolute inset-0 bg-radial from-sky-400/15 via-transparent to-transparent opacity-50 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500 pointer-events-none" />
-
-                    <Image
-                      src={p.logoSrc}
-                      alt={p.name}
-                      width={p.width}
-                      height={p.height}
-                      className="max-h-5 sm:max-h-6.5 md:max-h-7.5 w-auto object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-all duration-300 pointer-events-none"
-                    />
-                  </div>
-                ))}
-              </div>
-
-            </div>
-
-            {/* Mobile Layout (<640px): Clean 2-column responsive grid with last card centered */}
-            <div className="sm:hidden grid grid-cols-2 gap-3 w-full max-w-sm mx-auto">
-              {PARTNERS.map((p, idx) => (
-                <div
-                  key={`m-${p.id}`}
-                  className={`relative h-15 px-4 rounded-2xl bg-linear-to-b from-white/12 via-white/6 to-white/2 border border-white/20 flex items-center justify-center shadow-lg overflow-hidden ${
-                    idx === PARTNERS.length - 1 ? "col-span-2 max-w-[180px] mx-auto w-full" : ""
-                  }`}
-                >
-                  <div className="absolute inset-0 bg-radial from-sky-400/10 via-transparent to-transparent pointer-events-none" />
-                  <Image
-                    src={p.logoSrc}
-                    alt={p.name}
-                    width={p.width}
-                    height={p.height}
-                    className="max-h-6 w-auto object-contain brightness-0 invert opacity-90"
-                  />
-                </div>
-              ))}
-            </div>
-
+          {/* Right: 3 stacked ticker rows */}
+          <div
+            ref={tickerRef}
+            className="lg:col-span-7 flex flex-col gap-3 will-change-transform overflow-hidden"
+          >
+            {/* Row 1 – left, dimmed */}
+            <TickerRow items={PARTNERS} direction="left" speed={22} rowOpacity={0.35} />
+            {/* Row 2 – right, full brightness + spotlight mask (featured) */}
+            <TickerRow items={[...PARTNERS].reverse()} direction="right" speed={28} rowOpacity={1} spotlight />
+            {/* Row 3 – left, dimmed */}
+            <TickerRow items={PARTNERS} direction="left" speed={20} rowOpacity={0.35} />
           </div>
 
         </div>
-
       </div>
     </section>
   );

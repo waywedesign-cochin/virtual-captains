@@ -18,7 +18,9 @@ export function WhoThisIsFor() {
       if (!section || !wave) return;
 
       const slides = gsap.utils.toArray<HTMLElement>("[data-who-copy-slide]");
-      const imageSlides = gsap.utils.toArray<HTMLElement>("[data-who-image-slide]");
+      const imageSlides = gsap.utils.toArray<HTMLElement>(
+        "[data-who-image-slide]",
+      );
       const dots = gsap.utils.toArray<HTMLButtonElement>("[role='tab']");
       let activeIndex = 0;
 
@@ -100,11 +102,23 @@ export function WhoThisIsFor() {
           );
 
           // Image animation
-          gsap.to(currentImg, { opacity: 0, x: -40, filter: "blur(12px)", duration: 0.6, ease: "power2.in" });
+          gsap.to(currentImg, {
+            opacity: 0,
+            x: -40,
+            filter: "blur(12px)",
+            duration: 0.6,
+            ease: "power2.in",
+          });
           gsap.fromTo(
             nextImg,
             { opacity: 0, x: 40, scale: 0.95 },
-            { opacity: 1, x: 0, scale: 1, duration: 1.0, ease: "back.out(1.2)" }
+            {
+              opacity: 1,
+              x: 0,
+              scale: 1,
+              duration: 1.0,
+              ease: "back.out(1.2)",
+            },
           );
         } else {
           // Backward scroll: old leaves bottom-right, new enters top-left
@@ -139,11 +153,23 @@ export function WhoThisIsFor() {
           );
 
           // Image animation
-          gsap.to(currentImg, { opacity: 0, x: 40, filter: "blur(12px)", duration: 0.6, ease: "power2.in" });
+          gsap.to(currentImg, {
+            opacity: 0,
+            x: 40,
+            filter: "blur(12px)",
+            duration: 0.6,
+            ease: "power2.in",
+          });
           gsap.fromTo(
             nextImg,
             { opacity: 0, x: -40, scale: 0.95 },
-            { opacity: 1, x: 0, scale: 1, duration: 1.0, ease: "back.out(1.2)" }
+            {
+              opacity: 1,
+              x: 0,
+              scale: 1,
+              duration: 1.0,
+              ease: "back.out(1.2)",
+            },
           );
         }
 
@@ -175,10 +201,17 @@ export function WhoThisIsFor() {
         activeIndex = index;
       }
 
+      // Attach click listeners to tab dots so users can click between profiles
+      dots.forEach((dot, i) => {
+        dot.style.cursor = "pointer";
+        dot.addEventListener("click", () => goToSlide(i));
+      });
+
       // Create the pinning scroll trigger
       ScrollTrigger.create({
         trigger: section,
         start: "top top",
+        anticipatePin: 1,
         // Reduced pinning duration for better UX
         end: `+=${slides.length * 75}%`,
         pin: true,
@@ -222,7 +255,7 @@ export function WhoThisIsFor() {
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-x-[min(3.97vw,60px)] items-center max-[1023px]:grid-cols-1 max-[1023px]:gap-y-[clamp(1.5rem,5vw,3rem)] max-[1023px]:justify-items-center max-[1023px]:text-center">
             {/* Wave Graphic */}
             <div
-              className="relative w-full overflow-hidden rounded-[28px] h-70 sm:h-87.5 md:h-100 max-[1023px]:max-w-130 max-[767px]:max-w-full shadow-[0_16px_36px_rgba(0,0,0,0.08)] border border-black/5"
+              className="relative w-full overflow-hidden rounded-[28px] h-70 sm:h-87.5 md:h-100 max-[1023px]:max-w-130 max-[767px]:max-w-full "
               data-who-wave=""
               ref={waveRef}
               style={
@@ -232,7 +265,11 @@ export function WhoThisIsFor() {
               }
             >
               {audienceSlides.map((slide) => (
-                <div key={slide.id} className="absolute inset-0 w-full h-full will-change-transform" data-who-image-slide="">
+                <div
+                  key={slide.id}
+                  className="absolute inset-0 w-full h-full will-change-transform"
+                  data-who-image-slide=""
+                >
                   <Image
                     src={slide.image || "/inidividuals/wave.webp"}
                     alt="who-wave"
@@ -299,7 +336,9 @@ export function WhoThisIsFor() {
                       className="group inline-flex items-center gap-2 rounded-full bg-[#0a0b0d] hover:bg-[#1c4fc0] text-white px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-all duration-200 hover:scale-102 active:scale-98"
                     >
                       <span>{slide.cta}</span>
-                      <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">
+                        →
+                      </span>
                     </Link>
                   </div>
                 </div>

@@ -68,7 +68,7 @@ export default function SalesXAudience() {
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
+      "(prefers-reduced-motion: reduce)"
     ).matches;
 
     if (
@@ -91,8 +91,35 @@ export default function SalesXAudience() {
       const cylinderRadius = isMobile ? 150 : 195;
       const stepAngleDeg = isMobile ? 27 : 24;
 
-      // 1. Initial entrance states
-      gsap.set(centerTitleRef.current, { opacity: 0, scale: 0.85 });
+      // 1. Initial entrance states for center title: Signature jumping zoom-in spring reveal
+      gsap.set(centerTitleRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        y: 20,
+        transformOrigin: "center center",
+        force3D: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 75%",
+        once: true,
+        onEnter: () => {
+          gsap.to(centerTitleRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            ease: "none",
+            force3D: true,
+            keyframes: [
+              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+            ],
+          });
+        },
+      });
+
       if (centerAuraRef.current)
         gsap.set(centerAuraRef.current, { opacity: 0, scale: 0.6 });
       gsap.set(leftColRef.current, {
@@ -215,16 +242,17 @@ export default function SalesXAudience() {
           pin: stageRef.current,
           scrub: 0.8,
           anticipatePin: 1,
+          onEnter: () => {
+            gsap.killTweensOf(centerTitleRef.current);
+            gsap.set(centerTitleRef.current, { opacity: 1, scale: 1, y: 0 });
+          },
           onUpdate: (self) => {
             const p = self.progress;
 
-            // Phase 1: Center Blue Gradient & "Individuals" reveal (0.00 -> 0.12)
+            // Phase 1: Center Blue Gradient (0.00 -> 0.12) - Center title is stable and revealed
             if (p < 0.12) {
               const ratio = p / 0.12;
-              gsap.set(centerTitleRef.current, {
-                opacity: ratio,
-                scale: 0.85 + ratio * 0.15,
-              });
+              gsap.set(centerTitleRef.current, { opacity: 1, scale: 1, y: 0 });
               if (centerAuraRef.current) {
                 gsap.set(centerAuraRef.current, {
                   opacity: ratio,
@@ -245,7 +273,7 @@ export default function SalesXAudience() {
             // Phase 2: Left & Right columns unfold into 3-column layout (0.12 -> 0.22)
             else if (p < 0.22) {
               const ratio = (p - 0.12) / 0.1;
-              gsap.set(centerTitleRef.current, { opacity: 1, scale: 1 });
+              gsap.set(centerTitleRef.current, { opacity: 1, scale: 1, y: 0 });
               if (centerAuraRef.current)
                 gsap.set(centerAuraRef.current, { opacity: 1, scale: 1 });
 

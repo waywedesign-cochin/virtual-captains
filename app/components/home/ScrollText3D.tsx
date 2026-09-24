@@ -4,6 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -271,14 +272,7 @@ export default function ScrollText3D() {
         className="relative h-screen w-full overflow-hidden"
         style={{ perspective: "1200px" }}
       >
-        <div
-          className="pointer-events-none absolute opacity-80 inset-0 z-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(0,0,0,0.22) 0.95px, transparent 0.95px)",
-            backgroundSize: "10px 10px",
-          }}
-        />
+        <DottedBackground theme="light" />
 
         {/* Intro title — visible before scroll animation begins */}
         <div

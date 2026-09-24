@@ -11,7 +11,7 @@ interface SalesXHeroVideoProps {
 }
 
 export default function SalesXHeroVideo({
-  videoSrc = "/salesx/m.webm",
+  videoSrc = "/salesx/m.mp4",
   posterSrc = "/salesx/dashboard-preview.png",
   className = "",
 }: SalesXHeroVideoProps) {
@@ -34,8 +34,12 @@ export default function SalesXHeroVideo({
       const curS = Math.floor(current % 60);
       const totM = Math.floor(total / 60);
       const totS = Math.floor(total % 60);
-      setCurrentTimeStr(`${String(curM).padStart(2, "0")}:${String(curS).padStart(2, "0")}`);
-      setDurationStr(`${String(totM).padStart(2, "0")}:${String(totS).padStart(2, "0")}`);
+      setCurrentTimeStr(
+        `${String(curM).padStart(2, "0")}:${String(curS).padStart(2, "0")}`,
+      );
+      setDurationStr(
+        `${String(totM).padStart(2, "0")}:${String(totS).padStart(2, "0")}`,
+      );
     }
   };
 
@@ -63,7 +67,8 @@ export default function SalesXHeroVideo({
       <div
         className={`relative w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-blue-500/30 bg-[#070a1a]/95 text-white shadow-[0_25px_70px_-15px_rgba(20,50,150,0.6)] backdrop-blur-2xl transition-all duration-300 ${className}`}
         style={{
-          boxShadow: "0 0 60px -10px rgba(56, 189, 248, 0.25), 0 20px 40px rgba(0, 0, 0, 0.8)",
+          boxShadow:
+            "0 0 60px -10px rgba(56, 189, 248, 0.25), 0 20px 40px rgba(0, 0, 0, 0.8)",
         }}
       >
         {/* Top Window Bar */}
@@ -79,7 +84,9 @@ export default function SalesXHeroVideo({
 
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-[#38bdf8]">
-              <span className={`h-1.5 w-1.5 rounded-full bg-[#38bdf8] ${isPlaying ? "animate-ping" : ""}`} />
+              <span
+                className={`h-1.5 w-1.5 rounded-full bg-[#38bdf8] ${isPlaying ? "animate-ping" : ""}`}
+              />
               {isPlaying ? "LIVE 4K RENDER" : "VIDEO PAUSED"}
             </span>
 
@@ -89,8 +96,18 @@ export default function SalesXHeroVideo({
               className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer"
               title="Expand Demo Lightbox"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                />
               </svg>
               <span className="hidden md:inline">Full View</span>
             </button>
@@ -118,8 +135,12 @@ export default function SalesXHeroVideo({
             <div className="flex items-center gap-3 sm:gap-4 rounded-full border border-white/20 bg-[#0a0f2d]/80 px-4 sm:px-6 py-1.5 sm:py-2 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
               {/* SALESX Logo */}
               <div className="flex items-center font-sans">
-                <span className="font-extrabold tracking-wider text-white text-xs sm:text-sm">SALES</span>
-                <span className="text-[#38bdf8] font-black text-sm sm:text-base ml-0.5">X</span>
+                <span className="font-extrabold tracking-wider text-white text-xs sm:text-sm">
+                  SALES
+                </span>
+                <span className="text-[#38bdf8] font-black text-sm sm:text-base ml-0.5">
+                  X
+                </span>
               </div>
 
               {/* Vertical divider */}
@@ -137,8 +158,12 @@ export default function SalesXHeroVideo({
                   />
                 </div>
                 <div className="text-left leading-tight">
-                  <div className="text-[10px] sm:text-xs font-bold text-white">Virtual</div>
-                  <div className="text-[10px] sm:text-xs font-bold text-white/90">Captains</div>
+                  <div className="text-[10px] sm:text-xs font-bold text-white">
+                    Virtual
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-bold text-white/90">
+                    Captains
+                  </div>
                 </div>
               </div>
             </div>
@@ -163,8 +188,12 @@ export default function SalesXHeroVideo({
                 href="/individuals"
                 className="inline-flex items-center justify-center rounded-full bg-white hover:bg-slate-100 px-3.5 sm:px-5 py-1.5 sm:py-2 shadow-lg transition-all transform hover:scale-105 active:scale-95 cursor-pointer select-none shrink-0"
               >
-                <span className="text-[#f97316] font-extrabold text-xs sm:text-sm">Enroll</span>
-                <span className="text-[#6366f1] font-extrabold text-xs sm:text-sm ml-1">Now</span>
+                <span className="text-[#f97316] font-extrabold text-xs sm:text-sm">
+                  Enroll
+                </span>
+                <span className="text-[#6366f1] font-extrabold text-xs sm:text-sm ml-1">
+                  Now
+                </span>
               </Link>
             </div>
           </div>
@@ -174,16 +203,24 @@ export default function SalesXHeroVideo({
             type="button"
             onClick={handleTogglePlay}
             className={`absolute inset-0 m-auto h-14 w-14 sm:h-18 sm:w-18 rounded-full bg-black/50 hover:bg-blue-600/80 border border-white/30 backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110 z-30 cursor-pointer shadow-[0_0_30px_rgba(56,189,248,0.5)] ${
-              isPlaying ? "opacity-0 group-hover/video:opacity-100" : "opacity-100"
+              isPlaying
+                ? "opacity-0 group-hover/video:opacity-100"
+                : "opacity-100"
             }`}
             aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
-              <svg className="w-6 h-6 sm:w-7 sm:h-7 fill-current" viewBox="0 0 24 24">
+              <svg
+                className="w-6 h-6 sm:w-7 sm:h-7 fill-current"
+                viewBox="0 0 24 24"
+              >
                 <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
               </svg>
             ) : (
-              <svg className="w-6 h-6 sm:w-7 sm:h-7 ml-1 fill-current" viewBox="0 0 24 24">
+              <svg
+                className="w-6 h-6 sm:w-7 sm:h-7 ml-1 fill-current"
+                viewBox="0 0 24 24"
+              >
                 <path d="M8 5v14l11-7z" />
               </svg>
             )}
@@ -221,11 +258,17 @@ export default function SalesXHeroVideo({
                 aria-label={isPlaying ? "Pause" : "Play"}
               >
                 {isPlaying ? (
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 fill-current"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                   </svg>
                 ) : (
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5 fill-current"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 )}
@@ -238,13 +281,37 @@ export default function SalesXHeroVideo({
                 aria-label="Toggle mute"
               >
                 {isMuted ? (
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+                    />
                   </svg>
                 ) : (
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                    />
                   </svg>
                 )}
               </button>
@@ -261,8 +328,18 @@ export default function SalesXHeroVideo({
                 className="hidden sm:inline-flex items-center gap-1.5 rounded-md bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 px-2.5 py-1 text-[11px] font-medium text-[#38bdf8] transition-colors cursor-pointer"
               >
                 <span>Full View</span>
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
                 </svg>
               </button>
 
@@ -272,8 +349,18 @@ export default function SalesXHeroVideo({
                 className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
                 aria-label="Fullscreen"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                  />
                 </svg>
               </button>
             </div>
@@ -298,8 +385,18 @@ export default function SalesXHeroVideo({
                 className="rounded-lg bg-white/10 p-2 text-slate-300 hover:bg-white/20 hover:text-white transition-colors cursor-pointer"
                 aria-label="Close modal"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>

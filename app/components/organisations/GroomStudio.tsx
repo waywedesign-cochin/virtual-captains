@@ -242,7 +242,7 @@ export default function GroomStudio() {
       {/* Pinned Viewport Container - Dynamic 100dvh for mobile address bar resilience */}
       <div
         ref={pinRef}
-        className="sticky top-0 left-0 w-full h-dvh max-h-dvh overflow-hidden flex flex-col justify-between pt-16 sm:pt-20 lg:pt-22 pb-3 sm:pb-5 px-4 sm:px-8 lg:px-12 bg-white"
+        className="sticky top-0 left-0 w-full h-dvh max-h-dvh overflow-hidden flex flex-col justify-between pt-20 sm:pt-24 lg:pt-26 pb-3 sm:pb-5 px-4 sm:px-8 lg:px-12 bg-white"
       >
         <div className="w-full max-w-372 mx-auto flex flex-col h-full justify-between">
           {/* Top Header: Responsive title and horizontally-scrollable tabs on mobile */}
@@ -368,7 +368,7 @@ export default function GroomStudio() {
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                   >
-                    <div className="relative flex items-center justify-center w-full max-w-4xl mx-auto my-auto min-h-56.25 sm:min-h-70 md:min-h-80 select-none">
+                    <div className="relative flex items-center justify-center w-full max-w-4xl mx-auto my-auto min-h-55 sm:min-h-65 md:min-h-71.25 select-none">
                       {/* Left Floating Deck Nav Arrow */}
                       <button
                         type="button"
@@ -394,24 +394,24 @@ export default function GroomStudio() {
                       {/* Left Card (Overlapping behind center) */}
                       <div
                         onClick={prevCard}
-                        className={`absolute left-1 sm:left-[5%] md:left-[8%] lg:left-[12%] z-10 w-43.75 sm:w-61.25 md:w-68.75 h-48.75 sm:h-63.75 md:h-71.25 rounded-2xl sm:rounded-[28px] p-3.5 sm:p-5 md:p-6 flex flex-col items-center justify-center text-center text-white cursor-pointer shadow-lg scale-90 sm:scale-100 opacity-60 sm:opacity-95 transition-all duration-500 hover:scale-95 sm:hover:scale-102 hover:z-25 ${prevCardItem.bgClass}`}
+                        className={`absolute left-1 sm:left-[6%] md:left-[10%] lg:left-[15%] z-10 w-46.25 sm:w-56.25 md:w-62.5 h-45 sm:h-55 md:h-60 rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 flex flex-col items-center justify-center text-center text-white cursor-pointer border border-white/25 shadow-[0_14px_30px_rgba(0,0,0,0.18),inset_0_1px_1px_rgba(255,255,255,0.35)] scale-90 sm:scale-100 opacity-60 sm:opacity-95 transition-all duration-500 hover:scale-95 sm:hover:scale-102 hover:z-25 ${prevCardItem.bgClass}`}
                       >
-                        <div className="bg-white/20 border border-white/30 backdrop-blur-md rounded-xl sm:rounded-2xl py-1.5 sm:py-2 px-3 sm:px-5 font-bold text-xs sm:text-sm md:text-base lg:text-lg mb-2 sm:mb-4 shadow-xs select-none">
+                        <div className="bg-white/20 border border-white/30 backdrop-blur-md rounded-xl py-1 sm:py-1.5 px-3 sm:px-4 font-bold text-xs sm:text-[13px] md:text-sm mb-2 sm:mb-2.5 shadow-xs select-none">
                           {prevCardItem.title}
                         </div>
-                        <p className="text-[10px] sm:text-xs md:text-[13px] font-medium leading-relaxed max-w-36.25 sm:max-w-47.5 text-white select-none line-clamp-3 sm:line-clamp-none">
+                        <p className="text-[10px] sm:text-[11px] md:text-xs font-normal leading-relaxed max-w-47.5 text-white/95 select-none line-clamp-3 sm:line-clamp-none">
                           {prevCardItem.description}
                         </p>
                       </div>
 
                       {/* Center Card (Hero / Featured) */}
                       <div
-                        className={`relative z-20 w-58.75 sm:w-71.25 md:w-78.75 h-56.25 sm:h-71.25 md:h-80 rounded-2xl sm:rounded-[30px] p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center text-center text-white shadow-2xl shadow-blue-600/35 transition-all duration-500 ${activeCard.bgClass}`}
+                        className={`relative z-20 w-57.5 sm:w-67.5 md:w-73.75 h-55 sm:h-65 md:h-70 rounded-2xl sm:rounded-[26px] p-4 sm:p-5 md:p-6 flex flex-col items-center justify-center text-center text-white border border-white/30 shadow-[0_20px_45px_rgba(0,0,0,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45)] transition-all duration-500 ${activeCard.bgClass}`}
                       >
-                        <div className="bg-white/25 border border-white/35 backdrop-blur-md rounded-xl sm:rounded-2xl py-1.5 sm:py-2.5 px-4 sm:px-7 font-bold text-sm sm:text-base md:text-lg lg:text-xl mb-2 sm:mb-4 shadow-inner select-none">
+                        <div className="bg-white/25 border border-white/35 backdrop-blur-md rounded-xl py-1.5 sm:py-2 px-4 sm:px-5 font-bold text-xs sm:text-sm md:text-base mb-2.5 sm:mb-3 shadow-inner select-none tracking-wide">
                           {activeCard.title}
                         </div>
-                        <p className="text-[11px] sm:text-xs md:text-sm lg:text-[15px] font-medium leading-relaxed max-w-48.75 sm:max-w-56.25 text-white select-none">
+                        <p className="text-[11px] sm:text-xs md:text-[13.5px] font-normal leading-relaxed max-w-57.5 text-white select-none">
                           {activeCard.description}
                         </p>
                       </div>
@@ -419,12 +419,12 @@ export default function GroomStudio() {
                       {/* Right Card (Overlapping behind center) */}
                       <div
                         onClick={nextCard}
-                        className={`absolute right-1 sm:right-[5%] md:right-[8%] lg:right-[12%] z-10 w-43.75 sm:w-61.25 md:w-68.75 h-48.75 sm:h-63.75 md:h-71.25 rounded-2xl sm:rounded-[28px] p-3.5 sm:p-5 md:p-6 flex flex-col items-center justify-center text-center text-white cursor-pointer shadow-lg scale-90 sm:scale-100 opacity-60 sm:opacity-95 transition-all duration-500 hover:scale-95 sm:hover:scale-102 hover:z-25 ${nextCardItem.bgClass}`}
+                        className={`absolute right-1 sm:right-[6%] md:right-[10%] lg:right-[15%] z-10 w-46.25 sm:w-56.25 md:w-62.5 h-45 sm:h-55 md:h-60 rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 flex flex-col items-center justify-center text-center text-white cursor-pointer border border-white/25 shadow-[0_14px_30px_rgba(0,0,0,0.18),inset_0_1px_1px_rgba(255,255,255,0.35)] scale-90 sm:scale-100 opacity-60 sm:opacity-95 transition-all duration-500 hover:scale-95 sm:hover:scale-102 hover:z-25 ${nextCardItem.bgClass}`}
                       >
-                        <div className="bg-white/20 border border-white/30 backdrop-blur-md rounded-xl sm:rounded-2xl py-1.5 sm:py-2 px-3 sm:px-5 font-bold text-xs sm:text-sm md:text-base lg:text-lg mb-2 sm:mb-4 shadow-xs select-none">
+                        <div className="bg-white/20 border border-white/30 backdrop-blur-md rounded-xl py-1 sm:py-1.5 px-3 sm:px-4 font-bold text-xs sm:text-[13px] md:text-sm mb-2 sm:mb-2.5 shadow-xs select-none">
                           {nextCardItem.title}
                         </div>
-                        <p className="text-[10px] sm:text-xs md:text-[13px] font-medium leading-relaxed max-w-36.25 sm:max-w-47.5 text-white select-none line-clamp-3 sm:line-clamp-none">
+                        <p className="text-[10px] sm:text-[11px] md:text-xs font-normal leading-relaxed max-w-47.5 text-white/95 select-none line-clamp-3 sm:line-clamp-none">
                           {nextCardItem.description}
                         </p>
                       </div>

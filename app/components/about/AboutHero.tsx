@@ -90,7 +90,7 @@ export default function AboutHero() {
       <div
         ref={glowRef}
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[750px] lg:w-[900px] h-[260px] sm:h-[350px] bg-radial from-[#1e40af]/30 via-[#0c2269]/15 to-transparent blur-[120px] pointer-events-none -z-10 will-change-transform"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 sm:w-187.5 lg:w-225 h-65 sm:h-87.5 bg-radial from-[#1e40af]/30 via-[#0c2269]/15 to-transparent blur-[120px] pointer-events-none -z-10 will-change-transform"
       />
 
       <div
@@ -117,7 +117,7 @@ export default function AboutHero() {
               ref={line2Ref}
               className="block will-change-transform"
             >
-              <span className="text-[#e5ff00] font-bold drop-shadow-[0_0_24px_rgba(229,255,0,0.35)]">
+              <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(243,252,0,0.35)]">
                 Sales Capability
               </span>{" "}
               <span className="text-white">

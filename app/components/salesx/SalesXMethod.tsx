@@ -10,6 +10,42 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Deterministic PRNG (same output every render/build) so the starfield
+// doesn't shift between server and client render.
+function seededRandom(seed: number) {
+  let t = seed;
+  return () => {
+    t += 0x6d2b79f5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const STAR_COUNT = 55;
+const starRandom = seededRandom(9001);
+const METHOD_STARS = Array.from({ length: STAR_COUNT }, () => ({
+  left: starRandom() * 100,
+  top: starRandom() * 100,
+  size: 1 + starRandom() * 1.7,
+  delay: starRandom() * 5,
+  duration: 2.6 + starRandom() * 3.6,
+  baseOpacity: 0.2 + starRandom() * 0.5,
+}));
+
+// A sparser, dimmer scatter for inside the cards — enough to feel alive
+// without competing with the dashboard image and copy sitting on top.
+const CARD_STAR_COUNT = 26;
+const cardStarRandom = seededRandom(4242);
+const CARD_STARS = Array.from({ length: CARD_STAR_COUNT }, () => ({
+  left: cardStarRandom() * 100,
+  top: cardStarRandom() * 100,
+  size: 1 + cardStarRandom() * 1.3,
+  delay: cardStarRandom() * 5,
+  duration: 3 + cardStarRandom() * 3.6,
+  baseOpacity: 0.15 + cardStarRandom() * 0.3,
+}));
+
 interface MethodSlide {
   id: number;
   eyebrow: string;
@@ -97,8 +133,37 @@ export default function SalesXMethod() {
       ) as HTMLDivElement[];
       if (slidesElements.length < 3) return;
 
-      // 1. Initial visual states
-      gsap.set(introHeadingRef.current, { opacity: 1, scale: 1, y: 0 });
+      // 1. Initial visual states with signature zoom-in spring reveal
+      gsap.set(introHeadingRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        y: 20,
+        transformOrigin: "center center",
+        force3D: true,
+      });
+
+      let entranceTween: gsap.core.Tween | null = null;
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 80%",
+        once: true,
+        onEnter: () => {
+          entranceTween = gsap.to(introHeadingRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            ease: "none",
+            force3D: true,
+            keyframes: [
+              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+            ],
+          });
+        },
+      });
+
       gsap.set(cardsContainerRef.current, {
         opacity: 0,
         scale: 0.96,
@@ -138,6 +203,23 @@ export default function SalesXMethod() {
           onUpdate: (self) => {
             const p = self.progress;
 
+            // When scrubbing starts, ensure entrance tween doesn't conflict
+            if (p > 0.005 && entranceTween && entranceTween.isActive()) {
+              entranceTween.kill();
+            }
+
+            // Guarantee intro heading is completely hidden once slides appear
+            if (introHeadingRef.current) {
+              if (p >= 0.08) {
+                introHeadingRef.current.style.opacity = "0";
+                introHeadingRef.current.style.visibility = "hidden";
+                introHeadingRef.current.style.pointerEvents = "none";
+              } else {
+                introHeadingRef.current.style.visibility = "visible";
+                introHeadingRef.current.style.pointerEvents = "auto";
+              }
+            }
+
             setCardsVisible(p > 0.08);
 
             if (p < 0.38) {
@@ -154,13 +236,17 @@ export default function SalesXMethod() {
       scrollTriggerRef.current = tl.scrollTrigger || null;
 
       // PHASE 1: Quick intro fade (0 -> 0.12)
-      tl.to(introHeadingRef.current, {
-        opacity: 0,
-        scale: 1.05,
-        y: -25,
-        duration: 0.12,
-        ease: "power2.inOut",
-      }).to(
+      tl.fromTo(
+        introHeadingRef.current,
+        { opacity: 1, scale: 1, y: 0 },
+        {
+          opacity: 0,
+          scale: 1.05,
+          y: -25,
+          duration: 0.12,
+          ease: "power2.inOut",
+        },
+      ).to(
         cardsContainerRef.current,
         {
           opacity: 1,
@@ -236,6 +322,12 @@ export default function SalesXMethod() {
   }, []);
 
   const goToSlide = (index: number) => {
+    if (introHeadingRef.current) {
+      introHeadingRef.current.style.opacity = "0";
+      introHeadingRef.current.style.visibility = "hidden";
+      introHeadingRef.current.style.pointerEvents = "none";
+    }
+
     if (!scrollTriggerRef.current) {
       setActiveDot(index);
       return;
@@ -261,6 +353,36 @@ export default function SalesXMethod() {
     }
   };
 
+  // Each slide has its own opaque background, so the starfield has to live
+  // inside every slide (between its background and its content) rather
+  // than as one shared layer behind the stack, or the slide's own bg-color
+  // paints straight over it.
+  const renderCardStars = () => (
+    <div
+      aria-hidden
+      className="absolute inset-0 pointer-events-none overflow-hidden z-0"
+    >
+      {CARD_STARS.map((star, i) => (
+        <span
+          key={i}
+          className="sxm-star absolute rounded-full bg-white"
+          style={
+            {
+              left: `${star.left}%`,
+              top: `${star.top}%`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              opacity: star.baseOpacity,
+              boxShadow: `0 0 ${star.size * 2}px rgba(147,197,253,0.7)`,
+              animation: `sxm-twinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
+              "--sxm-star-base": star.baseOpacity,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </div>
+  );
+
   return (
     <section ref={sectionRef} className="relative bg-[#000207] select-none">
       {/* Pinned Stage Container: fits 100% within dynamic viewport height */}
@@ -268,6 +390,16 @@ export default function SalesXMethod() {
         ref={stageRef}
         className="min-h-screen h-dvh w-full flex flex-col items-center justify-center relative overflow-hidden px-3 sm:px-6 lg:px-12 py-4 sm:py-6"
       >
+        <style>{`
+          @keyframes sxm-twinkle {
+            0%, 100% { opacity: var(--sxm-star-base, 0.3); transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .sxm-star { animation: none !important; }
+          }
+        `}</style>
+
         {/* Background Ambient Radial Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 sm:w-260 lg:w-7xl h-100 sm:h-140 bg-radial from-[#1e40af]/25 via-[#312e81]/10 to-transparent blur-[140px] pointer-events-none -z-10" />
 
@@ -280,6 +412,32 @@ export default function SalesXMethod() {
             backgroundSize: "44px 44px",
           }}
         />
+
+        {/* Galaxy Starfield: a scattered, twinkling dust of distant stars,
+            matching the orbit galaxy effect on the About page */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none overflow-hidden -z-10"
+        >
+          {METHOD_STARS.map((star, i) => (
+            <span
+              key={i}
+              className="sxm-star absolute rounded-full bg-white"
+              style={
+                {
+                  left: `${star.left}%`,
+                  top: `${star.top}%`,
+                  width: `${star.size}px`,
+                  height: `${star.size}px`,
+                  opacity: star.baseOpacity,
+                  boxShadow: `0 0 ${star.size * 2.5}px rgba(147,197,253,0.8)`,
+                  animation: `sxm-twinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
+                  "--sxm-star-base": star.baseOpacity,
+                } as React.CSSProperties
+              }
+            />
+          ))}
+        </div>
 
         {/* 1. INTRO HEADING: Comes first in center, then dissolves on scrolling */}
         <div
@@ -351,8 +509,10 @@ export default function SalesXMethod() {
                       zIndex: index * 10 + 10,
                     }}
                   >
+                    {renderCardStars()}
+
                     {/* Left Column: Eyebrow, Heading, Paragraph, and Button */}
-                    <div className="lg:col-span-5 text-center lg:text-left flex flex-col items-center lg:items-start">
+                    <div className="relative z-10 lg:col-span-5 text-center lg:text-left flex flex-col items-center lg:items-start">
                       <h4 className="text-base sm:text-xl lg:text-3xl font-light text-white tracking-wide font-sans">
                         {slide.eyebrow}
                       </h4>
@@ -384,7 +544,7 @@ export default function SalesXMethod() {
                     </div>
 
                     {/* Right Column: Concentric Orbit Rings, Floating Badges, and dashbord-01.webp */}
-                    <div className="lg:col-span-7 relative flex items-center justify-center py-2 sm:py-4 lg:py-6">
+                    <div className="lg:col-span-7 relative z-10 flex items-center justify-center py-2 sm:py-4 lg:py-6">
                       {/* Concentric Circular Rings */}
                       <div className="absolute w-[95%] sm:w-[90%] aspect-square rounded-full border border-blue-500/15 pointer-events-none" />
                       <div className="absolute w-[120%] aspect-square rounded-full border border-blue-400/10 pointer-events-none" />

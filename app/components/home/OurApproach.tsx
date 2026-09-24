@@ -4,271 +4,122 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * 3-step sequence:
- * 1. Heading ("Simulated by AI / Validated by humans")
- * 2. Main Illustration (/home/approach1.svg)
- * 3. Sub-text ("The approach is built on repetition and evaluation...")
- *
- * Coordinates (x, y) sit exactly on the quadratic bezier curve:
- * Path: M 320 20 Q 100 220 320 420 (in viewBox 0 0 320 440)
- * - t = 0.16 -> (260.9, 84.0)
- * - t = 0.50 -> (140.0, 220.0)
- * - t = 0.84 -> (260.9, 356.0)
- */
-const PAGINATION_STEPS = [
+interface ModelSlide {
+  id: string;
+  number: string;
+  title: string;
+  shortLabel: string[];
+  tagline: string;
+  description: string;
+  image: string;
+}
+
+const MODEL_SLIDES: ModelSlide[] = [
   {
-    number: 1,
-    label: "AI real-time rehearsal",
-    x: 244.6,
-    y: 73.2,
+    id: "outbound",
+    number: "01",
+    title: "Outbound Lead Generation",
+    shortLabel: ["Outbound Lead", "Generation"],
+    tagline: "MORE PIPELINE. REAL OPPORTUNITIES.",
+    description:
+      "Find, reach and engage the right prospects. We help you start more conversations with decision-makers and fill your pipeline with real opportunities.",
+    image: "/home/models/Outbond.webp",
   },
   {
-    number: 2,
-    label: "Instant feedback",
-    x: 185.0,
-    y: 210.0,
+    id: "consulting",
+    number: "02",
+    title: "Sales Consulting",
+    shortLabel: ["Sales", "Consulting"],
+    tagline: "STRATEGY. PROCESS. REVENUE.",
+    description:
+      "Build a stronger sales strategy, sharpen your processes and identify the opportunities that can move revenue forward.",
+    image: "/home/models/sales training.webp",
   },
   {
-    number: 3,
-    label: "Human evaluation",
-    x: 244.6,
-    y: 346.8,
+    id: "team",
+    number: "03",
+    title: "Team Development",
+    shortLabel: ["Team", "Development"],
+    tagline: "PEOPLE. PERFORMANCE. RESULTS.",
+    description:
+      "We help you build and train sales teams that know how to prospect, communicate, handle objections and close with confidence.",
+    image: "/home/models/team dev.webp",
+  },
+  {
+    id: "personal",
+    number: "04",
+    title: "Personal Sales Training",
+    shortLabel: ["Personal", "Sales Training"],
+    tagline: "SKILLS. CONFIDENCE. GROWTH.",
+    description:
+      "Practical training, coaching and mentoring for sales professionals to strengthen their skills and perform better.",
+    image: "/home/models/personal.webp",
   },
 ];
 
 export default function OurApproach() {
   const sectionRef = useRef<HTMLElement>(null);
-
-  // Step 1: Heading elements
-  const eyebrowRef = useRef<HTMLSpanElement>(null);
-  const line1Ref = useRef<HTMLSpanElement>(null);
-  const line2Ref = useRef<HTMLSpanElement>(null);
-
-  // Step 2: Main illustration element
-  const imageWrapperRef = useRef<HTMLDivElement>(null);
-  const illustrationRef = useRef<HTMLImageElement>(null);
-
-  // Step 3: Sub-text elements
-  const subtextWrapperRef = useRef<HTMLDivElement>(null);
-  const subheadingRef = useRef<HTMLParagraphElement>(null);
-  const paragraphRef = useRef<HTMLParagraphElement>(null);
-
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+
   const [activeStep, setActiveStep] = useState(0);
 
-  const applyStepStyles = (step: number) => {
-    setActiveStep(step);
-    if (step === 0) {
-      gsap.to(imageWrapperRef.current, { opacity: 0, duration: 0.4 });
-      gsap.to(illustrationRef.current, {
-        clipPath: "inset(0 100% 0 0)",
-        duration: 0.4,
-      });
-      gsap.to(subtextWrapperRef.current, {
-        opacity: 0,
-        scale: 0.9,
-        y: 20,
-        duration: 0.4,
-      });
-    } else if (step === 1) {
-      gsap.to(imageWrapperRef.current, { opacity: 1, duration: 0.4 });
-      gsap.to(illustrationRef.current, {
-        clipPath: "inset(0 0% 0 0)",
-        duration: 0.5,
-      });
-      gsap.to(subtextWrapperRef.current, {
-        opacity: 0,
-        scale: 0.9,
-        y: 20,
-        duration: 0.4,
-      });
-    } else if (step === 2) {
-      gsap.to(imageWrapperRef.current, { opacity: 1, duration: 0.4 });
-      gsap.to(illustrationRef.current, {
-        clipPath: "inset(0 0% 0 0)",
-        duration: 0.5,
-      });
-      gsap.to(subtextWrapperRef.current, {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.5,
-      });
-    }
-  };
+  const prevIndex = (activeStep - 1 + 4) % 4;
+  const nextIndex = (activeStep + 1) % 4;
+
+  const activeSlide = MODEL_SLIDES[activeStep];
+  const prevSlide = MODEL_SLIDES[prevIndex];
+  const nextSlide = MODEL_SLIDES[nextIndex];
 
   const goToStep = (stepIndex: number) => {
     setActiveStep(stepIndex);
+
     const st = scrollTriggerRef.current;
-    if (st && window.innerWidth >= 1024) {
+    if (st && typeof window !== "undefined" && window.innerWidth >= 1024) {
       const start = st.start;
       const end = st.end;
       const total = end - start;
-      const targets = [0.08, 0.5, 0.92];
+      const targets = [0.08, 0.35, 0.65, 0.92];
       const targetScroll = start + targets[stepIndex] * total;
+
       if (window.__lenis) {
-        window.__lenis.scrollTo(targetScroll, { duration: 1.2, lock: false });
+        window.__lenis.scrollTo(targetScroll, { duration: 1.1, lock: false });
       } else {
         window.scrollTo({
           top: targetScroll,
           behavior: "smooth",
         });
       }
-    } else {
-      applyStepStyles(stepIndex);
     }
   };
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-
-      if (prefersReducedMotion) {
-        gsap.set(
-          [
-            eyebrowRef.current,
-            line1Ref.current,
-            line2Ref.current,
-            imageWrapperRef.current,
-            subtextWrapperRef.current,
-          ],
-          { opacity: 1, scale: 1, y: 0 },
-        );
-        gsap.set(illustrationRef.current, { clipPath: "none" });
-        return;
-      }
-
-      // Initial state before entrance
-      gsap.set(eyebrowRef.current, {
-        opacity: 0,
-        scale: 0.85,
-        y: -12,
-        transformOrigin: "center center",
-      });
-      gsap.set([line1Ref.current, line2Ref.current], {
-        opacity: 0,
-        scale: 0.65,
-        y: 20,
-        transformOrigin: "center center",
-      });
-      gsap.set(imageWrapperRef.current, {
-        opacity: 0,
-      });
-      gsap.set(illustrationRef.current, {
-        clipPath: "inset(0 100% 0 0)",
-      });
-      gsap.set(subtextWrapperRef.current, {
-        opacity: 0,
-        scale: 0.9,
-        y: 20,
-        transformOrigin: "center center",
-      });
-
-      // ---------------------------------------------------------------------
-      // 1. ENTRANCE: Reveal Heading on approach with JUMPING ZOOM-IN
-      // ---------------------------------------------------------------------
-      const entranceTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-      });
-
-      entranceTl
-        .to(eyebrowRef.current, {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.55,
-          ease: "power2.out",
-        })
-        .to(
-          line1Ref.current,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.85,
-            keyframes: [
-              { scale: 1.16, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
-          },
-          "-=0.25",
-        )
-        .to(
-          line2Ref.current,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.85,
-            keyframes: [
-              { scale: 1.16, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
-          },
-          "-=0.6",
-        );
-
       const mm = gsap.matchMedia();
 
-      // ---------------------------------------------------------------------
-      // 2. DESKTOP: Pinned Step-by-Step scrub (Heading -> Image -> Sub-text)
-      // ---------------------------------------------------------------------
+      // Desktop: Pinned scroll through the 4 capability slides
       mm.add("(min-width: 1024px)", () => {
         const pinTl = gsap.timeline({
           scrollTrigger: {
             id: "model-pin",
             trigger: sectionRef.current,
             start: "top top",
-            end: "+=160%",
+            end: "+=240%",
             pin: true,
             scrub: 0.5,
             onUpdate: (self) => {
               const p = self.progress;
-              if (p < 0.34) {
-                setActiveStep(0);
-              } else if (p < 0.67) {
-                setActiveStep(1);
-              } else {
-                setActiveStep(2);
-              }
+              // Divide into 4 quarters: [0 - 0.25], [0.25 - 0.5], [0.5 - 0.75], [0.75 - 1.0]
+              const step = Math.min(3, Math.floor(p * 4));
+              setActiveStep(step);
             },
           },
         });
 
         scrollTriggerRef.current = pinTl.scrollTrigger || null;
-
-        // Step 1: Heading is visible (from entrance). Hold from 0 to 0.15.
-        // Step 2: Reveal Image between 0.15 and 0.45
-        pinTl.to(
-          imageWrapperRef.current,
-          { opacity: 1, duration: 0.1, ease: "power1.out" },
-          0.15,
-        );
-        pinTl.to(
-          illustrationRef.current,
-          { clipPath: "inset(0 0% 0 0)", duration: 0.35, ease: "power1.inOut" },
-          0.15,
-        );
-
-        // Step 3: Reveal Sub-text between 0.55 and 0.85
-        pinTl.to(
-          subtextWrapperRef.current,
-          { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" },
-          0.55,
-        );
-
-        // Hold at end to view complete section comfortably
-        pinTl.to({}, { duration: 0.15 });
 
         const spacer = (
           pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
@@ -283,9 +134,7 @@ export default function OurApproach() {
         };
       });
 
-      // ---------------------------------------------------------------------
-      // 3. MOBILE / TABLET: Scroll scrub through 1 -> 2 -> 3
-      // ---------------------------------------------------------------------
+      // Mobile / Tablet: Smooth scrub
       mm.add("(max-width: 1023px)", () => {
         const mobileTl = gsap.timeline({
           scrollTrigger: {
@@ -295,39 +144,18 @@ export default function OurApproach() {
             scrub: true,
             onUpdate: (self) => {
               const p = self.progress;
-              if (p < 0.34) {
-                setActiveStep(0);
-              } else if (p < 0.67) {
-                setActiveStep(1);
-              } else {
-                setActiveStep(2);
-              }
+              const step = Math.min(3, Math.floor(p * 4));
+              setActiveStep(step);
             },
           },
         });
-
-        mobileTl.to(
-          imageWrapperRef.current,
-          { opacity: 1, duration: 0.15 },
-          0.15,
-        );
-        mobileTl.to(
-          illustrationRef.current,
-          { clipPath: "inset(0 0% 0 0)", duration: 0.35 },
-          0.15,
-        );
-        mobileTl.to(
-          subtextWrapperRef.current,
-          { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "power2.out" },
-          0.55,
-        );
 
         return () => mobileTl.kill();
       });
 
       return () => mm.revert();
     },
-    { scope: sectionRef },
+    { scope: sectionRef }
   );
 
   return (
@@ -336,191 +164,223 @@ export default function OurApproach() {
       id="about"
       data-nav-section="The Model"
       data-nav-theme="light"
-      className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-[clamp(28px,5vh,72px)] text-[#101010] sm:px-10 lg:px-16"
+      className="relative flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden bg-white px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-[#101010]"
     >
-      {/* Dot grid background */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-80"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.24) 0.95px, transparent 0.95px)",
-          backgroundSize: "10px 10px",
-        }}
-      />
+      {/* Subtle Dotted Background Grid (matching second section) */}
+      <DottedBackground theme="light" />
 
-      {/* ---------- RIGHT-SIDE SCROLL-DRIVEN ARC & 3 BUBBLES ---------- */}
-      <div className="pointer-events-none absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:block h-[clamp(320px,48vh,440px)] w-75">
-        <svg viewBox="0 0 300 420" className="h-full w-full overflow-visible">
-          {/* Subtle glow behind arc */}
+      <div className="relative z-10 mx-auto flex h-full max-h-dvh w-full max-w-375 flex-col justify-between items-center">
+        {/* ============================================================
+            1. CONSTANT TOP HEADER (Below Floating Navbar)
+        ============================================================ */}
+        <div className="text-center pt-1 sm:pt-2 shrink-0">
+          <span className="block font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-black/45 mb-1.5 sm:mb-2">
+            target. engage. Convert.
+          </span>
+          <h2 className="font-serif text-[clamp(1.55rem,2.2vw,2.4rem)] font-normal leading-[1.12] text-[#101010]">
+            <span className="italic text-[#1d63ed] block">
+              A Complete Sales Engine
+            </span>
+            <span className="block mt-0.5">
+              for Modern Businesses
+            </span>
+          </h2>
+        </div>
+
+        {/* ============================================================
+            2. CENTER CONTENT STAGE (Illustration + Bottom Copy)
+            w-full max-w-xl ensures text never squishes or clips
+        ============================================================ */}
+        <div className="relative flex flex-col items-center justify-center flex-1 w-full max-w-xl lg:max-w-2xl mx-auto min-h-0 my-auto py-2">
+          {/* Active Illustration Stage */}
+          <div className="relative h-40 sm:h-46.25 lg:h-51.25 xl:h-56.25 max-h-[28vh] w-full flex items-center justify-center shrink-0">
+            {MODEL_SLIDES.map((slide, idx) => {
+              const isActive = activeStep === idx;
+              return (
+                <div
+                  key={slide.id}
+                  className={`absolute inset-0 flex items-center justify-center transition-all duration-400 ease-out ${
+                    isActive
+                      ? "opacity-100 scale-100 pointer-events-auto"
+                      : "opacity-0 scale-95 pointer-events-none"
+                  }`}
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="h-full w-auto max-h-full object-contain select-none mix-blend-multiply"
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Bottom Dynamic Description & Bold Tagline */}
+          <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center text-center px-4 shrink-0 mt-3 sm:mt-4">
+            <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-black/75 max-w-lg mx-auto transition-opacity duration-300">
+              {activeSlide.description}
+            </p>
+            <p className="mt-2 font-sans text-[14px] sm:text-[15.5px] font-bold tracking-wider text-[#101010] transition-opacity duration-300">
+              {activeSlide.tagline}
+            </p>
+          </div>
+        </div>
+
+        {/* ============================================================
+            3. MOBILE / TABLET PILL BUTTON SELECTOR (< 1024px)
+        ============================================================ */}
+        <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2 lg:hidden pb-1 shrink-0">
+          {MODEL_SLIDES.map((slide, idx) => (
+            <button
+              key={slide.id}
+              type="button"
+              onClick={() => goToStep(idx)}
+              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
+                activeStep === idx
+                  ? "bg-[#101010] text-[#e7ff3d] shadow-sm font-semibold scale-102"
+                  : "bg-black/6 text-black/60 hover:bg-black/10"
+              }`}
+            >
+              <span className="mr-1 opacity-60 font-mono text-[9px]">
+                {slide.number}
+              </span>
+              {slide.title}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ============================================================
+          4. RIGHT-HAND SIDE CURVATURE DIAL (Desktop >= 1024px)
+          Features clean 3-node arc: Previous (top), Active (center apex), Next (bottom)
+      ============================================================ */}
+      <div className="pointer-events-none absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:block h-115 w-80 xl:w-90">
+        <svg viewBox="0 0 320 460" className="h-full w-full overflow-visible">
+          {/* Subtle Ambient Arc Glow */}
           <path
-            d="M 300 20 Q 70 210 300 400"
-            stroke="rgba(0,0,0,0.05)"
+            d="M 300 20 Q -20 230 300 440"
+            stroke="rgba(0,0,0,0.03)"
             strokeWidth="3.5"
             fill="none"
             vectorEffect="non-scaling-stroke"
           />
+
           {/* Main Curved Guide Line */}
           <path
-            d="M 300 20 Q 70 210 300 400"
+            d="M 300 20 Q -20 230 300 440"
             stroke="rgba(0,0,0,0.16)"
-            strokeWidth="1.5"
+            strokeWidth="1.25"
             fill="none"
             vectorEffect="non-scaling-stroke"
           />
 
-          {/* 3 Pagination Bubbles & Labels */}
-          {PAGINATION_STEPS.map((step, i) => {
-            const isActive = activeStep === i;
-
-            return (
-              <g
-                key={step.number}
-                onClick={() => goToStep(i)}
-                className="cursor-pointer pointer-events-auto group"
-              >
-                {/* Step Label to the left of the bubble */}
-                <text
-                  x={step.x - 18}
-                  y={step.y + 5}
-                  textAnchor="end"
-                  className="select-none font-serif transition-all duration-300 ease-out"
-                  style={{ fontFamily: "var(--font-serif)" }}
-                  fill={isActive ? "#101010" : "rgba(0,0,0,0.45)"}
-                  fontSize={isActive ? "20" : "14"}
-                  fontWeight={isActive ? "600" : "400"}
-                  letterSpacing="0.01em"
-                >
-                  {step.label}
-                </text>
-
-                {/* Ambient Glow behind active bubble */}
-                {isActive && (
-                  <circle
-                    cx={step.x}
-                    cy={step.y}
-                    r="17"
-                    fill="rgba(231,255,61,0.45)"
-                    className="animate-pulse"
-                  />
-                )}
-
-                {/* Bubble Circle - Perfectly Centered on the Line */}
-                <circle
-                  cx={step.x}
-                  cy={step.y}
-                  r={isActive ? "12" : "9.5"}
-                  fill={isActive ? "#e7ff3d" : "#ffffff"}
-                  stroke={isActive ? "#0a0b0d" : "rgba(0,0,0,0.25)"}
-                  strokeWidth={isActive ? "2" : "1.25"}
-                  className="transition-all duration-300 ease-out group-hover:stroke-[#3478e5]"
-                />
-
-                {/* Number 1, 2, 3 inside the bubble */}
-                <text
-                  x={step.x}
-                  y={step.y + (isActive ? 3.5 : 3)}
-                  textAnchor="middle"
-                  className="select-none font-serif transition-all duration-300 ease-out"
-                  style={{ fontFamily: "var(--font-serif)" }}
-                  fill={isActive ? "#0a0b0d" : "rgba(0,0,0,0.65)"}
-                  fontSize={isActive ? "12" : "10"}
-                  fontWeight="600"
-                >
-                  {step.number}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
-      </div>
-
-      {/* Main Content Flow */}
-      <div className="relative flex w-full max-w-[1920px] flex-col items-center">
-        {/* ---------- STEP 1: EYEBROW + HEADING ---------- */}
-        <span
-          ref={eyebrowRef}
-          className="mb-[clamp(14px,2.5vh,36px)] block text-center font-mono text-[10px] uppercase tracking-[0.14em] text-black/50 sm:tracking-[0.25em]"
-        >
-          AI &nbsp;·&nbsp; Human &nbsp;·&nbsp; Two Strengths &nbsp;·&nbsp; One
-          Edge
-        </span>
-
-        <h2 className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2]">
-          <span ref={line1Ref} className="block text-[#101010]">
-            Simulated by AI
-          </span>
-          <span ref={line2Ref} className="block italic text-[#3478e5]">
-            Validated by humans
-          </span>
-        </h2>
-
-        {/* ---------- UNIFIED STAGE CONTENT ---------- */}
-        <div className="mt-[clamp(20px,3.5vh,44px)] flex w-full flex-col items-center">
-          {/* STEP 2: Main Illustration (Single artwork) */}
-          <div
-            ref={imageWrapperRef}
-            className="w-full max-w-[min(880px,90vh)] lg:max-w-[min(880px,90vh,calc(100vw-560px))]"
+          {/* 1. TOP NODE: Previous Capability */}
+          <g
+            onClick={() => goToStep(prevIndex)}
+            className="cursor-pointer pointer-events-auto group"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              ref={illustrationRef}
-              src="/home/approach1.svg"
-              alt="AI and human collaboration in sales rehearsal"
-              width={949}
-              height={317}
-              className="h-auto w-full brightness-[1.01] mix-blend-darken"
+            <text
+              x={188}
+              y={90}
+              textAnchor="end"
+              className="select-none transition-all duration-300 ease-out group-hover:fill-black"
+              style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+              fill="rgba(0,0,0,0.42)"
+              fontSize="12.5"
+              fontWeight="400"
+            >
+              <tspan x={188} dy={0}>
+                {prevSlide.shortLabel[0]}
+              </tspan>
+              <tspan x={188} dy={15}>
+                {prevSlide.shortLabel[1]}
+              </tspan>
+            </text>
+            <circle
+              cx={205}
+              cy={96}
+              r={5.5}
+              fill="#ffffff"
+              stroke="rgba(0,0,0,0.3)"
+              strokeWidth={1.4}
+              className="transition-all duration-300 group-hover:stroke-[#1d63ed]"
             />
-          </div>
+          </g>
 
-          {/* STEP 3: Sub-text block */}
-          <div
-            ref={subtextWrapperRef}
-            className="mt-[clamp(16px,3vh,40px)] flex flex-col items-center text-center"
+          {/* 2. CENTER NODE: Current Active Capability (At the Apex) */}
+          <g className="pointer-events-auto">
+            <text
+              x={120}
+              y={224}
+              textAnchor="end"
+              className="select-none transition-all duration-300 ease-out"
+              style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+              fill="#101010"
+              fontSize="18"
+              fontWeight="700"
+              letterSpacing="-0.01em"
+            >
+              <tspan x={120} dy={0}>
+                {activeSlide.shortLabel[0]}
+              </tspan>
+              <tspan x={120} dy={22}>
+                {activeSlide.shortLabel[1]}
+              </tspan>
+            </text>
+
+            {/* Glowing Ambient Halo when Active */}
+            <circle
+              cx={140}
+              cy={230}
+              r={18}
+              fill="rgba(231,255,61,0.42)"
+              className="animate-pulse"
+            />
+
+            {/* Bright Yellow Apex Node Circle */}
+            <circle
+              cx={140}
+              cy={230}
+              r={9.5}
+              fill="#e7ff3d"
+              stroke="#0a0b0d"
+              strokeWidth={2}
+            />
+          </g>
+
+          {/* 3. BOTTOM NODE: Next Capability */}
+          <g
+            onClick={() => goToStep(nextIndex)}
+            className="cursor-pointer pointer-events-auto group"
           >
-            <p
-              ref={subheadingRef}
-              className="font-serif text-[clamp(1.05rem,0.7vw+0.6vh,1.35rem)] italic text-black/85"
+            <text
+              x={188}
+              y={358}
+              textAnchor="end"
+              className="select-none transition-all duration-300 ease-out group-hover:fill-black"
+              style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+              fill="rgba(0,0,0,0.42)"
+              fontSize="12.5"
+              fontWeight="400"
             >
-              The approach is built on repetition and evaluation.
-            </p>
-
-            <p
-              ref={paragraphRef}
-              className="mx-auto mt-3 max-w-150 font-sans text-[13px] leading-relaxed text-black/60 sm:text-[14px]"
-            >
-              AI powers the repetition through real-time rehearsal systems,
-              generating infinite scenarios so reps walk into every real
-              conversation already warmed up.
-            </p>
-          </div>
-        </div>
-
-        {/* Mobile / Tablet Stage Selector (Pills 1, 2, 3) */}
-        <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-2 px-3 lg:hidden">
-          {PAGINATION_STEPS.map((step, idx) => (
-            <button
-              key={step.number}
-              type="button"
-              onClick={() => goToStep(idx)}
-              className={`flex cursor-pointer items-center gap-2 rounded-full px-4 py-1.5 text-[11.5px] font-medium transition-all duration-300 ${
-                activeStep === idx
-                  ? "bg-[#101010] text-[#e7ff3d] shadow-sm scale-105"
-                  : "bg-black/5 text-black/60 hover:bg-black/10"
-              }`}
-            >
-              <span
-                className={`flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold ${
-                  activeStep === idx
-                    ? "bg-[#e7ff3d] text-[#0a0b0d]"
-                    : "bg-black/20 text-white"
-                }`}
-              >
-                {step.number}
-              </span>
-              {step.label}
-            </button>
-          ))}
-        </div>
+              <tspan x={188} dy={0}>
+                {nextSlide.shortLabel[0]}
+              </tspan>
+              <tspan x={188} dy={15}>
+                {nextSlide.shortLabel[1]}
+              </tspan>
+            </text>
+            <circle
+              cx={205}
+              cy={364}
+              r={5.5}
+              fill="#ffffff"
+              stroke="rgba(0,0,0,0.3)"
+              strokeWidth={1.4}
+              className="transition-all duration-300 group-hover:stroke-[#1d63ed]"
+            />
+          </g>
+        </svg>
       </div>
     </section>
   );

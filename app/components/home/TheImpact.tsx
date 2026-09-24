@@ -4,6 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -229,15 +230,8 @@ export default function TheImpact() {
           "linear-gradient(180deg, #050608 0%, #050608 15%, #08173e 35%, #103ba0 65%, #1852cf 85%, #1f5be0 100%)",
       }}
     >
-      {/* Background Dot Grid */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-70"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.35) 1.2px, transparent 1.2px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
+      {/* Background Dot Grid (matching second section) */}
+      <DottedBackground theme="dark" opacity={0.08} />
 
       {/* ---------- DESKTOP: STAGGERED HORIZONTAL TIMELINE (lg and up) ---------- */}
       <div className="relative z-10 mx-auto hidden h-70 w-full max-w-340 lg:block">

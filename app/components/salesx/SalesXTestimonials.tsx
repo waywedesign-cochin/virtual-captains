@@ -178,14 +178,28 @@ function TestimonialCard({ t }: { t: Testimonial }) {
 
 export default function SalesXTestimonials() {
   const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const subtextRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 
   // GSAP entrance for left heading
   useEffect(() => {
     if (typeof window === "undefined") return;
     const ctx = gsap.context(() => {
-      gsap.set(headingRef.current, { opacity: 0, y: 28 });
+      gsap.set(headingRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        y: 20,
+        transformOrigin: "left center",
+        force3D: true,
+      });
+      if (subtextRef.current) {
+        gsap.set(subtextRef.current, {
+          opacity: 0,
+          y: 16,
+        });
+      }
+
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top 72%",
@@ -195,8 +209,23 @@ export default function SalesXTestimonials() {
             opacity: 1,
             y: 0,
             duration: 0.85,
-            ease: "power3.out",
+            ease: "none",
+            force3D: true,
+            keyframes: [
+              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+            ],
           });
+          if (subtextRef.current) {
+            gsap.to(subtextRef.current, {
+              opacity: 1,
+              y: 0,
+              duration: 0.75,
+              delay: 0.25,
+              ease: "power2.out",
+            });
+          }
         },
       });
     }, sectionRef);
@@ -223,11 +252,17 @@ export default function SalesXTestimonials() {
 
           {/* ── LEFT COLUMN ── */}
           <div className="lg:col-span-5 order-2 lg:order-1 text-left pr-0 lg:pr-6">
-            <div ref={headingRef} className="will-change-transform">
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white font-sans">
+            <div>
+              <h2
+                ref={headingRef}
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white font-sans will-change-transform"
+              >
                 Testimonials
               </h2>
-              <div className="mt-5 text-lg sm:text-xl text-slate-300 font-sans leading-snug space-y-0.5">
+              <div
+                ref={subtextRef}
+                className="mt-5 text-lg sm:text-xl text-slate-300 font-sans leading-snug space-y-0.5 will-change-transform"
+              >
                 <div>Tested by Sellers</div>
                 <div>Endorsed by Execs</div>
               </div>

@@ -4,6 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -205,15 +206,8 @@ export default function HiringPartners() {
           "linear-gradient(180deg, #1f5be0 0%, #4a88f4 16%, #9fc3fa 34%, #e5efff 54%, #ffffff 74%, #ffffff 100%)",
       }}
     >
-      {/* Background Dot Grid */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-75"
-        style={{
-          backgroundImage:
-            "radial-gradient(rgba(0,0,0,0.22) 1.1px, transparent 1.1px)",
-          backgroundSize: "14px 14px",
-        }}
-      />
+      {/* Background Dot Grid (matching second section) */}
+      <DottedBackground theme="light" />
 
       <div className="relative z-10 mx-auto grid w-full max-w-310 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
         {/* ---------- LEFT: EXACT MOCKUP CIRCLE CLUSTER ---------- */}

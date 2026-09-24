@@ -62,8 +62,8 @@ function StoryWord({
     [start - 0.006, start, end],
     [
       "rgba(255, 255, 255, 0.22)",
-      isHighlight ? "#e5ff00" : "#ffffff",
-      isHighlight ? "#e5ff00" : "#ffffff",
+      isHighlight ? "#F3FC00" : "#ffffff",
+      isHighlight ? "#F3FC00" : "#ffffff",
     ]
   );
 
@@ -114,7 +114,7 @@ export default function AboutFounderStory() {
           className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#020B25] px-6 sm:px-10 lg:px-16"
         >
           {/* Subtle Ambient Cosmic Core Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-radial from-[#15388c]/30 via-[#07194a]/15 to-transparent blur-[160px] pointer-events-none -z-10" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-212.5 h-137.5 bg-radial from-[#15388c]/30 via-[#07194a]/15 to-transparent blur-[160px] pointer-events-none -z-10" />
 
           {/* Watermark Credo */}
           <span
@@ -126,9 +126,9 @@ export default function AboutFounderStory() {
 
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
             {/* Kicker Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-4 py-1.5 mb-8 shadow-[0_0_20px_rgba(229,255,0,0.15)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#e5ff00] animate-pulse shadow-[0_0_8px_#e5ff00]" />
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.25em] text-[#e5ff00]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-4 py-1.5 mb-8 shadow-[0_0_20px_rgba(243,252,0,0.15)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-[#D08817] to-[#F3FC00] animate-pulse shadow-[0_0_8px_#F3FC00]" />
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.25em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                 The Founder&rsquo;s Creed
               </span>
             </div>
@@ -142,12 +142,12 @@ export default function AboutFounderStory() {
                     key={p.id}
                     className={
                       isHighlight
-                        ? "text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] leading-[1.25] sm:leading-[1.22] py-2 sm:py-3 px-2 sm:px-6 rounded-2xl bg-white/[0.02] border border-[#e5ff00]/25 backdrop-blur-md shadow-[0_0_35px_rgba(229,255,0,0.12)]"
+                        ? "text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] leading-tight sm:leading-[1.22] py-2 sm:py-3 px-2 sm:px-6 rounded-2xl bg-white/2 border border-[#D08817]/40 backdrop-blur-md shadow-[0_0_35px_rgba(243,252,0,0.12)]"
                         : "text-base sm:text-xl lg:text-[1.35rem] leading-relaxed text-white/80"
                     }
                   >
                     {isHighlight && (
-                      <span className="font-serif italic text-[#e5ff00] mr-1 select-none">
+                      <span className="font-serif italic text-[#F3FC00] mr-1 select-none">
                         &ldquo;
                       </span>
                     )}
@@ -169,7 +169,7 @@ export default function AboutFounderStory() {
                       );
                     })}
                     {isHighlight && (
-                      <span className="font-serif italic text-[#e5ff00] ml-1 select-none">
+                      <span className="font-serif italic text-[#F3FC00] ml-1 select-none">
                         &rdquo;
                       </span>
                     )}
@@ -183,7 +183,7 @@ export default function AboutFounderStory() {
               <p className="font-serif italic text-white text-xl sm:text-2xl tracking-wide">
                 &mdash; Roshna Saffar
               </p>
-              <p className="text-xs font-mono uppercase tracking-[0.25em] text-[#e5ff00] mt-1">
+              <p className="text-xs font-mono uppercase tracking-[0.25em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent mt-1">
                 Founder · Virtual Captains
               </p>
             </div>

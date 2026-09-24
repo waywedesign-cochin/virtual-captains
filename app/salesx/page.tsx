@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Navbar from "../components/home/Navbar";
 import SalesXHero from "../components/salesx/SalesXHero";
 import SalesXShowcase from "../components/salesx/SalesXShowcase";
 import SalesXMethod from "../components/salesx/SalesXMethod";
@@ -19,9 +18,6 @@ export const metadata: Metadata = {
 export default function SalesXPage() {
   return (
     <main className="min-h-screen bg-[#030614] text-white selection:bg-[#38bdf8] selection:text-black">
-      {/* Top Main Navigation */}
-      <Navbar />
-
       {/* 1. Full Banner Video Hero with m.webm and Branding Pills */}
       <SalesXHero />
 
@@ -31,7 +27,10 @@ export default function SalesXPage() {
        */}
       <div className="relative bg-[#030614] overflow-hidden">
         {/* Shared ambient cosmic nebula lighting */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        >
           {/* Top-mid indigo core */}
           <div className="absolute top-[8%] left-1/2 -translate-x-1/2 w-[1000px] h-[700px] rounded-full bg-[#1e40af]/15 blur-[160px]" />
           {/* Middle-left blue glow */}
