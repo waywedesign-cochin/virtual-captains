@@ -55,8 +55,9 @@ const TIMELINE_STATS: TimelineStat[] = [
 ];
 
 /**
- * "The Impact" — Staggered horizontal timeline stats band matching reference design.
- * Numbers count up once when the section scrolls into view.
+ * "The Impact" — Staggered horizontal timeline stats band with
+ * smooth Scroll-Pinned Curtain Transition, Right-to-Left laser sweep,
+ * and scroll-triggered point reveals with live counting numbers.
  */
 export default function TheImpact() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -74,7 +75,7 @@ export default function TheImpact() {
       ).matches;
 
       if (prefersReducedMotion) {
-        gsap.set(lineFillRef.current, { scaleX: 1 });
+        gsap.set(lineFillRef.current, { scaleX: 1, transformOrigin: "right center" });
         gsap.set(dotRefs.current, { opacity: 1, scale: 1 });
         gsap.set(desktopItemRefs.current, { opacity: 1, scale: 1, y: 0 });
         gsap.set(mobileItemRefs.current, { opacity: 1, scale: 1, y: 0 });
@@ -91,7 +92,7 @@ export default function TheImpact() {
       // Initial states
       gsap.set(lineFillRef.current, {
         scaleX: 0,
-        transformOrigin: "left center",
+        transformOrigin: "right center",
       });
       gsap.set(dotRefs.current, {
         opacity: 0,
@@ -102,8 +103,11 @@ export default function TheImpact() {
         opacity: 0,
         scale: 0.75,
         y: (i) => (TIMELINE_STATS[i].position === "top" ? 22 : -22),
-        transformOrigin: (i) =>
-          TIMELINE_STATS[i].position === "top" ? "bottom left" : "top left",
+        transformOrigin: (i) => {
+          const isTop = TIMELINE_STATS[i].position === "top";
+          if (i === 4) return isTop ? "bottom right" : "top right";
+          return isTop ? "bottom left" : "top left";
+        },
       });
       gsap.set(mobileItemRefs.current, {
         opacity: 0,
@@ -112,107 +116,154 @@ export default function TheImpact() {
         transformOrigin: "center center",
       });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 72%",
-          toggleActions: "play none none reverse",
-        },
-      });
+      const mm = gsap.matchMedia();
 
-      // 1. Line fill animation (laser line sweeps across)
-      tl.to(
-        lineFillRef.current,
-        {
-          scaleX: 1,
-          duration: 1.15,
-          ease: "power2.inOut",
-        },
-        0,
-      );
-
-      // 2. Points appear one by one as the line progresses
-      const POINT_TIMES = [0.12, 0.35, 0.58, 0.82, 1.05];
-
-      TIMELINE_STATS.forEach((stat, i) => {
-        const pointTime = POINT_TIMES[i];
-        const dotEl = dotRefs.current[i];
-        const desktopEl = desktopItemRefs.current[i];
-        const valueEl = valueRefs.current[i];
-
-        // Glowing dot pops in
-        tl.to(
-          dotEl,
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.35,
-            ease: "back.out(2.5)",
+      // Desktop: Pinned scroll-scrubbed timeline (Right to Left Laser Sweep)
+      mm.add("(min-width: 1024px)", () => {
+        const pinTl = gsap.timeline({
+          scrollTrigger: {
+            id: "impact-pin",
+            trigger: sectionRef.current,
+            start: "top top",
+            end: () =>
+              "+=" +
+              ((typeof window !== "undefined" ? window.innerHeight : 900) * 2.2),
+            pin: true,
+            anticipatePin: 1,
+            scrub: 0.6,
           },
-          pointTime,
+        });
+
+        // 1. Laser line sweeps from right to left
+        pinTl.to(
+          lineFillRef.current,
+          {
+            scaleX: 1,
+            duration: 2.0,
+            ease: "none",
+          },
+          0,
         );
 
-        // Stat content zooms in
-        tl.to(
-          desktopEl,
+        // 2. Reveal points in right-to-left order as laser reaches each node
+        const REVERSE_POINTS = [
+          { index: 4, distFromRight: 0.12 }, // leftPercent: 88%
+          { index: 3, distFromRight: 0.32 }, // leftPercent: 68%
+          { index: 2, distFromRight: 0.52 }, // leftPercent: 48%
+          { index: 1, distFromRight: 0.72 }, // leftPercent: 28%
+          { index: 0, distFromRight: 0.92 }, // leftPercent: 8%
+        ];
+
+        REVERSE_POINTS.forEach(({ index, distFromRight }) => {
+          const hitTime = 2.0 * distFromRight;
+          const stat = TIMELINE_STATS[index];
+          const dotEl = dotRefs.current[index];
+          const desktopEl = desktopItemRefs.current[index];
+          const valueEl = valueRefs.current[index];
+
+          // Glowing dot pops in
+          pinTl.to(
+            dotEl,
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 0.18,
+              ease: "back.out(2.5)",
+            },
+            hitTime,
+          );
+
+          // Stat content zooms in
+          pinTl.to(
+            desktopEl,
+            {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              duration: 0.3,
+              ease: "back.out(1.2)",
+            },
+            hitTime + 0.02,
+          );
+
+          // Live number count scrubbed with scroll
+          const counter = { val: 0 };
+          pinTl.to(
+            counter,
+            {
+              val: stat.value,
+              duration: 0.38,
+              ease: "power1.out",
+              onUpdate: () => {
+                if (valueEl) {
+                  valueEl.textContent = Math.round(counter.val).toLocaleString("en-US");
+                }
+              },
+            },
+            hitTime + 0.02,
+          );
+        });
+
+        // Hold full stats briefly so user can view all numbers before unpinning
+        pinTl.to({}, { duration: 0.4 });
+
+        const spacer = (
+          pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
+        )?.spacer;
+        if (spacer) {
+          spacer.style.backgroundColor = "#1f5be0";
+        }
+
+        return () => pinTl.kill();
+      });
+
+      // Mobile & Tablet: Scroll-triggered / scrubbed cards
+      mm.add("(max-width: 1023px)", () => {
+        gsap.set(sectionRef.current, { clearProps: "all" });
+
+        const mobileTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            end: "bottom 85%",
+            scrub: 0.6,
+          },
+        });
+
+        mobileTl.to(
+          mobileItemRefs.current,
           {
             opacity: 1,
             scale: 1,
             y: 0,
-            duration: 0.55,
-            ease: "back.out(1.35)",
-          },
-          pointTime + 0.04,
-        );
-
-        // Counter counts up
-        const counter = { value: 0 };
-        tl.to(
-          counter,
-          {
-            value: stat.value,
-            duration: 1.4,
+            duration: 0.6,
+            stagger: 0.12,
             ease: "power2.out",
-            onUpdate: () => {
-              const formatted = Math.round(counter.value).toLocaleString("en-US");
-              if (valueEl) valueEl.textContent = formatted;
-            },
           },
-          pointTime + 0.04,
+          0,
         );
-      });
 
-      // Mobile items staggered zoom-in & count up
-      tl.to(
-        mobileItemRefs.current,
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.12,
-          ease: "back.out(1.2)",
-        },
-        0.2,
-      );
+        TIMELINE_STATS.forEach((stat, i) => {
+          const mobileEl = mobileValueRefs.current[i];
+          const counter = { val: 0 };
 
-      TIMELINE_STATS.forEach((stat, i) => {
-        const mobileEl = mobileValueRefs.current[i];
-        const counter = { value: 0 };
-
-        tl.to(
-          counter,
-          {
-            value: stat.value,
-            duration: 1.4,
-            ease: "power2.out",
-            onUpdate: () => {
-              const formatted = Math.round(counter.value).toLocaleString("en-US");
-              if (mobileEl) mobileEl.textContent = formatted;
+          mobileTl.to(
+            counter,
+            {
+              val: stat.value,
+              duration: 0.8,
+              ease: "power1.out",
+              onUpdate: () => {
+                if (mobileEl) {
+                  mobileEl.textContent = Math.round(counter.val).toLocaleString("en-US");
+                }
+              },
             },
-          },
-          0.3 + i * 0.12,
-        );
+            0.1 + i * 0.12,
+          );
+        });
+
+        return () => mobileTl.kill();
       });
     },
     { scope: sectionRef },
@@ -224,8 +275,9 @@ export default function TheImpact() {
       id="organisations"
       data-nav-section="The Impact"
       data-nav-theme="dark"
-      className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-6 pt-28 pb-20 text-white sm:px-10 lg:pt-36 lg:pb-28 lg:pl-36 lg:pr-16"
+      className="relative z-50 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-20 text-white sm:px-10 lg:pl-36 lg:pr-16 lg:py-0 lg:-mt-[100vh] origin-center will-change-[transform,opacity,border-radius]"
       style={{
+        borderRadius: "0px",
         background:
           "linear-gradient(180deg, #050608 0%, #050608 15%, #08173e 35%, #103ba0 65%, #1852cf 85%, #1f5be0 100%)",
       }}
@@ -238,10 +290,10 @@ export default function TheImpact() {
         {/* Continuous Horizontal Track Line */}
         <div className="absolute inset-x-0 top-1/2 h-[1.5px] -translate-y-1/2 bg-white/15" />
 
-        {/* Animated Fill Line (fills across from left to right) */}
+        {/* Animated Fill Line (fills across from right to left) */}
         <div
           ref={lineFillRef}
-          className="absolute inset-x-0 top-1/2 h-[2.5px] -translate-y-1/2 bg-linear-to-r from-[#1d63ed] via-[#38bdf8] to-[#e7ff3d] shadow-[0_0_14px_rgba(56,189,248,0.85)] origin-left"
+          className="absolute inset-x-0 top-1/2 h-[2.5px] -translate-y-1/2 bg-linear-to-l from-[#1d63ed] via-[#38bdf8] to-[#e7ff3d] shadow-[0_0_16px_rgba(56,189,248,0.9),0_0_24px_rgba(231,255,61,0.6)] origin-right"
         />
 
         {/* 5 Staggered Nodes with Neon Yellow Dots */}
@@ -267,10 +319,12 @@ export default function TheImpact() {
                 ref={(el) => {
                   desktopItemRefs.current[i] = el;
                 }}
-                className={`absolute left-0 w-max ${
-                  isTop
-                    ? "bottom-4 flex flex-col items-start text-left"
-                    : "top-4 flex flex-col items-start text-left"
+                className={`absolute ${
+                  i === 4
+                    ? "right-0 items-end text-right"
+                    : "left-0 items-start text-left"
+                } w-max ${
+                  isTop ? "bottom-4 flex flex-col" : "top-4 flex flex-col"
                 }`}
               >
                 <p className="font-sans text-[clamp(2rem,2.8vw,3.15rem)] font-bold leading-none tracking-tight text-white drop-shadow-sm">

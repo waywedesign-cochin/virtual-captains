@@ -60,6 +60,8 @@ export default function SideNav() {
       const rpPin = ScrollTrigger.getById("roleplay-pin");
       const modelPin = ScrollTrigger.getById("model-pin");
       const ccPin = ScrollTrigger.getById("cross-country-pin");
+      const endPin = ScrollTrigger.getById("endorsement-pin");
+      const impactPin = ScrollTrigger.getById("impact-pin");
 
       const roleplayTrigger =
         rpPin ||
@@ -110,23 +112,31 @@ export default function SideNav() {
 
       // 5. CrossCountry
       const ccEnd = ccPin ? ccPin.end : ccStart + vh * 3.5;
-      if (scrollY < ccEnd + vh * 0.35) {
+      if (scrollY < ccEnd) {
         setNavState(3, "light");
         return;
       }
 
-      // 6. Trailing static sections: Endorsement, The Impact, Hiring Partners, Footer
-      const impactEl = document.querySelector<HTMLElement>(
-        '[data-nav-section="The Impact"]',
-      );
+      // 6. Endorsement
+      const endEnd = endPin ? endPin.end : ccEnd + vh * 2.2;
+      if (scrollY < endEnd) {
+        setNavState(4, "dark");
+        return;
+      }
+
+      // 7. The Impact
+      const impactEnd = impactPin ? impactPin.end : endEnd + vh * 2.2;
+      if (scrollY < impactEnd) {
+        setNavState(5, "dark");
+        return;
+      }
+
+      // 8. Hiring Partners & Footer
       const hiringEl = document.querySelector<HTMLElement>(
         '[data-nav-section="Partner"]',
       );
       const footerEl = document.querySelector<HTMLElement>("footer");
 
-      const impactTop = impactEl
-        ? impactEl.getBoundingClientRect().top + scrollY
-        : Infinity;
       const hiringTop = hiringEl
         ? hiringEl.getBoundingClientRect().top + scrollY
         : Infinity;
@@ -141,18 +151,7 @@ export default function SideNav() {
         return;
       }
 
-      if (midPoint >= hiringTop) {
-        setNavState(6, "light");
-        return;
-      }
-
-      if (midPoint >= impactTop) {
-        setNavState(5, "dark");
-        return;
-      }
-
-      // Inside Endorsement
-      setNavState(4, "dark");
+      setNavState(6, "light");
     };
 
     update();
@@ -225,6 +224,8 @@ export default function SideNav() {
     const rpPin = ScrollTrigger.getById("roleplay-pin");
     const modelPin = ScrollTrigger.getById("model-pin");
     const ccPin = ScrollTrigger.getById("cross-country-pin");
+    const endPin = ScrollTrigger.getById("endorsement-pin");
+    const impactPin = ScrollTrigger.getById("impact-pin");
 
     let targetY: number | null = null;
 
@@ -270,23 +271,31 @@ export default function SideNav() {
         break;
 
       case 4: { // Endorsement
-        const el = document.querySelector<HTMLElement>(
-          '[data-nav-section="Endorsement"]',
-        );
-        if (el) {
-          targetY = el.getBoundingClientRect().top + currentScroll;
-        } else if (ccPin) {
-          targetY = ccPin.end + vh;
+        if (endPin) {
+          targetY = endPin.start + 5;
+        } else {
+          const el = document.querySelector<HTMLElement>(
+            '[data-nav-section="Endorsement"]',
+          );
+          if (el) {
+            targetY = el.getBoundingClientRect().top + currentScroll;
+          } else if (ccPin) {
+            targetY = ccPin.end + vh;
+          }
         }
         break;
       }
 
       case 5: { // The Impact
-        const el = document.querySelector<HTMLElement>(
-          '[data-nav-section="The Impact"]',
-        );
-        if (el) {
-          targetY = el.getBoundingClientRect().top + currentScroll;
+        if (impactPin) {
+          targetY = impactPin.start + 5;
+        } else {
+          const el = document.querySelector<HTMLElement>(
+            '[data-nav-section="The Impact"]',
+          );
+          if (el) {
+            targetY = el.getBoundingClientRect().top + currentScroll;
+          }
         }
         break;
       }

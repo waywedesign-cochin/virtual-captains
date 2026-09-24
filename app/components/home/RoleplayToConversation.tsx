@@ -9,13 +9,17 @@ import DottedBackground from "./DottedBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const PROMISE_TEXT = [
+const PROMISE_PARAGRAPH_1 = [
   "Sales", "success", "is", "built", "on", "more", "than", "individual", "tactics.",
-  "It", "takes", "a", "clear", "understanding", "of", "the", "market,", "strong", "sales", "strategy,",
-  "disciplined", "execution,", "and", "the", "expertise", "to", "adapt", "when", "the",
-  "business", "landscape", "changes.", "Virtual", "Captains", "brings", "these",
-  "elements", "together", "to", "help", "businesses", "strengthen", "their", "sales",
-  "function", "and", "create", "sustainable", "performance."
+  "It", "takes", "a", "clear", "understanding", "of", "the", "market,", "a", "strong", "sales",
+  "development", "strategy,", "disciplined", "outbound", "execution,", "and", "the", "ability",
+  "to", "adapt", "when", "the", "business", "landscape", "changes."
+];
+
+const PROMISE_PARAGRAPH_2 = [
+  "Virtual", "Captains", "brings", "these", "elements", "together", "to", "help", "businesses",
+  "build", "stronger", "sales", "pipelines,", "engage", "the", "right", "prospects,", "and",
+  "turn", "outbound", "opportunities", "into", "sustainable", "growth."
 ];
 
 export default function RoleplayToConversation() {
@@ -23,7 +27,7 @@ export default function RoleplayToConversation() {
   const stage1Ref = useRef<HTMLDivElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
   const mainHeadingRef = useRef<HTMLHeadingElement>(null);
-  const rightTextRef = useRef<HTMLParagraphElement>(null);
+  const rightTextRef = useRef<HTMLDivElement>(null);
   
   const twoAudiencesContainerRef = useRef<HTMLDivElement>(null);
   const twoAudiencesRef = useRef<TwoAudiencesRef>(null);
@@ -67,18 +71,21 @@ export default function RoleplayToConversation() {
             id: "roleplay-pin",
             trigger: sectionRef.current,
             start: "top top",
-            end: "+=6000",
+            end: () => "+=" + (5400 + (typeof window !== "undefined" ? window.innerHeight : 900)),
             pin: true,
+            anticipatePin: 1,
             scrub: 1,
             onUpdate: (self) => {
               if (twoAudiencesRef.current) {
-                if (self.progress > 0.57) {
+                if (self.progress > 0.48 && self.progress <= 0.86) {
                   const nestedProgress = gsap.utils.normalize(
-                    0.57,
-                    1,
+                    0.48,
+                    0.86,
                     self.progress,
                   );
                   twoAudiencesRef.current.jumpToProgress(nestedProgress);
+                } else if (self.progress > 0.86) {
+                  twoAudiencesRef.current.jumpToProgress(1);
                 } else {
                   twoAudiencesRef.current.jumpToProgress(0);
                 }
@@ -86,6 +93,13 @@ export default function RoleplayToConversation() {
             },
           },
         });
+
+        const spacer = (
+          masterTl.scrollTrigger as unknown as { spacer?: HTMLElement }
+        )?.spacer;
+        if (spacer) {
+          spacer.style.backgroundColor = "#040507";
+        }
 
         // 1. Zoom in Eyebrow and Heading (Zoom effect)
         // (Moved to separate ScrollTrigger above so it happens earlier)
@@ -140,7 +154,17 @@ export default function RoleplayToConversation() {
         );
 
         // 6. Give TwoAudiences room to scroll/scrub
-        masterTl.to({}, { duration: 3.5 });
+        masterTl.to({}, { duration: 3.2 });
+
+        // 7. Scroll-driven exit parallax: as OurApproach (The Model) slides over,
+        // RoleplayToConversation curves its border, dims, and zooms out into 3D space
+        masterTl.to(sectionRef.current, {
+          opacity: 0.5,
+          scale: 0.94,
+          borderRadius: "40px",
+          duration: 1.1,
+          ease: "none",
+        });
       });
 
       /*
@@ -151,7 +175,7 @@ export default function RoleplayToConversation() {
       mm.add("(max-width: 1023px)", () => {
         const wordElements = rightTextRef.current?.querySelectorAll(".word-reveal");
         
-        gsap.set([eyebrowRef.current, mainHeadingRef.current, twoAudiencesContainerRef.current], {
+        gsap.set([eyebrowRef.current, mainHeadingRef.current, twoAudiencesContainerRef.current, sectionRef.current], {
           clearProps: "all",
         });
         
@@ -173,7 +197,8 @@ export default function RoleplayToConversation() {
     <section 
       ref={sectionRef} 
       data-nav-override-zone
-      className="relative w-full bg-white overflow-hidden min-h-dvh"
+      className="relative z-10 w-full bg-white overflow-hidden min-h-dvh origin-center will-change-[transform,opacity,border-radius]"
+      style={{ borderRadius: "0px" }}
     >
       {/* Dotted Background (persists across stages) */}
       <DottedBackground theme="light" />
@@ -186,29 +211,35 @@ export default function RoleplayToConversation() {
         className="relative z-10 flex h-dvh w-full flex-col items-center justify-center p-4 sm:p-8"
       >
 
-        <div className="relative z-10 text-center mb-10 sm:mb-16">
+        <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10">
           <span 
             ref={eyebrowRef} 
-            className="text-[11px] sm:text-[13px] uppercase tracking-[0.3em] text-[#141414]/60 mb-6 sm:mb-8 block font-bold"
+            className="text-[11px] sm:text-[13px] uppercase tracking-[0.3em] text-[#141414]/60 mb-3 sm:mb-4 block font-bold"
           >
-            What Drives Us
+            WHAT WE BELIEVE
           </span>
           <h2 
             ref={mainHeadingRef} 
-            className="font-serif text-[clamp(2.5rem,4vw,4.5rem)] leading-[1.1] text-[#141414] font-normal"
+            className="font-serif text-[clamp(2.1rem,3.4vw,3.6rem)] leading-[1.14] text-[#141414] font-normal"
           >
-            The Benchmark for<br />
-            <span className="italic text-[#1d4ed8]">Strategic Sales Execution</span>
+            Driven by <span className="italic text-[#1d4ed8]">Sales Execution</span>
           </h2>
         </div>
         
-        <div className="relative z-10 max-w-4xl text-center px-4 sm:px-8">
-          <p 
-            ref={rightTextRef} 
-            className="font-sans text-[clamp(1.1rem,1.8vw,1.8rem)] leading-[1.6] text-[#141414] font-medium"
-          >
-            {PROMISE_TEXT.map((word, i) => (
-              <span key={i} className="word-reveal inline-block mr-[0.3em] opacity-15">
+        <div 
+          ref={rightTextRef} 
+          className="relative z-10 max-w-3xl text-center px-4 sm:px-6 space-y-3.5 sm:space-y-4.5"
+        >
+          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-[#141414]/85 font-normal sm:font-medium">
+            {PROMISE_PARAGRAPH_1.map((word, i) => (
+              <span key={`p1-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-15">
+                {word}
+              </span>
+            ))}
+          </p>
+          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-[#141414]/85 font-normal sm:font-medium">
+            {PROMISE_PARAGRAPH_2.map((word, i) => (
+              <span key={`p2-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-15">
                 {word}
               </span>
             ))}
