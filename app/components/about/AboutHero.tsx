@@ -117,7 +117,7 @@ export default function AboutHero() {
               ref={line2Ref}
               className="block will-change-transform"
             >
-              <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(243,252,0,0.35)]">
+              <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                 Sales Capability
               </span>{" "}
               <span className="text-white">
