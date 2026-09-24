@@ -48,12 +48,18 @@ export default function AboutFounder() {
         }
         for (let y = 0; y < h; y++) {
           const idxLeft = y * w * 4;
-          if ((data[idxLeft] + data[idxLeft + 1] + data[idxLeft + 2]) / 3 > 215) {
+          if (
+            (data[idxLeft] + data[idxLeft + 1] + data[idxLeft + 2]) / 3 >
+            215
+          ) {
             queue.push(0, y);
             visited[y * w] = 1;
           }
           const idxRight = (y * w + (w - 1)) * 4;
-          if ((data[idxRight] + data[idxRight + 1] + data[idxRight + 2]) / 3 > 215) {
+          if (
+            (data[idxRight] + data[idxRight + 1] + data[idxRight + 2]) / 3 >
+            215
+          ) {
             queue.push(w - 1, y);
             visited[y * w + (w - 1)] = 1;
           }
@@ -117,50 +123,73 @@ export default function AboutFounder() {
 
   /* --------------------------------------------------------------------------
      GPU Scroll Choreography:
-     1. Entrance & Grow Stage (progress: 0.00 -> 0.20):
-        - Founder portrait starts initially small (scale: 0.65, opacity: 0.2 -> 1.0)
-        - Sits right in the CENTER (x: 0)
-        - Grows smoothly as you scroll into full current size (scale: 1.0)
-     2. Center Full-Size Pause (progress: 0.20 -> 0.26):
-        - Rests centered at full current size (scale: 1.0, x: 0)
-     3. Glide to Left (progress: 0.26 -> 0.44):
+     1. Off-Screen Entrance & Settle Stage (progress: 0.00 -> 0.22):
+        - Portrait enters from OUTSIDE the screen below (heroY: 90vh -> 0vh)
+        - Starts commanding & slightly larger (scale: 1.40 -> 1.0)
+        - Fades in smoothly from outer space (opacity: 0 -> 1.0)
+        - Settles perfectly into the current centered framed arch position
+     2. Center Full-Size Pause (progress: 0.22 -> 0.28):
+        - Rests centered at current framed size (y: 0, scale: 1.0, x: 0)
+     3. Glide to Left (progress: 0.28 -> 0.46):
         - Glides from center (x: 0) -> left (x: -285px)
         - Stays at full current size (scale: 1.0)
-     4. Story Reveal on the Right (progress: 0.44 -> 0.58):
+     4. Story Reveal on the Right (progress: 0.46 -> 0.60):
         - Portrait is safely settled on the left
         - Story column smoothly fades in (opacity: 0 -> 1, x: 25 -> 0)
-     5. Permanent Locked Reading Stage (progress: 0.58 -> 1.00):
+     5. Permanent Locked Reading Stage (progress: 0.60 -> 1.00):
         - Everything stays 100% solid, crisp, and readable
      -------------------------------------------------------------------------- */
+  const heroY = useTransform(scrollYProgress, (progress: number) => {
+    if (progress <= 0.0) return "90vh";
+    if (progress >= 0.22) return "0vh";
+    const t = progress / 0.22;
+    // Cubic ease-out deceleration: sweeps smoothly in from outer screen and settles
+    const easeOut = 1 - Math.pow(1 - t, 3);
+    return `${(90 * (1 - easeOut)).toFixed(2)}vh`;
+  });
+
   const heroScale = useTransform(scrollYProgress, (progress: number) => {
-    if (progress <= 0.0) return 0.65;
-    if (progress >= 0.20) return 1.0;
-    return 0.65 + 0.35 * (progress / 0.20);
+    if (progress <= 0.0) return 1.4;
+    if (progress >= 0.22) return 1.0;
+    const t = progress / 0.22;
+    // Cubic ease-out deceleration: zooms down fluidly and settles into current size
+    const easeOut = 1 - Math.pow(1 - t, 3);
+    return 1.4 - 0.4 * easeOut;
   });
 
   const heroOpacity = useTransform(scrollYProgress, (progress: number) => {
-    if (progress <= 0.02) return 0.25;
-    if (progress >= 0.16) return 1.0;
-    return 0.25 + 0.75 * ((progress - 0.02) / (0.16 - 0.02));
+    if (progress <= 0.0) return 0;
+    if (progress >= 0.12) return 1.0;
+    const t = progress / 0.12;
+    return 1 - Math.pow(1 - t, 2);
   });
 
   const heroX = useTransform(scrollYProgress, (progress: number) => {
-    if (progress < 0.26) return 0;
-    if (progress >= 0.44) return -285;
-    return -285 * ((progress - 0.26) / (0.44 - 0.26));
+    if (progress < 0.28) return 0;
+    if (progress >= 0.46) return -285;
+    const t = (progress - 0.28) / (0.46 - 0.28);
+    // Smoothstep easing for a fluid glide
+    const ease = t * t * (3 - 2 * t);
+    return -285 * ease;
   });
 
   // Story ONLY starts fading in after portrait has already slid out of the way!
-  const storyContainerOpacity = useTransform(scrollYProgress, (progress: number) => {
-    if (progress < 0.44) return 0;
-    if (progress >= 0.58) return 1;
-    return (progress - 0.44) / (0.58 - 0.44);
-  });
+  const storyContainerOpacity = useTransform(
+    scrollYProgress,
+    (progress: number) => {
+      if (progress < 0.46) return 0;
+      if (progress >= 0.60) return 1;
+      const t = (progress - 0.46) / (0.60 - 0.46);
+      return t * t * (3 - 2 * t);
+    },
+  );
 
   const storyContainerX = useTransform(scrollYProgress, (progress: number) => {
-    if (progress < 0.44) return 25;
-    if (progress >= 0.58) return 0;
-    return 25 * (1 - (progress - 0.44) / (0.58 - 0.44));
+    if (progress < 0.46) return 25;
+    if (progress >= 0.60) return 0;
+    const t = (progress - 0.46) / (0.60 - 0.46);
+    const ease = t * t * (3 - 2 * t);
+    return 25 * (1 - ease);
   });
 
   return (
@@ -227,7 +256,7 @@ export default function AboutFounder() {
 
             {/* Attribution Below Arch */}
             <p className="font-serif italic font-normal text-white text-xl tracking-wide mt-4">
-              &mdash; Roshna Saffar
+              Roshna Saffar
             </p>
             <p className="text-[11px] font-mono uppercase tracking-[0.22em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent mt-0.5 font-semibold">
               Founder · Virtual Captains
@@ -244,37 +273,29 @@ export default function AboutFounder() {
             </h3>
 
             <p className="text-sm text-slate-200/90 font-sans leading-relaxed">
-              With 16+ years of leadership in enterprise sales across the Middle East, South Asia, and Southeast Asia, Roshna built Virtual Captains around a fundamental belief:
+              With 16+ years of leadership in enterprise sales across the Middle
+              East, South Asia, and Southeast Asia, Roshna built Virtual
+              Captains around a fundamental belief:
             </p>
 
             <div className="relative my-3 p-4 rounded-xl border border-white/10 bg-white/4">
               <div className="absolute left-0 inset-y-0 w-1 bg-linear-to-b from-[#F3FC00] via-[#D08817] to-transparent rounded-l" />
               <p className="font-serif italic text-base bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent leading-snug">
-                &ldquo;Sales capability isn&rsquo;t built by knowing more theory. It&rsquo;s built through practice, evaluation and real-world execution.&rdquo;
+                &ldquo;Sales capability isn&rsquo;t built by knowing more
+                theory. It&rsquo;s built through practice, evaluation and
+                real-world execution.&rdquo;
               </p>
               <p className="mt-2 text-xs text-amber-200/80 font-sans italic">
-                &ldquo;The best sales strategy is authenticity and sincerity.&rdquo;
+                &ldquo;The best sales strategy is authenticity and
+                sincerity.&rdquo;
               </p>
             </div>
 
             <p className="text-sm text-slate-300 font-sans leading-relaxed">
-              Today, she leads Virtual Captains across sales strategy, sales enablement, and execution, while spearheading SalesX to empower the next generation of sales professionals.
+              Today, she leads Virtual Captains across sales strategy, sales
+              enablement, and execution, while spearheading SalesX to empower
+              the next generation of sales professionals.
             </p>
-
-            <div className="pt-2 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] text-white/80">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#38bdf8]" />
-                16+ Years Experience
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] text-white/80">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#F3FC00]" />
-                Middle East &amp; Asia
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] text-white/80">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#da3cf0]" />
-                SalesX Founder
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -293,7 +314,12 @@ export default function AboutFounder() {
           {/* STICKY VIEWPORT STAGE */}
           <div
             id="pinned-sticky-stage"
-            style={{ position: "sticky", top: 0, height: "100vh", width: "100%" }}
+            style={{
+              position: "sticky",
+              top: 0,
+              height: "100vh",
+              width: "100%",
+            }}
             className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#020B25]"
           >
             {/* Continuous Dot Grid System matching the page canvas */}
@@ -310,7 +336,7 @@ export default function AboutFounder() {
             {/* Ambient Cosmic Background Nebula */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-250 h-162.5 bg-radial from-[#0f3591]/35 via-[#07194a]/20 to-transparent blur-[170px] pointer-events-none -z-10" />
 
-            {/* ── 1. CATHEDRAL ARCH PORTRAIT: Starts ZOOMED in CENTER, then glides to LEFT ── */}
+            {/* ── 1. CATHEDRAL ARCH PORTRAIT: Enters from outer screen, settles in CENTER, then glides to LEFT ── */}
             <motion.div
               id="hero-portrait-stage"
               style={{
@@ -318,6 +344,7 @@ export default function AboutFounder() {
                 left: "50%",
                 top: "calc(50% + 46px)",
                 x: heroX,
+                y: heroY,
                 scale: heroScale,
                 opacity: heroOpacity,
                 marginLeft: -130,
@@ -364,7 +391,7 @@ export default function AboutFounder() {
               {/* Attribution Below Arch */}
               <div className="mt-4 flex flex-col items-center text-center select-none">
                 <p className="font-serif italic font-normal text-white text-2xl lg:text-[26px] tracking-wide">
-                  &mdash; Roshna Saffar
+                  Roshna Saffar
                 </p>
                 <div className="inline-flex items-center gap-2 mt-1">
                   <span className="text-[11px] font-mono uppercase tracking-[0.24em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent font-semibold">
@@ -408,7 +435,9 @@ export default function AboutFounder() {
 
                 {/* Bio Paragraph */}
                 <p className="mt-3 text-[13.5px] lg:text-[14.5px] text-slate-200/90 font-sans leading-relaxed">
-                  With 16+ years of leadership in enterprise sales across the Middle East, South Asia, and Southeast Asia, Roshna built Virtual Captains around a fundamental belief:
+                  With 16+ years of leadership in enterprise sales across the
+                  Middle East, South Asia, and Southeast Asia, Roshna built
+                  Virtual Captains around a fundamental belief:
                 </p>
 
                 {/* Featured Pull-Quote Card */}
@@ -420,36 +449,26 @@ export default function AboutFounder() {
                   <div className="absolute left-0 inset-y-0 w-1 bg-linear-to-b from-[#F3FC00] via-[#D08817] to-transparent" />
 
                   <p className="font-serif italic text-base sm:text-lg lg:text-[19px] font-normal text-white leading-relaxed">
-                    &ldquo;Sales capability isn&rsquo;t built by knowing more theory. It&rsquo;s built through practice, evaluation and real-world execution.&rdquo;
+                    &ldquo;Sales capability isn&rsquo;t built by knowing more
+                    theory. It&rsquo;s built through practice, evaluation and
+                    real-world execution.&rdquo;
                   </p>
 
                   <div className="mt-2.5 pt-2.5 border-t border-white/10 flex items-center justify-between">
                     <p className="text-xs sm:text-[12.5px] text-amber-200/80 font-sans italic">
-                      &ldquo;The best sales strategy is authenticity and sincerity.&rdquo;
+                      &ldquo;The best sales strategy is authenticity and
+                      sincerity.&rdquo;
                     </p>
                   </div>
                 </div>
 
                 {/* Role Description */}
                 <p className="text-[13px] lg:text-[14px] text-slate-300 leading-relaxed font-sans">
-                  Today, she leads Virtual Captains across sales strategy, sales enablement, and execution, while spearheading SalesX to train and develop the next generation of high-performing sales leaders.
+                  Today, she leads Virtual Captains across sales strategy, sales
+                  enablement, and execution, while spearheading SalesX to train
+                  and develop the next generation of high-performing sales
+                  leaders.
                 </p>
-
-                {/* Micro-credential Capsules */}
-                <div className="mt-3.5 flex flex-wrap items-center gap-2">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/85 backdrop-blur-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#38bdf8]" />
-                    <span>16+ Years Experience</span>
-                  </div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/85 backdrop-blur-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#F3FC00]" />
-                    <span>Middle East &amp; Asia</span>
-                  </div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/85 backdrop-blur-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#da3cf0]" />
-                    <span>SalesX Founder</span>
-                  </div>
-                </div>
               </div>
             </motion.div>
           </div>
