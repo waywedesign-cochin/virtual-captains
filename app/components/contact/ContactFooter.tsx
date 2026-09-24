@@ -45,14 +45,10 @@ export default function ContactFooter() {
       ).matches;
 
       if (reduceMotion) {
-        gsap.set(
-          [
-            wordmarkRef.current,
-            actionsRef.current,
-            legalRef.current,
-          ].filter(Boolean),
-          { opacity: 1, y: 0, x: 0, scale: 1 },
-        );
+        if (wordmarkRef.current) gsap.set(wordmarkRef.current, { opacity: 0, visibility: "hidden", display: "none" });
+        if (actionsRef.current) gsap.set(actionsRef.current, { opacity: 1, y: 0, scale: 1, pointerEvents: "auto", visibility: "visible" });
+        if (legalRef.current) gsap.set(legalRef.current, { opacity: 1, x: 0 });
+        if (backToTopRef.current) gsap.set(backToTopRef.current, { opacity: 1, y: 0 });
         return;
       }
 
@@ -78,57 +74,125 @@ export default function ContactFooter() {
         });
       }
 
-      // ---------- Footer pinned reveal ----------
-      gsap.set(wordmarkRef.current, { opacity: 0, y: 30, scale: 1 });
-      gsap.set(actionsRef.current, { opacity: 0, scale: 0.9, y: 12, pointerEvents: "none" });
-      gsap.set(legalRef.current, { opacity: 0, x: 70 });
-      gsap.set(backToTopRef.current, { opacity: 0, y: 12 });
+      // ---------- Footer pinned reveal with zero opacity clashing ----------
+      const mm = gsap.matchMedia();
 
-      gsap
-        .timeline({
+      // Desktop (>= 1024px): Clean, strictly sequential transition with zero opacity overlap
+      mm.add("(min-width: 1024px)", () => {
+        gsap.set(wordmarkRef.current, { opacity: 0, y: 30, scale: 1, visibility: "visible" });
+        gsap.set(actionsRef.current, { opacity: 0, scale: 0.92, y: 16, pointerEvents: "none", visibility: "hidden" });
+        gsap.set(legalRef.current, { opacity: 0, x: 50 });
+        gsap.set(backToTopRef.current, { opacity: 0, y: 12 });
+
+        if (!footerRef.current) return;
+
+        const footerTl = gsap.timeline({
           scrollTrigger: {
             trigger: footerRef.current,
             start: "top top",
             end: "+=100%",
             pin: true,
             scrub: 0.5,
+            anticipatePin: 1,
+            refreshPriority: -1,
           },
-        })
-        .to(wordmarkRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.3,
-          ease: "power2.out",
-        })
-        .to({}, { duration: 0.25 })
-        .to(wordmarkRef.current, {
-          opacity: 0,
-          scale: 0.85,
-          duration: 0.28,
-          ease: "power2.in",
-        })
-        .to(
-          actionsRef.current,
-          {
+        });
+
+        footerTl
+          // 1. Wordmark fades in cleanly
+          .to(wordmarkRef.current, {
             opacity: 1,
-            scale: 1,
             y: 0,
-            pointerEvents: "auto",
-            duration: 0.35,
-            ease: "back.out(1.6)",
+            duration: 0.28,
+            ease: "power2.out",
+          })
+          .to({}, { duration: 0.16 }) // hold wordmark
+          // 2. Wordmark fades OUT COMPLETELY to 0 before actions ever begins
+          .to(wordmarkRef.current, {
+            opacity: 0,
+            scale: 0.85,
+            duration: 0.22,
+            ease: "power2.in",
+          })
+          // Immediately hide wordmark from rendering
+          .set(wordmarkRef.current, { visibility: "hidden" })
+          // 3. Actions reveals ONLY AFTER wordmark is 100% gone
+          .set(actionsRef.current, { visibility: "visible" })
+          .to(
+            actionsRef.current,
+            {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              pointerEvents: "auto",
+              duration: 0.3,
+              ease: "back.out(1.4)",
+            },
+            "+=0.04", // Positive gap ensures ZERO opacity overlap/clashing!
+          )
+          .to(
+            legalRef.current,
+            { opacity: 1, x: 0, duration: 0.28, ease: "power2.out" },
+            "-=0.1",
+          )
+          .to(
+            backToTopRef.current,
+            { opacity: 1, y: 0, duration: 0.25, ease: "power2.out" },
+            "<0.05",
+          )
+          .to({}, { duration: 0.15 });
+
+        return () => footerTl.kill();
+      });
+
+      // Mobile & Tablet (< 1024px): Direct reveal with actions immediately primary
+      mm.add("(max-width: 1023px)", () => {
+        gsap.set(wordmarkRef.current, { opacity: 0, display: "none", visibility: "hidden" });
+        gsap.set(actionsRef.current, { opacity: 0, y: 24, scale: 0.95, pointerEvents: "auto", visibility: "visible" });
+        gsap.set(legalRef.current, { opacity: 0, y: 20 });
+        gsap.set(backToTopRef.current, { opacity: 0, y: 12 });
+
+        if (!footerRef.current) return;
+
+        const mobileTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
           },
-          "<0.08",
-        )
-        .to(
-          legalRef.current,
-          { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" },
-          ">-0.1",
-        )
-        .to(
-          backToTopRef.current,
-          { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
-          "<0.1",
-        );
+        });
+
+        mobileTl
+          .to(actionsRef.current, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "power3.out",
+          })
+          .to(
+            legalRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            "-=0.25",
+          )
+          .to(
+            backToTopRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.3,
+              ease: "power2.out",
+            },
+            "<0.1",
+          );
+
+        return () => mobileTl.kill();
+      });
 
       // ---------- FOOTER CHROMATIC TORCH COLOR SYSTEM ----------
       const TORCH_PALETTE = [

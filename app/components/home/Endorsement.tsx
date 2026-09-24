@@ -139,6 +139,8 @@ export default function Endorsement() {
 
   useGSAP(
     () => {
+      const mm = gsap.matchMedia();
+
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
@@ -150,7 +152,8 @@ export default function Endorsement() {
       });
       gsap.set(stackRef.current, { opacity: 0, y: 40 });
 
-      const tl = gsap.timeline({
+      // Entrance animation for header & stack
+      const entranceTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 70%",
@@ -159,7 +162,7 @@ export default function Endorsement() {
       });
 
       if (eyebrowRef.current) {
-        tl.to(eyebrowRef.current, {
+        entranceTl.to(eyebrowRef.current, {
           opacity: 1,
           y: 0,
           duration: 0.5,
@@ -167,7 +170,7 @@ export default function Endorsement() {
         });
       }
 
-      tl.to(
+      entranceTl.to(
         headingRef.current,
         {
           opacity: 1,
@@ -185,6 +188,58 @@ export default function Endorsement() {
         { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
         "-=0.3",
       );
+
+      // Desktop: Pinned testimonial scrub + Curtain Exit Parallax into The Impact
+      mm.add("(min-width: 1024px)", () => {
+        const pinTl = gsap.timeline({
+          scrollTrigger: {
+            id: "endorsement-pin",
+            trigger: sectionRef.current,
+            start: "top top",
+            end: () => "+=" + ((typeof window !== "undefined" ? window.innerHeight : 900) * 2.2),
+            pin: true,
+            anticipatePin: 1,
+            scrub: 0.6,
+            onUpdate: (self) => {
+              const p = self.progress;
+              // In the first 75%, user scrubs through testimonials:
+              if (p <= 0.75) {
+                const cardIndex = Math.min(
+                  TESTIMONIALS.length - 1,
+                  Math.floor((p / 0.75) * TESTIMONIALS.length),
+                );
+                setActive(cardIndex);
+              }
+            },
+          },
+        });
+
+        // 1. Give room to scrub testimonials
+        pinTl.to({}, { duration: 2.5 });
+
+        // 2. Scroll-driven exit parallax: as The Impact slides over,
+        // Endorsement curves its border, dims, and zooms out into 3D space
+        pinTl.to(sectionRef.current, {
+          opacity: 0.5,
+          scale: 0.94,
+          borderRadius: "40px",
+          duration: 0.8,
+          ease: "none",
+        });
+
+        const spacer = (
+          pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
+        )?.spacer;
+        if (spacer) {
+          spacer.style.backgroundColor = "#040507";
+        }
+
+        return () => pinTl.kill();
+      });
+
+      mm.add("(max-width: 1023px)", () => {
+        gsap.set(sectionRef.current, { clearProps: "all" });
+      });
     },
     { scope: sectionRef },
   );
@@ -192,9 +247,11 @@ export default function Endorsement() {
   return (
     <section
       ref={sectionRef}
+      id="endorsement"
       data-nav-section="Endorsement"
       data-nav-theme="dark"
-      className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-4 pt-[clamp(68px,12vh,152px)] pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
+      className="relative z-40 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-4 pt-[clamp(68px,12vh,152px)] pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16 lg:-mt-[100vh] origin-center will-change-[transform,opacity,border-radius]"
+      style={{ borderRadius: "0px" }}
     >
       {/* Background Dot Grid (matching second section) */}
       <DottedBackground theme="dark" opacity={0.08} />
@@ -221,8 +278,8 @@ export default function Endorsement() {
           ref={stackRef}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:44%] sm:[--fan-2:78%]"
-          style={{ height: "clamp(410px, 50vh, 460px)" }}
+          className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:40%] sm:[--fan-2:74%]"
+          style={{ height: "clamp(350px, 44vh, 395px)" }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
@@ -271,7 +328,7 @@ export default function Endorsement() {
                 key={item.name}
                 aria-hidden={!isCenter}
                 onClick={() => setActive(i)}
-                className={`absolute flex h-97.5 w-[min(88vw,320px)] sm:h-105 sm:w-87.5 cursor-pointer flex-col justify-between overflow-hidden rounded-3xl p-6 sm:p-7 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
+                className={`absolute flex h-81.25 w-[min(84vw,280px)] sm:h-88.75 sm:w-76 cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 sm:p-5.5 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
                 style={{
                   transform: `translateX(${translateX}) scale(${scale})`,
                   opacity,
@@ -301,7 +358,7 @@ export default function Endorsement() {
                   <svg
                     viewBox="0 0 44 36"
                     fill="none"
-                    className="h-8 w-10 shrink-0 text-white/90"
+                    className="h-6.5 w-8 shrink-0 text-white/90"
                     aria-hidden="true"
                   >
                     <path
@@ -318,20 +375,20 @@ export default function Endorsement() {
                     />
                   </svg>
 
-                  <p className={`mt-3.5 max-w-46.25 sm:max-w-51.25 font-serif text-[14px] sm:text-[15.5px] font-normal leading-[1.38] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
+                  <p className={`mt-3 max-w-44 sm:max-w-48 font-serif text-[13px] sm:text-[14px] font-normal leading-[1.35] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
                     {item.quote}
                   </p>
                 </div>
 
                 {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
-                <div className="relative z-10 mt-auto max-w-42.5 pt-3">
-                  <h4 className="font-serif text-[17px] sm:text-[18.5px] font-medium text-white tracking-wide">
+                <div className="relative z-10 mt-auto max-w-40 pt-2">
+                  <h4 className="font-serif text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
                     {item.name}
                   </h4>
-                  <p className="mt-0.5 text-[12px] text-white/75 font-sans tracking-wide">
+                  <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
                     {item.role}
                   </p>
-                  <div className="mt-2">
+                  <div className="mt-1.5">
                     <Stars />
                   </div>
                 </div>
@@ -342,7 +399,7 @@ export default function Endorsement() {
                   <img
                     src={item.photo}
                     alt={item.name}
-                    className={`pointer-events-none absolute -bottom-1 -right-2 h-[80%] max-h-87.5 w-[58%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
+                    className={`pointer-events-none absolute -bottom-1 -right-2 h-[78%] max-h-75 w-[56%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
                   />
                 )}
               </article>

@@ -147,10 +147,24 @@ export default function HiringPartners() {
   const sectionRef = useRef<HTMLElement>(null);
   const clusterWrapperRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const eyebrowRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        if (eyebrowRef.current)
+          gsap.set(eyebrowRef.current, { opacity: 1, y: 0 });
+        gsap.set([headingRef.current, clusterWrapperRef.current], {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        });
+        return;
+      }
+
+      if (eyebrowRef.current) {
+        gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
+      }
 
       gsap.set(headingRef.current, {
         opacity: 0,
@@ -176,19 +190,40 @@ export default function HiringPartners() {
         scale: 1,
         duration: 0.85,
         ease: "power3.out",
-      }).to(
+      });
+
+      if (eyebrowRef.current) {
+        tl.to(
+          eyebrowRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.5",
+        );
+      }
+
+      tl.to(
         headingRef.current,
         {
           opacity: 1,
           y: 0,
           duration: 0.85,
           keyframes: [
-            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            {
+              scale: 1.15,
+              opacity: 1,
+              y: -4,
+              duration: 0.42,
+              ease: "power2.out",
+            },
             { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
             { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
           ],
         },
-        "-=0.45",
+        eyebrowRef.current ? "-=0.25" : "-=0.45",
       );
     },
     { scope: sectionRef },
@@ -275,16 +310,20 @@ export default function HiringPartners() {
         </div>
 
         {/* ---------- RIGHT: HEADLINE ---------- */}
-        <div className="text-center lg:col-span-5 lg:text-left">
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:col-span-5">
+          <span
+            ref={eyebrowRef}
+            className="mb-[clamp(12px,2vh,20px)] block font-sans text-[clamp(12px,1vw,14px)] font-normal tracking-[0.25em] text-[#101010]/75"
+          >
+            Our network
+          </span>
           <h2
             ref={headingRef}
-            className="font-serif text-[clamp(1.85rem,2.6vw,2.9rem)] font-normal leading-[1.22] text-[#111827]"
+            className="font-serif text-[clamp(2.1rem,3.2vw,3.6rem)] font-normal leading-[1.15] text-[#101010]"
           >
-            <span className="italic text-[#2563eb]">Get hired</span> by reputed
-            <br />
-            enterprises, across
-            <br />
-            India &amp; abroad
+            Building <span className="italic text-[#1d63ed]">Better </span>
+            <span className="italic text-[#1d63ed]">Sales</span> Through
+            Partnership
           </h2>
         </div>
       </div>

@@ -82,7 +82,7 @@ export default function OurApproach() {
       const start = st.start;
       const end = st.end;
       const total = end - start;
-      const targets = [0.08, 0.35, 0.65, 0.92];
+      const targets = [0.06, 0.25, 0.48, 0.68];
       const targetScroll = start + targets[stepIndex] * total;
 
       if (window.__lenis) {
@@ -100,23 +100,42 @@ export default function OurApproach() {
     () => {
       const mm = gsap.matchMedia();
 
-      // Desktop: Pinned scroll through the 4 capability slides
+      // Desktop: Pinned scroll through the 4 capability slides + Curtain Exit Parallax
       mm.add("(min-width: 1024px)", () => {
         const pinTl = gsap.timeline({
           scrollTrigger: {
             id: "model-pin",
             trigger: sectionRef.current,
             start: "top top",
-            end: "+=240%",
+            end: () => "+=" + ((typeof window !== "undefined" ? window.innerHeight : 900) * 3.2),
             pin: true,
+            anticipatePin: 1,
             scrub: 0.5,
             onUpdate: (self) => {
               const p = self.progress;
-              // Divide into 4 quarters: [0 - 0.25], [0.25 - 0.5], [0.5 - 0.75], [0.75 - 1.0]
-              const step = Math.min(3, Math.floor(p * 4));
-              setActiveStep(step);
+              // Divide 0.0 to 0.78 into 4 quarters: [0 - 0.25], [0.25 - 0.5], [0.5 - 0.75], [0.75 - 1.0]
+              if (p <= 0.78) {
+                const slideProgress = p / 0.78;
+                const step = Math.min(3, Math.floor(slideProgress * 4));
+                setActiveStep(step);
+              } else {
+                setActiveStep(3); // Hold on last slide during curtain exit
+              }
             },
           },
+        });
+
+        // 1. Give room to scroll through the 4 capability slides
+        pinTl.to({}, { duration: 3.0 });
+
+        // 2. Scroll-driven exit parallax: as CrossCountry slides over,
+        // OurApproach curves its border, dims, and zooms out into 3D space
+        pinTl.to(sectionRef.current, {
+          opacity: 0.5,
+          scale: 0.94,
+          borderRadius: "40px",
+          duration: 0.9,
+          ease: "none",
         });
 
         scrollTriggerRef.current = pinTl.scrollTrigger || null;
@@ -125,7 +144,7 @@ export default function OurApproach() {
           pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
         )?.spacer;
         if (spacer) {
-          spacer.style.backgroundColor = "#ffffff";
+          spacer.style.backgroundColor = "#040507";
         }
 
         return () => {
@@ -136,6 +155,8 @@ export default function OurApproach() {
 
       // Mobile / Tablet: Smooth scrub
       mm.add("(max-width: 1023px)", () => {
+        gsap.set(sectionRef.current, { clearProps: "all" });
+
         const mobileTl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -164,7 +185,8 @@ export default function OurApproach() {
       id="about"
       data-nav-section="The Model"
       data-nav-theme="light"
-      className="relative flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden bg-white px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-[#101010]"
+      className="relative z-20 flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden bg-white px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-[#101010] lg:-mt-[100vh] origin-center will-change-[transform,opacity,border-radius]"
+      style={{ borderRadius: "0px" }}
     >
       {/* Subtle Dotted Background Grid (matching second section) */}
       <DottedBackground theme="light" />
