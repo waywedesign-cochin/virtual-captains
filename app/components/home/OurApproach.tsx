@@ -100,7 +100,7 @@ export default function OurApproach() {
     () => {
       const mm = gsap.matchMedia();
 
-      // Desktop: Pinned scroll through the 4 capability slides + Curtain Exit Parallax
+      // Desktop: Pinned scroll through the 4 capability slides — no curtain exit
       mm.add("(min-width: 1024px)", () => {
         const pinTl = gsap.timeline({
           scrollTrigger: {
@@ -113,39 +113,16 @@ export default function OurApproach() {
             scrub: 0.5,
             onUpdate: (self) => {
               const p = self.progress;
-              // Divide 0.0 to 0.78 into 4 quarters: [0 - 0.25], [0.25 - 0.5], [0.5 - 0.75], [0.75 - 1.0]
-              if (p <= 0.78) {
-                const slideProgress = p / 0.78;
-                const step = Math.min(3, Math.floor(slideProgress * 4));
-                setActiveStep(step);
-              } else {
-                setActiveStep(3); // Hold on last slide during curtain exit
-              }
+              const step = Math.min(3, Math.floor(p * 4));
+              setActiveStep(step);
             },
           },
         });
 
-        // 1. Give room to scroll through the 4 capability slides
+        // Give room to scroll through the 4 capability slides
         pinTl.to({}, { duration: 3.0 });
 
-        // 2. Scroll-driven exit parallax: as CrossCountry slides over,
-        // OurApproach curves its border, dims, and zooms out into 3D space
-        pinTl.to(sectionRef.current, {
-          opacity: 0.5,
-          scale: 0.94,
-          borderRadius: "40px",
-          duration: 0.9,
-          ease: "none",
-        });
-
         scrollTriggerRef.current = pinTl.scrollTrigger || null;
-
-        const spacer = (
-          pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
-        )?.spacer;
-        if (spacer) {
-          spacer.style.backgroundColor = "#040507";
-        }
 
         return () => {
           pinTl.kill();
@@ -184,23 +161,25 @@ export default function OurApproach() {
       ref={sectionRef}
       id="about"
       data-nav-section="The Model"
-      data-nav-theme="light"
-      className="relative z-20 flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden bg-white px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-[#101010] lg:-mt-[100vh] origin-center will-change-[transform,opacity,border-radius]"
-      style={{ borderRadius: "0px" }}
+      data-nav-theme="dark"
+      className="relative z-10 flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-white"
+      style={{
+        background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
+      }}
     >
-      {/* Subtle Dotted Background Grid (matching second section) */}
-      <DottedBackground theme="light" />
+      {/* Subtle Dotted Background Grid */}
+      <DottedBackground theme="dark" />
 
       <div className="relative z-10 mx-auto flex h-full max-h-dvh w-full max-w-375 flex-col justify-between items-center">
         {/* ============================================================
-            1. CONSTANT TOP HEADER (Below Floating Navbar)
+            1. CONSTANT TOP HEADER
         ============================================================ */}
         <div className="text-center pt-1 sm:pt-2 shrink-0">
-          <span className="block font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-black/45 mb-1.5 sm:mb-2">
+          <span className="block font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-white/40 mb-1.5 sm:mb-2">
             target. engage. Convert.
           </span>
-          <h2 className="font-serif text-[clamp(1.55rem,2.2vw,2.4rem)] font-normal leading-[1.12] text-[#101010]">
-            <span className="italic text-[#1d63ed] block">
+          <h2 className="font-serif text-[clamp(1.55rem,2.2vw,2.4rem)] font-normal leading-[1.12] text-white">
+            <span className="italic text-[#4d82f5] block">
               A Complete Sales Engine
             </span>
             <span className="block mt-0.5">
@@ -211,7 +190,6 @@ export default function OurApproach() {
 
         {/* ============================================================
             2. CENTER CONTENT STAGE (Illustration + Bottom Copy)
-            w-full max-w-xl ensures text never squishes or clips
         ============================================================ */}
         <div className="relative flex flex-col items-center justify-center flex-1 w-full max-w-xl lg:max-w-2xl mx-auto min-h-0 my-auto py-2">
           {/* Active Illustration Stage */}
@@ -227,10 +205,11 @@ export default function OurApproach() {
                       : "opacity-0 scale-95 pointer-events-none"
                   }`}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={slide.image}
                     alt={slide.title}
-                    className="h-full w-auto max-h-full object-contain select-none mix-blend-multiply"
+                    className="h-full w-auto max-h-full object-contain select-none brightness-110 contrast-110"
                   />
                 </div>
               );
@@ -239,10 +218,10 @@ export default function OurApproach() {
 
           {/* Bottom Dynamic Description & Bold Tagline */}
           <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center text-center px-4 shrink-0 mt-3 sm:mt-4">
-            <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-black/75 max-w-lg mx-auto transition-opacity duration-300">
+            <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-white/65 max-w-lg mx-auto transition-opacity duration-300">
               {activeSlide.description}
             </p>
-            <p className="mt-2 font-sans text-[14px] sm:text-[15.5px] font-bold tracking-wider text-[#101010] transition-opacity duration-300">
+            <p className="mt-2 font-sans text-[14px] sm:text-[15.5px] font-bold tracking-wider text-white transition-opacity duration-300">
               {activeSlide.tagline}
             </p>
           </div>
@@ -259,8 +238,8 @@ export default function OurApproach() {
               onClick={() => goToStep(idx)}
               className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
                 activeStep === idx
-                  ? "bg-[#101010] text-[#e7ff3d] shadow-sm font-semibold scale-102"
-                  : "bg-black/6 text-black/60 hover:bg-black/10"
+                  ? "bg-[#e7ff3d] text-[#0a0b0d] shadow-sm font-semibold scale-102"
+                  : "bg-white/8 text-white/60 hover:bg-white/15"
               }`}
             >
               <span className="mr-1 opacity-60 font-mono text-[9px]">
@@ -274,14 +253,13 @@ export default function OurApproach() {
 
       {/* ============================================================
           4. RIGHT-HAND SIDE CURVATURE DIAL (Desktop >= 1024px)
-          Features clean 3-node arc: Previous (top), Active (center apex), Next (bottom)
       ============================================================ */}
       <div className="pointer-events-none absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:block h-115 w-80 xl:w-90">
         <svg viewBox="0 0 320 460" className="h-full w-full overflow-visible">
           {/* Subtle Ambient Arc Glow */}
           <path
             d="M 300 20 Q -20 230 300 440"
-            stroke="rgba(0,0,0,0.03)"
+            stroke="rgba(255,255,255,0.04)"
             strokeWidth="3.5"
             fill="none"
             vectorEffect="non-scaling-stroke"
@@ -290,7 +268,7 @@ export default function OurApproach() {
           {/* Main Curved Guide Line */}
           <path
             d="M 300 20 Q -20 230 300 440"
-            stroke="rgba(0,0,0,0.16)"
+            stroke="rgba(255,255,255,0.12)"
             strokeWidth="1.25"
             fill="none"
             vectorEffect="non-scaling-stroke"
@@ -305,9 +283,9 @@ export default function OurApproach() {
               x={188}
               y={90}
               textAnchor="end"
-              className="select-none transition-all duration-300 ease-out group-hover:fill-black"
+              className="select-none transition-all duration-300 ease-out group-hover:fill-white"
               style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
-              fill="rgba(0,0,0,0.42)"
+              fill="rgba(255,255,255,0.42)"
               fontSize="12.5"
               fontWeight="400"
             >
@@ -322,10 +300,10 @@ export default function OurApproach() {
               cx={205}
               cy={96}
               r={5.5}
-              fill="#ffffff"
-              stroke="rgba(0,0,0,0.3)"
+              fill="transparent"
+              stroke="rgba(255,255,255,0.3)"
               strokeWidth={1.4}
-              className="transition-all duration-300 group-hover:stroke-[#1d63ed]"
+              className="transition-all duration-300 group-hover:stroke-[#4d82f5]"
             />
           </g>
 
@@ -337,7 +315,7 @@ export default function OurApproach() {
               textAnchor="end"
               className="select-none transition-all duration-300 ease-out"
               style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
-              fill="#101010"
+              fill="#ffffff"
               fontSize="18"
               fontWeight="700"
               letterSpacing="-0.01em"
@@ -379,9 +357,9 @@ export default function OurApproach() {
               x={188}
               y={358}
               textAnchor="end"
-              className="select-none transition-all duration-300 ease-out group-hover:fill-black"
+              className="select-none transition-all duration-300 ease-out group-hover:fill-white"
               style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
-              fill="rgba(0,0,0,0.42)"
+              fill="rgba(255,255,255,0.42)"
               fontSize="12.5"
               fontWeight="400"
             >
@@ -396,10 +374,10 @@ export default function OurApproach() {
               cx={205}
               cy={364}
               r={5.5}
-              fill="#ffffff"
-              stroke="rgba(0,0,0,0.3)"
+              fill="transparent"
+              stroke="rgba(255,255,255,0.3)"
               strokeWidth={1.4}
-              className="transition-all duration-300 group-hover:stroke-[#1d63ed]"
+              className="transition-all duration-300 group-hover:stroke-[#4d82f5]"
             />
           </g>
         </svg>

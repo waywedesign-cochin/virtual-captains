@@ -189,7 +189,7 @@ export default function Endorsement() {
         "-=0.3",
       );
 
-      // Desktop: Pinned testimonial scrub + Curtain Exit Parallax into The Impact
+      // Desktop: Pinned testimonial scrub — no curtain exit
       mm.add("(min-width: 1024px)", () => {
         const pinTl = gsap.timeline({
           scrollTrigger: {
@@ -202,37 +202,17 @@ export default function Endorsement() {
             scrub: 0.6,
             onUpdate: (self) => {
               const p = self.progress;
-              // In the first 75%, user scrubs through testimonials:
-              if (p <= 0.75) {
-                const cardIndex = Math.min(
-                  TESTIMONIALS.length - 1,
-                  Math.floor((p / 0.75) * TESTIMONIALS.length),
-                );
-                setActive(cardIndex);
-              }
+              const cardIndex = Math.min(
+                TESTIMONIALS.length - 1,
+                Math.floor(p * TESTIMONIALS.length),
+              );
+              setActive(cardIndex);
             },
           },
         });
 
-        // 1. Give room to scrub testimonials
+        // Give room to scrub testimonials
         pinTl.to({}, { duration: 2.5 });
-
-        // 2. Scroll-driven exit parallax: as The Impact slides over,
-        // Endorsement curves its border, dims, and zooms out into 3D space
-        pinTl.to(sectionRef.current, {
-          opacity: 0.5,
-          scale: 0.94,
-          borderRadius: "40px",
-          duration: 0.8,
-          ease: "none",
-        });
-
-        const spacer = (
-          pinTl.scrollTrigger as unknown as { spacer?: HTMLElement }
-        )?.spacer;
-        if (spacer) {
-          spacer.style.backgroundColor = "#040507";
-        }
 
         return () => pinTl.kill();
       });
@@ -250,11 +230,13 @@ export default function Endorsement() {
       id="endorsement"
       data-nav-section="Endorsement"
       data-nav-theme="dark"
-      className="relative z-40 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#050608] px-4 pt-[clamp(68px,12vh,152px)] pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16 lg:-mt-[100vh] origin-center will-change-[transform,opacity,border-radius]"
-      style={{ borderRadius: "0px" }}
+      className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 pt-[clamp(68px,12vh,152px)] pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
+      style={{
+        background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
+      }}
     >
       {/* Background Dot Grid (matching second section) */}
-      <DottedBackground theme="dark" opacity={0.08} />
+      <DottedBackground theme="dark" />
 
       <div className="relative z-10 flex w-full max-w-[1920px] flex-col items-center">
         {/* ---------- EYEBROW ---------- */}

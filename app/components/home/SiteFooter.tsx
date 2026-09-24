@@ -373,129 +373,10 @@ export default function SiteFooter({
         return () => mobileTl.kill();
       });
 
-      // ---------- FOOTER CHROMATIC TORCH COLOR SYSTEM ----------
-      const TORCH_PALETTE = [
-        { r: 56, g: 189, b: 248 }, // Electric Cyan (#38bdf8)
-        { r: 231, g: 255, b: 61 }, // Electric Lime (#e7ff3d)
-        { r: 143, g: 208, b: 255 }, // Sky Ice Blue (#8fd0ff)
-        { r: 42, g: 130, b: 255 }, // Royal Blue (#2a82ff)
-        { r: 218, g: 60, b: 240 }, // Neon Violet (#da3cf0)
-        { r: 255, g: 214, b: 10 }, // Radiant Yellow (#ffd60a)
-        { r: 255, g: 120, b: 18 }, // Sunset Orange (#ff7812)
-      ];
-
-      const torchColorObj = { ...TORCH_PALETTE[0] };
-      const setGlowCssVar = () => {
-        if (!footerRef.current) return;
-        const { r, g, b } = torchColorObj;
-        footerRef.current.style.setProperty(
-          "--torch-color",
-          `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`
-        );
-        footerRef.current.style.setProperty(
-          "--torch-glow",
-          `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.95)`
-        );
-        footerRef.current.style.setProperty(
-          "--torch-glow-soft",
-          `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.28)`
-        );
-        footerRef.current.style.setProperty(
-          "--torch-dim",
-          `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.08)`
-        );
-      };
-      setGlowCssVar();
-
-      const colorTl = gsap.timeline({ repeat: -1 });
-      for (let i = 0; i < TORCH_PALETTE.length; i++) {
-        const next = TORCH_PALETTE[(i + 1) % TORCH_PALETTE.length];
-        colorTl.to(torchColorObj, {
-          r: next.r,
-          g: next.g,
-          b: next.b,
-          duration: 3.2,
-          ease: "sine.inOut",
-          onUpdate: setGlowCssVar,
-        });
-      }
-
-      // ---------- FOOTER TORCH DOTS PROXIMITY REVEAL ----------
-      const dotsGlow = footerDotsGlowRef.current;
-      const torchAura = footerTorchAuraRef.current;
-      const footer = footerRef.current;
-      let onFooterEnter: ((e: PointerEvent) => void) | null = null;
-      let onFooterMove: ((e: PointerEvent) => void) | null = null;
-      let onFooterLeave: ((e: PointerEvent) => void) | null = null;
-
-      if (footer && dotsGlow) {
-        const dotGlow = { x: -9999, y: -9999, opacity: 0 };
-
-        const applyDotGlow = () => {
-          if (!dotsGlow) return;
-          dotsGlow.style.setProperty("--dx", `${dotGlow.x}px`);
-          dotsGlow.style.setProperty("--dy", `${dotGlow.y}px`);
-          dotsGlow.style.opacity = `${dotGlow.opacity}`;
-          if (torchAura) {
-            torchAura.style.setProperty("--dx", `${dotGlow.x}px`);
-            torchAura.style.setProperty("--dy", `${dotGlow.y}px`);
-            torchAura.style.opacity = `${dotGlow.opacity * 0.75}`;
-          }
-        };
-
-        const dotGlowX = gsap.quickTo(dotGlow, "x", {
-          duration: 0.25,
-          ease: "power2.out",
-          onUpdate: applyDotGlow,
-        });
-        const dotGlowY = gsap.quickTo(dotGlow, "y", {
-          duration: 0.25,
-          ease: "power2.out",
-          onUpdate: applyDotGlow,
-        });
-        const dotGlowOpacity = gsap.quickTo(dotGlow, "opacity", {
-          duration: 0.35,
-          ease: "power2.out",
-          onUpdate: applyDotGlow,
-        });
-
-        onFooterEnter = (e: PointerEvent) => {
-          const r = footer.getBoundingClientRect();
-          const cx = e.clientX - r.left;
-          const cy = e.clientY - r.top;
-          dotGlow.x = cx;
-          dotGlow.y = cy;
-          dotGlow.opacity = 1;
-          applyDotGlow();
-          dotGlowX(cx);
-          dotGlowY(cy);
-          dotGlowOpacity(1);
-        };
-
-        onFooterMove = (e: PointerEvent) => {
-          const r = footer.getBoundingClientRect();
-          const cx = e.clientX - r.left;
-          const cy = e.clientY - r.top;
-          dotGlowX(cx);
-          dotGlowY(cy);
-          dotGlowOpacity(1);
-        };
-
-        onFooterLeave = () => {
-          dotGlowOpacity(0);
-        };
-
-        footer.addEventListener("pointerenter", onFooterEnter);
-        footer.addEventListener("pointermove", onFooterMove);
-        footer.addEventListener("pointerleave", onFooterLeave);
-      }
+      // (Removed footer chromatic torch logic)
 
       return () => {
         cleanupCTA?.();
-        colorTl.kill();
-        if (footer && onFooterEnter) footer.removeEventListener("pointerenter", onFooterEnter);
-        if (footer && onFooterMove) footer.removeEventListener("pointermove", onFooterMove);
-        if (footer && onFooterLeave) footer.removeEventListener("pointerleave", onFooterLeave);
       };
     },
     { scope: containerRef },
@@ -511,23 +392,23 @@ export default function SiteFooter({
       {showCTA && (
         <section
           ref={ctaSectionRef}
-          className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-white px-6 py-20 text-center sm:px-10"
+          className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-[#040507] px-6 py-20 text-center sm:px-10"
         >
-          {/* Subtle Dotted Background (matching second section) */}
-          <DottedBackground theme="light" />
+          {/* Subtle Dotted Background */}
+          <DottedBackground theme="dark" />
           {/* soft luminous vignette */}
           <div
             className="pointer-events-none absolute inset-0 z-0"
             style={{
               background:
-                "radial-gradient(ellipse 70% 55% at 50% 45%, transparent 35%, rgba(255,255,255,0.7) 100%)",
+                "radial-gradient(ellipse 70% 55% at 50% 45%, transparent 35%, rgba(4, 5, 7, 0.7) 100%)",
             }}
           />
 
           <div className="relative z-10 flex flex-col items-center gap-[clamp(18px,3vh,32px)]">
             <p
               ref={ctaEyebrowRef}
-              className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/60 sm:text-[12px]"
+              className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/60 sm:text-[12px]"
             >
               Ready when you are
             </p>
@@ -536,7 +417,7 @@ export default function SiteFooter({
               ref={ctaRef}
               type="button"
               onClick={() => setIsBookingOpen(true)}
-              className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-black/25 bg-white/80 backdrop-blur-md px-[clamp(34px,7vw,90px)] py-[clamp(14px,2.4vh,26px)] font-serif text-[clamp(1.4rem,3.4vw,2.75rem)] leading-none transition-all duration-300 hover:border-black/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-4"
+              className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-md px-[clamp(34px,7vw,90px)] py-[clamp(14px,2.4vh,26px)] font-serif text-[clamp(1.4rem,3.4vw,2.75rem)] leading-none transition-all duration-300 hover:border-white/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061230]"
               aria-label="Book a call with Virtual Captains"
             >
               <span
@@ -545,12 +426,12 @@ export default function SiteFooter({
                 style={{ width: 0, height: 0, transform: "scale(0)" }}
               />
               <span className="relative z-10 inline-flex items-center gap-3">
-                <span ref={ctaLabelRef} className="text-[#101010]">
+                <span ref={ctaLabelRef} className="text-white">
                   Book a Call
                 </span>
                 <span
                   ref={ctaArrowRef}
-                  className="inline-block text-[0.75em]"
+                  className="inline-block text-[0.75em] text-white"
                   aria-hidden="true"
                 >
                   &rarr;
@@ -558,7 +439,7 @@ export default function SiteFooter({
               </span>
             </button>
 
-            <p className="mt-2 text-center font-serif text-[clamp(1.25rem,2.5vw,2rem)] font-medium text-[#101010] tracking-tight">
+            <p className="mt-2 text-center font-serif text-[clamp(1.25rem,2.5vw,2rem)] font-medium text-white/90 tracking-tight">
               Great Conversations Create Greater Possibilities
             </p>
           </div>
@@ -566,36 +447,21 @@ export default function SiteFooter({
       )}
 
       {/* ================= FOOTER ================= */}
-      <div className={`w-full ${isLightBlue ? "bg-[#06133a]" : "bg-[#020B25]"}`}>
+      <div className={`w-full ${isLightBlue ? "bg-[#0c318f]" : "bg-[#040507]"}`}>
         <footer
           ref={footerRef}
           id="resources"
           className="relative -mt-px flex min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 lg:px-16 pt-[clamp(36px,6vh,72px)] pb-6 sm:pb-8 text-white"
           style={{
             background: isLightBlue
-              ? "linear-gradient(180deg, #ffffff 0%, #f4f8fe 6%, #e2effd 14%, #afd0fa 25%, #66a0f6 38%, #2874ed 50%, #1757d2 64%, #103fa7 78%, #0a1c52 90%, #06133a 100%)"
-              : "#020B25",
+              ? "linear-gradient(180deg, #040507 0%, #050b24 30%, #051d5c 70%, #0c318f 100%)"
+              : "#040507",
           }}
         >
-          {/* Torch Aura Glow Layer */}
-          <div
-            ref={footerTorchAuraRef}
-            className="pointer-events-none absolute inset-0 z-0"
-            style={{
-              opacity: 0,
-              background:
-                "radial-gradient(220px circle at var(--dx, -9999px) var(--dy, -9999px), var(--torch-glow-soft, rgba(56,189,248,0.25)) 0%, var(--torch-dim, rgba(231,255,61,0.06)) 50%, transparent 75%)",
-              maskImage:
-                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 18%, black 45%)",
-              WebkitMaskImage:
-                "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 18%, black 45%)",
-            }}
-          />
-
-          {/* Dot Grid System with Torch Glow Proximity */}
+          {/* Subtle Dot Grid (Static) */}
           <div
             ref={footerDotsRef}
-            className="pointer-events-none absolute inset-0 z-0"
+            className="pointer-events-none absolute inset-0 z-0 opacity-40"
             style={{
               backgroundImage:
                 "radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)",
@@ -606,31 +472,9 @@ export default function SiteFooter({
                 "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 20%, black 40%)",
             }}
           >
-            <div
-              ref={footerDotsGlowRef}
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                opacity: 0,
-                backgroundImage:
-                  "radial-gradient(var(--torch-color, rgba(255,255,255,0.95)) 1.5px, transparent 2.4px)",
-                backgroundSize: "32px 32px",
-                maskImage:
-                  "radial-gradient(180px circle at var(--dx, -9999px) var(--dy, -9999px), rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, transparent 70%)",
-                WebkitMaskImage:
-                  "radial-gradient(180px circle at var(--dx, -9999px) var(--dy, -9999px), rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, transparent 70%)",
-              }}
-            />
           </div>
 
           {/* floating gradient orbs for depth */}
-          <div
-            ref={orb1Ref}
-            className="pointer-events-none absolute -left-24 top-[22%] z-0 h-85 w-85 rounded-full opacity-30 blur-3xl sm:h-105 sm:w-105"
-            style={{
-              background:
-                "radial-gradient(circle, #e7ff3d 0%, transparent 70%)",
-            }}
-          />
           <div
             ref={orb2Ref}
             className="pointer-events-none absolute -bottom-32 -right-16 z-0 h-75 w-75 rounded-full opacity-25 blur-3xl sm:h-95 sm:w-95"

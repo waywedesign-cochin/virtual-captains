@@ -234,15 +234,15 @@ export default function HiringPartners() {
       ref={sectionRef}
       id="partner"
       data-nav-section="Partner"
-      data-nav-theme="light"
-      className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-6 py-20 text-[#101010] sm:px-10 lg:py-28 lg:pl-36 lg:pr-16"
+      data-nav-theme="dark"
+      className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-6 py-20 text-white sm:px-10 lg:py-28 lg:pl-36 lg:pr-16"
       style={{
         background:
-          "linear-gradient(180deg, #1f5be0 0%, #4a88f4 16%, #9fc3fa 34%, #e5efff 54%, #ffffff 74%, #ffffff 100%)",
+          "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}
     >
-      {/* Background Dot Grid (matching second section) */}
-      <DottedBackground theme="light" />
+      {/* Background Dot Grid */}
+      <DottedBackground theme="dark" />
 
       <div className="relative z-10 mx-auto grid w-full max-w-310 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
         {/* ---------- LEFT: EXACT MOCKUP CIRCLE CLUSTER ---------- */}
@@ -252,10 +252,10 @@ export default function HiringPartners() {
             className="relative aspect-square w-[min(480px,88vw)] sm:w-[min(520px,90vw)] max-w-full select-none"
           >
             {/* Outer subtle faint boundary ring */}
-            <div className="pointer-events-none absolute inset-0 rounded-full border border-black/15" />
+            <div className="pointer-events-none absolute inset-0 rounded-full border border-white/15" />
 
             {/* Inner crisp thin boundary ring containing all pods */}
-            <div className="absolute inset-[3.5%] rounded-full border border-black/85 bg-white/20 backdrop-blur-[1px]">
+            <div className="absolute inset-[3.5%] rounded-full border border-white/20 bg-white/5 backdrop-blur-[1px]">
               {/* 8 Scattered Circular Pods matching mockup */}
               {PODS.map((pod) => (
                 <div
@@ -263,7 +263,7 @@ export default function HiringPartners() {
                   className={`group absolute rounded-full flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 cursor-pointer select-none ${
                     pod.isCenter
                       ? "shadow-[0_1px_3px_rgba(0,0,0,0.12)] z-20 hover:shadow-[0_4px_16px_rgba(226,253,0,0.45)]"
-                      : "shadow-[0_1px_3px_rgba(0,0,0,0.06)] z-10 hover:bg-white! hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] hover:z-30"
+                      : "shadow-[0_1px_3px_rgba(255,255,255,0.06)] z-10 hover:bg-white/20! hover:shadow-[0_10px_28px_rgba(0,0,0,0.25)] hover:z-30"
                   }`}
                   style={{
                     left: `${pod.left}%`,
@@ -313,13 +313,13 @@ export default function HiringPartners() {
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:col-span-5">
           <span
             ref={eyebrowRef}
-            className="mb-[clamp(12px,2vh,20px)] block font-sans text-[clamp(12px,1vw,14px)] font-normal tracking-[0.25em] text-[#101010]/75"
+            className="mb-[clamp(12px,2vh,20px)] block font-sans text-[clamp(12px,1vw,14px)] font-normal tracking-[0.25em] text-white/60"
           >
             Our network
           </span>
           <h2
             ref={headingRef}
-            className="font-serif text-[clamp(2.1rem,3.2vw,3.6rem)] font-normal leading-[1.15] text-[#101010]"
+            className="font-serif text-[clamp(2.1rem,3.2vw,3.6rem)] font-normal leading-[1.15] text-white"
           >
             Building <span className="italic text-[#1d63ed]">Better </span>
             <span className="italic text-[#1d63ed]">Sales</span> Through

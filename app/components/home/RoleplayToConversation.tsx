@@ -65,7 +65,7 @@ export default function RoleplayToConversation() {
           ease: "power2.out",
         });
 
-        // MASTER SCROLL TIMELINE
+        // MASTER SCROLL TIMELINE — pinned, no curtain exit
         const masterTl = gsap.timeline({
           scrollTrigger: {
             id: "roleplay-pin",
@@ -94,17 +94,7 @@ export default function RoleplayToConversation() {
           },
         });
 
-        const spacer = (
-          masterTl.scrollTrigger as unknown as { spacer?: HTMLElement }
-        )?.spacer;
-        if (spacer) {
-          spacer.style.backgroundColor = "#040507";
-        }
-
-        // 1. Zoom in Eyebrow and Heading (Zoom effect)
-        // (Moved to separate ScrollTrigger above so it happens earlier)
-
-        // 2. Reveal Paragraph Words letter by letter / word by word
+        // 1. Reveal Paragraph Words letter by letter / word by word
         masterTl.to(
           wordElements,
           {
@@ -116,32 +106,18 @@ export default function RoleplayToConversation() {
           "+=0.2"
         );
 
-        // 3. Hold for a moment to let the user read
+        // 2. Hold for a moment to let the user read
         masterTl.to({}, { duration: 0.8 });
 
-        // 4. Fade out Stage 1 and transition background to dark
+        // 3. Fade out Stage 1 and transition background (stays dark)
         masterTl.to(stage1Ref.current, {
           opacity: 0,
           scale: 0.9,
           duration: 0.8,
           ease: "power2.inOut",
         });
-        
-        masterTl.to(sectionRef.current, {
-          backgroundColor: "#0a0b0d",
-          duration: 0.8,
-          ease: "power2.inOut",
-        }, "<"); // animate bg concurrently with fade out
 
-        // Animate dots to white so they persist nicely
-        masterTl.to("#dotPattern circle", {
-          fill: "#ffffff",
-          opacity: 0.15,
-          duration: 0.8,
-          ease: "power2.inOut",
-        }, "<");
-
-        // 5. Fade in TwoAudiences (Stage 2)
+        // 4. Fade in TwoAudiences (Stage 2)
         masterTl.to(
           twoAudiencesContainerRef.current,
           {
@@ -153,18 +129,8 @@ export default function RoleplayToConversation() {
           "-=0.4"
         );
 
-        // 6. Give TwoAudiences room to scroll/scrub
+        // 5. Give TwoAudiences room to scroll/scrub
         masterTl.to({}, { duration: 3.2 });
-
-        // 7. Scroll-driven exit parallax: as OurApproach (The Model) slides over,
-        // RoleplayToConversation curves its border, dims, and zooms out into 3D space
-        masterTl.to(sectionRef.current, {
-          opacity: 0.5,
-          scale: 0.94,
-          borderRadius: "40px",
-          duration: 1.1,
-          ease: "none",
-        });
       });
 
       /*
@@ -179,14 +145,14 @@ export default function RoleplayToConversation() {
           clearProps: "all",
         });
         
-        gsap.set(sectionRef.current, { backgroundColor: "#0a0b0d" }); // default to dark for flow
+        gsap.set(sectionRef.current, { backgroundColor: "#071430" });
         
         if (wordElements) {
           gsap.set(wordElements, { opacity: 1 });
         }
 
         if (twoAudiencesRef.current) {
-          twoAudiencesRef.current.jumpToProgress(0); // Start with Organisations
+          twoAudiencesRef.current.jumpToProgress(0);
         }
       });
     },
@@ -197,11 +163,13 @@ export default function RoleplayToConversation() {
     <section 
       ref={sectionRef} 
       data-nav-override-zone
-      className="relative z-10 w-full bg-white overflow-hidden min-h-dvh origin-center will-change-[transform,opacity,border-radius]"
-      style={{ borderRadius: "0px" }}
+      className="relative z-10 w-full overflow-hidden min-h-dvh"
+      style={{
+        background: "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
+      }}
     >
       {/* Dotted Background (persists across stages) */}
-      <DottedBackground theme="light" />
+      <DottedBackground theme="dark" />
 
       {/* ============================================================
           STAGE 1: OUR PROMISE
@@ -214,15 +182,15 @@ export default function RoleplayToConversation() {
         <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10">
           <span 
             ref={eyebrowRef} 
-            className="text-[11px] sm:text-[13px] uppercase tracking-[0.3em] text-[#141414]/60 mb-3 sm:mb-4 block font-bold"
+            className="text-[11px] sm:text-[13px] uppercase tracking-[0.3em] text-white/50 mb-3 sm:mb-4 block font-bold"
           >
             WHAT WE BELIEVE
           </span>
           <h2 
             ref={mainHeadingRef} 
-            className="font-serif text-[clamp(2.1rem,3.4vw,3.6rem)] leading-[1.14] text-[#141414] font-normal"
+            className="font-serif text-[clamp(2.1rem,3.4vw,3.6rem)] leading-[1.14] text-white font-normal"
           >
-            Driven by <span className="italic text-[#1d4ed8]">Sales Execution</span>
+            Driven by <span className="italic text-[#4d82f5]">Sales Execution</span>
           </h2>
         </div>
         
@@ -230,14 +198,14 @@ export default function RoleplayToConversation() {
           ref={rightTextRef} 
           className="relative z-10 max-w-3xl text-center px-4 sm:px-6 space-y-3.5 sm:space-y-4.5"
         >
-          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-[#141414]/85 font-normal sm:font-medium">
+          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
             {PROMISE_PARAGRAPH_1.map((word, i) => (
               <span key={`p1-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-15">
                 {word}
               </span>
             ))}
           </p>
-          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-[#141414]/85 font-normal sm:font-medium">
+          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
             {PROMISE_PARAGRAPH_2.map((word, i) => (
               <span key={`p2-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-15">
                 {word}
@@ -252,7 +220,7 @@ export default function RoleplayToConversation() {
       ============================================================ */}
       <div 
         ref={twoAudiencesContainerRef} 
-        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-12 sm:mt-16 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none p-3 sm:p-4 lg:p-3 xl:p-4"
+        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-12 sm:mt-16 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none"
       >
         <div className="pointer-events-auto w-full h-full">
           <TwoAudiences ref={twoAudiencesRef} />

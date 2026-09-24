@@ -12,27 +12,14 @@ import TheImpact from "./components/home/TheImpact";
 
 export default function Page() {
   return (
-    <main className="block w-full bg-[#040507]">
+    <main className="block w-full bg-[#050e28]">
       <Navbar />
       <SideNav />
       <Hero />
-      {/* 3D Text Section slides smoothly over Hero */}
       <ScrollText3D />
       <RoleplayToConversation />
-
-      {/*
-        TwoAudiences is now fully integrated inside RoleplayToConversation
-        to achieve the seamless "inside the black hole" transformation transition!
-      */}
-
       <OurApproach />
       <CrossCountry />
-      {/* 
-        Corrected Wrapper: 
-        Uses relative positioning and a fixed minimum height so it takes up proper space 
-        in the scroll flow without overlapping the components above or below it.
-      */}
-
       <Endorsement />
       <TheImpact />
       <HiringPartners />
