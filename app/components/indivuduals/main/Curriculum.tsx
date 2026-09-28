@@ -9,7 +9,7 @@ export function Curriculum() {
       aria-labelledby="curriculum-heading"
     >
       <CurriculumStage>
-        <div className="mx-auto w-full max-w-372 px-4 sm:px-8 lg:px-12 py-[clamp(4rem,10vw,8rem)]">
+        <div className="mx-auto w-full max-w-372 px-4 sm:px-8 lg:px-12 py-12 sm:py-16 lg:py-[clamp(4rem,10vw,8rem)]">
           {/* Desktop Layout: Sticky Left, Scrolling Right */}
           <div className="hidden lg:flex lg:flex-row lg:items-start lg:justify-between lg:gap-20">
             {/* Left Side: Sticky Text */}
@@ -34,8 +34,8 @@ export function Curriculum() {
                     key={line}
                     className={
                       index === 0
-                        ? "block text-[clamp(2.75rem,4.5vw,4.25rem)] font-medium leading-[1.08] text-white tracking-tight"
-                        : "block text-[clamp(1.35rem,2.2vw,1.95rem)] font-sans font-light leading-relaxed text-white/70 mt-4 sm:mt-5"
+                        ? "block type-h2 font-medium text-white"
+                        : "block type-lead font-light text-white/70 mt-4 sm:mt-5"
                     }
                   >
                     {line}
@@ -95,11 +95,11 @@ export function Curriculum() {
                           </div>
                         </div>
 
-                        <h3 className="relative z-10 text-2xl lg:text-3xl font-serif font-medium text-white mb-3 tracking-tight">
+                        <h3 className="relative z-10 type-h3 font-medium text-white mb-3">
                           {module.title}
                         </h3>
 
-                        <p className="relative z-10 text-base leading-relaxed text-white/70 font-light max-w-lg">
+                        <p className="relative z-10 type-body text-white/70 font-light max-w-lg">
                           {module.body}
                         </p>
                       </article>
@@ -111,8 +111,8 @@ export function Curriculum() {
           </div>
 
           {/* Mobile Layout: Stacked Rail */}
-          <div className="block lg:hidden mt-8">
-            <div className="flex flex-col items-center mb-12 text-center">
+          <div className="block lg:hidden">
+            <div className="flex flex-col items-center mb-10 text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-4 py-1.5 shadow-[0_0_20px_rgba(56,189,248,0.15)] mb-4">
                 <span className="h-2 w-2 rounded-full bg-[#38bdf8] animate-pulse shadow-[0_0_8px_#38bdf8]" />
                 <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
@@ -120,14 +120,14 @@ export function Curriculum() {
                 </p>
               </div>
 
-              <h2 className="w-full text-center">
+              <h2 className="w-full text-center" data-curriculum-compact-heading="">
                 {curriculum.statement.map((line, index) => (
                   <span
                     key={line}
                     className={
                       index === 0
-                        ? "block text-[clamp(2.35rem,8vw,3.25rem)] font-serif font-medium leading-[1.1] text-white tracking-tight"
-                        : "block text-[clamp(1.2rem,4.8vw,1.6rem)] font-sans font-light leading-snug text-white/70 mt-3.5"
+                        ? "block type-h2 font-medium text-white"
+                        : "block type-lead font-light text-white/70 mt-3.5"
                     }
                   >
                     {line}
@@ -168,11 +168,11 @@ export function Curriculum() {
                         </div>
                       </div>
 
-                      <h3 className="relative z-10 text-xl font-serif font-medium text-white mb-2 tracking-tight">
+                      <h3 className="relative z-10 type-h3 font-medium text-white mb-2">
                         {module.title}
                       </h3>
 
-                      <p className="relative z-10 text-sm leading-relaxed text-white/70 font-light">
+                      <p className="relative z-10 type-body text-white/70 font-light">
                         {module.body}
                       </p>
                     </article>

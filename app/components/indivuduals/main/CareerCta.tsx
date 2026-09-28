@@ -21,14 +21,38 @@ export function CareerCta() {
         {
           motion: "(prefers-reduced-motion: no-preference)",
           reduced: "(prefers-reduced-motion: reduce)",
-          isDesktop: "(min-width: 768px)",
-          isMobile: "(max-width: 767px)",
+          isDesktop: "(min-width: 1024px)",
+          isMobile: "(max-width: 1023px)",
         },
         (context) => {
           if (!context.conditions?.motion) return;
           const { isDesktop } = context.conditions;
 
           const textContainer = one<HTMLElement>(element, "#career-heading");
+
+          // Phones & tablets: no pin — the headline zooms in like every other
+          // heading, and the button is already visible beneath it.
+          if (!isDesktop) {
+            if (!textContainer) return;
+            gsap.set(textContainer, { opacity: 0, scale: 0.65, y: 20 });
+            gsap.to(textContainer, {
+              scrollTrigger: {
+                trigger: textContainer,
+                start: "top 88%",
+                toggleActions: "play none none reverse",
+              },
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              keyframes: [
+                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+              ],
+            });
+            return;
+          }
+
           const leftPart = one<HTMLElement>(element, "[data-career-left]");
           const rightPart = one<HTMLElement>(element, "[data-career-right]");
           const button = one<HTMLElement>(element, "[data-career-button]");
@@ -141,7 +165,7 @@ export function CareerCta() {
   return (
     <section
       id="career"
-      className="relative w-full bg-white text-center text-slate-900 min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative w-full bg-white text-center text-slate-900 py-16 sm:py-20 lg:py-0 lg:min-h-screen flex items-center justify-center overflow-hidden"
       aria-labelledby="career-heading"
       ref={scope}
     >
@@ -150,32 +174,35 @@ export function CareerCta() {
         data-career-container=""
       >
         <h2
-          className="flex flex-col md:flex-row items-center justify-center w-full relative z-10 text-2xl md:text-4xl lg:text-5xl font-serif font-medium leading-[1.15] tracking-tight will-change-transform"
+          className="flex flex-col lg:flex-row items-center justify-center w-full relative z-10 type-h2 font-medium will-change-transform text-balance"
           id="career-heading"
         >
           <span
             data-career-left=""
-            className="inline-block md:whitespace-nowrap will-change-transform text-center"
+            className="inline-block lg:whitespace-nowrap will-change-transform text-center"
           >
             {careerCta.lead.trim()}
           </span>
-          
-          {/* Wrapper that grows to push text apart */}
+
+          {/* Wrapper that grows to push text apart (desktop). Below lg it sits
+              after the text, with the button already showing. */}
           <div
             data-career-button-wrapper=""
-            className="flex items-center justify-center will-change-auto"
+            className="order-last mt-8 flex items-center justify-center will-change-auto lg:order-0 lg:mt-0"
           >
             <div
               data-career-button=""
-              className="scale-0 opacity-0 pointer-events-none flex items-center justify-center md:whitespace-nowrap"
+              className="flex items-center justify-center lg:scale-0 lg:opacity-0 lg:pointer-events-none lg:whitespace-nowrap"
             >
-              <BookACallButton variant="white" />
+              {/* White pill with a solid black border (the old faint-border
+                  white variant disappeared on this white section) */}
+              <BookACallButton variant="outline" />
             </div>
           </div>
 
           <span
             data-career-right=""
-            className="inline-flex flex-wrap md:flex-nowrap justify-center items-center gap-x-[1ch] md:whitespace-nowrap will-change-transform text-center"
+            className="inline-flex flex-wrap lg:flex-nowrap justify-center items-center gap-x-[1ch] lg:whitespace-nowrap will-change-transform text-center"
           >
             <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 font-serif italic">
               {careerCta.accent}

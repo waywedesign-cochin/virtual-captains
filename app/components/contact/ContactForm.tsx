@@ -8,46 +8,69 @@ import { quickContacts, socialLinks } from "./data";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* Same fields, order and rules as the "Book a Call" popup (BookACallModal):
+   audience toggle, first/last name, work email, phone with country code,
+   organisation-only role + team size, message. */
+type Audience = "individual" | "organisation";
+
 type FormState = {
-  name: string;
-  phone: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  website: string;
+  countryCode: string;
+  phone: string;
+  role: string;
+  employees: string;
   message: string;
 };
 
+type FieldName = keyof FormState;
+
 const initialState: FormState = {
-  name: "",
-  phone: "",
+  firstName: "",
+  lastName: "",
   email: "",
-  website: "",
+  countryCode: "+91",
+  phone: "",
+  role: "",
+  employees: "",
   message: "",
 };
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-const fields: Array<{
-  name: keyof FormState;
-  label: string;
-  type: string;
-  placeholder: string;
-  required: boolean;
-}> = [
-  { name: "name", label: "Full Name", type: "text", placeholder: "Riya Sharma", required: true },
-  { name: "phone", label: "Phone Number", type: "tel", placeholder: "+91 98765 43210", required: true },
-  { name: "email", label: "Work Email", type: "email", placeholder: "riya@company.com", required: true },
-  { name: "website", label: "Company Website", type: "url", placeholder: "https://yourcompany.com", required: false },
+const COUNTRY_CODES = [
+  { value: "+1", label: "+1 (US)" },
+  { value: "+44", label: "+44 (UK)" },
+  { value: "+61", label: "+61 (AU)" },
+  { value: "+91", label: "+91 (IN)" },
+  { value: "+971", label: "+971 (AE)" },
+  { value: "+65", label: "+65 (SG)" },
 ];
 
+const EMPLOYEE_RANGES = ["1-10", "11-50", "51-100", "101-200", "201-500", "500+"];
+
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const labelClass =
+  "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/80";
+
+function controlClass(hasError: boolean) {
+  return `w-full min-w-0 rounded-xl border bg-white/4 px-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-all duration-200 focus:bg-white/[0.07] focus:ring-2 ${
+    hasError
+      ? "border-[#ff5c5c] focus:border-[#ff5c5c] focus:ring-[#ff5c5c]/20"
+      : "border-white/12 focus:border-[#38bdf8] focus:ring-[#38bdf8]/20"
+  }`;
+}
 
 export default function ContactForm() {
   const sectionRef = useRef<HTMLElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
   const rightCardRef = useRef<HTMLDivElement>(null);
 
+  const [audience, setAudience] = useState<Audience>("individual");
   const [values, setValues] = useState<FormState>(initialState);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
 
   useEffect(() => {
@@ -123,21 +146,25 @@ export default function ContactForm() {
   }, []);
 
   const handleChange =
-    (field: keyof FormState) =>
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (field: FieldName) =>
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setValues((prev) => ({ ...prev, [field]: e.target.value }));
       if (errors[field]) {
         setErrors((prev) => ({ ...prev, [field]: undefined }));
       }
     };
 
+  const isOrg = audience === "organisation";
+
   const validate = (): boolean => {
-    const next: Partial<Record<keyof FormState, string>> = {};
-    if (!values.name.trim()) next.name = "Please enter your full name.";
-    if (!values.phone.trim()) next.phone = "A phone number helps us follow up faster.";
+    const next: Partial<Record<FieldName, string>> = {};
+    if (!values.firstName.trim()) next.firstName = "Please enter your first name.";
+    if (!values.lastName.trim()) next.lastName = "Please enter your last name.";
     if (!values.email.trim()) next.email = "Please enter your email address.";
     else if (!emailPattern.test(values.email)) next.email = "Please enter a valid email address.";
-    if (!values.message.trim()) next.message = "Let us know about your team or requirement.";
+    if (!values.phone.trim()) next.phone = "A phone number helps us follow up faster.";
+    if (isOrg && !values.role.trim()) next.role = "Please enter your role.";
+    if (isOrg && !values.employees) next.employees = "Please select your team size.";
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -151,7 +178,19 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        // `name` / `phone` keep the API's existing required fields; the rest
+        // are the popup-format extras.
+        body: JSON.stringify({
+          audience,
+          name: `${values.firstName.trim()} ${values.lastName.trim()}`,
+          firstName: values.firstName.trim(),
+          lastName: values.lastName.trim(),
+          email: values.email.trim(),
+          phone: `${values.countryCode} ${values.phone.trim()}`,
+          role: isOrg ? values.role.trim() : undefined,
+          employees: isOrg ? values.employees : undefined,
+          message: values.message.trim(),
+        }),
       });
       if (!res.ok) throw new Error("Request failed");
       setStatus("success");
@@ -160,6 +199,18 @@ export default function ContactForm() {
       setStatus("error");
     }
   };
+
+  const errorText = (field: FieldName) =>
+    errors[field] ? (
+      <p id={`${field}-error`} className="mt-1.5 text-xs text-[#ff6b6b]">
+        {errors[field]}
+      </p>
+    ) : null;
+
+  const a11y = (field: FieldName) => ({
+    "aria-invalid": Boolean(errors[field]),
+    "aria-describedby": errors[field] ? `${field}-error` : undefined,
+  });
 
   return (
     <section
@@ -306,62 +357,133 @@ export default function ContactForm() {
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="grid gap-5 sm:grid-cols-2">
-                {fields.map((field) => (
-                  <div key={field.name} className="form-field-anim will-change-transform">
-                    <label
-                      htmlFor={field.name}
-                      className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/80"
-                    >
-                      {field.label}
-                      {field.required && <span className="text-[#ffd60a]"> *</span>}
-                    </label>
-                    <input
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      placeholder={field.placeholder}
-                      value={values[field.name]}
-                      onChange={handleChange(field.name)}
-                      aria-invalid={Boolean(errors[field.name])}
-                      aria-describedby={errors[field.name] ? `${field.name}-error` : undefined}
-                      className={`w-full rounded-xl border bg-white/4 px-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-all duration-200 focus:bg-white/[0.07] focus:ring-2 ${
-                        errors[field.name]
-                          ? "border-[#ff5c5c] focus:border-[#ff5c5c] focus:ring-[#ff5c5c]/20"
-                          : "border-white/12 focus:border-[#38bdf8] focus:ring-[#38bdf8]/20"
-                      }`}
-                    />
-                    {errors[field.name] && (
-                      <p id={`${field.name}-error`} className="mt-1.5 text-xs text-[#ff6b6b]">
-                        {errors[field.name]}
-                      </p>
-                    )}
+                {/* I am: Individual / Organisation (segmented, like the popup) */}
+                <fieldset className="sm:col-span-2 form-field-anim will-change-transform">
+                  <legend className={labelClass}>I am enquiring as</legend>
+                  <div className="grid grid-cols-2 gap-1 rounded-full border border-white/12 bg-white/4 p-1">
+                    {(["individual", "organisation"] as const).map((opt) => (
+                      <label
+                        key={opt}
+                        className={`flex min-h-11 cursor-pointer items-center justify-center rounded-full text-sm font-semibold transition-colors has-focus-visible:ring-2 has-focus-visible:ring-[#38bdf8]/60 ${
+                          audience === opt
+                            ? "bg-white text-[#0a0b0d]"
+                            : "text-white/65 hover:text-white"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="audience"
+                          value={opt}
+                          checked={audience === opt}
+                          onChange={() => setAudience(opt)}
+                          className="sr-only"
+                        />
+                        {opt === "individual" ? "Individual" : "Organisation"}
+                      </label>
+                    ))}
                   </div>
-                ))}
+                </fieldset>
 
+                {/* First / Last name */}
+                <div className="form-field-anim will-change-transform">
+                  <label htmlFor="firstName" className={labelClass}>
+                    First Name<span className="text-[#ffd60a]"> *</span>
+                  </label>
+                  <input id="firstName" name="firstName" type="text" autoComplete="given-name" placeholder="Jane"
+                    value={values.firstName} onChange={handleChange("firstName")} {...a11y("firstName")}
+                    className={controlClass(Boolean(errors.firstName))} />
+                  {errorText("firstName")}
+                </div>
+                <div className="form-field-anim will-change-transform">
+                  <label htmlFor="lastName" className={labelClass}>
+                    Last Name<span className="text-[#ffd60a]"> *</span>
+                  </label>
+                  <input id="lastName" name="lastName" type="text" autoComplete="family-name" placeholder="Doe"
+                    value={values.lastName} onChange={handleChange("lastName")} {...a11y("lastName")}
+                    className={controlClass(Boolean(errors.lastName))} />
+                  {errorText("lastName")}
+                </div>
+
+                {/* Work email */}
                 <div className="sm:col-span-2 form-field-anim will-change-transform">
-                  <label htmlFor="message" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/80">
-                    Message / Revenue Motion Details<span className="text-[#ffd60a]"> *</span>
+                  <label htmlFor="email" className={labelClass}>
+                    Work Email<span className="text-[#ffd60a]"> *</span>
+                  </label>
+                  <input id="email" name="email" type="email" autoComplete="email" placeholder="jane@company.com"
+                    value={values.email} onChange={handleChange("email")} {...a11y("email")}
+                    className={controlClass(Boolean(errors.email))} />
+                  {errorText("email")}
+                </div>
+
+                {/* Phone with country code */}
+                <div className="sm:col-span-2 form-field-anim will-change-transform">
+                  <label htmlFor="phone" className={labelClass}>
+                    Phone Number<span className="text-[#ffd60a]"> *</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <select
+                      aria-label="Country code"
+                      value={values.countryCode}
+                      onChange={handleChange("countryCode")}
+                      // w-28! overrides controlClass's w-full so the number field keeps its room
+                      className={`${controlClass(false)} w-28! shrink-0 cursor-pointer px-3! [&>option]:bg-[#0a0d16]`}
+                    >
+                      {COUNTRY_CODES.map((c) => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </select>
+                    <input id="phone" name="phone" type="tel" autoComplete="tel-national" placeholder="9876543210"
+                      value={values.phone} onChange={handleChange("phone")} {...a11y("phone")}
+                      className={`${controlClass(Boolean(errors.phone))} flex-1`} />
+                  </div>
+                  {errorText("phone")}
+                </div>
+
+                {/* Organisation only: role + team size */}
+                {isOrg && (
+                  <>
+                    <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                      <label htmlFor="role" className={labelClass}>
+                        Your Role / Designation<span className="text-[#ffd60a]"> *</span>
+                      </label>
+                      <input id="role" name="role" type="text" autoComplete="organization-title" placeholder="e.g. Sales Manager"
+                        value={values.role} onChange={handleChange("role")} {...a11y("role")}
+                        className={controlClass(Boolean(errors.role))} />
+                      {errorText("role")}
+                    </div>
+                    <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                      <label htmlFor="employees" className={labelClass}>
+                        Number of Employees<span className="text-[#ffd60a]"> *</span>
+                      </label>
+                      <select id="employees" name="employees" value={values.employees} onChange={handleChange("employees")}
+                        {...a11y("employees")}
+                        className={`${controlClass(Boolean(errors.employees))} cursor-pointer [&>option]:bg-[#0a0d16]`}>
+                        <option value="" disabled>Select an option</option>
+                        {EMPLOYEE_RANGES.map((r) => (
+                          <option key={r} value={r}>{r}</option>
+                        ))}
+                      </select>
+                      {errorText("employees")}
+                    </div>
+                  </>
+                )}
+
+                {/* Message */}
+                <div className="sm:col-span-2 form-field-anim will-change-transform">
+                  <label htmlFor="message" className={labelClass}>
+                    Message <span className="font-normal normal-case tracking-normal text-white/40">(optional)</span>
                   </label>
                   <textarea
                     id="message"
                     name="message"
-                    rows={5}
-                    placeholder="Tell us about your team size, sales cycle, current outbound process, and what good outcomes look like..."
+                    rows={4}
+                    placeholder="What would you like to talk about?"
                     value={values.message}
                     onChange={handleChange("message")}
-                    aria-invalid={Boolean(errors.message)}
-                    aria-describedby={errors.message ? "message-error" : undefined}
-                    className={`w-full resize-none rounded-xl border bg-white/4 px-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-all duration-200 focus:bg-white/[0.07] focus:ring-2 ${
-                      errors.message
-                        ? "border-[#ff5c5c] focus:border-[#ff5c5c] focus:ring-[#ff5c5c]/20"
-                        : "border-white/12 focus:border-[#38bdf8] focus:ring-[#38bdf8]/20"
-                    }`}
+                    {...a11y("message")}
+                    className={`${controlClass(Boolean(errors.message))} resize-none`}
                   />
-                  {errors.message && (
-                    <p id="message-error" className="mt-1.5 text-xs text-[#ff6b6b]">
-                      {errors.message}
-                    </p>
-                  )}
+                  {errorText("message")}
                 </div>
               </div>
 

@@ -36,6 +36,11 @@ function renderStyledTitle(fullTitle: string) {
   );
 }
 
+// Pinned scroll-through only on desktop-sized screens; phones, tablets and
+// short windows get a normal section where the tabs switch programmes.
+const PINNED_QUERY = "(min-width: 1024px) and (min-height: 560px)";
+const STATIC_QUERY = "(max-width: 1023px), (max-height: 559px)";
+
 export default function GroomStudio() {
   const trackRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
@@ -108,7 +113,12 @@ export default function GroomStudio() {
   const handleTabClick = (index: number) => {
     if (!trackRef.current) return;
     const st = ScrollTrigger.getById("groom-scroll-trigger");
-    if (st) {
+    // Short screens (rotated phones) aren't pinned — the tab switches directly
+    if (!st) {
+      setActiveTab(index);
+      return;
+    }
+    {
       const scrollStart = st.start;
       const scrollRange = st.end - st.start;
       const targetProgress = (index + 0.15) / 4;
@@ -129,7 +139,19 @@ export default function GroomStudio() {
       if (!pinEl || !trackEl) return;
 
       const numStages = allProgrammes.length;
+      const mm = gsap.matchMedia();
 
+      // Phones, tablets and short screens: no pin; the tabs drive which
+      // programme is shown (see the activeTab effect below).
+      mm.add(STATIC_QUERY, () => {
+        allProgrammes.forEach((_, i) => {
+          gsap.set(`.prog-slide-${i}`, { autoAlpha: i === 0 ? 1 : 0, zIndex: i === 0 ? 10 : 5 });
+          gsap.set(`.prog-slide-${i} .text-node, .prog-slide-${i} .cards-stack`, { y: 0, opacity: 1 });
+        });
+        setActiveTab(0);
+      });
+
+      mm.add(PINNED_QUERY, () => {
       const masterTl = gsap.timeline({
         scrollTrigger: {
           id: "groom-scroll-trigger",
@@ -228,33 +250,51 @@ export default function GroomStudio() {
 
         masterTl.to({}, { duration: 0.4 });
       }
+      });
     },
     { scope: trackRef },
   );
+
+  // Non-pinned (short screen) mode: crossfade to the tapped programme
+  useEffect(() => {
+    if (ScrollTrigger.getById("groom-scroll-trigger")) return;
+    if (!window.matchMedia(STATIC_QUERY).matches) return;
+    allProgrammes.forEach((_, i) => {
+      const el = trackRef.current?.querySelector(`.prog-slide-${i}`);
+      if (!el) return;
+      if (i === activeTab) {
+        gsap.set(el, { zIndex: 10 });
+        gsap.fromTo(el, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" });
+      } else {
+        gsap.set(el, { autoAlpha: 0, zIndex: 5 });
+      }
+    });
+  }, [activeTab]);
 
   return (
     <section
       ref={trackRef}
       id="programmes-showcase"
       className="relative w-full bg-white text-slate-900"
-      style={{ minHeight: "400vh" }}
     >
-      {/* Pinned Viewport Container - Dynamic 100dvh for mobile address bar resilience */}
+      {/* Pinned by GSAP (it adds its own scroll spacer) on screens ≥ 560px
+          tall. The old `sticky` + forced 400vh height pinned it a second time
+          on top, leaving long empty stretches. Short screens: normal flow. */}
       <div
         ref={pinRef}
-        className="sticky top-0 left-0 w-full h-dvh max-h-dvh overflow-hidden flex flex-col justify-between pt-20 sm:pt-24 lg:pt-26 pb-3 sm:pb-5 px-4 sm:px-8 lg:px-12 bg-white"
+        className="left-0 w-full h-dvh max-h-dvh overflow-hidden flex flex-col justify-between pt-20 sm:pt-24 lg:pt-26 pb-3 sm:pb-5 px-4 sm:px-8 lg:px-12 bg-white [@media(max-width:1023px)]:h-auto [@media(max-width:1023px)]:max-h-none [@media(max-width:1023px)]:overflow-visible [@media(max-width:1023px)]:pt-12 [@media(max-width:1023px)]:pb-12 [@media(max-height:559px)]:h-auto [@media(max-height:559px)]:max-h-none [@media(max-height:559px)]:overflow-visible [@media(max-height:559px)]:pt-16 [@media(max-height:559px)]:pb-12"
       >
         <div className="w-full max-w-372 mx-auto flex flex-col h-full justify-between">
           {/* Top Header: Responsive title and horizontally-scrollable tabs on mobile */}
           <div className="w-full border-b border-slate-200 pb-2 sm:pb-3 mb-1.5 sm:mb-2">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 sm:gap-4">
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-3 lg:gap-4">
               {/* LEFT: Active Programme Title */}
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-slate-900 tracking-tight transition-all duration-300 shrink-0">
+              <h2 className="order-2 lg:order-none text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-slate-900 tracking-tight transition-all duration-300 shrink-0">
                 {renderStyledTitle(allProgrammes[activeTab].tabTitle)}
               </h2>
 
               {/* RIGHT: Other Programme Tabs */}
-              <div className="flex items-center gap-3.5 sm:gap-5 md:gap-7 text-xs sm:text-sm lg:text-base font-medium overflow-x-auto no-scrollbar scroll-smooth py-0.5 -mb-1 max-w-full">
+              <div className="order-1 lg:order-none grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:items-center lg:gap-7 text-[13px] sm:text-sm lg:text-base font-medium py-0.5 lg:-mb-1 max-w-full">
                 {allProgrammes.map((p, idx) => {
                   const isActive = idx === activeTab;
                   return (
@@ -262,17 +302,18 @@ export default function GroomStudio() {
                       key={p.id}
                       type="button"
                       onClick={() => handleTabClick(idx)}
-                      className={`relative py-1 transition-colors cursor-pointer shrink-0 whitespace-nowrap ${
+                      aria-pressed={isActive}
+                      className={`relative flex min-h-10 items-center justify-center rounded-full border px-3 transition-colors cursor-pointer whitespace-nowrap lg:min-h-0 lg:rounded-none lg:border-0 lg:px-0 lg:py-2 lg:shrink-0 ${
                         isActive
-                          ? "text-slate-900 font-semibold"
-                          : "text-slate-400 hover:text-slate-800"
+                          ? "border-blue-600 bg-blue-600 text-white font-semibold lg:bg-transparent lg:text-slate-900"
+                          : "border-slate-200 text-slate-500 hover:text-slate-800 lg:text-slate-400"
                       }`}
                     >
                       <span>{p.tabTitle}</span>
                       {isActive && (
                         <span
                           aria-hidden="true"
-                          className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-blue-600"
+                          className="absolute -bottom-1 left-0 right-0 hidden h-0.5 rounded-full bg-blue-600 lg:block"
                         />
                       )}
                     </button>
@@ -284,7 +325,9 @@ export default function GroomStudio() {
 
           {/* Dynamic Content Slides Container */}
           <div
-            className="relative flex-1 flex flex-col justify-between min-h-0"
+            // Slides share one grid cell: pinned, the row fills the stage;
+            // unpinned, it takes the height of the tallest slide.
+            className="relative flex-1 grid grid-rows-[minmax(0,1fr)] min-h-0"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
@@ -303,7 +346,7 @@ export default function GroomStudio() {
               return (
                 <div
                   key={prog.id}
-                  className={`prog-slide-${pIdx} absolute inset-0 flex flex-col justify-between pointer-events-auto`}
+                  className={`prog-slide-${pIdx} col-start-1 row-start-1 h-full min-h-0 flex flex-col justify-between pointer-events-auto`}
                 >
                   {/* Top Text Row: Responsive 2-column layout */}
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 sm:gap-4 md:gap-6 lg:gap-8 items-start mb-1 sm:mb-2">

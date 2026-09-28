@@ -40,7 +40,7 @@ export function HeroCTA({
     <div ref={containerRef} className="w-full">
       {/* Desktop Geometric Composition */}
       <div
-        className="hidden md:block hero__cta-composition relative w-full max-w-360 mx-auto"
+        className="hidden lg:block hero__cta-composition relative w-full max-w-360 mx-auto"
         style={{ height: "clamp(56px, 5.29vw, 80px)" }}
       >
         {/* SVG Background Layer */}
@@ -141,16 +141,16 @@ export function HeroCTA({
       </div>
 
       {/* Mobile Responsive Pill Group */}
-      <div className="flex md:hidden flex-col sm:flex-row items-center justify-center gap-3 w-full px-4 max-w-md mx-auto">
+      <div className="flex lg:hidden flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md sm:max-w-xl mx-auto">
         <Link
           href={primaryHref}
-          className="w-full text-center font-bold text-white bg-linear-to-r from-[#6B21D9] via-[#7135DF] to-[#4F46E5] py-3.5 px-6 rounded-full shadow-[0_0_24px_rgba(107,33,217,0.4)] text-sm tracking-wide transition-all active:scale-98"
+          className="flex min-h-13 w-full items-center justify-center text-center font-bold text-white bg-linear-to-r from-[#6B21D9] via-[#7135DF] to-[#4F46E5] px-6 rounded-full shadow-[0_0_24px_rgba(107,33,217,0.4)] text-sm tracking-wide transition-all active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
         >
           {primaryLabel}
         </Link>
         <Link
           href={secondaryHref}
-          className="w-full text-center font-bold text-white bg-linear-to-r from-[#1c4fc0] to-[#3B62EB] py-3.5 px-6 rounded-full border border-white/20 shadow-[0_0_20px_rgba(59,98,235,0.3)] text-sm tracking-wide transition-all active:scale-98"
+          className="flex min-h-13 w-full items-center justify-center text-center font-bold text-white bg-white/5 backdrop-blur-md px-6 rounded-full border border-white/25 text-sm tracking-wide transition-all hover:bg-white/10 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
         >
           {secondaryLabel}
         </Link>

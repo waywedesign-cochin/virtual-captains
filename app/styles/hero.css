@@ -307,14 +307,16 @@
   }
 }
 
-@media (max-width: 767px) {
+/* Phones AND tablets: the percentage-positioned stage only holds together at
+   desktop widths, so below 1024 everything drops into ordinary flow. */
+@media (max-width: 1023px) {
   /* The absolute stage is replaced by ordinary flow: the header becomes a
      normal first row instead of an overlay, so nothing can collide with the
      headline no matter how tall the viewport is. */
   .hero {
     --hero-h: auto;
     height: auto;
-    min-height: 100svh;
+    min-height: 0;
     display: block;
     /* The shared site Navbar is `position: fixed` and sits above every page,
        including this one — it isn't part of Hero's own markup (that's the
@@ -322,7 +324,58 @@
        automatically. Below 768px .hero drops from the absolute desktop stage
        into normal flow, and without this top clearance the headline starts
        underneath the fixed navbar instead of below it. */
-    padding-block: clamp(5.5rem, 24vw, 7rem) 3.5rem;
+    padding-block: clamp(7rem, 22vw, 9rem) 3rem;
+  }
+
+  .hero__frame {
+    height: auto;
+    position: relative;
+    width: 100%;
+  }
+
+  /* Premium mobile composition: the hero owns most of the first screen and
+     its content sits centred in it, instead of a stack pinned to the top. */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 88svh;
+  }
+
+  /* The orbit's labels are hidden below desktop, so its bare lines only add
+     noise at this size. */
+  .hero__orbit {
+    display: none;
+  }
+
+  /* Glow sits behind the headline, not the top edge. */
+  .hero__halo {
+    top: 12%;
+    width: min(90vw, 420px);
+  }
+
+  .hero__headline {
+    font-size: clamp(2.6rem, 11.5vw, 4.25rem);
+    line-height: 1.02;
+  }
+
+  .hero__sub {
+    max-width: 34ch;
+    margin: 1.25rem auto 0;
+    font-size: clamp(0.975rem, 0.9rem + 0.4vw, 1.125rem);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .hero__cta-underline {
+    display: none;
+  }
+
+  /* Centred with margins, not a transform — GSAP animates this element's
+     transform and would overwrite a CSS translate. */
+  .hero__figure {
+    max-width: 760px;
+    margin-inline: auto;
   }
 
   .hero__header {
@@ -343,7 +396,7 @@
   }
 
   .hero__figure {
-    opacity: 0.34;
+    opacity: 0.3;
   }
 
   .hero__copy,
@@ -355,7 +408,7 @@
   }
 
   .hero__cta {
-    margin-top: 2.5rem;
+    margin-top: 2.25rem;
   }
 
   .hero__cta-frame {

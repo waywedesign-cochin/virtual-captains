@@ -3,7 +3,7 @@ import Navbar from "../components/home/Navbar";
 import OrgHero from "../components/organisations/OrgHero";
 import GroomStudio from "../components/organisations/GroomStudio";
 import OrgCTA from "../components/organisations/OrgCTA";
-import IndividualsOrgFooter from "../components/common/IndividualsOrgFooter";
+import SiteFooter from "../components/home/SiteFooter";
 
 export const metadata: Metadata = {
   title: "Virtual Captains for Organisations — Total Sales Floor Management",
@@ -19,7 +19,8 @@ export default function OrganisationsPage() {
         <OrgHero />
         <GroomStudio />
         <OrgCTA />
-        <IndividualsOrgFooter />
+        {/* Home-page footer, white → blue to flow out of this light page */}
+        <SiteFooter showCTA={false} theme="white-blue" />
       </main>
     </>
   );

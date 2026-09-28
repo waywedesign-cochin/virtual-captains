@@ -90,31 +90,14 @@ export default function OrgHero() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-[75vh] bg-white flex items-center justify-center overflow-hidden py-24 lg:py-32"
+      className="relative w-full min-h-[75vh] bg-white flex items-center justify-center overflow-hidden pt-28 pb-16 sm:py-24 lg:py-32"
     >
-      {/* Background Rings - Thick sculptural concentric circles matching earlier design */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-        {[1, 2, 3, 4].map((ring) => (
-          <div
-            key={ring}
-            className="hero-ring absolute rounded-full border-4 sm:border-8 md:border-14 lg:border-16 border-slate-200"
-            style={{
-              width: `calc(10vw + ${ring * 9}vw)`,
-              height: `calc(10vw + ${ring * 9}vw)`,
-              minWidth: `${140 + ring * 100}px`,
-              minHeight: `${140 + ring * 100}px`,
-              opacity: ring === 4 ? 0.25 : 0.85 - ring * 0.15,
-            }}
-          />
-        ))}
-      </div>
-
       {/* Top dark gradient for navbar visibility - much smoother blend */}
       <div className="absolute top-0 left-0 right-0 h-[55vh] bg-linear-to-b from-neutral-900/30 via-neutral-900/10 to-transparent pointer-events-none" />
 
       <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full">
         {/* Left Text */}
-        <div className="lg:col-span-3 hero-text text-center lg:text-left order-2 lg:order-1 pt-8 lg:pt-0">
+        <div className="relative z-10 lg:col-span-3 hero-text text-center lg:text-left order-2 lg:order-1 pt-8 lg:pt-0">
           <h3 className="text-[#2563eb] text-[11px] font-bold uppercase tracking-widest mb-1">
             FOUR PROGRAMMES,
           </h3>
@@ -128,10 +111,30 @@ export default function OrgHero() {
         </div>
 
         {/* Center Visual & Title */}
-        <div className="lg:col-span-6 relative flex flex-col items-center justify-center min-h-125 md:min-h-150 order-1 lg:order-2">
+        <div className="lg:col-span-6 relative flex flex-col items-center justify-center min-h-100 sm:min-h-125 md:min-h-150 [@media(max-height:500px)]:min-h-80 order-1 lg:order-2">
+          {/* Concentric rings — inside the title's own container so they are
+              always centred on the headline (they were centred on the whole
+              section, up to 158px off on phones/tablets). Centred with flex,
+              not a translate: GSAP animates the rings' transform. */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+            {[1, 2, 3, 4].map((ring) => (
+              <div
+                key={ring}
+                className="hero-ring absolute rounded-full border-4 sm:border-8 md:border-14 lg:border-16 border-slate-200"
+                style={{
+                  width: `calc(10vw + ${ring * 9}vw)`,
+                  height: `calc(10vw + ${ring * 9}vw)`,
+                  minWidth: `${140 + ring * 100}px`,
+                  minHeight: `${140 + ring * 100}px`,
+                  opacity: ring === 4 ? 0.25 : 0.85 - ring * 0.15,
+                }}
+              />
+            ))}
+          </div>
+
           {/* Main Title - No background card */}
           <div className="text-center z-10 hero-text">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-bold text-[#2563eb] mb-2 leading-[1.1] tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[3.5rem] xl:text-[72px] font-bold text-[#2563eb] mb-2 leading-[1.1] tracking-tight">
               <span className="block">From Induction</span>
               <span className="flex items-center justify-center gap-[0.25em]">
                 <span>to</span>
@@ -146,28 +149,32 @@ export default function OrgHero() {
           </div>
 
           {/* Floating Bubbles */}
-          <div className="absolute inset-0 pointer-events-none">
+          {/* Hidden on very short screens (rotated phones) — there isn't the
+              height for them to float clear of the headline */}
+          <div className="absolute inset-0 pointer-events-none [@media(max-height:500px)]:hidden">
             {/* Top Left - Groom Studio (Green) */}
-            <div className="hero-bubble absolute top-[0%] left-[5%] sm:top-[2%] sm:left-[25%] md:left-[30%] bg-[#aee7aa] text-[#0f3d0f] px-3 py-2 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold text-xs sm:text-[15px] shadow-[0_8px_20px_rgba(174,231,170,0.4)] leading-tight text-center">
+            {/* Four corners around the title, clear of the text:
+                top-left, top-right, bottom-left, bottom-right */}
+            <div className="hero-bubble absolute top-[4%] left-[4%] sm:left-[14%] lg:left-[8%] xl:left-[14%] bg-[#aee7aa] text-[#0f3d0f] px-3 py-2 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold text-xs sm:text-[15px] shadow-[0_8px_20px_rgba(174,231,170,0.4)] leading-tight text-center">
               Groom
               <br />
               Studio
             </div>
 
             {/* Top Right - Sales Audit (Cyan) */}
-            <div className="hero-bubble absolute top-[12%] right-[2%] sm:top-[18%] sm:right-[22%] md:right-[28%] bg-[#a6e6db] text-[#0f3d36] px-3 py-1 sm:px-5 sm:py-1.5 rounded-full font-medium text-[10px] sm:text-[13px] shadow-[0_6px_16px_rgba(166,230,219,0.4)]">
+            <div className="hero-bubble absolute top-[9%] right-[4%] sm:right-[14%] lg:right-[6%] xl:right-[14%] bg-[#a6e6db] text-[#0f3d36] px-3 py-1 sm:px-5 sm:py-1.5 rounded-full font-medium text-[10px] sm:text-[13px] shadow-[0_6px_16px_rgba(166,230,219,0.4)]">
               Sales Audit
             </div>
 
             {/* Bottom Left - SalesX Training (Blue) */}
-            <div className="hero-bubble absolute bottom-[5%] left-[2%] sm:bottom-[8%] sm:left-[12%] md:left-[22%] bg-[#3b82f6] text-white px-5 py-3 sm:px-7 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-xl shadow-[0_12px_24px_rgba(59,130,246,0.35)] leading-tight text-center">
+            <div className="hero-bubble absolute bottom-[6%] left-[4%] sm:left-[12%] lg:left-[4%] xl:left-[12%] bg-[#3b82f6] text-white px-5 py-3 sm:px-7 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-xl shadow-[0_12px_24px_rgba(59,130,246,0.35)] leading-tight text-center">
               SalesX
               <br />
               Training
             </div>
 
             {/* Bottom Right - Outbound Lead Gen (Peach) */}
-            <div className="hero-bubble absolute bottom-[10%] right-[5%] sm:bottom-[15%] sm:right-[25%] md:right-[32%] bg-[#dfaf9b] text-[#3d1e0f] px-3 py-2 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold text-xs sm:text-[14px] shadow-[0_8px_20px_rgba(223,175,155,0.4)] leading-tight text-center">
+            <div className="hero-bubble absolute bottom-[10%] right-[4%] sm:right-[14%] lg:right-[6%] xl:right-[14%] bg-[#dfaf9b] text-[#3d1e0f] px-3 py-2 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold text-xs sm:text-[14px] shadow-[0_8px_20px_rgba(223,175,155,0.4)] leading-tight text-center">
               Outbound
               <br />
               Lead Gen
@@ -176,16 +183,16 @@ export default function OrgHero() {
         </div>
 
         {/* Right CTA */}
-        <div className="lg:col-span-3 hero-text flex flex-row lg:flex-col gap-4 justify-center lg:justify-end items-center lg:items-end order-3 pt-4 lg:pt-0">
+        <div className="relative z-10 lg:col-span-3 hero-text flex flex-row lg:flex-col gap-4 justify-center lg:justify-end items-center lg:items-end order-3 pt-4 lg:pt-0">
           <Link
             href="/demo"
-            className="px-8 py-2.5 rounded-full border border-black bg-white text-black hover:bg-slate-50 transition-colors w-36 text-center text-[13.5px] font-medium shadow-sm"
+            className="flex min-h-11 items-center justify-center px-8 rounded-full border border-black bg-white text-black hover:bg-slate-50 transition-colors w-36 text-center text-[13.5px] font-medium shadow-sm"
           >
             Demo
           </Link>
           <Link
             href="/get-started"
-            className="px-8 py-2.5 rounded-full bg-[#3b82f6] text-white hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30 w-36 text-center text-[13.5px] font-medium"
+            className="flex min-h-11 items-center justify-center px-8 rounded-full bg-[#3b82f6] text-white hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30 w-36 text-center text-[13.5px] font-medium"
           >
             Get Started
           </Link>

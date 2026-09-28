@@ -80,11 +80,18 @@ export default function OrgCTA() {
   return (
     <section
       ref={containerRef}
-      className="w-full bg-white py-16 sm:py-24 md:py-32 overflow-hidden relative"
+      className="w-full bg-white py-12 sm:py-16 lg:py-24 overflow-hidden relative"
     >
+      {/* Fade the glow orbs out to pure white at the bottom edge, so the
+          section meets the footer's white → blue gradient without a seam */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-28 sm:h-36 bg-linear-to-b from-transparent to-white"
+      />
+
       <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
         {/* Left Content */}
-        <div className="z-10 relative flex flex-col items-start">
+        <div className="z-10 relative flex flex-col items-center text-center md:items-start md:text-left">
           <p className="cta-text text-sm sm:text-base font-normal text-slate-700 mb-2 sm:mb-3.5">
             For Organisations
           </p>
@@ -102,7 +109,7 @@ export default function OrgCTA() {
         </div>
 
         {/* Right Visuals - 2 Glow Gradients (Top-Right Blue & Bottom-Left Mint Green) + Frosted Glass Circle */}
-        <div className="relative w-full min-h-80 sm:min-h-100 md:min-h-115 flex items-center justify-center">
+        <div className="relative w-full min-h-80 sm:min-h-100 md:min-h-115 [@media(max-height:500px)]:min-h-72 flex items-center justify-center">
           {/* 1. TOP-RIGHT Glowing Blue Gradient Orb */}
           <div
             className="cta-gradient-blue absolute -top-8 -right-4 sm:-top-12 sm:right-2 md:-top-16 md:right-6 w-65 h-65 sm:w-85 sm:h-85 md:w-105 md:h-105 rounded-full pointer-events-none transition-transform"

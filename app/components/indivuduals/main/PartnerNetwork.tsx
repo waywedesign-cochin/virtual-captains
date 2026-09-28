@@ -1,13 +1,21 @@
 import { partner, partnerSlots } from "@/content/site";
 import { PartnerLines } from "./PartnerLines";
 import { PartnerStage } from "./PartnerStage";
+import { PartnerNetworkCompact } from "./PartnerNetworkCompact";
 import Image from "next/image";
 
 export function PartnerNetwork() {
   return (
-    <section className="section partner" aria-labelledby="partner-heading">
+    <section className="section partner" aria-label="Partner Network">
+      {/* Phones & tablets: flowing layout, no pinned stage */}
+      <div className="lg:hidden">
+        <PartnerNetworkCompact />
+      </div>
+
+      {/* Desktop: the pinned, percentage-positioned stage */}
+      <div className="hidden h-full lg:block">
       <PartnerStage>
-        <h2 className="partner__title font-serif" id="partner-heading">
+        <h2 className="partner__title type-h2" id="partner-heading">
           {partner.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -17,14 +25,14 @@ export function PartnerNetwork() {
         <div className="absolute top-[8.7%] md:left-[55%] left-[8.47%] max-md:top-[25%] z-3 max-w-lg pr-4 md:pr-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 shadow-[0_0_16px_rgba(56,189,248,0.15)] mb-3">
             <span className="h-1.5 w-1.5 rounded-full bg-[#38bdf8] animate-pulse shadow-[0_0_6px_#38bdf8]" />
-            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#38bdf8]">
+            <span className="type-eyebrow text-[#38bdf8]">
               Hiring Network
             </span>
           </div>
-          <h3 className="text-white font-serif font-medium text-lg md:text-xl leading-snug mb-2">
+          <h3 className="type-h3 font-medium text-white mb-2">
             {partner.sideHeading}
           </h3>
-          <p className="text-white/70 text-xs md:text-sm leading-relaxed">
+          <p className="type-body text-white/70">
             {partner.sideBody}
           </p>
         </div>
@@ -63,6 +71,7 @@ export function PartnerNetwork() {
           ))}
         </ul>
       </PartnerStage>
+      </div>
     </section>
   );
 }
