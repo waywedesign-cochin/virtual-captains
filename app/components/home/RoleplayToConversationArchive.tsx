@@ -687,7 +687,7 @@ export default function RoleplayToConversation() {
               </span>
               <h2
                 ref={mainHeadingRef}
-                className="font-serif text-[clamp(1.5rem,2.5vw+1rem,3rem)] font-normal leading-[1.05] tracking-[-0.04em]"
+                className="font-sans text-[clamp(1.5rem,2.5vw+1rem,3rem)] font-normal leading-[1.05] tracking-[-0.04em]"
               >
                 <span className="block">
                   <span ref={headingLine1Ref} className="inline-block lg:whitespace-nowrap">
@@ -752,7 +752,7 @@ export default function RoleplayToConversation() {
             >
               <span
                 ref={refineRef}
-                className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-1/2 bg-white px-2 font-serif text-[clamp(22px,2vw,36px)] italic leading-none text-[#3478e5]"
+                className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-1/2 bg-white px-2 font-sans text-[clamp(22px,2vw,36px)] italic leading-none text-[#3478e5]"
               >
                 Refine
               </span>
@@ -767,7 +767,7 @@ export default function RoleplayToConversation() {
             >
               <span
                 ref={validateRef}
-                className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-white px-2 font-serif text-[clamp(16px,1.5vw,26px)] italic leading-none text-[#3478e5]"
+                className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-white px-2 font-sans text-[clamp(16px,1.5vw,26px)] italic leading-none text-[#3478e5]"
               >
                 Valuate
               </span>
@@ -782,7 +782,7 @@ export default function RoleplayToConversation() {
             >
               <span
                 ref={executeRef}
-                className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-1/2 bg-white px-2 font-serif text-[clamp(16px,1.5vw,26px)] italic leading-none text-[#3478e5]"
+                className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-1/2 bg-white px-2 font-sans text-[clamp(16px,1.5vw,26px)] italic leading-none text-[#3478e5]"
               >
                 Execute
               </span>
@@ -797,7 +797,7 @@ export default function RoleplayToConversation() {
             >
               <span
                 ref={rehearseRef}
-                className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-white px-2 font-serif text-[clamp(12px,1vw,17px)] italic leading-none text-[#3478e5]"
+                className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-white px-2 font-sans text-[clamp(12px,1vw,17px)] italic leading-none text-[#3478e5]"
               >
                 Rehearse
               </span>
@@ -831,3 +831,4 @@ export default function RoleplayToConversation() {
     </section>
   );
 }
+

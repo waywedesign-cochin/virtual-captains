@@ -187,9 +187,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
 
       scrubTimelineRef.current = tl;
 
-      const mm = gsap.matchMedia();
-      mm.add("(max-width: 1023px)", () => {
-        if (!headlineRef.current) return;
+      if (headlineRef.current) {
         gsap.set(headlineRef.current, {
           opacity: 0,
           scale: 0.65,
@@ -212,7 +210,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
           ],
         });
-      });
+      }
     },
     { scope: sectionRef },
   );
@@ -237,25 +235,26 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 w-full overflow-hidden flex flex-col justify-center py-6 sm:py-10 lg:py-0 lg:h-screen lg:min-h-0"
+      className="relative z-10 w-full overflow-hidden flex flex-col justify-center py-6 sm:py-10 pin:py-0 pin:h-screen pin:min-h-0"
     >
-      <div className="relative z-10 mx-auto w-full max-w-[1920px] px-4 sm:px-10 lg:px-16 py-3 sm:py-6 lg:py-4 xl:py-6 flex flex-col justify-center lg:justify-between flex-1 gap-5 sm:gap-8 lg:gap-0 overflow-hidden">
+      <div className="relative z-10 mx-auto w-full max-w-[1920px] px-4 sm:px-10 pin:px-16 py-3 sm:py-6 pin:py-4 pin-xl:py-6 flex flex-col justify-center pin:justify-between flex-1 gap-5 sm:gap-8 pin:gap-0 overflow-hidden">
         {/* TOP EYEBROW */}
         <p
           ref={topTitleRef}
-          className="ta-eyebrow text-center font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white/50 max-w-xl mx-auto px-4 shrink-0 mb-2 sm:mb-4 lg:mb-2"
+          className="ta-eyebrow text-center font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white/50 max-w-xl mx-auto px-4 shrink-0 mb-2 sm:mb-4 pin:mb-2"
         >
-          Two Audiences &nbsp;·&nbsp; One Discipline &nbsp;:&nbsp; Execution
+          <span className="whitespace-nowrap">Two Audiences · One Discipline</span>{" "}
+          <span className="whitespace-nowrap">: Execution</span>
         </p>
 
         {/* MIDDLE ROW: HEADLINE & AUDIENCE CARD */}
         <div className="relative z-10 flex-1 w-full flex items-center justify-center my-auto min-h-0">
-          <div className="relative w-full grid items-center gap-6 sm:gap-10 lg:grid-cols-2 lg:gap-8 xl:gap-12">
+          <div className="relative w-full grid items-center gap-6 sm:gap-10 pin:grid-cols-2 pin:gap-8 pin-xl:gap-12">
             {/* LEFT COLUMN: HEADLINE */}
-            <div className="lg:pl-16 xl:pl-24 flex justify-center lg:block">
+            <div className="pin:pl-28 pin-xl:pl-28 flex justify-center pin:block">
               <h2
                 ref={headlineRef}
-                className="ta-headline inline-block max-w-xl font-serif text-[clamp(1.75rem,5vw,3.25rem)] font-normal leading-[1.16] text-white text-center lg:text-left"
+                className="ta-headline inline-block max-w-xl font-sans text-[clamp(1.5rem,4.5vw,3rem)] pin:text-[clamp(1.75rem,2.9vw,2.25rem)] pin-xl:text-[clamp(1.5rem,4.5vw,3rem)] font-normal leading-[1.16] text-white text-center pin:text-left"
               >
                 <span className="block">
                   <span ref={headlineLine1Ref} className="inline-block">
@@ -278,7 +277,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             {/* CENTER DIVIDER: GLOWING YELLOW BUBBLE WITH CENTER LINE IN BETWEEN LHS & RHS */}
             <div
               ref={centerDividerRef}
-              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center justify-center h-[72%] max-h-95 z-20"
+              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden pin:flex flex-col items-center justify-center h-[72%] max-h-95 z-20"
               aria-hidden="true"
             >
               {/* Top line segment */}
@@ -309,7 +308,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             {/* ============================================================
                 RIGHT COLUMN: MOBILE RESPONSIVE CARD (< 1024px)
             ============================================================ */}
-            <div className="block lg:hidden w-full max-w-md mx-auto relative z-20">
+            <div className="block pin:hidden w-full max-w-md mx-auto relative z-20">
               {/* Soft atmospheric blue glow */}
               <div className="pointer-events-none absolute -inset-3 rounded-3xl bg-[radial-gradient(ellipse_at_top,rgba(77,130,245,0.2)_0%,transparent_70%)] blur-xl" />
 
@@ -341,7 +340,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                 </div>
 
                 {/* Sub-headline */}
-                <p className="font-serif text-[1.15rem] sm:text-[1.3rem] leading-snug text-white text-center sm:text-left mb-4">
+                <p className="font-sans text-[1.15rem] sm:text-[1.3rem] leading-snug text-white text-center sm:text-left mb-4">
                   {activeAudience === "orgs" ? (
                     <>
                       Equip your teams with{" "}
@@ -379,7 +378,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                 {/* Bottom Action Button */}
                 <div className="mt-5 pt-4 border-t border-white/8 flex justify-center">
                   <Link
-                    href={activeAudience === "orgs" ? "/organisations" : "/indivuduals"}
+                    href={activeAudience === "orgs" ? "/organisations" : "/individuals"}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/8 hover:bg-white hover:text-black px-6 py-2.5 text-xs sm:text-[13px] font-medium text-white transition-all shadow-sm active:scale-95 group cursor-pointer"
                   >
                     <span>
@@ -410,10 +409,10 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             ============================================================ */}
             <div
               ref={rhsContainerRef}
-              className="relative hidden lg:flex h-115 xl:h-122.5 w-full items-center"
+              className="relative hidden pin:flex h-115 pin-xl:h-122.5 w-full items-center"
             >
               {/* DESKTOP BACKGROUND WEDGE (Preserves natural 724:1084 aspect ratio) */}
-              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 xl:-right-2 w-[140%] xl:w-[150%] h-[135%] xl:h-[145%] flex items-center justify-end">
+              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 pin-xl:-right-2 w-[140%] pin-xl:w-[150%] h-[135%] pin-xl:h-[145%] flex items-center justify-end">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/home/Vector1.png"
@@ -429,13 +428,13 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               <div
                 ref={orgsTextRef}
                 style={{ opacity: 1 }}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 pin:py-4 pin:pl-10 pin-xl:pl-14 pin:pr-6 max-w-112.5"
               >
                 <div>
-                  <p className="font-serif text-[15px] sm:text-[17px] italic text-white/85">
+                  <p className="font-sans text-[15px] sm:text-[17px] italic text-white/85">
                     For Organisations
                   </p>
-                  <p className="mt-0.5 font-serif text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
+                  <p className="mt-0.5 font-sans text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
                     Equip your teams with{" "}
                     <span className="italic text-white/90">
                       real-world practice
@@ -476,13 +475,13 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                   pointerEvents: "none",
                   transform: "translateY(35px) rotate(4deg)",
                 }}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 pin:py-4 pin:pl-10 pin-xl:pl-14 pin:pr-6 max-w-112.5"
               >
                 <div>
-                  <p className="font-serif text-[15px] sm:text-[17px] italic text-white/85">
+                  <p className="font-sans text-[15px] sm:text-[17px] italic text-white/85">
                     For Individuals
                   </p>
-                  <p className="mt-0.5 font-serif text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
+                  <p className="mt-0.5 font-sans text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
                     Elevate your own{" "}
                     <span className="italic text-white/90">
                       closing capabilities
@@ -520,7 +519,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         {/* BOTTOM PAGINATION & TOGGLE (DESKTOP ONLY) */}
         <div
           ref={bottomNavRef}
-          className="relative z-10 mt-2 sm:mt-3 lg:mt-2 hidden lg:flex flex-col items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-2"
+          className="relative z-10 mt-2 sm:mt-3 pin:mt-2 hidden pin:flex flex-col items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-2"
         >
           <button
             type="button"
@@ -573,3 +572,4 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
 
 TwoAudiences.displayName = "TwoAudiences";
 export default TwoAudiences;
+

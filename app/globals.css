@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/*
+ * Scroll-pinned home sections only get their desktop (pinned) layout when the
+ * viewport is wide AND tall enough to fit a full-screen stage. Short desktop
+ * windows (zoomed browser, squashed window) fall back to the stacked
+ * mobile/tablet layout instead of clipping. Keep in sync with PIN_QUERY in
+ * app/components/home/pinQuery.ts. `pin-xl` is declared second so its rules
+ * sort after — and override — plain `pin` ones, like xl: over lg:.
+ */
+@custom-variant pin (@media (min-width: 1024px) and (min-height: 600px));
+@custom-variant pin-xl (@media (min-width: 1280px) and (min-height: 600px));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -76,4 +87,31 @@ body {
 
 .animate-pulse-glow {
   animation: pulse-glow 2s infinite ease-in-out;
+}
+
+/* Custom sleek scrollbar for dropdowns */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+/* Carousel autoplay countdown bar (OurApproach pills) */
+@keyframes vc-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }

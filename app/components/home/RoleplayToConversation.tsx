@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import TwoAudiences, { TwoAudiencesRef } from "./TwoAudiences";
 import DottedBackground from "./DottedBackground";
+import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -41,7 +42,7 @@ export default function RoleplayToConversation() {
        * DESKTOP
        * ============================================================
        */
-      mm.add("(min-width: 1024px)", () => {
+      mm.add(PIN_QUERY, () => {
         const wordElements = rightTextRef.current?.querySelectorAll(".word-reveal");
         if (!wordElements?.length) return;
 
@@ -181,7 +182,7 @@ export default function RoleplayToConversation() {
        * MOBILE / TABLET (No pin)
        * ============================================================
        */
-      mm.add("(max-width: 1023px)", () => {
+      mm.add(NO_PIN_QUERY, () => {
         const wordElements = rightTextRef.current?.querySelectorAll(".word-reveal");
         
         if (wordElements) {
@@ -223,7 +224,7 @@ export default function RoleplayToConversation() {
     <section 
       ref={sectionRef} 
       data-nav-override-zone
-      className="relative z-10 w-full overflow-hidden min-h-0 lg:min-h-dvh pb-6 sm:pb-10 lg:pb-0"
+      className="relative z-10 w-full overflow-hidden min-h-0 pin:min-h-dvh pb-6 sm:pb-10 pin:pb-0"
       style={{
         background: "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
       }}
@@ -236,7 +237,7 @@ export default function RoleplayToConversation() {
       ============================================================ */}
       <div 
         ref={stage1Ref}
-        className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-10 sm:py-14 lg:h-dvh lg:p-8"
+        className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-10 sm:py-14 pin:h-dvh pin:p-8"
       >
 
         <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10">
@@ -248,7 +249,7 @@ export default function RoleplayToConversation() {
           </span>
           <h2 
             ref={mainHeadingRef} 
-            className="font-serif text-[clamp(2.1rem,3.4vw,3.6rem)] leading-[1.14] text-white font-normal"
+            className="font-sans text-[clamp(2.1rem,3.4vw,3.6rem)] leading-[1.14] text-white font-normal"
           >
             Driven by <span className="italic text-[#4d82f5]">Sales Execution</span>
           </h2>
@@ -260,14 +261,14 @@ export default function RoleplayToConversation() {
         >
           <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
             {PROMISE_PARAGRAPH_1.map((word, i) => (
-              <span key={`p1-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 lg:opacity-15">
+              <span key={`p1-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 pin:opacity-15">
                 {word}
               </span>
             ))}
           </p>
           <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
             {PROMISE_PARAGRAPH_2.map((word, i) => (
-              <span key={`p2-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 lg:opacity-15">
+              <span key={`p2-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 pin:opacity-15">
                 {word}
               </span>
             ))}
@@ -280,7 +281,7 @@ export default function RoleplayToConversation() {
       ============================================================ */}
       <div 
         ref={twoAudiencesContainerRef} 
-        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-6 sm:mt-8 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none"
+        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-6 sm:mt-8 pin:mt-0 pin:absolute pin:inset-0 pin:z-50 pin:opacity-0 pin:pointer-events-none"
       >
         <div className="pointer-events-auto w-full h-full">
           <TwoAudiences ref={twoAudiencesRef} />
@@ -290,3 +291,4 @@ export default function RoleplayToConversation() {
     </section>
   );
 }
+

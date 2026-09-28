@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
+import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -119,12 +120,16 @@ export default function Endorsement() {
   }, []);
 
   // Only advance while the section is actually on screen and nobody is
-  // reading a card under the pointer.
+  // reading a card under the pointer. Restarting on every `active` change
+  // gives each card its full time after a tap/swipe — a free-running interval
+  // could fire right after a manual change and skip a card. On pinned
+  // desktop layouts the scroll position drives the cards, so no autoplay.
   useEffect(() => {
     if (!onScreen || hovered) return;
-    const id = window.setInterval(() => go(1), AUTOPLAY_MS);
-    return () => window.clearInterval(id);
-  }, [onScreen, hovered, go]);
+    if (window.matchMedia(PIN_QUERY).matches) return;
+    const id = window.setTimeout(() => go(1), AUTOPLAY_MS);
+    return () => window.clearTimeout(id);
+  }, [onScreen, hovered, go, active]);
 
   useEffect(() => {
     const node = sectionRef.current;
@@ -190,7 +195,7 @@ export default function Endorsement() {
       );
 
       // Desktop: Pinned testimonial scrub — no curtain exit
-      mm.add("(min-width: 1024px)", () => {
+      mm.add(PIN_QUERY, () => {
         const pinTl = gsap.timeline({
           scrollTrigger: {
             id: "endorsement-pin",
@@ -217,7 +222,7 @@ export default function Endorsement() {
         return () => pinTl.kill();
       });
 
-      mm.add("(max-width: 1023px)", () => {
+      mm.add(NO_PIN_QUERY, () => {
         gsap.set(sectionRef.current, { clearProps: "transform" });
       });
     },
@@ -230,7 +235,7 @@ export default function Endorsement() {
       id="endorsement"
       data-nav-section="Endorsement"
       data-nav-theme="dark"
-      className="relative z-10 flex min-h-0 lg:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 lg:pt-[clamp(68px,12vh,152px)] lg:pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
+      className="relative z-10 flex min-h-0 pin:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 pin:pt-[clamp(68px,12vh,152px)] pin:pb-[clamp(28px,5vh,72px)] text-white sm:px-10 pin:px-16"
       style={{
         background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}
@@ -244,13 +249,14 @@ export default function Endorsement() {
           ref={eyebrowRef}
           className="mb-[clamp(12px,2vh,24px)] block text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/50"
         >
-          Social Proof &nbsp;·&nbsp; Enterprise &nbsp;·&nbsp; Individual &nbsp;·&nbsp; Global
+          <span className="whitespace-nowrap">Social Proof · Enterprise</span>{" "}
+          <span className="whitespace-nowrap">· Individual · Global</span>
         </span>
 
         {/* ---------- HEADING ---------- */}
         <h2
           ref={headingRef}
-          className="max-w-2xl text-center font-serif text-[clamp(1.75rem,2.2vw+1.2vh,3rem)] font-normal leading-[1.18] text-white"
+          className="max-w-2xl text-center font-sans text-[clamp(1.75rem,2.2vw+1.2vh,3rem)] font-normal leading-[1.18] text-white"
         >
           Our Partners, in Their Own Words.
         </h2>
@@ -260,7 +266,7 @@ export default function Endorsement() {
           ref={stackRef}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:40%] sm:[--fan-2:74%]"
+          className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl touch-pan-y items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:40%] sm:[--fan-2:74%]"
           style={{ height: "clamp(350px, 44vh, 395px)" }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
@@ -357,14 +363,14 @@ export default function Endorsement() {
                     />
                   </svg>
 
-                  <p className={`mt-3 max-w-44 sm:max-w-48 font-serif text-[13px] sm:text-[14px] font-normal leading-[1.35] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
+                  <p className={`mt-3 max-w-44 sm:max-w-48 font-sans text-[13px] sm:text-[14px] font-normal leading-[1.35] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
                     {item.quote}
                   </p>
                 </div>
 
                 {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
                 <div className="relative z-10 mt-auto max-w-40 pt-2">
-                  <h4 className="font-serif text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
+                  <h4 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
                     {item.name}
                   </h4>
                   <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
@@ -390,12 +396,12 @@ export default function Endorsement() {
         </div>
 
         {/* ---------- CONTROLS ---------- */}
-        <div className="relative z-10 mt-[clamp(18px,3vh,40px)] flex items-center gap-5">
+        <div className="relative z-10 mt-[clamp(18px,3vh,40px)] flex items-center gap-3 sm:gap-5">
           <button
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous testimonial"
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:h-9 sm:w-9"
           >
             <svg
               viewBox="0 0 24 24"
@@ -409,7 +415,9 @@ export default function Endorsement() {
             </svg>
           </button>
 
-          <div className="flex items-center gap-2">
+          {/* The visible pill stays 8px tall; the button around it is a 24px
+              hit area so the dots are actually tappable on touch screens */}
+          <div className="flex items-center">
             {TESTIMONIALS.map((item, i) => (
               <button
                 key={item.name}
@@ -417,12 +425,16 @@ export default function Endorsement() {
                 onClick={() => setActive(i)}
                 aria-label={`Show testimonial from ${item.name}`}
                 aria-current={i === active}
-                className={`h-2 cursor-pointer rounded-full transition-all duration-500 ${
-                  i === active
-                    ? "w-6 bg-white"
-                    : "w-2 bg-white/30 hover:bg-white/60"
-                }`}
-              />
+                className="group flex h-6 cursor-pointer items-center justify-center px-1 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              >
+                <span
+                  className={`block h-2 rounded-full transition-all duration-500 ${
+                    i === active
+                      ? "w-6 bg-white"
+                      : "w-2 bg-white/30 group-hover:bg-white/60"
+                  }`}
+                />
+              </button>
             ))}
           </div>
 
@@ -430,7 +442,7 @@ export default function Endorsement() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next testimonial"
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:h-9 sm:w-9"
           >
             <svg
               viewBox="0 0 24 24"
@@ -448,3 +460,4 @@ export default function Endorsement() {
     </section>
   );
 }
+
