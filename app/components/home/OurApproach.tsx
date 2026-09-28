@@ -63,6 +63,7 @@ const MODEL_SLIDES: ModelSlide[] = [
 
 export default function OurApproach() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const [activeStep, setActiveStep] = useState(0);
@@ -98,6 +99,32 @@ export default function OurApproach() {
 
   useGSAP(
     () => {
+      // Signature Zoom-in Heading Entrance
+      if (headerRef.current) {
+        gsap.set(headerRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+        });
+
+        gsap.to(headerRef.current, {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+          ],
+        });
+      }
+
       const mm = gsap.matchMedia();
 
       // Desktop: Pinned scroll through the 4 capability slides — no curtain exit
@@ -107,7 +134,9 @@ export default function OurApproach() {
             id: "model-pin",
             trigger: sectionRef.current,
             start: "top top",
-            end: () => "+=" + ((typeof window !== "undefined" ? window.innerHeight : 900) * 3.2),
+            end: () =>
+              "+=" +
+              (typeof window !== "undefined" ? window.innerHeight : 900) * 3.2,
             pin: true,
             anticipatePin: 1,
             scrub: 0.5,
@@ -132,7 +161,7 @@ export default function OurApproach() {
 
       // Mobile / Tablet: Smooth scrub
       mm.add("(max-width: 1023px)", () => {
-        gsap.set(sectionRef.current, { clearProps: "all" });
+        gsap.set(sectionRef.current, { clearProps: "transform" });
 
         const mobileTl = gsap.timeline({
           scrollTrigger: {
@@ -153,7 +182,7 @@ export default function OurApproach() {
 
       return () => mm.revert();
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   return (
@@ -162,7 +191,7 @@ export default function OurApproach() {
       id="about"
       data-nav-section="The Model"
       data-nav-theme="dark"
-      className="relative z-10 flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-white"
+      className="relative -mt-px z-10 flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-white"
       style={{
         background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}
@@ -174,7 +203,7 @@ export default function OurApproach() {
         {/* ============================================================
             1. CONSTANT TOP HEADER
         ============================================================ */}
-        <div className="text-center pt-1 sm:pt-2 shrink-0">
+        <div ref={headerRef} className="text-center pt-1 sm:pt-2 shrink-0">
           <span className="block font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-white/40 mb-1.5 sm:mb-2">
             target. engage. Convert.
           </span>
@@ -182,9 +211,7 @@ export default function OurApproach() {
             <span className="italic text-[#4d82f5] block">
               A Complete Sales Engine
             </span>
-            <span className="block mt-0.5">
-              for Modern Businesses
-            </span>
+            <span className="block mt-0.5">for Modern Businesses</span>
           </h2>
         </div>
 
@@ -193,7 +220,7 @@ export default function OurApproach() {
         ============================================================ */}
         <div className="relative flex flex-col items-center justify-center flex-1 w-full max-w-xl lg:max-w-2xl mx-auto min-h-0 my-auto py-2">
           {/* Active Illustration Stage */}
-          <div className="relative h-40 sm:h-46.25 lg:h-51.25 xl:h-56.25 max-h-[28vh] w-full flex items-center justify-center shrink-0">
+          <div className="relative h-46 sm:h-54 lg:h-64 xl:h-72 max-h-[34vh] w-full flex items-center justify-center shrink-0">
             {MODEL_SLIDES.map((slide, idx) => {
               const isActive = activeStep === idx;
               return (

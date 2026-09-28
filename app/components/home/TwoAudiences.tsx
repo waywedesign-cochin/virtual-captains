@@ -185,6 +185,33 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
       );
 
       scrubTimelineRef.current = tl;
+
+      const mm = gsap.matchMedia();
+      mm.add("(max-width: 1023px)", () => {
+        if (!headlineRef.current) return;
+        gsap.set(headlineRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+        });
+
+        gsap.to(headlineRef.current, {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+          ],
+        });
+      });
     },
     { scope: sectionRef },
   );
@@ -228,7 +255,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             <div className="lg:pl-16 xl:pl-24 flex justify-center lg:block">
               <h2
                 ref={headlineRef}
-                className="inline-block max-w-xl font-serif text-[clamp(1.75rem,2.8vw,3.25rem)] font-normal leading-[1.16] text-white text-center lg:text-left"
+                className="ta-headline inline-block max-w-xl font-serif text-[clamp(1.75rem,2.8vw,3.25rem)] font-normal leading-[1.16] text-white text-center lg:text-left"
               >
                 <span className="block">
                   <span ref={headlineLine1Ref} className="inline-block">

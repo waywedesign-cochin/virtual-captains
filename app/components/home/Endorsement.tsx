@@ -218,7 +218,7 @@ export default function Endorsement() {
       });
 
       mm.add("(max-width: 1023px)", () => {
-        gsap.set(sectionRef.current, { clearProps: "all" });
+        gsap.set(sectionRef.current, { clearProps: "transform" });
       });
     },
     { scope: sectionRef },

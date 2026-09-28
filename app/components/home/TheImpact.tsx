@@ -206,7 +206,7 @@ export default function TheImpact() {
 
       // Mobile & Tablet: Scroll-triggered / scrubbed cards
       mm.add("(max-width: 1023px)", () => {
-        gsap.set(sectionRef.current, { clearProps: "all" });
+        gsap.set(sectionRef.current, { clearProps: "transform" });
 
         const mobileTl = gsap.timeline({
           scrollTrigger: {

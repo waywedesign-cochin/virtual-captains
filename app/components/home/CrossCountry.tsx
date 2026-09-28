@@ -653,7 +653,7 @@ export default function CrossCountry() {
         });
 
         mm.add("(max-width: 1023px)", () => {
-          gsap.set(sectionRef.current, { clearProps: "all" });
+          gsap.set(sectionRef.current, { clearProps: "transform" });
 
           const trigger = ScrollTrigger.create({
             trigger: sectionRef.current,

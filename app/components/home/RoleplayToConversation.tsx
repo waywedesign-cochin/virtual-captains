@@ -47,23 +47,47 @@ export default function RoleplayToConversation() {
 
         // INITIAL STATES
         gsap.set(wordElements, { opacity: 0 });
-        gsap.set(eyebrowRef.current, { opacity: 0, scale: 0.85, y: 15 });
-        gsap.set(mainHeadingRef.current, { opacity: 0, scale: 0.85, y: 20 });
+        gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
+        gsap.set(mainHeadingRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+        });
         gsap.set(twoAudiencesContainerRef.current, { autoAlpha: 0, scale: 0.95 });
 
         // HEADING ENTRY TIMELINE (Triggers before pinning)
-        gsap.to([eyebrowRef.current, mainHeadingRef.current], {
+        const headingEntryTl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 60%", // triggers when section is 40% into the viewport
+            start: "top 65%",
+            toggleActions: "play none none reverse",
           },
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power2.out",
         });
+
+        if (eyebrowRef.current) {
+          headingEntryTl.to(eyebrowRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+        }
+
+        headingEntryTl.to(
+          mainHeadingRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            keyframes: [
+              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+            ],
+          },
+          eyebrowRef.current ? "-=0.25" : undefined,
+        );
 
         // MASTER SCROLL TIMELINE — pinned, no curtain exit
         const masterTl = gsap.timeline({
@@ -129,6 +153,25 @@ export default function RoleplayToConversation() {
           "-=0.4"
         );
 
+        const taHeading = twoAudiencesContainerRef.current?.querySelector(".ta-headline");
+        if (taHeading) {
+          masterTl.fromTo(
+            taHeading,
+            { opacity: 0, scale: 0.65, y: 20, transformOrigin: "center center" },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              keyframes: [
+                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+              ],
+            },
+            "-=0.5",
+          );
+        }
+
         // 5. Give TwoAudiences room to scroll/scrub
         masterTl.to({}, { duration: 3.2 });
       });
@@ -141,12 +184,6 @@ export default function RoleplayToConversation() {
       mm.add("(max-width: 1023px)", () => {
         const wordElements = rightTextRef.current?.querySelectorAll(".word-reveal");
         
-        gsap.set([eyebrowRef.current, mainHeadingRef.current, twoAudiencesContainerRef.current, sectionRef.current], {
-          clearProps: "all",
-        });
-        
-        gsap.set(sectionRef.current, { backgroundColor: "#071430" });
-        
         if (wordElements) {
           gsap.set(wordElements, { opacity: 1 });
         }
@@ -154,6 +191,29 @@ export default function RoleplayToConversation() {
         if (twoAudiencesRef.current) {
           twoAudiencesRef.current.jumpToProgress(0);
         }
+
+        gsap.set(mainHeadingRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+        });
+
+        gsap.to(mainHeadingRef.current, {
+          scrollTrigger: {
+            trigger: stage1Ref.current,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+          ],
+        });
       });
     },
     { scope: sectionRef }
@@ -163,7 +223,7 @@ export default function RoleplayToConversation() {
     <section 
       ref={sectionRef} 
       data-nav-override-zone
-      className="relative z-10 w-full overflow-hidden min-h-dvh"
+      className="relative z-10 w-full overflow-hidden min-h-dvh pb-10 lg:pb-0"
       style={{
         background: "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
       }}
@@ -226,6 +286,7 @@ export default function RoleplayToConversation() {
           <TwoAudiences ref={twoAudiencesRef} />
         </div>
       </div>
+
     </section>
   );
 }
