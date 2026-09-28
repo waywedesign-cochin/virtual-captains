@@ -101,7 +101,7 @@ export default function AboutFounderStory() {
     <section
       role="region"
       aria-label="Founder Roshna Saffar Creed & Story"
-      className="relative w-full bg-[#020B25] text-white"
+      className="relative w-full text-white"
     >
       {/* Scroll track: pins stage in place while scrubbing words */}
       <div
@@ -111,10 +111,8 @@ export default function AboutFounderStory() {
         <div
           ref={stageRef}
           style={{ position: "sticky", top: 0, height: "100vh", width: "100%" }}
-          className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#020B25] px-6 sm:px-10 lg:px-16"
+          className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center px-6 sm:px-10 lg:px-16"
         >
-          {/* Subtle Ambient Cosmic Core Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-212.5 h-137.5 bg-radial from-[#15388c]/30 via-[#07194a]/15 to-transparent blur-[160px] pointer-events-none -z-10" />
 
           {/* Watermark Credo */}
           <span

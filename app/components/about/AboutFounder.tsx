@@ -3,11 +3,26 @@
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
+import { useHeadingZoom } from "./useHeadingZoom";
 
 const FOUNDER_IMAGE = "/about/founder.webp";
 
+/*
+ * Desktop reading layout: portrait (260px) + 64px gap + story (500px) is one
+ * 824px group centred on screen. The portrait's centre therefore sits 282px
+ * left of screen centre, and the story column starts 88px left of it.
+ */
+const PORTRAIT_W = 260;
+const STORY_W = 500;
+const GROUP_GAP = 64;
+const GROUP_W = PORTRAIT_W + GROUP_GAP + STORY_W;
+const PORTRAIT_SHIFT = -(GROUP_W / 2) + PORTRAIT_W / 2; // -282
+const STORY_OFFSET = -(GROUP_W / 2) + PORTRAIT_W + GROUP_GAP; // -88
+
 export default function AboutFounder() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const mobileHeadingRef = useRef<HTMLHeadingElement>(null);
+  useHeadingZoom(mobileHeadingRef);
   const [isMounted, setIsMounted] = useState(false);
   const [cutoutUrl, setCutoutUrl] = useState<string | null>(null);
 
@@ -131,7 +146,7 @@ export default function AboutFounder() {
      2. Center Full-Size Pause (progress: 0.22 -> 0.28):
         - Rests centered at current framed size (y: 0, scale: 1.0, x: 0)
      3. Glide to Left (progress: 0.28 -> 0.46):
-        - Glides from center (x: 0) -> left (x: -285px)
+        - Glides from center (x: 0) -> left (x: PORTRAIT_SHIFT, -282px)
         - Stays at full current size (scale: 1.0)
      4. Story Reveal on the Right (progress: 0.46 -> 0.60):
         - Portrait is safely settled on the left
@@ -166,11 +181,11 @@ export default function AboutFounder() {
 
   const heroX = useTransform(scrollYProgress, (progress: number) => {
     if (progress < 0.28) return 0;
-    if (progress >= 0.46) return -285;
+    if (progress >= 0.46) return PORTRAIT_SHIFT;
     const t = (progress - 0.28) / (0.46 - 0.28);
     // Smoothstep easing for a fluid glide
     const ease = t * t * (3 - 2 * t);
-    return -285 * ease;
+    return PORTRAIT_SHIFT * ease;
   });
 
   // Story ONLY starts fading in after portrait has already slid out of the way!
@@ -197,25 +212,13 @@ export default function AboutFounder() {
       id="founder-experience-section"
       role="region"
       aria-label="Founder Roshna Saffar Experience"
-      className="relative z-20 w-full bg-[#020B25] text-white"
+      className="relative z-20 w-full text-white"
     >
       {/* ====================================================================
          MOBILE & TABLET VIEW (< 1024px): Responsive Vertical Layout
          ==================================================================== */}
-      <div className="block lg:hidden relative w-full overflow-hidden pt-28 pb-16 sm:pt-32 sm:pb-20 select-none bg-[#020B25]">
-        {/* Continuous Dot Grid System matching the page canvas */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-20"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(255,255,255,0.065) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
-        />
+      <div className="block pin:hidden relative w-full overflow-hidden py-16 sm:py-20 select-none">
 
-        {/* Ambient Cosmic Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-137.5 h-100 bg-radial from-[#15388c]/40 via-[#081b4e]/20 to-transparent blur-[130px] pointer-events-none -z-10" />
 
         <div className="w-full max-w-xl mx-auto px-5 sm:px-8 flex flex-col items-center text-center relative z-10">
           {/* Top Kicker */}
@@ -264,8 +267,8 @@ export default function AboutFounder() {
           </div>
 
           {/* Founder's Story & Credo Card */}
-          <div className="w-full text-left p-6 sm:p-7 rounded-2xl border border-white/15 bg-linear-to-br from-white/6 via-white/2 to-transparent backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] space-y-4">
-            <h3 className="text-xl sm:text-2xl font-normal tracking-tight text-white font-sans">
+          <div className="w-full text-center p-6 sm:p-7 rounded-2xl border border-white/15 bg-linear-to-br from-white/6 via-white/2 to-transparent backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] space-y-4">
+            <h3 ref={mobileHeadingRef} className="text-xl sm:text-2xl font-normal tracking-tight text-white font-sans">
               Built on 16+ Years of{" "}
               <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                 Enterprise Execution
@@ -305,7 +308,7 @@ export default function AboutFounder() {
          Starts zoomed in CENTER, then glides to LEFT.
          Story only reveals on the RIGHT once portrait has cleared the path!
          ==================================================================== */}
-      <div className="hidden lg:block">
+      <div className="hidden pin:block">
         <div
           ref={containerRef}
           id="pinned-scroll-container"
@@ -320,21 +323,9 @@ export default function AboutFounder() {
               height: "100vh",
               width: "100%",
             }}
-            className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#020B25]"
+            className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center"
           >
-            {/* Continuous Dot Grid System matching the page canvas */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-20"
-              style={{
-                backgroundImage:
-                  "radial-gradient(rgba(255,255,255,0.065) 1px, transparent 1px)",
-                backgroundSize: "32px 32px",
-              }}
-            />
 
-            {/* Ambient Cosmic Background Nebula */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-250 h-162.5 bg-radial from-[#0f3591]/35 via-[#07194a]/20 to-transparent blur-[170px] pointer-events-none -z-10" />
 
             {/* ── 1. CATHEDRAL ARCH PORTRAIT: Enters from outer screen, settles in CENTER, then glides to LEFT ── */}
             <motion.div
@@ -351,7 +342,7 @@ export default function AboutFounder() {
                 marginTop: -205,
                 zIndex: 25,
               }}
-              className="flex flex-col items-center pointer-events-auto will-change-transform"
+              className="flex flex-col items-center pointer-events-auto will-change-transform [@media(max-height:619px)]:[zoom:0.82]"
             >
               {/* The Cathedral Arch Frame (260px x 350px) */}
               <div className="relative w-65 h-87.5">
@@ -404,17 +395,20 @@ export default function AboutFounder() {
             {/* ── 2. RIGHT-SIDE NARRATIVE STORY: Placed safely BELOW navbar with calc(50% + 46px) ── */}
             <motion.div
               id="story-column-stage"
+              // Portrait + 64px gap + story form one centred group (see
+              // PORTRAIT_SHIFT / STORY_OFFSET), so the gap is even on every
+              // desktop and the column never runs past the right edge.
               style={{
                 position: "absolute",
                 left: "50%",
-                marginLeft: 40,
+                marginLeft: STORY_OFFSET,
                 top: "calc(50% + 46px)",
                 y: "-50%",
                 x: storyContainerX,
                 opacity: storyContainerOpacity,
                 zIndex: 30,
               }}
-              className="w-125 max-w-125 pointer-events-auto will-change-transform"
+              className="w-[min(500px,calc(100vw-420px))] pointer-events-auto will-change-transform [@media(max-height:619px)]:[zoom:0.82]"
             >
               <div className="flex flex-col items-start text-left">
                 {/* Kicker Pill */}

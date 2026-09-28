@@ -26,7 +26,8 @@ export default function AboutPage() {
        * background layer. No borders, no colour breaks, no separation.
        */}
       <div className="relative z-10 bg-[#020B25] overflow-x-clip">
-        {/* Continuous Subtle Dot Grid System across the entire About page (fades in after hero) */}
+        {/* Continuous subtle dot grid across the entire About page, hero
+            included, so no section reads as a separate band */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
@@ -34,24 +35,8 @@ export default function AboutPage() {
             backgroundImage:
               "radial-gradient(rgba(255,255,255,0.065) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
-            maskImage:
-              "linear-gradient(to bottom, transparent 0%, transparent 600px, black 850px, black 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, transparent 600px, black 850px, black 100%)",
           }}
         />
-
-        {/* Shared ambient nebula glows that float across the whole page */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-          {/* Top-centre blue core */}
-          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-225 sm:w-275 h-175 rounded-full bg-[#0f3591]/20 blur-[160px]" />
-          {/* Mid-page warm accent */}
-          <div className="absolute top-[35%] right-[-10%] w-162.5 sm:w-212.5 h-162.5 rounded-full bg-[#1a4fc8]/14 blur-[160px]" />
-          {/* Bottom-left cool glow */}
-          <div className="absolute bottom-[20%] left-[-10%] w-150 sm:w-200 h-150 rounded-full bg-[#0a2a80]/18 blur-[150px]" />
-          {/* Deep footer aura */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-237.5 h-125 rounded-full bg-[#0d276b]/15 blur-[160px]" />
-        </div>
 
         {/* 1. Hero Section: Single Centred Headline */}
         <AboutHero />
@@ -71,12 +56,21 @@ export default function AboutPage() {
         {/* 6. Certifications Section: Giant Watermark Title & 4 Rosette Star Badges */}
         <AboutCertifications />
 
-        {/* 7. Video & Call to Action: YouTube Iframe & Concentric Book A Call Button */}
+        {/* 7. Video & audience paths: YouTube video + Learner / Business buttons */}
         <AboutVideoCTA />
+
+        {/* Blend the page navy into the footer's near-black so the hand-off
+            has no visible colour edge */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none relative z-0 h-48 sm:h-64 bg-linear-to-b from-transparent to-[#040507]"
+        />
       </div>
 
-      {/* Footer: Pure footer without duplicated CTA band */}
-      <SiteFooter showCTA={false} />
+      {/* Home-page footer without the "Book a Call" band; theme kept
+          light-blue explicitly, since turning the band off would otherwise
+          switch the footer to its plain black variant */}
+      <SiteFooter showCTA={false} theme="light-blue" />
     </main>
   );
 }

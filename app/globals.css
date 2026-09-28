@@ -13,6 +13,12 @@
  * pinned-only tweaks still win where both apply. */
 @custom-variant ta (@media (min-width: 769px));
 @custom-variant pin (@media (min-width: 1024px) and (min-height: 480px));
+/* About hexagon: only where it has room (tablet+ and not a rotated phone);
+ * everything smaller gets a plain card grid. Keep in sync with HEX_QUERY in
+ * app/components/about/AboutMetrics.tsx. */
+@custom-variant hex (@media (min-width: 768px) and (min-height: 501px));
+/* About page sticky stages whose content needs a tall viewport (~620px) */
+@custom-variant stage (@media (min-width: 1024px) and (min-height: 620px));
 @custom-variant pin-xl (@media (min-width: 1280px) and (min-height: 480px));
 
 :root {
