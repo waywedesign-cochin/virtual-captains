@@ -1,3 +1,5 @@
+import type { PortableTextBlock } from "@portabletext/types";
+
 export type BlogCategory = string;
 
 export interface BlogPost {
@@ -11,19 +13,20 @@ export interface BlogPost {
   featured?: boolean;
   image: string;
   bannerImage?: string;
+  detailTitle?: string;
   author: {
     name: string;
     role: string;
     avatar: string;
   };
   content?: {
-    lead: string;
-    sections: {
-      heading?: string;
-      paragraphs: string[];
-      listItems?: string[];
-      note?: string;
-    }[];
+    lead?: string;
+    body?: PortableTextBlock[];
+  };
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    canonicalUrl?: string;
   };
 }
 

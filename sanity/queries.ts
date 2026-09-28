@@ -30,13 +30,20 @@ export const ALL_POSTS_QUERY = groq`
 export const POST_BY_SLUG_QUERY = groq`
   *[_type == "post" && slug.current == $slug][0] {
     ${postFields},
+    detailTitle,
+    seo {
+      metaTitle,
+      metaDescription,
+      canonicalUrl
+    },
     content {
       lead,
-      sections[] {
-        heading,
-        paragraphs,
-        listItems,
-        note
+      body[] {
+        ...,
+        _type == "image" => {
+          ...,
+          "url": asset->url
+        }
       }
     }
   }
