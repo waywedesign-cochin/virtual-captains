@@ -12,7 +12,7 @@ import TheImpact from "./components/home/TheImpact";
 
 export default function Page() {
   return (
-    <main className="block w-full bg-[#050e28]">
+    <main className="block w-full bg-[#040507]">
       <Navbar />
       <SideNav />
       <Hero />

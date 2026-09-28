@@ -122,11 +122,11 @@ const STATS = [
   {
     id: "roi",
     content: (
-      <div className="flex flex-col items-center text-center">
-        <div className="text-[clamp(3rem,8vw,5.5rem)] font-serif leading-none tracking-tight text-[#2557d6]">
+      <div className="flex flex-col items-center text-center px-4 max-w-[88vw]">
+        <div className="text-[clamp(2.5rem,7vw,5.5rem)] font-serif leading-none tracking-tight text-[#2557d6]">
           3x
         </div>
-        <div className="mt-1 text-[clamp(1rem,2vw,1.5rem)] font-serif tracking-wide text-[#4d82f5]">
+        <div className="mt-1 text-[clamp(0.95rem,2.2vw,1.45rem)] font-serif tracking-wide text-[#4d82f5] whitespace-nowrap">
           Faster Onboarding
         </div>
       </div>
@@ -134,6 +134,17 @@ const STATS = [
     x: "0vw",
     y: "0vh",
   },
+];
+
+const MOBILE_COORDS = [
+  { x: 0, y: -20 }, // 0: ISO Certified (top)
+  { x: 0, y: 15 }, // 1: 15,000+ Professionals (lower)
+  { x: 0, y: -18 }, // 2: CPD Accredited (top)
+  { x: 0, y: 16 }, // 3: 500+ Sales Teams (lower)
+  { x: -14, y: -10 }, // 4: 8+ Countries (upper-left)
+  { x: 14, y: 14 }, // 5: AI-Powered (lower-right, separated from 8+)
+  { x: 0, y: -18 }, // 6: 100% Custom Playbooks (top)
+  { x: 0, y: 0 }, // 7: 3x Faster Onboarding (dead center)
 ];
 
 export default function ScrollText3D() {
@@ -154,29 +165,62 @@ export default function ScrollText3D() {
 
       if (prefersReducedMotion) return;
 
+      const isMobile = window.innerWidth < 768;
+      const isTablet = window.innerWidth < 1024;
+
       // Several stats fly in from a leftward vw offset (e.g. "-40vw"). At
       // lg+ widths (>=1024px) the fixed SideNav sits at the left edge, so
       // clamp how far left any stat is allowed to land — below 1024px the
       // nav isn't rendered at all, so no clamp is needed there.
       const NAV_SAFE_LEFT_PX = 200;
-      const getSafeX = (vwValue: string) => {
+      const getSafeX = (index: number, vwValue: string) => {
+        if (isMobile && MOBILE_COORDS[index]) {
+          return (MOBILE_COORDS[index].x / 100) * window.innerWidth;
+        }
         let px = (parseFloat(vwValue) / 100) * window.innerWidth;
-        if (window.innerWidth < 768) {
-          px = px * 0.45;
-        } else if (window.innerWidth >= 1024 && px < 0) {
+        if (window.innerWidth >= 1024 && px < 0) {
           const minPx = NAV_SAFE_LEFT_PX - window.innerWidth / 2;
           return Math.max(px, minPx);
         }
         return px;
       };
 
-      const getSafeY = (vhValue: string) => {
+      const getSafeY = (index: number, vhValue: string) => {
+        if (isMobile && MOBILE_COORDS[index]) {
+          return `${MOBILE_COORDS[index].y}vh`;
+        }
         const vh = parseFloat(vhValue);
         if (window.innerHeight < 700) {
           return `${vh * 0.65}vh`;
         }
         return vhValue;
       };
+
+      // Zoom-in entrance animation for intro heading
+      if (introRef.current) {
+        gsap.set(introRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+        });
+
+        gsap.to(introRef.current, {
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+          ],
+        });
+      }
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -207,40 +251,53 @@ export default function ScrollText3D() {
       textRefs.current.forEach((text, i) => {
         if (!text) return;
 
+        const isLast = i === STATS.length - 1;
+        const initialZ = isMobile ? -3600 : -6000;
+
         // Position strictly in the center and push deep into Z space
         gsap.set(text, {
           xPercent: -50,
           yPercent: -50,
-          x: getSafeX(STATS[i].x),
-          y: getSafeY(STATS[i].y),
-          z: -6000,
+          x: getSafeX(i, STATS[i].x),
+          y: getSafeY(i, STATS[i].y),
+          z: initialZ,
           opacity: 0,
         });
 
         const itemTl = gsap.timeline();
 
-        const isLast = i === STATS.length - 1;
+        // Calibrate final Z distance: on mobile, stop at gentle z=120 so it never gets cut off
+        const targetZ = isLast
+          ? isMobile
+            ? 120
+            : isTablet
+              ? 350
+              : 650
+          : isMobile
+            ? 450
+            : 800;
 
         // 1. Fly forward linearly in 3D space
         itemTl.to(
           text,
           {
-            z: 800, // Make the last item stop much closer to the camera so it is bigger
+            z: targetZ,
             duration: 1,
             ease: "none", // Constant Z velocity gives natural 3D acceleration
           },
           0,
         );
 
-        // 2. Fade in as it approaches
-        itemTl.to(
+        // 2. Fade in only as it approaches the readable zone (avoids background clustering)
+        itemTl.fromTo(
           text,
+          { opacity: 0 },
           {
             opacity: 1,
-            duration: 0.3,
+            duration: isMobile ? 0.24 : 0.3,
             ease: "power1.inOut",
           },
-          0,
+          isMobile ? 0.32 : 0.12,
         );
 
         // 3. Fade out before it hits the camera (except the last item, so it stays on screen!)
@@ -249,15 +306,15 @@ export default function ScrollText3D() {
             text,
             {
               opacity: 0,
-              duration: 0.2,
+              duration: isMobile ? 0.2 : 0.2,
               ease: "power1.inOut",
             },
-            0.8,
+            isMobile ? 0.68 : 0.8,
           );
         }
 
-        // Add to main timeline staggered so they form a continuous tunnel
-        tl.add(itemTl, i * 0.12);
+        // Add to main timeline staggered so they form a continuous tunnel without overlapping
+        tl.add(itemTl, i * (isMobile ? 0.15 : 0.12));
       });
     },
     { scope: sectionRef },
@@ -299,7 +356,7 @@ export default function ScrollText3D() {
               ref={(el) => {
                 textRefs.current[i] = el;
               }}
-              className="absolute left-1/2 top-1/2 opacity-0 motion-reduce:relative motion-reduce:left-auto motion-reduce:top-auto motion-reduce:opacity-100 motion-reduce:transform-none"
+              className="absolute left-1/2 top-1/2 opacity-0 motion-reduce:relative motion-reduce:left-auto motion-reduce:top-auto motion-reduce:opacity-100 motion-reduce:transform-none pointer-events-none w-max max-w-[92vw]"
             >
               {stat.content}
             </div>

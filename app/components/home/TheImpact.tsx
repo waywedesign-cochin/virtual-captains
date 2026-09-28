@@ -206,7 +206,7 @@ export default function TheImpact() {
 
       // Mobile & Tablet: Scroll-triggered / scrubbed cards
       mm.add("(max-width: 1023px)", () => {
-        gsap.set(sectionRef.current, { clearProps: "all" });
+        gsap.set(sectionRef.current, { clearProps: "transform" });
 
         const mobileTl = gsap.timeline({
           scrollTrigger: {
@@ -262,7 +262,7 @@ export default function TheImpact() {
       id="organisations"
       data-nav-section="The Impact"
       data-nav-theme="dark"
-      className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-20 text-white sm:px-10 lg:pl-36 lg:pr-16 lg:py-0"
+      className="relative z-10 flex min-h-0 lg:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-5 py-10 sm:py-14 sm:px-10 lg:pl-36 lg:pr-16 lg:py-0 text-white"
       style={{
         background:
           "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",

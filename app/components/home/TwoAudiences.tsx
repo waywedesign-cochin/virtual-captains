@@ -4,6 +4,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
@@ -185,6 +186,33 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
       );
 
       scrubTimelineRef.current = tl;
+
+      const mm = gsap.matchMedia();
+      mm.add("(max-width: 1023px)", () => {
+        if (!headlineRef.current) return;
+        gsap.set(headlineRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+        });
+
+        gsap.to(headlineRef.current, {
+          scrollTrigger: {
+            trigger: headlineRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          keyframes: [
+            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+          ],
+        });
+      });
     },
     { scope: sectionRef },
   );
@@ -209,14 +237,13 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 w-full h-full min-h-screen lg:min-h-0 lg:h-screen overflow-hidden flex flex-col justify-between"
+      className="relative z-10 w-full overflow-hidden flex flex-col justify-center py-6 sm:py-10 lg:py-0 lg:h-screen lg:min-h-0"
     >
-
-      <div className="relative z-10 mx-auto w-full h-full max-w-[1920px] px-5 sm:px-10 lg:px-16 py-4 sm:py-6 lg:py-4 xl:py-6 flex flex-col justify-between flex-1 overflow-hidden">
+      <div className="relative z-10 mx-auto w-full max-w-[1920px] px-4 sm:px-10 lg:px-16 py-3 sm:py-6 lg:py-4 xl:py-6 flex flex-col justify-center lg:justify-between flex-1 gap-5 sm:gap-8 lg:gap-0 overflow-hidden">
         {/* TOP EYEBROW */}
         <p
           ref={topTitleRef}
-          className="ta-eyebrow pt-2 sm:pt-4 lg:pt-2 mb-2 sm:mb-3 lg:mb-2 text-center font-mono text-[9px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.15em] sm:tracking-[0.25em] text-white/50 max-w-xl mx-auto px-4 shrink-0"
+          className="ta-eyebrow text-center font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white/50 max-w-xl mx-auto px-4 shrink-0 mb-2 sm:mb-4 lg:mb-2"
         >
           Two Audiences &nbsp;·&nbsp; One Discipline &nbsp;:&nbsp; Execution
         </p>
@@ -228,7 +255,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             <div className="lg:pl-16 xl:pl-24 flex justify-center lg:block">
               <h2
                 ref={headlineRef}
-                className="inline-block max-w-xl font-serif text-[clamp(1.75rem,2.8vw,3.25rem)] font-normal leading-[1.16] text-white text-center lg:text-left"
+                className="ta-headline inline-block max-w-xl font-serif text-[clamp(1.75rem,5vw,3.25rem)] font-normal leading-[1.16] text-white text-center lg:text-left"
               >
                 <span className="block">
                   <span ref={headlineLine1Ref} className="inline-block">
@@ -240,9 +267,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                     into measurable
                   </span>
                 </span>
-                <span className="block italic text-[#1d63ed]">
+                <span className="block italic text-[#4d82f5]">
                   <span ref={headlineLine3Ref} className="inline-block">
-                    sale performance
+                    sales performance
                   </span>
                 </span>
               </h2>
@@ -279,13 +306,114 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               <div className="w-[1.5px] flex-1 bg-linear-to-b from-[#e7ff3d]/70 via-white/15 to-transparent shadow-[0_0_8px_rgba(231,255,61,0.3)]" />
             </div>
 
-            {/* RIGHT COLUMN: BACKGROUND SHAPE & AUDIENCE CONTENT */}
+            {/* ============================================================
+                RIGHT COLUMN: MOBILE RESPONSIVE CARD (< 1024px)
+            ============================================================ */}
+            <div className="block lg:hidden w-full max-w-md mx-auto relative z-20">
+              {/* Soft atmospheric blue glow */}
+              <div className="pointer-events-none absolute -inset-3 rounded-3xl bg-[radial-gradient(ellipse_at_top,rgba(77,130,245,0.2)_0%,transparent_70%)] blur-xl" />
+
+              <div className="relative rounded-2xl sm:rounded-3xl border border-white/12 bg-linear-to-b from-white/[0.08] via-[#071330]/65 to-white/[0.02] backdrop-blur-xl p-5 sm:p-7 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.18)]">
+                {/* Segmented Switcher */}
+                <div className="flex p-1 rounded-full bg-black/40 border border-white/10 max-w-[280px] mx-auto mb-5">
+                  <button
+                    type="button"
+                    onClick={() => toggleAudience("orgs")}
+                    className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold transition-all duration-300 cursor-pointer ${
+                      activeAudience === "orgs"
+                        ? "bg-white text-black shadow-md"
+                        : "text-white/60 hover:text-white"
+                    }`}
+                  >
+                    For Organisations
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleAudience("individuals")}
+                    className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold transition-all duration-300 cursor-pointer ${
+                      activeAudience === "individuals"
+                        ? "bg-white text-black shadow-md"
+                        : "text-white/60 hover:text-white"
+                    }`}
+                  >
+                    For Individuals
+                  </button>
+                </div>
+
+                {/* Sub-headline */}
+                <p className="font-serif text-[1.15rem] sm:text-[1.3rem] leading-snug text-white text-center sm:text-left mb-4">
+                  {activeAudience === "orgs" ? (
+                    <>
+                      Equip your teams with{" "}
+                      <span className="italic text-[#4d82f5]">real-world practice</span>
+                    </>
+                  ) : (
+                    <>
+                      Elevate your own{" "}
+                      <span className="italic text-[#4d82f5]">closing capabilities</span>
+                    </>
+                  )}
+                </p>
+
+                {/* List items */}
+                <div className="flex flex-col gap-3.5">
+                  {(activeAudience === "orgs" ? ORG_ITEMS : INDIVIDUAL_ITEMS).map((item) => (
+                    <div key={item.title} className="flex items-start gap-3">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#4d82f5] shadow-[0_0_8px_rgba(77,130,245,0.85)] shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className={`text-[13.5px] sm:text-[14.5px] font-semibold leading-tight ${
+                            item.accent ? "text-[#4d82f5]" : "text-white"
+                          }`}
+                        >
+                          {item.title}
+                        </p>
+                        <p className="mt-0.5 text-[11.5px] sm:text-[12px] leading-relaxed text-white/65">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bottom Action Button */}
+                <div className="mt-5 pt-4 border-t border-white/8 flex justify-center">
+                  <Link
+                    href={activeAudience === "orgs" ? "/organisations" : "/indivuduals"}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/8 hover:bg-white hover:text-black px-6 py-2.5 text-xs sm:text-[13px] font-medium text-white transition-all shadow-sm active:scale-95 group cursor-pointer"
+                  >
+                    <span>
+                      {activeAudience === "orgs"
+                        ? "Build High-Performing Team"
+                        : "Elevate Closing Capabilities"}
+                    </span>
+                    <svg
+                      className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* ============================================================
+                RIGHT COLUMN: DESKTOP SHAPE & AUDIENCE CONTENT (>= 1024px)
+            ============================================================ */}
             <div
               ref={rhsContainerRef}
-              className="relative h-102.5 sm:h-110 lg:h-115 xl:h-122.5 w-full flex items-center"
+              className="relative hidden lg:flex h-115 xl:h-122.5 w-full items-center"
             >
-              {/* DESKTOP BACKGROUND WEDGE (Preserves natural 724:1084 aspect ratio, avoids squishing) */}
-              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 xl:-right-2 w-[140%] xl:w-[150%] h-[135%] xl:h-[145%] hidden lg:flex items-center justify-end">
+              {/* DESKTOP BACKGROUND WEDGE (Preserves natural 724:1084 aspect ratio) */}
+              <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 xl:-right-2 w-[140%] xl:w-[150%] h-[135%] xl:h-[145%] flex items-center justify-end">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/home/Vector1.png"
@@ -294,14 +422,8 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                 />
               </div>
 
-              {/* DESKTOP AMBIENT BLUE RADIAL GLOW (Envelops all text in deep luminous blue light) */}
-              <div className="pointer-events-none absolute -inset-8 rounded-[36px] bg-[radial-gradient(ellipse_at_60%_50%,rgba(29,99,237,0.38)_0%,rgba(20,60,180,0.18)_50%,transparent_75%)] blur-2xl hidden lg:block" />
-
-              {/* MOBILE & TABLET RESPONSIVE CONTAINER CARD (Active on screens < lg) */}
-              <div className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-3xl border border-white/10 bg-linear-to-br from-[#1d63ed]/15 via-white/3 to-transparent backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.45)] lg:hidden overflow-hidden">
-                <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-[#1d63ed]/25 blur-3xl" />
-                <div className="absolute -left-10 -bottom-10 h-64 w-64 rounded-full bg-[#1d63ed]/15 blur-3xl" />
-              </div>
+              {/* DESKTOP AMBIENT BLUE RADIAL GLOW */}
+              <div className="pointer-events-none absolute -inset-8 rounded-[36px] bg-[radial-gradient(ellipse_at_60%_50%,rgba(29,99,237,0.38)_0%,rgba(20,60,180,0.18)_50%,transparent_75%)] blur-2xl" />
 
               {/* FIRST STATE: Organisations */}
               <div
@@ -309,32 +431,6 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                 style={{ opacity: 1 }}
                 className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
               >
-                {/* Mobile Tab Switcher */}
-                <div className="flex lg:hidden items-center gap-2 mb-1">
-                  <button
-                    type="button"
-                    onClick={() => toggleAudience("orgs")}
-                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                      activeAudience === "orgs"
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-white/60 hover:bg-white/15"
-                    }`}
-                  >
-                    For Organisations
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleAudience("individuals")}
-                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                      activeAudience === "individuals"
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-white/60 hover:bg-white/15"
-                    }`}
-                  >
-                    For Individuals
-                  </button>
-                </div>
-
                 <div>
                   <p className="font-serif text-[15px] sm:text-[17px] italic text-white/85">
                     For Organisations
@@ -382,32 +478,6 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                 }}
                 className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 lg:py-4 lg:pl-10 xl:pl-14 lg:pr-6 max-w-112.5"
               >
-                {/* Mobile Tab Switcher */}
-                <div className="flex lg:hidden items-center gap-2 mb-1">
-                  <button
-                    type="button"
-                    onClick={() => toggleAudience("orgs")}
-                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                      activeAudience === "orgs"
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-white/60 hover:bg-white/15"
-                    }`}
-                  >
-                    For Organisations
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleAudience("individuals")}
-                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                      activeAudience === "individuals"
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-white/60 hover:bg-white/15"
-                    }`}
-                  >
-                    For Individuals
-                  </button>
-                </div>
-
                 <div>
                   <p className="font-serif text-[15px] sm:text-[17px] italic text-white/85">
                     For Individuals
@@ -447,10 +517,10 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
           </div>
         </div>
 
-        {/* BOTTOM PAGINATION & TOGGLE */}
+        {/* BOTTOM PAGINATION & TOGGLE (DESKTOP ONLY) */}
         <div
           ref={bottomNavRef}
-          className="relative z-10 mt-2 sm:mt-3 lg:mt-2 flex flex-col items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-2"
+          className="relative z-10 mt-2 sm:mt-3 lg:mt-2 hidden lg:flex flex-col items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-2"
         >
           <button
             type="button"

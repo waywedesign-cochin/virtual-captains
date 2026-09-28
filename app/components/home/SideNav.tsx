@@ -18,10 +18,8 @@ export const NAV_SECTIONS = [
 
 type NavTheme = "light" | "dark";
 
-const activeColor = (theme: NavTheme) =>
-  theme === "dark" ? "#ffffff" : "#0a0b0d";
-const restingColor = (theme: NavTheme) =>
-  theme === "dark" ? "rgba(255,255,255,0.42)" : "rgba(10,11,13,0.32)";
+const activeColor = (_theme?: NavTheme) => "#ffffff";
+const restingColor = (_theme?: NavTheme) => "rgba(255,255,255,0.45)";
 
 /**
  * Fixed left-edge navigation on desktop (lg and up).
@@ -88,7 +86,7 @@ export default function SideNav() {
 
       // 2. RoleplayToConversation - Stage 1: The Promise
       if (scrollY < choosePathThreshold) {
-        setNavState(0, "light");
+        setNavState(0, "dark");
         return;
       }
 
@@ -106,14 +104,14 @@ export default function SideNav() {
           ? modelPin.end
           : modelStart + vh * 2;
       if (scrollY < ccStart) {
-        setNavState(2, "light");
+        setNavState(2, "dark");
         return;
       }
 
       // 5. CrossCountry
       const ccEnd = ccPin ? ccPin.end : ccStart + vh * 3.5;
       if (scrollY < ccEnd) {
-        setNavState(3, "light");
+        setNavState(3, "dark");
         return;
       }
 
@@ -151,7 +149,7 @@ export default function SideNav() {
         return;
       }
 
-      setNavState(6, "light");
+      setNavState(6, "dark");
     };
 
     update();
@@ -166,7 +164,7 @@ export default function SideNav() {
         detail.label as (typeof NAV_SECTIONS)[number],
       );
       if (index === -1) return;
-      setNavState(index, detail.theme);
+      setNavState(index, "dark");
     };
     window.addEventListener("vc:nav-override", handleOverride);
 
@@ -329,7 +327,7 @@ export default function SideNav() {
         <span
           ref={arrowRef}
           style={{ opacity: 0 }}
-          className="pointer-events-none absolute -left-4 top-0 text-[9px] will-change-transform"
+          className="pointer-events-none absolute -left-4 top-0 text-[9px] text-white will-change-transform"
         >
           ▷
         </span>
@@ -341,7 +339,7 @@ export default function SideNav() {
               itemRefs.current[i] = el;
             }}
             onClick={() => scrollToSection(i)}
-            className={`pointer-events-auto cursor-pointer bg-transparent border-0 p-0 text-left whitespace-nowrap text-[11px] tracking-wide will-change-[filter,opacity] transition-all duration-200 hover:scale-105 hover:opacity-100! hover:filter-[blur(0px)]! active:scale-95 ${theme === "dark" ? "hover:text-white!" : "hover:text-[#0a0b0d]!"}`}
+            className="pointer-events-auto cursor-pointer bg-transparent border-0 p-0 text-left whitespace-nowrap text-[11px] tracking-wide will-change-[filter,opacity] transition-all duration-200 hover:scale-105 hover:opacity-100! hover:filter-[blur(0px)]! active:scale-95 text-white/50 hover:text-white!"
             aria-label={`Scroll to ${label}`}
           >
             {label}
