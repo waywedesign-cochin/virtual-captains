@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowUpRight, Check, Copy, Clock, Calendar, Mail } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  Copy,
+  Clock,
+  Calendar,
+  Mail,
+} from "lucide-react";
 import Link from "next/link";
-import { BlogPost, BLOG_POSTS } from "../../blogs/blogData";
+import { BlogPost } from "@/sanity/lib/types";
 import { CTASection } from "./CTASection";
 
 const TwitterIcon = ({ className }: { className?: string }) => (
@@ -19,6 +27,7 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
 
 interface BlogSlugPageProps {
   post: BlogPost;
+  recentPosts: BlogPost[];
   onNavigateBack: () => void;
   onSelectPost: (slug: string) => void;
   onBookCall: () => void;
@@ -26,6 +35,7 @@ interface BlogSlugPageProps {
 
 export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
   post,
+  recentPosts,
   onNavigateBack,
   onSelectPost,
   onBookCall,
@@ -37,10 +47,14 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [post.slug]);
 
-  // Recent blogs (excluding current post)
-  const recentBlogs = BLOG_POSTS.filter(
-    (p: BlogPost) => p.slug !== post.slug,
-  ).slice(0, 4);
+  const recentBlogs = recentPosts;
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -80,7 +94,6 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
 
       {/* ── Two-column layout (desktop) ── */}
       <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 py-4 flex gap-10 xl:gap-14 items-start">
-
         {/* ── LEFT: Main article content ── */}
         <div className="min-w-0 flex-1">
           {/* Header Lockup */}
@@ -101,7 +114,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-[#737373]">
                 <Calendar className="w-3 h-3" />
-                {post.publishedDate}
+                {formatDate(post.publishedDate)}
               </span>
             </div>
 
@@ -133,8 +146,12 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               </div>
               <div className="h-8 w-px bg-linear-to-b from-transparent via-[#1d4ed8]/30 to-transparent" />
               <div className="text-right">
-                <p className="text-xs font-medium text-[#737373]">{post.publishedDate}</p>
-                <p className="text-[11px] font-mono text-[#A4A4A4] uppercase tracking-wider">{post.readTime}</p>
+                <p className="text-xs font-medium text-[#737373]">
+                  {formatDate(post.publishedDate)}
+                </p>
+                <p className="text-[11px] font-mono text-[#A4A4A4] uppercase tracking-wider">
+                  {post.readTime}
+                </p>
               </div>
             </div>
             {/* Gradient divider */}
@@ -162,58 +179,58 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
           {/* Article Prose */}
           <div className="space-y-8 text-[#333333] pt-8 leading-[1.85]">
             {/* Lead Paragraph — with subtle blue left accent */}
-            <div className="flex gap-4">
-              <div className="w-1 shrink-0 rounded-full bg-linear-to-b from-[#1d4ed8] to-[#0ea5e9]/30 mt-1 mb-1" />
-              <p className="text-lg sm:text-xl md:text-2xl text-[#141414] font-serif leading-relaxed font-normal">
-                {post.content.lead}
-              </p>
-            </div>
+            {post.content?.lead && (
+              <div className="flex gap-4">
+                <div className="w-1 shrink-0 rounded-full bg-linear-to-b from-[#1d4ed8] to-[#0ea5e9]/30 mt-1 mb-1" />
+                <p className="text-lg sm:text-xl md:text-2xl text-[#141414] font-serif leading-relaxed font-normal">
+                  {post.content.lead}
+                </p>
+              </div>
+            )}
 
             {/* Dynamic Content Sections */}
-            {post.content.sections.map(
-              (section: BlogPost["content"]["sections"][number], idx: number) => (
-                <div key={idx} className="space-y-4 pt-2">
-                  {section.heading && (
-                    <h2 className="font-serif text-2xl sm:text-3xl font-normal tracking-tight pt-6 pb-1 bg-linear-to-r from-[#141414] via-[#1d4ed8] to-[#141414] bg-clip-text text-transparent">
-                      {section.heading}
-                    </h2>
-                  )}
+            {post.content?.sections?.map((section, idx: number) => (
+              <div key={idx} className="space-y-4 pt-2">
+                {section.heading && (
+                  <h2 className="font-serif text-2xl sm:text-3xl font-normal tracking-tight pt-6 pb-1 bg-linear-to-r from-[#141414] via-[#1d4ed8] to-[#141414] bg-clip-text text-transparent">
+                    {section.heading}
+                  </h2>
+                )}
 
-                  {section.paragraphs.map((para: string, pIdx: number) => (
-                    <p
-                      key={pIdx}
-                      className="text-base sm:text-lg text-[#444444] leading-[1.85] font-normal"
-                    >
-                      {para}
+                {section.paragraphs.map((para: string, pIdx: number) => (
+                  <p
+                    key={pIdx}
+                    className="text-base sm:text-lg text-[#444444] leading-[1.85] font-normal"
+                  >
+                    {para}
+                  </p>
+                ))}
+
+                {/* Bullet list */}
+                {section.listItems && section.listItems.length > 0 && (
+                  <ul className="space-y-3 my-5 pl-2">
+                    {section.listItems.map((item: string, lIdx: number) => (
+                      <li
+                        key={lIdx}
+                        className="flex items-start gap-3 text-base sm:text-lg text-[#444444] leading-relaxed"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] mt-3 shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {/* Callout quote/box */}
+                {section.note && (
+                  <div className="p-6 sm:p-7 rounded-2xl bg-white border border-black/6 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
+                    <p className="text-sm sm:text-base text-[#141414] italic leading-relaxed font-serif">
+                      "{section.note}"
                     </p>
-                  ))}
-
-                  {/* Bullet list */}
-                  {section.listItems && section.listItems.length > 0 && (
-                    <ul className="space-y-3 my-5 pl-2">
-                      {section.listItems.map((item: string, lIdx: number) => (
-                        <li
-                          key={lIdx}
-                          className="flex items-start gap-3 text-base sm:text-lg text-[#444444] leading-relaxed"
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] mt-3 shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {/* Callout quote/box */}
-                  {section.note && (
-                    <div className="p-6 sm:p-7 rounded-2xl bg-white border border-black/6 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
-                      <p className="text-sm sm:text-base text-[#141414] italic leading-relaxed font-serif">
-                        "{section.note}"
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ),
-            )}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
           {/* Social Sharing Row */}
@@ -269,43 +286,47 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
             <div className="flex-1 h-px bg-linear-to-r from-[#1d4ed8]/30 to-transparent" />
           </div>
 
-          <div className="flex flex-col gap-4">
-            {recentBlogs.map((recent: BlogPost) => (
-              <Link
-                key={recent.id}
-                href={`/blogs/${recent.slug}`}
-                className="group flex gap-3.5 p-3.5 rounded-2xl bg-white border border-black/5 hover:border-[#1d4ed8]/20 hover:shadow-[0_4px_20px_rgba(29,78,216,0.08)] transition-all duration-300 relative overflow-hidden"
-              >
-                {/* Hover blue accent line */}
-                <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#1d4ed8] to-[#0ea5e9] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
-
-                {/* Thumbnail */}
-                <div className="shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-[#F2EFE9]">
-                  <img
-                    src={recent.image}
-                    alt={recent.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-
-                {/* Text */}
-                <div className="flex-1 min-w-0 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-black/5 text-[#555] inline-block mb-1">
-                      {recent.category}
-                    </span>
-                    <h4 className="text-[13px] font-semibold text-[#141414] leading-snug line-clamp-2 group-hover:text-[#1d4ed8] transition-colors">
-                      {recent.title}
-                    </h4>
+          {recentBlogs.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {recentBlogs.map((recent) => (
+                <Link
+                  key={recent._id}
+                  href={`/blogs/${recent.slug}`}
+                  className="group flex gap-3.5 p-3.5 rounded-2xl bg-white border border-black/5 hover:border-[#1d4ed8]/20 hover:shadow-[0_4px_20px_rgba(29,78,216,0.08)] transition-all duration-300 relative overflow-hidden"
+                >
+                  <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#1d4ed8] to-[#0ea5e9] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
+                  <div className="shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-[#F2EFE9]">
+                    <img
+                      src={recent.image}
+                      alt={recent.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
-                  <span className="text-[11px] text-[#A4A4A4] font-mono mt-1.5">
-                    {recent.readTime}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-black/5 text-[#555] inline-block mb-1">
+                        {recent.category}
+                      </span>
+                      <h4 className="text-[13px] font-semibold text-[#141414] leading-snug line-clamp-2 group-hover:text-[#1d4ed8] transition-colors">
+                        {recent.title}
+                      </h4>
+                    </div>
+                    <span className="text-[11px] text-[#A4A4A4] font-mono mt-1.5">
+                      {recent.readTime}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center gap-2 py-10 px-5 rounded-2xl bg-white border border-dashed border-black/10">
+              <span className="text-2xl">📝</span>
+              <p className="text-xs font-medium text-[#737373]">
+                More articles coming soon
+              </p>
+            </div>
+          )}
 
           {/* View all link */}
           <Link
@@ -335,9 +356,9 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-          {recentBlogs.slice(0, 3).map((recent: BlogPost) => (
+          {recentBlogs.slice(0, 3).map((recent) => (
             <Link
-              key={recent.id}
+              key={recent._id}
               href={`/blogs/${recent.slug}`}
               data-cursor="read"
               data-cursor-text="Read article"
@@ -348,7 +369,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               {/* Top Section */}
               <div className="flex flex-col">
                 <span className="text-[11px] font-mono uppercase tracking-widest text-[#8c8c8c]">
-                  {recent.publishedDate}
+                  {formatDate(recent.publishedDate)}
                 </span>
 
                 <h4 className="font-serif text-xl sm:text-[22px] font-normal text-[#141414] group-hover:text-[#1d4ed8] transition-colors leading-[1.24] tracking-tight mt-2.5 mb-1.5 line-clamp-2">
@@ -388,26 +409,29 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
         <div className="bg-white rounded-[28px] sm:rounded-4xl p-8 sm:p-12 relative overflow-hidden border border-black/5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.06)]">
           {/* Subtle blue accent in the corner */}
           <div className="absolute top-0 right-0 w-100 h-100 bg-linear-to-bl from-[#e0e7ff] via-transparent to-transparent opacity-60 pointer-events-none" />
-          
+
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 md:gap-12">
             <div className="max-w-xl">
               <h3 className="font-serif text-2xl sm:text-3xl text-[#141414]">
                 Get more insights in your inbox
               </h3>
             </div>
-            
+
             <div className="w-full md:w-auto shrink-0">
-              <form className="flex flex-col sm:flex-row gap-3" onSubmit={(e) => e.preventDefault()}>
+              <form
+                className="flex flex-col sm:flex-row gap-3"
+                onSubmit={(e) => e.preventDefault()}
+              >
                 <div className="relative flex-1 sm:w-72">
                   <Mail className="w-4 h-4 text-[#A4A4A4] absolute left-4 top-1/2 -translate-y-1/2" />
-                  <input 
-                    type="email" 
-                    placeholder="Enter your email address" 
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
                     required
                     className="w-full bg-[#F9F8F6] border border-black/6 rounded-full py-3.5 pl-11 pr-4 text-sm text-[#141414] placeholder-[#A4A4A4] focus:outline-none focus:border-[#1d4ed8] focus:bg-white transition-colors"
                   />
                 </div>
-                <button 
+                <button
                   type="submit"
                   className="px-7 py-3.5 bg-linear-to-r from-[#1d4ed8] to-[#0369a1] hover:from-[#2563eb] hover:to-[#0284c7] text-white text-sm font-semibold rounded-full shadow-[0_4px_14px_rgba(29,78,216,0.2)] hover:shadow-[0_6px_20px_rgba(29,78,216,0.3)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
                 >

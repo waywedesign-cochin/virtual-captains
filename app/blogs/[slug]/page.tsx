@@ -1,98 +1,45 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
-import Lenis from "lenis";
-import Navbar from "../../components/home/Navbar";
-import SiteFooter from "../../components/home/SiteFooter";
-import { BlogSlugPage } from "../../components/blogs/BlogSlugPage";
-import { BookCallModal } from "../../components/blogs/BookCallModal";
-import { MouseFollower } from "../../components/blogs/MouseFollower";
-import { BLOG_POSTS, BlogPost } from "../blogData";
+import { clientFetch } from "@/sanity/lib/client";
+import {
+  POST_BY_SLUG_QUERY,
+  RECENT_POSTS_QUERY,
+  ALL_POST_SLUGS_QUERY,
+} from "@/sanity/queries";
+import { BlogPost } from "@/sanity/lib/types";
+import { BlogPostPageClient } from "@/app/components/blogs/BlogPostPageClient";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const router = useRouter();
-  const [slug, setSlug] = useState<string | null>(null);
-  const [isBookCallOpen, setIsBookCallOpen] = useState(false);
+export async function generateStaticParams() {
+  const slugs = await clientFetch<string[]>({
+    query: ALL_POST_SLUGS_QUERY,
+    tags: ["post"],
+  });
 
-  // Unwrap params (Next.js 15+ async params)
-  useEffect(() => {
-    params.then(({ slug }) => setSlug(slug));
-  }, [params]);
+  return slugs.map((slug) => ({ slug }));
+}
 
-  // Lenis smooth scroll
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-    });
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const { slug } = await params;
 
-    let animationFrameId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      animationFrameId = requestAnimationFrame(raf);
-    }
-    animationFrameId = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      lenis.destroy();
-    };
-  }, []);
-
-  // Wait for slug to resolve
-  if (!slug) {
-    return (
-      <div className="min-h-screen bg-[#F9F8F6] flex items-center justify-center">
-        <div className="w-6 h-6 rounded-full border-2 border-[#1d4ed8] border-t-transparent animate-spin" />
-      </div>
-    );
-  }
-
-  const post: BlogPost | undefined = BLOG_POSTS.find((p) => p.slug === slug);
+  const [post, recentPosts] = await Promise.all([
+    clientFetch<BlogPost | null>({
+      query: POST_BY_SLUG_QUERY,
+      params: { slug },
+      tags: ["post"],
+    }),
+    clientFetch<BlogPost[]>({
+      query: RECENT_POSTS_QUERY,
+      params: { slug },
+      tags: ["post"],
+    }),
+  ]);
 
   if (!post) {
     notFound();
   }
 
-  const handleSelectPost = (nextSlug: string) => {
-    router.push(`/blogs/${nextSlug}`);
-  };
-
-  return (
-    <div className="min-h-screen bg-[#F9F8F6] text-[#141414] flex flex-col selection:bg-[#141414] selection:text-white antialiased font-sans">
-      {/* Shared site Navbar — auto-detects /blogs/* route for light theme */}
-      <Navbar />
-
-      {/* pt-20 offsets the fixed Navbar */}
-      <div className="flex-1 w-full pt-20 sm:pt-24">
-        <BlogSlugPage
-          post={post}
-          onNavigateBack={() => router.push("/blogs")}
-          onSelectPost={handleSelectPost}
-          onBookCall={() => setIsBookCallOpen(true)}
-        />
-      </div>
-
-      {/* Mouse Follower "Read article" Bubble */}
-      <MouseFollower />
-
-      {/* Interactive Book a Call Modal */}
-      <BookCallModal
-        isOpen={isBookCallOpen}
-        onClose={() => setIsBookCallOpen(false)}
-      />
-
-      {/* Footer */}
-      <SiteFooter showCTA={false} />
-    </div>
-  );
+  return <BlogPostPageClient post={post} recentPosts={recentPosts} />;
 }

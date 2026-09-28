@@ -2,32 +2,36 @@ import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
-import {
-  BLOG_POSTS,
-  BlogCategory,
-  CATEGORIES,
-  BlogPost,
-} from "../../blogs/blogData";
+import { BlogPost, Category } from "@/sanity/lib/types";
 import { CTASection } from "./CTASection";
 
 interface BlogListPageProps {
+  posts: BlogPost[];
+  categories: Category[];
   onBookCall: () => void;
 }
 
 export const BlogListPage: React.FC<BlogListPageProps> = ({
+  posts = [],
+  categories = [],
   onBookCall,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<BlogCategory>("All");
+  const categoryOptions = useMemo(
+    () => ["All", ...categories.map((c) => c.title)],
+    [categories],
+  );
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Primary featured marquee post
   const featuredPost = useMemo(() => {
-    return BLOG_POSTS.find((p: BlogPost) => p.featured) || BLOG_POSTS[0];
-  }, []);
+    return posts.find((p: BlogPost) => p.featured) || posts[0];
+  }, [posts]);
 
-  // Filtered posts (excluding featured from the bottom grid if category is 'All' and no search)
+  // Filtered posts
   const filteredPosts = useMemo(() => {
-    return BLOG_POSTS.filter((post: BlogPost) => {
+    return posts.filter((post: BlogPost) => {
       const matchesCategory =
         selectedCategory === "All" ? true : post.category === selectedCategory;
       const matchesQuery =
@@ -38,7 +42,17 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
             post.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesQuery;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [posts, selectedCategory, searchQuery]);
+
+  if (!featuredPost) {
+    return (
+      <main className="w-full pb-16">
+        <div className="text-center py-24">
+          <p className="text-[#737373] text-sm">No articles published yet.</p>
+        </div>
+      </main>
+    );
+  }
 
   // Framer-style staggered words animation
   const containerVariants = {
@@ -64,6 +78,13 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
     },
   };
 
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
   return (
     <main className="w-full pb-16">
       {/* 1. Hero Section with Exact Framer Stagger Entrance */}
@@ -75,7 +96,10 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
           className="space-y-5"
         >
           {/* Eyebrow tag */}
-          <motion.div variants={wordVariants} className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#1d4ed8]/20 bg-linear-to-r from-[#1d4ed8]/8 to-[#0ea5e9]/5 text-[11px] font-semibold tracking-widest uppercase text-[#1d4ed8]">
+          <motion.div
+            variants={wordVariants}
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#1d4ed8]/20 bg-linear-to-r from-[#1d4ed8]/8 to-[#0ea5e9]/5 text-[11px] font-semibold tracking-widest uppercase text-[#1d4ed8]"
+          >
             <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] animate-pulse" />
             Virtual Captains Blogs
           </motion.div>
@@ -123,7 +147,9 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
       <section className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 mb-16">
         {/* Section label */}
         <div className="flex items-center gap-3 mb-5">
-          <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#1d4ed8] to-[#0369a1] bg-clip-text text-transparent">Featured</span>
+          <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#1d4ed8] to-[#0369a1] bg-clip-text text-transparent">
+            Featured
+          </span>
           <div className="flex-1 h-px bg-linear-to-r from-[#1d4ed8]/30 to-transparent" />
         </div>
         <Link
@@ -136,7 +162,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
           <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="text-xs sm:text-sm font-medium text-[#A4A4A4]">
-                {featuredPost.publishedDate}
+                {formatDate(featuredPost.publishedDate)}
               </span>
 
               <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#141414] group-hover:text-neutral-600 transition-colors leading-[1.18] tracking-tight">
@@ -188,7 +214,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           {/* Animated Category Tabs */}
           <div className="flex flex-wrap items-center gap-2 p-1 bg-black/3 rounded-full border border-black/4">
-            {CATEGORIES.map((cat: BlogCategory) => {
+            {categoryOptions.map((cat: string) => {
               const isActive = selectedCategory === cat;
               return (
                 <button
@@ -243,7 +269,9 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
       <section className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 mb-24">
         {/* Section label */}
         <div className="flex items-center gap-3 mb-8">
-          <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#1d4ed8] to-[#0369a1] bg-clip-text text-transparent">All Articles</span>
+          <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#1d4ed8] to-[#0369a1] bg-clip-text text-transparent">
+            All Articles
+          </span>
           <div className="flex-1 h-px bg-linear-to-r from-[#1d4ed8]/30 to-transparent" />
         </div>
         {filteredPosts.length === 0 ? (
@@ -263,9 +291,9 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {filteredPosts.map((post: BlogPost, idx: number) => (
+            {filteredPosts.map((post: BlogPost) => (
               <Link
-                key={post.id}
+                key={post._id}
                 href={`/blogs/${post.slug}`}
                 data-cursor="read"
                 data-cursor-text="Read article"
@@ -278,7 +306,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
                 <div className="flex flex-col">
                   {/* Date */}
                   <span className="text-[11px] font-mono uppercase tracking-widest text-[#8c8c8c]">
-                    {post.publishedDate}
+                    {formatDate(post.publishedDate)}
                   </span>
 
                   {/* Title */}
