@@ -5,11 +5,14 @@ import Link from "next/link";
 import { useRef, type CSSProperties } from "react";
 import { audienceSlides, whoThisIsFor } from "@/content/site";
 import { gsap, useGSAP, ScrollTrigger } from "@/lib/animations/gsap";
+import { useHeadingZoom } from "@/components/about/useHeadingZoom";
 
 export function WhoThisIsFor() {
   const containerRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
   const copyContainerRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useHeadingZoom(headingRef);
 
   useGSAP(
     () => {
@@ -48,130 +51,49 @@ export function WhoThisIsFor() {
         const currentImg = imageSlides[activeIndex];
         const nextImg = imageSlides[index];
 
-        // Stop ongoing animations so rapid scrolling doesn't break
-        gsap.killTweensOf(slides);
-        gsap.killTweensOf(imageSlides);
+        // Stop ongoing animations so rapid clicks/scrolls don't stack up
+        const nextLines = Array.from(nextSlide.children) as HTMLElement[];
+        gsap.killTweensOf([...slides, ...imageSlides, ...nextLines]);
 
-        // Ensure current is visible to animate out, and next is prepared
-        gsap.set(currentSlide, {
-          opacity: 1,
-          zIndex: 1,
-          pointerEvents: "none",
+        // Only opacity + transform are animated (GPU-composited). The old
+        // blur/rotate fly-out repainted the whole slide every frame.
+        const dir = index > activeIndex ? 1 : -1;
+
+        gsap.set(currentSlide, { zIndex: 1, pointerEvents: "none" });
+        gsap.set(nextSlide, { zIndex: 2, pointerEvents: "auto", opacity: 1, x: 0, y: 0 });
+        gsap.set(currentImg, { zIndex: 1 });
+        gsap.set(nextImg, { zIndex: 2 });
+
+        // 1. Outgoing copy: quick fade + lift away in the travel direction
+        gsap.to(currentSlide, {
+          opacity: 0,
+          y: -14 * dir,
+          duration: 0.3,
+          ease: "power2.in",
         });
-        gsap.set(nextSlide, {
-          zIndex: 2,
-          pointerEvents: "auto",
-          filter: "blur(0px)",
-        });
 
-        gsap.set(currentImg, { zIndex: 1, filter: "blur(0px)" });
-        gsap.set(nextImg, { zIndex: 2, filter: "blur(0px)" });
+        // 2. Incoming copy: its lines (name, title, body, CTA) rise in one
+        //    after another — an editorial reveal rather than a block swap
+        gsap.fromTo(
+          nextLines,
+          { opacity: 0, y: 18 * dir },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.55,
+            ease: "power3.out",
+            stagger: 0.06,
+            delay: 0.18,
+          },
+        );
 
-        const isForward = index > activeIndex;
-
-        if (isForward) {
-          // Forward scroll: old leaves top-left, new enters bottom-right
-          gsap.to(currentSlide, {
-            opacity: 0,
-            x: -80,
-            y: -40,
-            rotation: -10,
-            filter: "blur(12px)",
-            duration: 0.6,
-            ease: "power2.in",
-          });
-          gsap.fromTo(
-            nextSlide,
-            {
-              opacity: 0,
-              x: 120,
-              y: 60,
-              rotation: 15,
-              scale: 0.9,
-              transformOrigin: "bottom right",
-            },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              rotation: 0,
-              scale: 1,
-              duration: 1.0,
-              ease: "back.out(1.2)",
-            },
-          );
-
-          // Image animation
-          gsap.to(currentImg, {
-            opacity: 0,
-            x: -40,
-            filter: "blur(12px)",
-            duration: 0.6,
-            ease: "power2.in",
-          });
-          gsap.fromTo(
-            nextImg,
-            { opacity: 0, x: 40, scale: 0.95 },
-            {
-              opacity: 1,
-              x: 0,
-              scale: 1,
-              duration: 1.0,
-              ease: "back.out(1.2)",
-            },
-          );
-        } else {
-          // Backward scroll: old leaves bottom-right, new enters top-left
-          gsap.to(currentSlide, {
-            opacity: 0,
-            x: 120,
-            y: 60,
-            rotation: 15,
-            filter: "blur(12px)",
-            duration: 0.6,
-            ease: "power2.in",
-          });
-          gsap.fromTo(
-            nextSlide,
-            {
-              opacity: 0,
-              x: -80,
-              y: -40,
-              rotation: -10,
-              scale: 0.9,
-              transformOrigin: "bottom right",
-            },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              rotation: 0,
-              scale: 1,
-              duration: 1.0,
-              ease: "back.out(1.2)",
-            },
-          );
-
-          // Image animation
-          gsap.to(currentImg, {
-            opacity: 0,
-            x: 40,
-            filter: "blur(12px)",
-            duration: 0.6,
-            ease: "power2.in",
-          });
-          gsap.fromTo(
-            nextImg,
-            { opacity: 0, x: -40, scale: 0.95 },
-            {
-              opacity: 1,
-              x: 0,
-              scale: 1,
-              duration: 1.0,
-              ease: "back.out(1.2)",
-            },
-          );
-        }
+        // 3. Image: soft crossfade with a gentle settle
+        gsap.to(currentImg, { opacity: 0, duration: 0.5, ease: "power1.out" });
+        gsap.fromTo(
+          nextImg,
+          { opacity: 0, scale: 1.04 },
+          { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" },
+        );
 
         // Update dots
         dots.forEach((dot, i) => {
@@ -201,31 +123,88 @@ export function WhoThisIsFor() {
         activeIndex = index;
       }
 
+      // Phones/tablets: a timed carousel (restarted by every manual change)
+      // instead of scroll-pinning. Paused while the section is off screen.
+      let autoplay: number | undefined;
+      let onScreen = false;
+      const isPinned = () => window.matchMedia("(min-width: 1024px)").matches;
+      const restartAutoplay = () => {
+        window.clearTimeout(autoplay);
+        if (!onScreen || isPinned()) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        autoplay = window.setTimeout(() => {
+          goToSlide((activeIndex + 1) % slides.length);
+          restartAutoplay();
+        }, 6000);
+      };
+      const goManual = (index: number) => {
+        goToSlide(index);
+        restartAutoplay();
+      };
+
       // Attach click listeners to tab dots so users can click between profiles
-      dots.forEach((dot, i) => {
-        dot.style.cursor = "pointer";
-        dot.addEventListener("click", () => goToSlide(i));
+      const onDotClick = dots.map((dot, i) => {
+        const handler = () => goManual(i);
+        dot.addEventListener("click", handler);
+        return handler;
       });
 
-      // Create the pinning scroll trigger
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        anticipatePin: 1,
-        // Reduced pinning duration for better UX
-        end: `+=${slides.length * 75}%`,
-        pin: true,
-        snap: {
-          snapTo: 1 / (slides.length - 1),
-          duration: 0.4,
-          ease: "power1.inOut",
+      // Swipe between profiles on touch screens
+      let touchX: number | null = null;
+      const onTouchStart = (e: TouchEvent) => {
+        touchX = e.touches[0].clientX;
+      };
+      const onTouchEnd = (e: TouchEvent) => {
+        if (touchX === null || isPinned()) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        touchX = null;
+        if (Math.abs(dx) < 40) return;
+        goManual((activeIndex + (dx < 0 ? 1 : -1) + slides.length) % slides.length);
+      };
+      section.addEventListener("touchstart", onTouchStart, { passive: true });
+      section.addEventListener("touchend", onTouchEnd);
+
+      const visibility = new IntersectionObserver(
+        ([entry]) => {
+          onScreen = entry.isIntersecting;
+          if (onScreen) restartAutoplay();
+          else window.clearTimeout(autoplay);
         },
-        onUpdate: (self) => {
-          // Calculate which slide we should be on based on scroll progress with proper thresholds
-          const targetIndex = Math.round(self.progress * (slides.length - 1));
-          goToSlide(targetIndex);
-        },
+        { threshold: 0.35 },
+      );
+      visibility.observe(section);
+
+      // Desktop only: pin and scroll through the profiles
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px)", () => {
+        window.clearTimeout(autoplay);
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top top",
+          anticipatePin: 1,
+          // Reduced pinning duration for better UX
+          end: `+=${slides.length * 75}%`,
+          pin: true,
+          snap: {
+            snapTo: 1 / (slides.length - 1),
+            duration: 0.4,
+            ease: "power1.inOut",
+          },
+          onUpdate: (self) => {
+            // Calculate which slide we should be on based on scroll progress with proper thresholds
+            const targetIndex = Math.round(self.progress * (slides.length - 1));
+            goToSlide(targetIndex);
+          },
+        });
       });
+
+      return () => {
+        window.clearTimeout(autoplay);
+        visibility.disconnect();
+        section.removeEventListener("touchstart", onTouchStart);
+        section.removeEventListener("touchend", onTouchEnd);
+        dots.forEach((dot, i) => dot.removeEventListener("click", onDotClick[i]));
+      };
     },
     { scope: containerRef },
   );
@@ -234,28 +213,35 @@ export function WhoThisIsFor() {
     <section
       id="who"
       ref={containerRef}
-      className="section bg-(--white) text-(--ink) overflow-hidden min-h-screen flex flex-col justify-center pt-20 pb-6 md:pt-24 md:pb-8"
+      className="section bg-(--white) text-(--ink) overflow-hidden flex flex-col justify-center py-12 sm:py-16 lg:min-h-screen lg:pt-24 lg:pb-8"
       aria-labelledby="who-heading"
     >
       <div className="frame w-full max-w-372 px-4 sm:px-8 lg:px-12 mx-auto flex flex-col items-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-4 py-1.5 mb-3">
           <span className="h-2 w-2 rounded-full bg-[#2563eb]" />
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-[#2563eb]">
+          <span className="type-eyebrow text-[#2563eb]">
             Target Profiles
           </span>
         </div>
         <h2
-          className="text-center text-3xl md:text-4xl lg:text-5xl font-serif font-medium tracking-tight text-(--ink)"
+          ref={headingRef}
+          className="text-center type-h2 font-medium text-(--ink)"
           id="who-heading"
         >
           Who Is This For
         </h2>
 
-        <div className="w-[85%] mt-6 md:mt-10 max-[1023px]:w-[calc(100%-2*var(--gutter))]">
-          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-x-[min(3.97vw,60px)] items-center max-[1023px]:grid-cols-1 max-[1023px]:gap-y-[clamp(1.5rem,5vw,3rem)] max-[1023px]:justify-items-center max-[1023px]:text-center">
+        {/* Below 1024px two layouts:
+              portrait (> 500px tall)  → stacked & centred
+              rotated phone (≤ 500px)  → image + copy side by side (the
+                                         desktop grid), with a shorter image
+            Arbitrary media variants are used because the max-* breakpoint
+            variants aren't generated in this project. */}
+        <div className="w-[85%] mt-6 md:mt-10 [@media(max-width:1023px)]:w-full [@media(max-width:1023px)_and_(max-height:500px)]:mt-5">
+          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-x-[min(3.97vw,60px)] items-center [@media(max-width:1023px)_and_(min-height:501px)]:grid-cols-1 [@media(max-width:1023px)_and_(min-height:501px)]:gap-y-[clamp(1.5rem,5vw,3rem)] [@media(max-width:1023px)_and_(min-height:501px)]:justify-items-center [@media(max-width:1023px)_and_(min-height:501px)]:text-center [@media(max-width:1023px)_and_(max-height:500px)]:gap-x-6">
             {/* Wave Graphic */}
             <div
-              className="relative w-full overflow-hidden rounded-[28px] h-70 sm:h-87.5 md:h-100 max-[1023px]:max-w-130 max-[767px]:max-w-full "
+              className="relative w-full overflow-hidden rounded-[28px] h-70 sm:h-87.5 md:h-100 [@media(max-width:1023px)_and_(min-height:501px)]:max-w-130 [@media(max-height:500px)]:h-50 [@media(max-height:500px)]:rounded-2xl"
               data-who-wave=""
               ref={waveRef}
               style={
@@ -284,53 +270,40 @@ export function WhoThisIsFor() {
             </div>
 
             {/* Text Copy */}
+            {/* Slides share one grid cell, so the box is always as tall as
+                the tallest slide (no spacer sized to slide 1 only) */}
             <div
               ref={copyContainerRef}
-              className="relative w-full pt-[min(1.32vw,20px)] max-[1023px]:pt-0"
+              className="relative grid w-full pt-[min(1.32vw,20px)] [@media(max-width:1023px)]:pt-0"
             >
-              {/* Invisible spacer to maintain container height for absolute children */}
-              <div className="w-full invisible pointer-events-none opacity-0">
-                <p className="grad-text [--grad:var(--grad-audience)] text-2xl md:text-4xl lg:text-5xl font-serif font-normal leading-[1.1] tracking-[-0.01em]">
-                  {audienceSlides[0].eyebrow}
-                </p>
-                <h3 className="mt-2 md:mt-4 text-lg md:text-xl font-medium tracking-[-0.01em]">
-                  {audienceSlides[0].title}
-                </h3>
-                <p className="max-w-[25em] mt-4 md:mt-6 text-sm md:text-base leading-relaxed max-[1023px]:max-w-[46ch]">
-                  {audienceSlides[0].body}
-                </p>
-                <div className="mt-6 md:mt-8">
-                  <span className="btn-pill">{audienceSlides[0].cta}</span>
-                </div>
-              </div>
-
-              {/* Actual slides */}
               {audienceSlides.map((slide) => (
                 <div
                   key={slide.id}
-                  className="w-full absolute top-0 left-0 will-change-transform"
+                  className="col-start-1 row-start-1 w-full will-change-transform"
                   data-who-copy-slide=""
                   data-hue={slide.waveHue}
                 >
                   <p
-                    className="grad-text [--grad:var(--grad-audience)] text-2xl md:text-4xl lg:text-5xl font-serif font-normal leading-[1.1] tracking-[-0.01em] pb-1.5"
+                    className="grad-text [--grad:var(--grad-audience)] type-display font-normal pb-1.5"
                     data-who-eyebrow=""
                   >
                     {slide.eyebrow}
                   </p>
                   <h3
-                    className="mt-2 md:mt-4 text-lg md:text-xl font-serif font-medium tracking-tight text-(--ink)"
+                    className="mt-2 md:mt-4 type-h3 font-medium text-(--ink)"
                     data-who-slide-title=""
                   >
                     {slide.title}
                   </h3>
                   <p
-                    className="max-w-[25em] mt-4 md:mt-6 text-sm md:text-base leading-relaxed text-(--ink-soft) max-[1023px]:max-w-[46ch]"
+                    className="max-w-[25em] mt-4 md:mt-6 type-body text-(--ink-soft) [@media(max-width:1023px)_and_(min-height:501px)]:max-w-[46ch] [@media(max-height:500px)]:mt-2"
                     data-who-body=""
                   >
                     {slide.body}
                   </p>
-                  <div className="mt-6 md:mt-8 flex items-center justify-start max-[1023px]:justify-center">
+                  {/* Centred by default (stacked phones/tablets); left-aligned
+                      beside the image on desktop and rotated phones */}
+                  <div className="mt-6 md:mt-8 flex items-center justify-center lg:justify-start [@media(max-height:500px)]:justify-start [@media(max-height:500px)]:mt-4">
                     <Link
                       href={slide.href}
                       className="group inline-flex items-center gap-2 rounded-full bg-[#0a0b0d] hover:bg-[#1c4fc0] text-white px-7 py-3 text-xs sm:text-sm font-semibold tracking-wide shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-all duration-200 hover:scale-102 active:scale-98"
@@ -356,10 +329,12 @@ export function WhoThisIsFor() {
                 key={item.id}
                 type="button"
                 role="tab"
-                className="w-3 h-3 border-[1.5px] border-[#b9bec9] rounded-full transition-all duration-300 aria-selected:w-8 aria-selected:bg-[#2563eb] aria-selected:border-[#2563eb]"
+                className="group flex h-7 cursor-pointer items-center justify-center px-1.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563eb]/60"
                 aria-selected={index === 0}
                 aria-label={item.eyebrow}
-              />
+              >
+                <span className="block h-3 w-3 rounded-full border-[1.5px] border-[#b9bec9] transition-all duration-300 group-aria-selected:w-8 group-aria-selected:border-[#2563eb] group-aria-selected:bg-[#2563eb]" />
+              </button>
             ))}
           </div>
         </div>

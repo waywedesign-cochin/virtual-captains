@@ -38,7 +38,9 @@ export function buildPartnerTimeline(scope: HTMLElement): void {
       const conditions = context.conditions;
       if (!conditions?.motion) return;
 
-      const compact = conditions.compact === true;
+      // Below desktop the stage isn't rendered (PartnerNetworkCompact takes
+      // over), so there is nothing to pin or emit.
+      if (conditions.compact) return;
 
       const hub = one<HTMLElement>(scope, "[data-partner-hub]");
       const hubPlate = one<HTMLElement>(scope, ".partner__hub-plate");

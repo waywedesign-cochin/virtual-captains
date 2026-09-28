@@ -30,7 +30,9 @@ gsap.registerPlugin(ScrollTrigger);
  */
 interface SiteFooterProps {
   showCTA?: boolean;
-  theme?: "default" | "subtle" | "dark" | "light-blue";
+  /** "white-blue": for light pages — starts white to flow out of the page
+   *  above, then deepens to the home page's blue. */
+  theme?: "default" | "subtle" | "dark" | "light-blue" | "white-blue";
 }
 
 export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
@@ -41,6 +43,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
     showCTA ||
     theme === "default";
 
+  const isWhiteBlue = theme === "white-blue";
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -621,16 +624,20 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
 
       {/* ================= FOOTER ================= */}
       <div
-        className={`w-full ${isLightBlue ? "bg-[#0c318f]" : "bg-[#040507]"}`}
+        className={`w-full ${isWhiteBlue ? "bg-white" : isLightBlue ? "bg-[#0c318f]" : "bg-[#040507]"}`}
       >
         <footer
           ref={footerRef}
           id="resources"
-          className="relative -mt-px flex min-h-0 pin:min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 pin:px-16 py-8 sm:py-10 pin:pt-[clamp(36px,6vh,72px)] pin:pb-8 text-white"
+          // white-blue: extra top room on stacked layouts so the white text
+          // only ever sits on the blue part of the gradient
+          className={`relative -mt-px flex min-h-0 pin:min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 pin:px-16 ${isWhiteBlue ? "pt-40 pb-8 sm:pt-44 sm:pb-10" : "py-8 sm:py-10"} pin:pt-[clamp(36px,6vh,72px)] pin:pb-8 text-white`}
           style={{
-            background: isLightBlue
-              ? "linear-gradient(180deg, #040507 0%, #050b24 30%, #051d5c 70%, #0c318f 100%)"
-              : "#040507",
+            background: isWhiteBlue
+              ? "linear-gradient(180deg, #ffffff 0%, #dfe9ff 10%, #6d9cf2 26%, #2f63d8 44%, #1c4fc0 66%, #0c318f 100%)"
+              : isLightBlue
+                ? "linear-gradient(180deg, #040507 0%, #050b24 30%, #051d5c 70%, #0c318f 100%)"
+                : "#040507",
           }}
         >
           {/* Dot Grid System with Torch Glow Proximity */}

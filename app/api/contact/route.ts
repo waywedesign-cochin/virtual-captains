@@ -3,11 +3,12 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, message, website } = body;
+    const { name, email, phone, message, website, audience, role, employees } = body;
 
-    if (!name || !email || !phone || !message) {
+    // Message is optional (matches the Book a Call popup)
+    if (!name || !email || !phone) {
       return NextResponse.json(
-        { error: "Name, email, phone, and message are required." },
+        { error: "Name, email, and phone are required." },
         { status: 400 }
       );
     }
@@ -17,8 +18,11 @@ export async function POST(request: Request) {
       name,
       email,
       phone,
+      audience: audience || "N/A",
+      role: role || "N/A",
+      employees: employees || "N/A",
       website: website || "N/A",
-      message,
+      message: message || "N/A",
       timestamp: new Date().toISOString(),
     });
 

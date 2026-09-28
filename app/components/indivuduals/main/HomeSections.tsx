@@ -17,6 +17,7 @@ export function HomeSections() {
       </DarkAtmosphere>
       <WhoThisIsFor />
       <CareerCta />
+      {/* Same footer as the home page, without its "Book a Call" CTA band */}
       <SiteFooter showCTA={false} theme="light-blue" />
     </>
   );

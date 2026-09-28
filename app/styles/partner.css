@@ -20,10 +20,8 @@
   top: 8.7%;
   left: 8.47%;
   z-index: 3;
-  font-size: var(--fs-partner-title);
+  /* size / line-height come from the shared `type-h2` utility */
   font-weight: 300;
-  line-height: 1.185;
-  letter-spacing: -0.01em;
   color: var(--white);
 }
 
@@ -151,8 +149,10 @@
    ========================================================================== */
 
 @media (max-width: 1023px) {
+  /* Below desktop the percentage-positioned stage is not rendered at all
+     (see PartnerNetworkCompact) — the section sizes to its flowing content. */
   .partner {
-    height: min(104vw, 1000px);
+    height: auto;
   }
 
   .partner__lines-group--wide {
@@ -206,9 +206,6 @@
 }
 
 @media (max-width: 767px) {
-  .partner {
-    height: min(215vw, 840px);
-  }
 
   .partner__title {
     top: 3%;

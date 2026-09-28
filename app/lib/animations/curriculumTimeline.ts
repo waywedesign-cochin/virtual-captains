@@ -92,6 +92,23 @@ export function buildCurriculumTimeline(scope: HTMLElement): void {
 function buildCompactReveal(scope: HTMLElement): void {
   const items = all<HTMLElement>(scope, "[data-curriculum-rail-item]");
 
+  // Same zoom-bounce heading entrance used across the site
+  const heading = one<HTMLElement>(scope, "[data-curriculum-compact-heading]");
+  if (heading) {
+    gsap.set(heading, { opacity: 0, scale: 0.65, y: 20 });
+    gsap.to(heading, {
+      scrollTrigger: { trigger: heading, start: "top 88%", toggleActions: "play none none reverse" },
+      opacity: 1,
+      y: 0,
+      duration: 0.85,
+      keyframes: [
+        { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+        { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+        { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+      ],
+    });
+  }
+
   items.forEach((item) => {
     gsap.fromTo(
       item,

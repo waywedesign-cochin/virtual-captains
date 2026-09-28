@@ -41,6 +41,13 @@ export function Hero() {
               </span>
             ))}
           </h1>
+
+          {/* Phones & tablets only: a supporting line so the headline has
+              context before the CTAs (desktop has the orbit composition) */}
+          <p className="hero__sub lg:hidden">
+            A 12-week cohort programme that turns graduates, career switchers and
+            working reps into high-performing B2B sellers.
+          </p>
         </div>
 
         <div className="hero__cta">
