@@ -684,7 +684,7 @@ export default function CrossCountry() {
       id="programs"
       data-nav-section="Cross Country"
       data-nav-theme="dark"
-      className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-[clamp(24px,4vh,60px)] text-white sm:px-8 lg:px-16"
+      className="relative z-10 flex min-h-0 lg:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 lg:py-[clamp(24px,4vh,60px)] text-white sm:px-8 lg:px-16"
       style={{
         background:
           "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
@@ -708,7 +708,7 @@ export default function CrossCountry() {
         {/* Seamlessly blended widescreen canvas container */}
         <div
           ref={globeWrapRef}
-          className="relative mt-[clamp(10px,2vh,24px)] flex w-[min(1120px,94vw)] h-[clamp(300px,46vh,420px)] flex-col items-center justify-center"
+          className="relative mt-[clamp(10px,2vh,24px)] flex w-[min(1120px,94vw)] h-[clamp(260px,38vh,420px)] flex-col items-center justify-center"
         >
           {/* Ambient luminous atmospheric glow directly behind the map/globe */}
           <div className="pointer-events-none absolute inset-x-8 -inset-y-6 rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(56,189,248,0.28)_0%,rgba(29,99,237,0.14)_50%,transparent_75%)] blur-3xl -z-10" />

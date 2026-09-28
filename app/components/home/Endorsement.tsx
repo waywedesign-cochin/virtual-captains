@@ -230,7 +230,7 @@ export default function Endorsement() {
       id="endorsement"
       data-nav-section="Endorsement"
       data-nav-theme="dark"
-      className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 pt-[clamp(68px,12vh,152px)] pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
+      className="relative z-10 flex min-h-0 lg:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 lg:pt-[clamp(68px,12vh,152px)] lg:pb-[clamp(28px,5vh,72px)] text-white sm:px-10 lg:px-16"
       style={{
         background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}

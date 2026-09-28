@@ -223,7 +223,7 @@ export default function RoleplayToConversation() {
     <section 
       ref={sectionRef} 
       data-nav-override-zone
-      className="relative z-10 w-full overflow-hidden min-h-dvh pb-10 lg:pb-0"
+      className="relative z-10 w-full overflow-hidden min-h-0 lg:min-h-dvh pb-6 sm:pb-10 lg:pb-0"
       style={{
         background: "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
       }}
@@ -236,7 +236,7 @@ export default function RoleplayToConversation() {
       ============================================================ */}
       <div 
         ref={stage1Ref}
-        className="relative z-10 flex h-dvh w-full flex-col items-center justify-center p-4 sm:p-8"
+        className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-10 sm:py-14 lg:h-dvh lg:p-8"
       >
 
         <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10">
@@ -260,14 +260,14 @@ export default function RoleplayToConversation() {
         >
           <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
             {PROMISE_PARAGRAPH_1.map((word, i) => (
-              <span key={`p1-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-15">
+              <span key={`p1-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 lg:opacity-15">
                 {word}
               </span>
             ))}
           </p>
           <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
             {PROMISE_PARAGRAPH_2.map((word, i) => (
-              <span key={`p2-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-15">
+              <span key={`p2-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 lg:opacity-15">
                 {word}
               </span>
             ))}
@@ -280,7 +280,7 @@ export default function RoleplayToConversation() {
       ============================================================ */}
       <div 
         ref={twoAudiencesContainerRef} 
-        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-12 sm:mt-16 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none"
+        className="relative z-30 flex items-center justify-center w-full h-full opacity-100 pointer-events-auto mt-6 sm:mt-8 lg:mt-0 lg:absolute lg:inset-0 lg:z-50 lg:opacity-0 lg:pointer-events-none"
       >
         <div className="pointer-events-auto w-full h-full">
           <TwoAudiences ref={twoAudiencesRef} />

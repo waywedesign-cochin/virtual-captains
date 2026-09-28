@@ -235,7 +235,7 @@ export default function HiringPartners() {
       id="partner"
       data-nav-section="Partner"
       data-nav-theme="dark"
-      className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-6 py-20 text-white sm:px-10 lg:py-28 lg:pl-36 lg:pr-16"
+      className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-5 py-10 sm:py-14 lg:py-28 lg:pl-36 lg:pr-16 text-white sm:px-10"
       style={{
         background:
           "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
@@ -319,7 +319,7 @@ export default function HiringPartners() {
           </span>
           <h2
             ref={headingRef}
-            className="font-serif text-[clamp(2.1rem,3.2vw,3.6rem)] font-normal leading-[1.15] text-white"
+            className="font-serif text-[clamp(1.75rem,5vw,3.6rem)] font-normal leading-[1.15] text-white"
           >
             Building <span className="italic text-[#1d63ed]">Better </span>
             <span className="italic text-[#1d63ed]">Sales</span> Through

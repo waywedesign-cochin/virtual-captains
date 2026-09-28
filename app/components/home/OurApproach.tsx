@@ -191,7 +191,7 @@ export default function OurApproach() {
       id="about"
       data-nav-section="The Model"
       data-nav-theme="dark"
-      className="relative -mt-px z-10 flex h-screen max-h-dvh w-full flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-12 pt-24 pb-6 sm:pb-8 lg:pt-26 lg:pb-8 text-white"
+      className="relative -mt-px z-10 flex min-h-0 lg:h-screen lg:max-h-dvh w-full flex-col justify-center lg:justify-between overflow-hidden px-4 sm:px-8 lg:px-12 py-10 sm:py-14 lg:pt-26 lg:pb-8 text-white"
       style={{
         background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}
@@ -199,7 +199,7 @@ export default function OurApproach() {
       {/* Subtle Dotted Background Grid */}
       <DottedBackground theme="dark" />
 
-      <div className="relative z-10 mx-auto flex h-full max-h-dvh w-full max-w-375 flex-col justify-between items-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-375 flex-col justify-center lg:justify-between items-center gap-5 sm:gap-6 lg:gap-0 lg:h-full lg:max-h-dvh">
         {/* ============================================================
             1. CONSTANT TOP HEADER
         ============================================================ */}
@@ -207,7 +207,7 @@ export default function OurApproach() {
           <span className="block font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-white/40 mb-1.5 sm:mb-2">
             target. engage. Convert.
           </span>
-          <h2 className="font-serif text-[clamp(1.55rem,2.2vw,2.4rem)] font-normal leading-[1.12] text-white">
+          <h2 className="font-serif text-[clamp(1.4rem,4.2vw,2.4rem)] font-normal leading-[1.15] text-white">
             <span className="italic text-[#4d82f5] block">
               A Complete Sales Engine
             </span>
@@ -220,7 +220,7 @@ export default function OurApproach() {
         ============================================================ */}
         <div className="relative flex flex-col items-center justify-center flex-1 w-full max-w-xl lg:max-w-2xl mx-auto min-h-0 my-auto py-2">
           {/* Active Illustration Stage */}
-          <div className="relative h-46 sm:h-54 lg:h-64 xl:h-72 max-h-[34vh] w-full flex items-center justify-center shrink-0">
+          <div className="relative h-44 sm:h-52 lg:h-64 xl:h-72 max-h-[34vh] w-full flex items-center justify-center shrink-0">
             {MODEL_SLIDES.map((slide, idx) => {
               const isActive = activeStep === idx;
               return (
@@ -245,10 +245,10 @@ export default function OurApproach() {
 
           {/* Bottom Dynamic Description & Bold Tagline */}
           <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center text-center px-4 shrink-0 mt-3 sm:mt-4">
-            <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-white/65 max-w-lg mx-auto transition-opacity duration-300">
+            <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-white/70 max-w-lg mx-auto transition-opacity duration-300">
               {activeSlide.description}
             </p>
-            <p className="mt-2 font-sans text-[14px] sm:text-[15.5px] font-bold tracking-wider text-white transition-opacity duration-300">
+            <p className="mt-2 font-sans text-[13.5px] sm:text-[15px] font-bold tracking-wider text-white transition-opacity duration-300">
               {activeSlide.tagline}
             </p>
           </div>

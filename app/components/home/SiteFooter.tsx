@@ -533,7 +533,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
       {showCTA && (
         <section
           ref={ctaSectionRef}
-          className="relative -mt-px z-10 flex min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-[#040507] px-6 py-20 text-center sm:px-10"
+          className="relative -mt-px z-10 flex min-h-0 lg:min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-[#040507] px-6 py-12 sm:py-16 lg:py-20 text-center sm:px-10"
         >
           {/* Subtle Dotted Background */}
           <DottedBackground theme="dark" />
@@ -558,7 +558,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
               ref={ctaRef}
               type="button"
               onClick={() => setIsBookingOpen(true)}
-              className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-md px-[clamp(34px,7vw,90px)] py-[clamp(14px,2.4vh,26px)] font-serif text-[clamp(1.4rem,3.4vw,2.75rem)] leading-none transition-all duration-300 hover:border-white/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061230]"
+              className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-md px-[clamp(26px,6vw,90px)] py-[clamp(12px,2vh,24px)] font-serif text-[clamp(1.25rem,4vw,2.75rem)] leading-none transition-all duration-300 hover:border-white/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061230]"
               aria-label="Book a call with Virtual Captains"
             >
               <span
@@ -582,7 +582,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
 
             <p
               ref={ctaHeadingRef}
-              className="mt-2 text-center font-serif text-[clamp(1.25rem,2.5vw,2rem)] font-medium text-white/90 tracking-tight"
+              className="mt-2 text-center font-serif text-[clamp(1.15rem,3.2vw,2rem)] font-medium text-white/90 tracking-tight max-w-xl px-2"
             >
               Great Conversations Create Greater Possibilities
             </p>
@@ -597,7 +597,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
         <footer
           ref={footerRef}
           id="resources"
-          className="relative -mt-px flex min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 lg:px-16 pt-[clamp(36px,6vh,72px)] pb-6 sm:pb-8 text-white"
+          className="relative -mt-px flex min-h-0 lg:min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 lg:px-16 py-8 sm:py-10 lg:pt-[clamp(36px,6vh,72px)] lg:pb-8 text-white"
           style={{
             background: isLightBlue
               ? "linear-gradient(180deg, #040507 0%, #050b24 30%, #051d5c 70%, #0c318f 100%)"
@@ -640,8 +640,8 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
               stacked on top of each other, so as the logo fades away the
               links are already sitting right where it was — no dead space,
               no slide-in-from-nowhere. */}
-            <div className="relative flex w-full min-h-55 sm:min-h-62.5 md:min-h-67.5 items-center justify-center">
-              <div ref={wordmarkRef} className="flex w-full justify-center">
+            <div className="relative flex w-full min-h-0 lg:min-h-67.5 items-center justify-center">
+              <div ref={wordmarkRef} className="hidden lg:flex w-full justify-center">
                 <Image
                   src="/home/logo.png"
                   alt="Virtual Captains"
@@ -662,10 +662,10 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
 
               <div
                 ref={actionsRef}
-                className="absolute inset-0 flex flex-col items-center justify-center gap-4 sm:gap-5 px-4"
+                className="relative lg:absolute lg:inset-0 flex flex-col items-center justify-center gap-4 sm:gap-5 px-2 sm:px-4 w-full py-4 lg:py-0"
               >
-                <p className="text-center font-serif font-bold text-[clamp(1.4rem,2.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm">
-                  Trusted Partner for <br /> People, Teams & Organizations
+                <p className="text-center font-serif font-bold text-[clamp(1.2rem,3.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm max-w-xl">
+                  Trusted Partner for <br className="hidden sm:block" /> People, Teams & Organizations
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                   <Link
@@ -723,7 +723,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
           {/* Legal / Copyright Bar: Cleanly anchored at the bottom with no dead void */}
           <div
             ref={legalRef}
-            className="relative z-10 mx-auto mt-auto flex w-full max-w-350 flex-col items-center gap-3 border-t border-white/15 pt-5 sm:pt-6 pb-1 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
+            className="relative z-10 mx-auto mt-auto flex w-full max-w-350 flex-col items-center gap-3 border-t border-white/15 pt-5 sm:pt-6 pb-12 sm:pb-1 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
           >
             <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
               <Link
