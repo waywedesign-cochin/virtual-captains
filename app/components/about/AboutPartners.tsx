@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { useHeadingZoom } from "./useHeadingZoom";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 if (typeof window !== "undefined") {
@@ -141,13 +142,15 @@ export default function AboutPartners() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const textRef    = useRef<HTMLDivElement>(null);
   const tickerRef  = useRef<HTMLDivElement>(null);
+  useHeadingZoom(headingRef);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion || !sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      const targets = [headingRef.current, textRef.current, tickerRef.current].filter(
+      // Heading has its own zoom entrance (useHeadingZoom) — fade the rest
+      const targets = [textRef.current, tickerRef.current].filter(
         (el): el is HTMLHeadingElement | HTMLDivElement => el !== null
       );
       if (targets.length === 0) return;
@@ -158,7 +161,7 @@ export default function AboutPartners() {
         start: "top 75%",
         once: true,
         onEnter: () => {
-          const activeTargets = [headingRef.current, textRef.current, tickerRef.current].filter(
+          const activeTargets = [textRef.current, tickerRef.current].filter(
             (el): el is HTMLHeadingElement | HTMLDivElement => el !== null
           );
           if (activeTargets.length > 0) {
@@ -182,10 +185,8 @@ export default function AboutPartners() {
       ref={sectionRef}
       role="region"
       aria-label="Partner Network"
-      className="relative w-full overflow-hidden py-14 sm:py-20 md:py-24 lg:py-20 xl:py-28 select-none"
+      className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-24 xl:py-28 select-none"
     >
-      {/* Ambient blue glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-187.5 sm:w-262.5 lg:w-337.5 h-125 sm:h-175 bg-[radial-gradient(ellipse_at_center,rgba(19,55,142,0.35)_0%,rgba(8,28,84,0.18)_50%,transparent_100%)] blur-[140px] pointer-events-none -z-10" />
 
       <div className="w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 xl:px-12 relative z-10">
 

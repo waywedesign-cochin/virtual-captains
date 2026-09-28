@@ -8,7 +8,6 @@ export default function AboutHero() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -18,25 +17,6 @@ export default function AboutHero() {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-
-      // Ambient backlight fade-in & breathing pulse
-      if (glowRef.current) {
-        gsap.fromTo(
-          glowRef.current,
-          { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1, duration: 1.6, ease: "power2.out" }
-        );
-
-        gsap.to(glowRef.current, {
-          scale: 1.08,
-          opacity: 0.85,
-          duration: 3.5,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: 1.6,
-        });
-      }
 
       // Initial headline zoom-in reveal state
       if (headingRef.current) {
@@ -84,15 +64,8 @@ export default function AboutHero() {
     <section
       role="region"
       aria-label="About Virtual Captains Hero"
-      className="relative w-full min-h-screen flex items-center justify-center pt-20 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8 overflow-hidden select-none"
+      className="relative w-full min-h-[65svh] lg:min-h-svh flex items-center justify-center pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8 overflow-hidden select-none"
     >
-      {/* Centered Breathing Ambient Glow */}
-      <div
-        ref={glowRef}
-        aria-hidden="true"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 sm:w-187.5 lg:w-225 h-65 sm:h-87.5 bg-radial from-[#1e40af]/30 via-[#0c2269]/15 to-transparent blur-[120px] pointer-events-none -z-10 will-change-transform"
-      />
-
       <div
         ref={containerRef}
         className="w-full max-w-5xl mx-auto flex flex-col items-center text-center relative z-10"

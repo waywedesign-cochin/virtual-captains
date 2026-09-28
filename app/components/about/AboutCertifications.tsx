@@ -118,13 +118,11 @@ export default function AboutCertifications() {
       ref={sectionRef}
       role="region"
       aria-label="Certifications"
-      className="relative w-full overflow-hidden py-14 sm:py-20 md:py-24 lg:py-20 xl:py-28 select-none flex flex-col items-center justify-center min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] xl:min-h-[540px]"
+      className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-24 xl:py-28 select-none flex flex-col items-center justify-center min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] xl:min-h-[540px]"
     >
       {/* Accessible semantic heading for screen readers */}
       <h2 className="sr-only">Certifications</h2>
 
-      {/* ── Deep Royal Blue Ambient Radial Background Glow ── */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] sm:w-[950px] lg:w-[1300px] h-[400px] sm:h-[550px] bg-radial from-[#123996]/35 via-[#081d5a]/20 to-transparent blur-[140px] pointer-events-none -z-10" />
 
       {/* ── Giant Horizontal Continuous Marquee Scrolling Behind Badges ── */}
       <div

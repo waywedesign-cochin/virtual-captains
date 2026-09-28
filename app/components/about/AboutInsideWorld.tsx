@@ -3,6 +3,12 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useScroll } from "motion/react";
 import gsap from "gsap";
+import { useHeadingZoom } from "./useHeadingZoom";
+
+// Below this height the sticky stage (heading + copy + card) cannot fit on
+// one screen (e.g. a rotated phone), so the section renders as a normal block
+// and the arrows / pills switch pillars instead of scroll position.
+const STATIC_QUERY = "(max-height: 559px)";
 
 interface Pillar {
   id: string;
@@ -54,11 +60,23 @@ export default function AboutInsideWorld() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrollFraction, setScrollFraction] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [isStatic, setIsStatic] = useState(false);
+  const isStaticRef = useRef(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useHeadingZoom(headingRef);
 
   const numItems = PILLARS.length;
 
   useEffect(() => {
     setIsMounted(true);
+    const mq = window.matchMedia(STATIC_QUERY);
+    const sync = () => {
+      isStaticRef.current = mq.matches;
+      setIsStatic(mq.matches);
+    };
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
   // Pinned scroll progress tracker across the entire section container
@@ -70,6 +88,7 @@ export default function AboutInsideWorld() {
   // Track scroll progress and drive active pillar based on pinned scroll depth
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest: number) => {
+      if (isStaticRef.current) return;
       const clamped = Math.max(0, Math.min(0.9999, latest));
       setScrollFraction(clamped);
 
@@ -114,6 +133,7 @@ export default function AboutInsideWorld() {
   const scrollToPillar = useCallback(
     (index: number) => {
       setActiveIndex(index);
+      if (isStaticRef.current) return;
       if (!containerRef.current || typeof window === "undefined") return;
       const rect = containerRef.current.getBoundingClientRect();
       const currentScrollY = window.scrollY;
@@ -142,6 +162,7 @@ export default function AboutInsideWorld() {
 
   // Calculate the continuous fill progress of the active pill [0.0 -> 1.0]
   const segmentProgress = (() => {
+    if (isStatic) return 1;
     const raw = (scrollFraction * numItems) % 1;
     return Math.max(0, Math.min(1, raw));
   })();
@@ -155,27 +176,14 @@ export default function AboutInsideWorld() {
       id="inside-our-world-section"
       role="region"
       aria-label="Inside Our World Pinned Scroll Experience"
-      className="relative w-full h-[280vh] bg-[#020B25]"
+      className="relative w-full h-[280vh] [@media(max-height:559px)]:h-auto"
     >
       {/* ── STICKY VIEWPORT STAGE (Locks on screen while scrolling through the 4 pillars) ── */}
       <div
         id="inside-world-sticky-stage"
-        style={{ position: "sticky", top: 0, height: "100vh", width: "100%" }}
-        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#020B25] select-none"
+        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center select-none [@media(max-height:559px)]:static [@media(max-height:559px)]:h-auto [@media(max-height:559px)]:py-16"
       >
-        {/* Continuous Dot Grid System matching the page canvas */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-20"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(255,255,255,0.065) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
-        />
 
-        {/* Ambient Cosmic Background Nebula */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-225 h-125 bg-radial from-[#0e3085]/35 via-[#061845]/20 to-transparent blur-[150px] pointer-events-none -z-10" />
 
         {/* Outer Max-Width Container */}
         <div className="w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 lg:px-8 xl:px-12 relative z-10">
@@ -191,7 +199,7 @@ export default function AboutInsideWorld() {
                 </span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-[2.6rem] lg:text-[2.5rem] xl:text-[3.25rem] 2xl:text-6xl font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
+              <h2 ref={headingRef} className="text-3xl sm:text-4xl md:text-[2.6rem] lg:text-[2.5rem] xl:text-[3.25rem] 2xl:text-6xl font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
                 Inside Our World
               </h2>
 
@@ -323,7 +331,7 @@ export default function AboutInsideWorld() {
                 </div>
 
                 {/* ── Exact Arc with Locked Apex Dot & Scroll-Driven Energy Beam ── */}
-                <div className="hidden sm:block shrink-0 relative w-22.5 sm:w-27.5 md:w-31.25 lg:w-26.25 xl:w-36.25 2xl:w-43.75 h-80 sm:h-90 md:h-97.5 lg:h-87.5 xl:h-102.5 2xl:h-112.5 select-none pointer-events-none">
+                <div className="hidden lg:block [@media(max-height:500px)]:hidden shrink-0 relative w-22.5 sm:w-27.5 md:w-31.25 lg:w-26.25 xl:w-36.25 2xl:w-43.75 h-80 sm:h-90 md:h-97.5 lg:h-87.5 xl:h-102.5 2xl:h-112.5 select-none pointer-events-none">
                   <svg
                     viewBox="0 0 200 460"
                     className="w-full h-full overflow-visible"
