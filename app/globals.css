@@ -8,8 +8,12 @@
  * app/components/home/pinQuery.ts. `pin-xl` is declared second so its rules
  * sort after — and override — plain `pin` ones, like xl: over lg:.
  */
-@custom-variant pin (@media (min-width: 1024px) and (min-height: 600px));
-@custom-variant pin-xl (@media (min-width: 1280px) and (min-height: 600px));
+/* Desktop two-column layouts that don't need a pinned stage (e.g. the "Choose
+ * Your Path" split): anything wider than a tablet. Declared before `pin` so
+ * pinned-only tweaks still win where both apply. */
+@custom-variant ta (@media (min-width: 769px));
+@custom-variant pin (@media (min-width: 1024px) and (min-height: 480px));
+@custom-variant pin-xl (@media (min-width: 1280px) and (min-height: 480px));
 
 :root {
   --background: #ffffff;

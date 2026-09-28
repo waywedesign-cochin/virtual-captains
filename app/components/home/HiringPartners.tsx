@@ -37,110 +37,65 @@ type CirclePod = {
  * All partner logos are sourced exclusively from public/partners/
  */
 const PODS: CirclePod[] = [
-  // 1. Center Yellow Circle (Exact center from mockup: [49.7%, 57.4%], diam: 14.6%)
-  {
-    id: "center-yellow",
-    name: "Virtual Captains",
-    isCenter: true,
-    left: 42.4,
-    top: 50.1,
-    size: 14.6,
-    bg: "#e2fd00", // Vibrant signature lime yellow
-    fallbackText: "Logo",
-    fontSize: "clamp(10px, 1.6vw, 14px)",
-  },
-
-  // 2. Top-Right Extra Large Circle (The dominant circle: [72.0%, 36.7%], diam: 34.1%)
+  // Only real partner logos — placeholder "Logo" bubbles removed. Positions
+  // (% of the inner ring) keep at least ~4% clear between any two bubbles,
+  // enough that the 105% hover zoom never makes neighbours touch.
   {
     id: "pod-top-right",
     name: "MoonHive",
     isCenter: false,
-    left: 55.0,
-    top: 19.7,
-    size: 34.1,
+    left: 51,
+    top: 24,
+    size: 32,
     bg: "#d9d9d9",
     logoSrc: "/partners/MOONHIV.png",
     fallbackText: "MoonHive",
   },
-
-  // 3. Mid-Left Large Circle ([20.25%, 56.2%], diam: 23.0%)
   {
     id: "pod-mid-left",
     name: "AHAD",
     isCenter: false,
-    left: 8.75,
-    top: 44.7,
-    size: 23.0,
+    left: 12,
+    top: 37,
+    size: 26,
     bg: "#d9d9d9",
     logoSrc: "/partners/AHAD.png",
     fallbackText: "AHAD",
   },
-
-  // 4. Top Medium Circle ([39.9%, 16.9%], diam: 19.0%)
   {
     id: "pod-top",
     name: "Skylark",
     isCenter: false,
-    left: 30.4,
-    top: 7.4,
-    size: 19.0,
+    left: 27,
+    top: 11,
+    size: 22,
     bg: "#d9d9d9",
     logoSrc: "/partners/SKYLARK.png",
     fallbackText: "Skylark",
   },
-
-  // 5. Upper-Center-Left Tiny Circle ([37.0%, 38.8%], diam: 12.8%)
-  {
-    id: "pod-upper-inner",
-    name: "Partner",
-    isCenter: false,
-    left: 30.6,
-    top: 32.4,
-    size: 12.8,
-    bg: "#d9d9d9",
-    fallbackText: "Logo",
-    fontSize: "clamp(8px, 1.2vw, 11px)",
-  },
-
-  // 6. Bottom-Left Medium-Small Circle ([31.9%, 79.8%], diam: 17.2%)
   {
     id: "pod-bottom-left",
     name: "JSR",
     isCenter: false,
-    left: 23.3,
-    top: 71.2,
-    size: 17.2,
+    left: 27.5,
+    top: 67.5,
+    size: 21,
     bg: "#d9d9d9",
     logoSrc: "/partners/JSR.png",
     invert: true,
     fallbackText: "JSR",
   },
-
-  // 7. Bottom-Right Medium Circle ([62.1%, 82.1%], diam: 18.9%)
   {
     id: "pod-bottom-right",
     name: "Sigma Life Unifirm",
     isCenter: false,
-    left: 52.65,
-    top: 72.65,
-    size: 18.9,
+    left: 55,
+    top: 63,
+    size: 24,
     bg: "#d9d9d9",
     logoSrc: "/partners/UNIFIRM.png",
     invert: true,
     fallbackText: "Unifirm",
-  },
-
-  // 8. Mid-Right Small Circle ([80.2%, 67.5%], diam: 13.0%)
-  {
-    id: "pod-mid-right",
-    name: "Partner",
-    isCenter: false,
-    left: 73.7,
-    top: 61.0,
-    size: 13.0,
-    bg: "#d9d9d9",
-    fallbackText: "Logo",
-    fontSize: "clamp(8px, 1.2vw, 11px)",
   },
 ];
 
@@ -193,20 +148,27 @@ export default function HiringPartners() {
         ease: "power3.out",
       });
 
+      // Eyebrow + heading get their own trigger: below lg they sit under the
+      // cluster, so tying them to the section top started the zoom before
+      // the heading was on screen.
+      const headingTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: eyebrowRef.current ?? headingRef.current,
+          start: "top 82%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
       if (eyebrowRef.current) {
-        tl.to(
-          eyebrowRef.current,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-          },
-          "-=0.5",
-        );
+        headingTl.to(eyebrowRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        });
       }
 
-      tl.to(
+      headingTl.to(
         headingRef.current,
         {
           opacity: 1,
@@ -224,7 +186,7 @@ export default function HiringPartners() {
             { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
           ],
         },
-        eyebrowRef.current ? "-=0.25" : "-=0.45",
+        eyebrowRef.current ? "-=0.25" : 0,
       );
     },
     { scope: sectionRef },
@@ -250,7 +212,7 @@ export default function HiringPartners() {
         <div className="flex justify-center pin:col-span-7">
           <div
             ref={clusterWrapperRef}
-            className="relative aspect-square w-[min(480px,88vw)] sm:w-[min(520px,90vw)] max-w-full select-none"
+            className="relative aspect-square w-[min(380px,82vw)] sm:w-[min(430px,80vw)] max-w-full select-none"
           >
             {/* Outer subtle faint boundary ring */}
             <div className="pointer-events-none absolute inset-0 rounded-full border border-white/15" />
@@ -314,17 +276,20 @@ export default function HiringPartners() {
         <div className="flex flex-col items-center pin:items-start text-center pin:text-left pin:col-span-5">
           <span
             ref={eyebrowRef}
-            className="mb-[clamp(12px,2vh,20px)] block font-sans text-[clamp(12px,1vw,14px)] font-normal tracking-[0.25em] text-white/60"
+            className="mb-[clamp(12px,2vh,20px)] block font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/50"
           >
             Our network
           </span>
           <h2
             ref={headingRef}
-            className="font-sans text-[clamp(1.75rem,5vw,3.6rem)] font-normal leading-[1.15] text-white"
+            className="font-sans text-[clamp(1.75rem,5vw,3.6rem)] pin:text-[clamp(2rem,3.2vw,3.25rem)] font-normal leading-[1.15] text-white"
           >
-            Building <span className="italic text-[#1d63ed]">Better </span>
-            <span className="italic text-[#1d63ed]">Sales</span> Through
-            Partnership
+            {/* Desktop: "Building Better Sales" on one line, "Through
+                Partnership" beneath it */}
+            <span className="pin:block pin:whitespace-nowrap">
+              Building <span className="italic text-[#1d63ed]">Better Sales</span>
+            </span>{" "}
+            <span className="pin:block">Through Partnership</span>
           </h2>
         </div>
       </div>

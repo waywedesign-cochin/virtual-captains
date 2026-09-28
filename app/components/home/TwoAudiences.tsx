@@ -249,12 +249,12 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
 
         {/* MIDDLE ROW: HEADLINE & AUDIENCE CARD */}
         <div className="relative z-10 flex-1 w-full flex items-center justify-center my-auto min-h-0">
-          <div className="relative w-full grid items-center gap-6 sm:gap-10 pin:grid-cols-2 pin:gap-8 pin-xl:gap-12">
+          <div className="relative w-full grid items-center gap-6 sm:gap-10 ta:grid-cols-2 ta:gap-8 pin-xl:gap-12">
             {/* LEFT COLUMN: HEADLINE */}
-            <div className="pin:pl-28 pin-xl:pl-28 flex justify-center pin:block">
+            <div className="ta:pl-4 pin:pl-28 pin-xl:pl-28 flex justify-center ta:block">
               <h2
                 ref={headlineRef}
-                className="ta-headline inline-block max-w-xl font-sans text-[clamp(1.5rem,4.5vw,3rem)] pin:text-[clamp(1.75rem,2.9vw,2.25rem)] pin-xl:text-[clamp(1.5rem,4.5vw,3rem)] font-normal leading-[1.16] text-white text-center pin:text-left"
+                className="ta-headline inline-block max-w-xl font-sans text-[clamp(1.5rem,4.5vw,3rem)] ta:text-[clamp(1.75rem,2.9vw,2.25rem)] pin-xl:text-[clamp(1.5rem,4.5vw,3rem)] font-normal leading-[1.16] text-white text-center ta:text-left"
               >
                 <span className="block">
                   <span ref={headlineLine1Ref} className="inline-block">
@@ -277,7 +277,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             {/* CENTER DIVIDER: GLOWING YELLOW BUBBLE WITH CENTER LINE IN BETWEEN LHS & RHS */}
             <div
               ref={centerDividerRef}
-              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden pin:flex flex-col items-center justify-center h-[72%] max-h-95 z-20"
+              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden ta:flex flex-col items-center justify-center h-[72%] max-h-95 z-20"
               aria-hidden="true"
             >
               {/* Top line segment */}
@@ -308,7 +308,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             {/* ============================================================
                 RIGHT COLUMN: MOBILE RESPONSIVE CARD (< 1024px)
             ============================================================ */}
-            <div className="block pin:hidden w-full max-w-md mx-auto relative z-20">
+            <div className="block ta:hidden w-full max-w-md mx-auto relative z-20">
               {/* Soft atmospheric blue glow */}
               <div className="pointer-events-none absolute -inset-3 rounded-3xl bg-[radial-gradient(ellipse_at_top,rgba(77,130,245,0.2)_0%,transparent_70%)] blur-xl" />
 
@@ -409,7 +409,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             ============================================================ */}
             <div
               ref={rhsContainerRef}
-              className="relative hidden pin:flex h-115 pin-xl:h-122.5 w-full items-center"
+              className="relative hidden ta:flex h-115 pin-xl:h-122.5 w-full items-center"
             >
               {/* DESKTOP BACKGROUND WEDGE (Preserves natural 724:1084 aspect ratio) */}
               <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 pin-xl:-right-2 w-[140%] pin-xl:w-[150%] h-[135%] pin-xl:h-[145%] flex items-center justify-end">
@@ -428,7 +428,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               <div
                 ref={orgsTextRef}
                 style={{ opacity: 1 }}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 pin:py-4 pin:pl-10 pin-xl:pl-14 pin:pr-6 max-w-112.5"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 ta:py-4 ta:pl-10 pin-xl:pl-14 ta:pr-6 max-w-112.5"
               >
                 <div>
                   <p className="font-sans text-[15px] sm:text-[17px] italic text-white/85">
@@ -475,7 +475,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                   pointerEvents: "none",
                   transform: "translateY(35px) rotate(4deg)",
                 }}
-                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 pin:py-4 pin:pl-10 pin-xl:pl-14 pin:pr-6 max-w-112.5"
+                className="absolute inset-0 z-10 flex flex-col justify-center gap-3.5 sm:gap-4 p-5 sm:p-7 ta:py-4 ta:pl-10 pin-xl:pl-14 ta:pr-6 max-w-112.5"
               >
                 <div>
                   <p className="font-sans text-[15px] sm:text-[17px] italic text-white/85">
@@ -519,7 +519,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         {/* BOTTOM PAGINATION & TOGGLE (DESKTOP ONLY) */}
         <div
           ref={bottomNavRef}
-          className="relative z-10 mt-2 sm:mt-3 pin:mt-2 hidden pin:flex flex-col items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-2"
+          className="relative z-10 mt-2 sm:mt-3 pin:mt-2 hidden ta:flex flex-col items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-2"
         >
           <button
             type="button"
