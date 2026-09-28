@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
+import { PIN_QUERY } from "./pinQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -171,7 +172,7 @@ export default function HiringPartners() {
         scale: 0.65,
         y: 20,
         transformOrigin:
-          typeof window !== "undefined" && window.innerWidth >= 1024
+          window.matchMedia(PIN_QUERY).matches
             ? "left center"
             : "center center",
       });
@@ -235,7 +236,7 @@ export default function HiringPartners() {
       id="partner"
       data-nav-section="Partner"
       data-nav-theme="dark"
-      className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-5 py-10 sm:py-14 lg:py-28 lg:pl-36 lg:pr-16 text-white sm:px-10"
+      className="relative -mt-px z-10 flex w-full flex-col justify-center overflow-hidden px-5 py-10 sm:py-14 pin:py-28 pin:pl-36 pin:pr-16 text-white sm:px-10"
       style={{
         background:
           "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
@@ -244,9 +245,9 @@ export default function HiringPartners() {
       {/* Background Dot Grid */}
       <DottedBackground theme="dark" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-310 grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
+      <div className="relative z-10 mx-auto grid w-full max-w-310 grid-cols-1 items-center gap-12 pin:grid-cols-12 pin:gap-8">
         {/* ---------- LEFT: EXACT MOCKUP CIRCLE CLUSTER ---------- */}
-        <div className="flex justify-center lg:col-span-7">
+        <div className="flex justify-center pin:col-span-7">
           <div
             ref={clusterWrapperRef}
             className="relative aspect-square w-[min(480px,88vw)] sm:w-[min(520px,90vw)] max-w-full select-none"
@@ -276,7 +277,7 @@ export default function HiringPartners() {
                 >
                   {pod.isCenter ? (
                     <span
-                      className="font-serif font-normal text-black select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
+                      className="font-sans font-normal text-black select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
                       style={{ fontSize: pod.fontSize }}
                     >
                       {pod.fallbackText}
@@ -297,7 +298,7 @@ export default function HiringPartners() {
                     </div>
                   ) : (
                     <span
-                      className="font-serif font-normal text-[#101010] select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
+                      className="font-sans font-normal text-[#101010] select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
                       style={{ fontSize: pod.fontSize }}
                     >
                       {pod.fallbackText}
@@ -310,7 +311,7 @@ export default function HiringPartners() {
         </div>
 
         {/* ---------- RIGHT: HEADLINE ---------- */}
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:col-span-5">
+        <div className="flex flex-col items-center pin:items-start text-center pin:text-left pin:col-span-5">
           <span
             ref={eyebrowRef}
             className="mb-[clamp(12px,2vh,20px)] block font-sans text-[clamp(12px,1vw,14px)] font-normal tracking-[0.25em] text-white/60"
@@ -319,7 +320,7 @@ export default function HiringPartners() {
           </span>
           <h2
             ref={headingRef}
-            className="font-serif text-[clamp(1.75rem,5vw,3.6rem)] font-normal leading-[1.15] text-white"
+            className="font-sans text-[clamp(1.75rem,5vw,3.6rem)] font-normal leading-[1.15] text-white"
           >
             Building <span className="italic text-[#1d63ed]">Better </span>
             <span className="italic text-[#1d63ed]">Sales</span> Through
@@ -330,3 +331,4 @@ export default function HiringPartners() {
     </section>
   );
 }
+

@@ -15,7 +15,7 @@ export default function SectionTag({
   sublabel?: string;
 }) {
   return (
-    <div className="pointer-events-none absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-2 sm:left-6 lg:flex lg:left-10">
+    <div className="pointer-events-none absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-2 sm:left-6 pin:flex pin:left-10">
       <div className="flex items-center gap-1.5">
         <span className="text-[9px] text-[#9aa0ab]">▷</span>
         <span className="text-[11px] font-medium tracking-wide text-[#4a4d54]">

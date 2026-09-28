@@ -93,6 +93,15 @@ export default function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMobileMenuOpen]);
+
   // Scroll listener for sticky capsule state and top progress line
   useEffect(() => {
     const onScroll = () => {
@@ -151,7 +160,7 @@ export default function Navbar() {
           isSticky ? "pt-3 sm:pt-4" : "pt-5 sm:pt-6"
         }`}
       >
-        <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 flex justify-center">
+        <div className="w-full max-w-372 mx-auto px-4 sm:px-8 xl:px-12 flex justify-center">
           {/*
             ECHOFI SIGNATURE MORPHING HEADER GRID (.header-grid):
             - In Top State: Spans full container width, transparent background, clean spacing
@@ -198,7 +207,7 @@ export default function Navbar() {
             {/* 2. CENTER: Navigation Links / Dots (.header-links-wrap) */}
             {/* TOP STATE: Full Words for distinct pages (.header-links) */}
             {!isSticky && pathname !== '/individuals' && (
-              <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-8.5">
+              <nav className="hidden xl:flex items-center justify-center gap-6 xl:gap-8.5">
                 {NAV_ITEMS.map((item) => {
                   const isChildActive = item.children?.some(
                     (child) => pathname === child.href || pathname.startsWith(child.href)
@@ -238,7 +247,7 @@ export default function Navbar() {
                           aria-expanded={isOpen}
                           aria-label={`${item.label} menu`}
                         >
-                          <span className="text-[13.5px] lg:text-[14px] tracking-[-0.01em]">
+                          <span className="text-[13.5px] xl:text-[14px] tracking-[-0.01em]">
                             {item.label}
                           </span>
                           <ChevronDown
@@ -381,7 +390,7 @@ export default function Navbar() {
                       key={item.label}
                       href={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`relative py-1 text-[13.5px] lg:text-[14px] tracking-[-0.01em] transition-colors duration-200 select-none ${
+                      className={`relative py-1 text-[13.5px] xl:text-[14px] tracking-[-0.01em] transition-colors duration-200 select-none ${
                         isActive
                           ? isLightPage
                             ? "text-[#141414] font-semibold shadow-[0_2px_0_0_#1d4ed8]"
@@ -679,12 +688,14 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`lg:hidden relative flex items-center justify-center rounded-full transition-all cursor-pointer shrink-0 ${
+                className={`xl:hidden relative flex items-center justify-center rounded-full transition-all cursor-pointer shrink-0 ${
                   isLightPage
                     ? "border border-black/15 bg-black/5 text-[#141414] hover:bg-black/10"
                     : "border border-white/20 bg-white/10 text-white hover:bg-white/20"
                 } ${isSticky ? "h-8 w-8" : "h-10 w-10"}`}
                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-nav-drawer"
               >
                 <div
                   className={`relative w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] ${
@@ -745,13 +756,18 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Dropdown Drawer (Accessible in both top and sticky states) */}
+        {/* Capped to the viewport and scrollable so every link stays
+            reachable on short / landscape phones; data-lenis-prevent lets
+            wheel and trackpad scrolling reach the drawer instead of Lenis */}
         {isMobileMenuOpen && (
           <div
-            className={`lg:hidden absolute inset-x-4 rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-300 pointer-events-auto z-50 ${
+            id="mobile-nav-drawer"
+            data-lenis-prevent
+            className={`xl:hidden custom-scrollbar absolute inset-x-0 sm:inset-x-2 max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain rounded-2xl p-5 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-300 pointer-events-auto z-50 ${
               isLightPage
                 ? "bg-[#F9F8F6]/95 backdrop-blur-2xl border border-black/10 text-[#141414]"
                 : "bg-[#0d0e12]/95 backdrop-blur-2xl border border-white/12 text-white"
-            } ${isSticky ? "top-full mt-3 max-w-md mx-auto" : "top-full mt-2"}`}
+            } ${isSticky ? "top-full mt-3" : "top-full mt-2"}`}
           >
             <div className="flex flex-col gap-2">
               {NAV_ITEMS.map((item) => {

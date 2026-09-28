@@ -355,7 +355,7 @@ export default function Hero() {
       <div className="relative z-3 flex flex-1 flex-col items-center justify-center px-5 py-6 text-center sm:px-8">
         <div className="relative group">
           {/* MAIN TEXT */}
-          <h1 className="max-w-5xl font-serif text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none px-4 py-2 -mx-4 -my-2">
+          <h1 className="max-w-5xl font-sans text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none px-4 py-2 -mx-4 -my-2">
             <span className="hero-line block px-2 -mx-2 py-0.5">
               <span className="hero-word-base inline-block">Turn</span>{" "}
               <span className="hero-word-base inline-block">Sales</span>
@@ -381,7 +381,7 @@ export default function Hero() {
           {/* HIGHLIGHT TEXT (torch spotlight glow reveal) */}
           <h1
             ref={highlightRef}
-            className="pointer-events-none absolute inset-0 max-w-5xl font-serif text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none hidden sm:block px-4 py-2 -mx-4 -my-2"
+            className="pointer-events-none absolute inset-0 max-w-5xl font-sans text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none hidden sm:block px-4 py-2 -mx-4 -my-2"
             style={{
               opacity: 0,
               textShadow:
@@ -504,7 +504,7 @@ function IndividualButton() {
     <Link
       href="/individuals"
       ref={btnRef}
-      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] cursor-pointer select-none"
+      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-3 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] cursor-pointer select-none"
     >
       <span
         ref={liquidRef}
@@ -628,7 +628,7 @@ function OrganisationButton() {
     <Link
       href="/organisations"
       ref={btnRef}
-      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-2.5 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] select-none cursor-pointer"
+      className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-3 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] select-none cursor-pointer"
     >
       <span
         ref={fillRef}
@@ -667,3 +667,4 @@ function Logo({ className }: { className?: string }) {
     />
   );
 }
+

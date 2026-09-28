@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
+import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,6 +18,8 @@ interface ModelSlide {
   description: string;
   image: string;
 }
+
+const AUTOPLAY_MS = 4500;
 
 const MODEL_SLIDES: ModelSlide[] = [
   {
@@ -67,6 +70,49 @@ export default function OurApproach() {
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const [activeStep, setActiveStep] = useState(0);
+  // Non-pinned layouts (phones, tablets, short windows) run the slides as a
+  // timed carousel instead of tying them to scroll position.
+  const [isPinned, setIsPinned] = useState(false);
+  const [onScreen, setOnScreen] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const autoplay = !isPinned && onScreen && !paused && !reduceMotion;
+
+  useEffect(() => {
+    const pinMq = window.matchMedia(PIN_QUERY);
+    const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => {
+      setIsPinned(pinMq.matches);
+      setReduceMotion(motionMq.matches);
+    };
+    sync();
+    pinMq.addEventListener("change", sync);
+    motionMq.addEventListener("change", sync);
+
+    const node = sectionRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => setOnScreen(entry.isIntersecting),
+      { threshold: 0.35 },
+    );
+    if (node) observer.observe(node);
+
+    return () => {
+      pinMq.removeEventListener("change", sync);
+      motionMq.removeEventListener("change", sync);
+      observer.disconnect();
+    };
+  }, []);
+
+  // Restarting on every step change gives each slide its full time, including
+  // right after the user taps a pill.
+  useEffect(() => {
+    if (!autoplay) return;
+    const id = window.setTimeout(
+      () => setActiveStep((step) => (step + 1) % MODEL_SLIDES.length),
+      AUTOPLAY_MS,
+    );
+    return () => window.clearTimeout(id);
+  }, [autoplay, activeStep]);
 
   const prevIndex = (activeStep - 1 + 4) % 4;
   const nextIndex = (activeStep + 1) % 4;
@@ -79,7 +125,7 @@ export default function OurApproach() {
     setActiveStep(stepIndex);
 
     const st = scrollTriggerRef.current;
-    if (st && typeof window !== "undefined" && window.innerWidth >= 1024) {
+    if (st && window.matchMedia(PIN_QUERY).matches) {
       const start = st.start;
       const end = st.end;
       const total = end - start;
@@ -128,7 +174,7 @@ export default function OurApproach() {
       const mm = gsap.matchMedia();
 
       // Desktop: Pinned scroll through the 4 capability slides — no curtain exit
-      mm.add("(min-width: 1024px)", () => {
+      mm.add(PIN_QUERY, () => {
         const pinTl = gsap.timeline({
           scrollTrigger: {
             id: "model-pin",
@@ -159,25 +205,9 @@ export default function OurApproach() {
         };
       });
 
-      // Mobile / Tablet: Smooth scrub
-      mm.add("(max-width: 1023px)", () => {
+      // Mobile / Tablet / short windows: timed carousel (see autoplay effect)
+      mm.add(NO_PIN_QUERY, () => {
         gsap.set(sectionRef.current, { clearProps: "transform" });
-
-        const mobileTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            end: "bottom 30%",
-            scrub: true,
-            onUpdate: (self) => {
-              const p = self.progress;
-              const step = Math.min(3, Math.floor(p * 4));
-              setActiveStep(step);
-            },
-          },
-        });
-
-        return () => mobileTl.kill();
       });
 
       return () => mm.revert();
@@ -191,7 +221,7 @@ export default function OurApproach() {
       id="about"
       data-nav-section="The Model"
       data-nav-theme="dark"
-      className="relative -mt-px z-10 flex min-h-0 lg:h-screen lg:max-h-dvh w-full flex-col justify-center lg:justify-between overflow-hidden px-4 sm:px-8 lg:px-12 py-10 sm:py-14 lg:pt-26 lg:pb-8 text-white"
+      className="relative -mt-px z-10 flex min-h-0 pin:h-screen pin:max-h-dvh w-full flex-col justify-center pin:justify-between overflow-hidden px-4 sm:px-8 pin:px-12 py-10 sm:py-14 pin:pt-26 pin:pb-8 text-white"
       style={{
         background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}
@@ -199,7 +229,7 @@ export default function OurApproach() {
       {/* Subtle Dotted Background Grid */}
       <DottedBackground theme="dark" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-375 flex-col justify-center lg:justify-between items-center gap-5 sm:gap-6 lg:gap-0 lg:h-full lg:max-h-dvh">
+      <div className="relative z-10 mx-auto flex w-full max-w-375 flex-col justify-center pin:justify-between items-center gap-5 sm:gap-6 pin:gap-0 pin:h-full pin:max-h-dvh">
         {/* ============================================================
             1. CONSTANT TOP HEADER
         ============================================================ */}
@@ -207,7 +237,7 @@ export default function OurApproach() {
           <span className="block font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-white/40 mb-1.5 sm:mb-2">
             target. engage. Convert.
           </span>
-          <h2 className="font-serif text-[clamp(1.4rem,4.2vw,2.4rem)] font-normal leading-[1.15] text-white">
+          <h2 className="font-sans text-[clamp(1.4rem,4.2vw,2.4rem)] font-normal leading-[1.15] text-white">
             <span className="italic text-[#4d82f5] block">
               A Complete Sales Engine
             </span>
@@ -218,9 +248,9 @@ export default function OurApproach() {
         {/* ============================================================
             2. CENTER CONTENT STAGE (Illustration + Bottom Copy)
         ============================================================ */}
-        <div className="relative flex flex-col items-center justify-center flex-1 w-full max-w-xl lg:max-w-2xl mx-auto min-h-0 my-auto py-2">
+        <div className="relative flex flex-col items-center justify-center flex-1 w-full max-w-xl pin:max-w-2xl mx-auto min-h-0 my-auto py-2">
           {/* Active Illustration Stage */}
-          <div className="relative h-44 sm:h-52 lg:h-64 xl:h-72 max-h-[34vh] w-full flex items-center justify-center shrink-0">
+          <div className="relative h-44 sm:h-52 pin:h-64 pin-xl:h-72 max-h-[34vh] w-full flex items-center justify-center shrink-0">
             {MODEL_SLIDES.map((slide, idx) => {
               const isActive = activeStep === idx;
               return (
@@ -257,13 +287,20 @@ export default function OurApproach() {
         {/* ============================================================
             3. MOBILE / TABLET PILL BUTTON SELECTOR (< 1024px)
         ============================================================ */}
-        <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2 lg:hidden pb-1 shrink-0">
+        <div
+          className="flex flex-wrap items-center justify-center gap-2 mt-2 pin:hidden pb-1 shrink-0 max-w-md"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
+        >
           {MODEL_SLIDES.map((slide, idx) => (
             <button
               key={slide.id}
               type="button"
               onClick={() => goToStep(idx)}
-              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
+              aria-pressed={activeStep === idx}
+              className={`relative overflow-hidden inline-flex min-h-9 items-center px-3.5 rounded-full text-[12px] font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 ${
                 activeStep === idx
                   ? "bg-[#e7ff3d] text-[#0a0b0d] shadow-sm font-semibold scale-102"
                   : "bg-white/8 text-white/60 hover:bg-white/15"
@@ -273,6 +310,16 @@ export default function OurApproach() {
                 {slide.number}
               </span>
               {slide.title}
+              {/* Autoplay countdown — mirrors the timer: remounts (restarts)
+                  on every slide and hides while autoplay is paused */}
+              {activeStep === idx && autoplay && (
+                <span
+                  key={activeStep}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 origin-left bg-[#0a0b0d]/35"
+                  style={{ animation: `vc-fill ${AUTOPLAY_MS}ms linear forwards` }}
+                />
+              )}
             </button>
           ))}
         </div>
@@ -281,7 +328,7 @@ export default function OurApproach() {
       {/* ============================================================
           4. RIGHT-HAND SIDE CURVATURE DIAL (Desktop >= 1024px)
       ============================================================ */}
-      <div className="pointer-events-none absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 lg:block h-115 w-80 xl:w-90">
+      <div className="pointer-events-none absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 pin:block h-115 w-80 pin-xl:w-90">
         <svg viewBox="0 0 320 460" className="h-full w-full overflow-visible">
           {/* Subtle Ambient Arc Glow */}
           <path
@@ -311,7 +358,7 @@ export default function OurApproach() {
               y={90}
               textAnchor="end"
               className="select-none transition-all duration-300 ease-out group-hover:fill-white"
-              style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-sans), Georgia, serif" }}
               fill="rgba(255,255,255,0.42)"
               fontSize="12.5"
               fontWeight="400"
@@ -341,7 +388,7 @@ export default function OurApproach() {
               y={224}
               textAnchor="end"
               className="select-none transition-all duration-300 ease-out"
-              style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-sans), Georgia, serif" }}
               fill="#ffffff"
               fontSize="18"
               fontWeight="700"
@@ -385,7 +432,7 @@ export default function OurApproach() {
               y={358}
               textAnchor="end"
               className="select-none transition-all duration-300 ease-out group-hover:fill-white"
-              style={{ fontFamily: "var(--font-serif), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-sans), Georgia, serif" }}
               fill="rgba(255,255,255,0.42)"
               fontSize="12.5"
               fontWeight="400"
@@ -412,3 +459,4 @@ export default function OurApproach() {
     </section>
   );
 }
+

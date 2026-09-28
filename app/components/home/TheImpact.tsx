@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
+import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -119,7 +120,7 @@ export default function TheImpact() {
       const mm = gsap.matchMedia();
 
       // Desktop: Pinned scroll-scrubbed timeline (Right to Left Laser Sweep) — no curtain exit
-      mm.add("(min-width: 1024px)", () => {
+      mm.add(PIN_QUERY, () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             id: "impact-pin",
@@ -205,7 +206,7 @@ export default function TheImpact() {
       });
 
       // Mobile & Tablet: Scroll-triggered / scrubbed cards
-      mm.add("(max-width: 1023px)", () => {
+      mm.add(NO_PIN_QUERY, () => {
         gsap.set(sectionRef.current, { clearProps: "transform" });
 
         const mobileTl = gsap.timeline({
@@ -262,7 +263,7 @@ export default function TheImpact() {
       id="organisations"
       data-nav-section="The Impact"
       data-nav-theme="dark"
-      className="relative z-10 flex min-h-0 lg:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-5 py-10 sm:py-14 sm:px-10 lg:pl-36 lg:pr-16 lg:py-0 text-white"
+      className="relative z-10 flex min-h-0 pin:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-5 py-10 sm:py-14 sm:px-10 pin:pl-36 pin:pr-16 pin:py-0 text-white"
       style={{
         background:
           "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
@@ -272,7 +273,7 @@ export default function TheImpact() {
       <DottedBackground theme="dark" />
 
       {/* ---------- DESKTOP: STAGGERED HORIZONTAL TIMELINE (lg and up) ---------- */}
-      <div className="relative z-10 mx-auto hidden h-70 w-full max-w-340 lg:block">
+      <div className="relative z-10 mx-auto hidden h-70 w-full max-w-340 pin:block">
         {/* Continuous Horizontal Track Line */}
         <div className="absolute inset-x-0 top-1/2 h-[1.5px] -translate-y-1/2 bg-white/15" />
 
@@ -323,7 +324,7 @@ export default function TheImpact() {
                   </span>
                   {stat.suffix}
                 </p>
-                <p className="mt-2 max-w-50 font-serif text-[clamp(0.95rem,1.15vw,1.18rem)] italic leading-tight text-white/90">
+                <p className="mt-2 max-w-50 font-sans text-[clamp(0.95rem,1.15vw,1.18rem)] italic leading-tight text-white/90">
                   {stat.label}
                 </p>
               </div>
@@ -333,18 +334,20 @@ export default function TheImpact() {
       </div>
 
       {/* ---------- MOBILE & TABLET: RESPONSIVE GRID (< lg) ---------- */}
-      <div className="relative z-10 mx-auto grid w-full max-w-lg grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:hidden">
+      {/* Two columns even on phones — one tall card per stat made this a
+          ~1000px scroll of mostly empty tiles */}
+      <div className="relative z-10 mx-auto grid w-full max-w-lg grid-cols-2 gap-3 sm:gap-6 pin:hidden">
         {TIMELINE_STATS.map((stat, i) => (
           <div
             key={`mobile-${stat.label}`}
             ref={(el) => {
               mobileItemRefs.current[i] = el;
             }}
-            className={`flex flex-col items-center text-center rounded-2xl border border-white/10 bg-white/4 p-5 backdrop-blur-[2px] ${
-              i === 4 ? "sm:col-span-2 sm:mx-auto sm:w-1/2" : ""
+            className={`flex flex-col items-center justify-center text-center rounded-2xl border border-white/10 bg-white/4 px-3 py-4 sm:p-5 backdrop-blur-[2px] ${
+              i === 4 ? "col-span-2 sm:mx-auto sm:w-1/2" : ""
             }`}
           >
-            <p className="font-sans text-[clamp(2rem,5vw,2.6rem)] font-bold leading-none tracking-tight text-white drop-shadow-sm">
+            <p className="font-sans text-[clamp(1.75rem,7vw,2.6rem)] font-bold leading-none tracking-tight text-white drop-shadow-sm">
               <span
                 ref={(el) => {
                   mobileValueRefs.current[i] = el;
@@ -354,7 +357,7 @@ export default function TheImpact() {
               </span>
               {stat.suffix}
             </p>
-            <p className="mt-2 font-serif text-[15px] italic leading-tight text-white/90">
+            <p className="mt-2 font-sans text-[13px] sm:text-[15px] italic leading-tight text-white/90 text-balance">
               {stat.label}
             </p>
             <span className="mt-3 h-2 w-2 rounded-full bg-[#e7ff3d] shadow-[0_0_8px_#e7ff3d]" />
@@ -364,3 +367,4 @@ export default function TheImpact() {
     </section>
   );
 }
+

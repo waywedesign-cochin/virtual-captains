@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { LAND_DOTS } from "./globeDots";
 import DottedBackground from "./DottedBackground";
+import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -59,6 +60,74 @@ function smoothstep(t: number) {
 }
 
 /**
+ * Leader line + white name plate for the focused city. Prefers to point
+ * toward the canvas centre, flips sides when the plate would not fit, and as
+ * a last resort clamps the plate inside the canvas — on a ~300px-wide phone
+ * canvas the plate is nearly half the width, so it would otherwise be cut off.
+ */
+function drawCityLabel(
+  ctx: CanvasRenderingContext2D,
+  point: { x: number; y: number },
+  location: Location,
+  width: number,
+  fontSans: string,
+  lineAlpha: number,
+) {
+  const leader = width < 520 ? 18 : 24;
+  const gap = 14;
+
+  ctx.font = `600 13px ${fontSans}`;
+  const nameWidth = ctx.measureText(location.name).width;
+  ctx.font = `400 11px ${fontSans}`;
+  const countryWidth = ctx.measureText(location.country).width;
+  const plateWidth = Math.max(nameWidth, countryWidth) + 14;
+
+  const fitsLeft = point.x - leader - gap - plateWidth + 7 >= 4;
+  const fitsRight = point.x + leader + gap + plateWidth - 7 <= width - 4;
+  const towardCenter = point.x > width / 2 ? "left" : "right";
+  const side =
+    towardCenter === "left"
+      ? fitsLeft || !fitsRight
+        ? "left"
+        : "right"
+      : fitsRight || !fitsLeft
+        ? "right"
+        : "left";
+
+  const labelY = Math.max(21, point.y - leader);
+  const dir = side === "left" ? -1 : 1;
+
+  ctx.beginPath();
+  ctx.moveTo(point.x + dir * 5, point.y - 5);
+  ctx.lineTo(point.x + dir * leader, labelY);
+  ctx.lineTo(point.x + dir * (leader + 8), labelY);
+  ctx.strokeStyle = `rgba(255, 255, 255, ${lineAlpha})`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  const textX = point.x + dir * (leader + gap);
+  const rawPlateX = side === "left" ? textX - plateWidth + 7 : textX - 7;
+  const plateX = Math.min(Math.max(rawPlateX, 4), width - plateWidth - 4);
+  const contentX = plateX + 7;
+
+  ctx.fillStyle = "rgba(255,255,255,0.96)";
+  ctx.beginPath();
+  ctx.roundRect(plateX, labelY - 17, plateWidth, 34, 4);
+  ctx.fill();
+
+  ctx.textAlign = "left";
+  ctx.font = `600 13px ${fontSans}`;
+  ctx.textBaseline = "bottom";
+  ctx.fillStyle = "#101010";
+  ctx.fillText(location.name, contentX, labelY - 1);
+
+  ctx.font = `400 11px ${fontSans}`;
+  ctx.textBaseline = "top";
+  ctx.fillStyle = "rgba(16,16,16,0.65)";
+  ctx.fillText(location.country, contentX, labelY + 3);
+}
+
+/**
  * "Empowering sales professionals worldwide" — A widescreen, seamlessly blended
  * world map & 3D globe visualization. Features a wide landscape footprint without
  * heavy borders or dark box containers, blending naturally into the section's
@@ -69,6 +138,7 @@ export default function CrossCountry() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
   const globeWrapRef = useRef<HTMLDivElement>(null);
+  const canvasBoxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [viewMode, setViewMode] = useState<"map" | "globe">("map");
@@ -80,8 +150,8 @@ export default function CrossCountry() {
   useGSAP(
     () => {
       const canvas = canvasRef.current;
-      const wrap = globeWrapRef.current;
-      if (!canvas || !wrap) return;
+      const box = canvasBoxRef.current;
+      if (!canvas || !box) return;
 
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
@@ -98,11 +168,13 @@ export default function CrossCountry() {
       let width = 0;
       let height = 0;
 
+      // Layout size (clientWidth), not getBoundingClientRect: the stage is
+      // mid scale-in when this first runs, and a transformed rect would size
+      // the backing store too small and leave the map blurry.
       const resize = () => {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const rect = wrap.getBoundingClientRect();
-        width = rect.width;
-        height = rect.height;
+        width = box.clientWidth;
+        height = box.clientHeight;
         canvas.width = Math.round(width * dpr);
         canvas.height = Math.round(height * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -110,7 +182,7 @@ export default function CrossCountry() {
 
       resize();
       const resizeObserver = new ResizeObserver(resize);
-      resizeObserver.observe(wrap);
+      resizeObserver.observe(box);
 
       const draw = (time: number) => {
         if (!width || !height) return;
@@ -147,6 +219,9 @@ export default function CrossCountry() {
         })();
 
         const pulse = 0.5 + 0.5 * Math.sin(time * 0.0022);
+        // Marker halos are sized for a ~1100px canvas; shrink them on phones
+        // so a focused city doesn't swallow its neighbours.
+        const markerScale = Math.max(0.6, Math.min(1, width / 720));
 
         // ===================================================================
         // 1. SEAMLESSLY BLENDED WIDESCREEN WORLD MAP MODE
@@ -155,6 +230,9 @@ export default function CrossCountry() {
           const baseScale = Math.min(width / 360, height / 155) * 0.98;
           const flatZoom = 1 + (zoom - 1) * 1.35;
           const scale = baseScale * flatZoom;
+          // Fixed 65px/40px feathering ate ~45% of a phone-width map
+          const fadeX = Math.min(65, width * 0.1);
+          const fadeY = Math.min(40, height * 0.12);
 
           const projectFlat = (lon: number, lat: number) => {
             const dLon = angleDelta(centerLon, lon);
@@ -165,8 +243,8 @@ export default function CrossCountry() {
               return null;
 
             // Soft edge fading so the map seamlessly dissolves into the background gradient
-            const edgeFadeX = Math.min(1, Math.min(x, width - x) / 65);
-            const edgeFadeY = Math.min(1, Math.min(y, height - y) / 40);
+            const edgeFadeX = Math.min(1, Math.min(x, width - x) / fadeX);
+            const edgeFadeY = Math.min(1, Math.min(y, height - y) / fadeY);
             const edgeAlpha = Math.max(0, edgeFadeX * edgeFadeY);
 
             return { x, y, depth: 1, edgeAlpha };
@@ -272,7 +350,9 @@ export default function CrossCountry() {
             ctx.arc(
               point.x,
               point.y,
-              (isFocused ? 12 + 5 * pulse : 6) * Math.min(flatZoom, 1.8),
+              (isFocused ? 12 + 5 * pulse : 6) *
+                Math.min(flatZoom, 1.8) *
+                markerScale,
               0,
               Math.PI * 2,
             );
@@ -291,56 +371,10 @@ export default function CrossCountry() {
               ctx.lineWidth = 0.8;
               ctx.stroke();
 
-              const labelAlpha =
+              ctx.globalAlpha =
                 Math.min(1, (activeLabel.weight - 0.35) / 0.65) *
                 point.edgeAlpha;
-              ctx.globalAlpha = labelAlpha;
-
-              const leader = width < 520 ? 18 : 24;
-              const labelY = point.y - leader;
-              const isRightSide = point.x > cx;
-              const textX = isRightSide
-                ? point.x - leader - 14
-                : point.x + leader + 14;
-
-              ctx.beginPath();
-              if (isRightSide) {
-                ctx.moveTo(point.x - 5, point.y - 5);
-                ctx.lineTo(point.x - leader, labelY);
-                ctx.lineTo(point.x - leader - 8, labelY);
-              } else {
-                ctx.moveTo(point.x + 5, point.y - 5);
-                ctx.lineTo(point.x + leader, labelY);
-                ctx.lineTo(point.x + leader + 8, labelY);
-              }
-              ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
-              ctx.lineWidth = 1;
-              ctx.stroke();
-
-              ctx.font = `600 13px ${fontSans}`;
-              const nameWidth = ctx.measureText(location.name).width;
-              ctx.font = `400 11px ${fontSans}`;
-              const countryWidth = ctx.measureText(location.country).width;
-              const plateWidth = Math.max(nameWidth, countryWidth) + 14;
-
-              const plateX = isRightSide ? textX - plateWidth + 7 : textX - 7;
-              const contentX = isRightSide ? textX - plateWidth + 14 : textX;
-
-              ctx.fillStyle = "rgba(255,255,255,0.96)";
-              ctx.beginPath();
-              ctx.roundRect(plateX, labelY - 17, plateWidth, 34, 4);
-              ctx.fill();
-
-              ctx.textAlign = "left";
-              ctx.font = `600 13px ${fontSans}`;
-              ctx.textBaseline = "bottom";
-              ctx.fillStyle = "#101010";
-              ctx.fillText(location.name, contentX, labelY - 1);
-
-              ctx.font = `400 11px ${fontSans}`;
-              ctx.textBaseline = "top";
-              ctx.fillStyle = "rgba(16,16,16,0.65)";
-              ctx.fillText(location.country, contentX, labelY + 3);
+              drawCityLabel(ctx, point, location, width, fontSans, 0.75);
             }
           }
           ctx.globalAlpha = 1;
@@ -440,7 +474,9 @@ export default function CrossCountry() {
             ctx.arc(
               point.x,
               point.y,
-              (isFocused ? 11 + 5 * pulse : 6) * Math.min(zoom, 1.6),
+              (isFocused ? 11 + 5 * pulse : 6) *
+                Math.min(zoom, 1.6) *
+                markerScale,
               0,
               Math.PI * 2,
             );
@@ -461,52 +497,7 @@ export default function CrossCountry() {
 
               const labelAlpha = (activeLabel.weight - 0.35) / 0.65;
               ctx.globalAlpha = Math.min(1, labelAlpha) * alpha;
-
-              const leader = width < 480 ? 20 : 26;
-              const labelY = point.y - leader;
-              const isRightSide = point.x > cx;
-              const textX = isRightSide
-                ? point.x - leader - 16
-                : point.x + leader + 16;
-
-              ctx.beginPath();
-              if (isRightSide) {
-                ctx.moveTo(point.x - 6, point.y - 6);
-                ctx.lineTo(point.x - leader, labelY);
-                ctx.lineTo(point.x - leader - 10, labelY);
-              } else {
-                ctx.moveTo(point.x + 6, point.y - 6);
-                ctx.lineTo(point.x + leader, labelY);
-                ctx.lineTo(point.x + leader + 10, labelY);
-              }
-              ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-              ctx.lineWidth = 1;
-              ctx.stroke();
-
-              ctx.font = `600 13px ${fontSans}`;
-              const nameWidth = ctx.measureText(location.name).width;
-              ctx.font = `400 11px ${fontSans}`;
-              const countryWidth = ctx.measureText(location.country).width;
-              const plateWidth = Math.max(nameWidth, countryWidth) + 14;
-
-              const plateX = isRightSide ? textX - plateWidth + 7 : textX - 7;
-              const contentX = isRightSide ? textX - plateWidth + 14 : textX;
-
-              ctx.fillStyle = "rgba(255,255,255,0.96)";
-              ctx.beginPath();
-              ctx.roundRect(plateX, labelY - 17, plateWidth, 34, 4);
-              ctx.fill();
-
-              ctx.textAlign = "left";
-              ctx.font = `600 13px ${fontSans}`;
-              ctx.textBaseline = "bottom";
-              ctx.fillStyle = "#101010";
-              ctx.fillText(location.name, contentX, labelY - 1);
-
-              ctx.font = `400 11px ${fontSans}`;
-              ctx.textBaseline = "top";
-              ctx.fillStyle = "rgba(16,16,16,0.6)";
-              ctx.fillText(location.country, contentX, labelY + 3);
+              drawCityLabel(ctx, point, location, width, fontSans, 0.6);
             }
           }
           ctx.globalAlpha = 1;
@@ -630,7 +621,7 @@ export default function CrossCountry() {
           );
 
         // Desktop: Pinned camera journey — no curtain exit
-        mm.add("(min-width: 1024px)", () => {
+        mm.add(PIN_QUERY, () => {
           const pinTl = gsap.timeline({
             scrollTrigger: {
               id: "cross-country-pin",
@@ -652,7 +643,7 @@ export default function CrossCountry() {
           return () => pinTl.kill();
         });
 
-        mm.add("(max-width: 1023px)", () => {
+        mm.add(NO_PIN_QUERY, () => {
           gsap.set(sectionRef.current, { clearProps: "transform" });
 
           const trigger = ScrollTrigger.create({
@@ -684,7 +675,7 @@ export default function CrossCountry() {
       id="programs"
       data-nav-section="Cross Country"
       data-nav-theme="dark"
-      className="relative z-10 flex min-h-0 lg:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 lg:py-[clamp(24px,4vh,60px)] text-white sm:px-8 lg:px-16"
+      className="relative z-10 flex min-h-0 pin:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 pin:py-[clamp(24px,4vh,60px)] text-white sm:px-8 pin:px-16"
       style={{
         background:
           "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
@@ -696,7 +687,7 @@ export default function CrossCountry() {
       <div className="relative z-10 flex w-full max-w-[1920px] flex-col items-center">
         <h2
           ref={headingRef}
-          className="max-w-3xl text-center font-serif text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2] text-white"
+          className="max-w-3xl text-center font-sans text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2] text-white"
         >
           <span className="block">Empowering sales</span>
           <span className="block">
@@ -705,21 +696,24 @@ export default function CrossCountry() {
           </span>
         </h2>
 
-        {/* Seamlessly blended widescreen canvas container */}
+        {/* Seamlessly blended widescreen canvas stage */}
         <div
           ref={globeWrapRef}
-          className="relative mt-[clamp(10px,2vh,24px)] flex w-[min(1120px,94vw)] h-[clamp(260px,38vh,420px)] flex-col items-center justify-center"
+          className="relative mt-[clamp(12px,2vh,24px)] flex w-full max-w-[1120px] flex-col items-center"
         >
-          {/* Ambient luminous atmospheric glow directly behind the map/globe */}
-          <div className="pointer-events-none absolute inset-x-8 -inset-y-6 rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(56,189,248,0.28)_0%,rgba(29,99,237,0.14)_50%,transparent_75%)] blur-3xl -z-10" />
-
-          {/* Floating mode switch pill */}
-          <div className="absolute top-0 right-2 z-20 flex items-center gap-1 rounded-full border border-white/20 bg-white/10 p-0.5 backdrop-blur-md shadow-sm">
+          {/* Mode switch — sits in the flow above the map on phones/tablets
+              (it covered the map there), floats top-right on desktop where
+              the widescreen map leaves room for it */}
+          <div
+            role="group"
+            aria-label="Map style"
+            className="relative z-20 flex items-center gap-1 rounded-full border border-white/20 bg-white/10 p-1 shadow-sm backdrop-blur-md pin:absolute pin:right-2 pin:top-0 pin:p-0.5"
+          >
             <button
               type="button"
               onClick={() => setViewMode("map")}
-              aria-label="Switch to World Map view"
-              className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-all ${
+              aria-pressed={viewMode === "map"}
+              className={`flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[12px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 pin:min-h-6 pin:px-2.5 pin:text-[11px] ${
                 viewMode === "map"
                   ? "bg-[#2563eb] text-white shadow-sm"
                   : "text-white/70 hover:text-white"
@@ -740,8 +734,8 @@ export default function CrossCountry() {
             <button
               type="button"
               onClick={() => setViewMode("globe")}
-              aria-label="Switch to 3D Globe view"
-              className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-all ${
+              aria-pressed={viewMode === "globe"}
+              className={`flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[12px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 pin:min-h-6 pin:px-2.5 pin:text-[11px] ${
                 viewMode === "globe"
                   ? "bg-[#2563eb] text-white shadow-sm"
                   : "text-white/70 hover:text-white"
@@ -761,7 +755,22 @@ export default function CrossCountry() {
             </button>
           </div>
 
-          <canvas ref={canvasRef} className="h-full w-full" />
+          {/* Height tracks width on phones but is also capped by viewport
+              height, so a landscape phone still fits heading + map + copy */}
+          <div
+            ref={canvasBoxRef}
+            className="relative mt-3 h-[clamp(200px,min(62vw,52svh),380px)] w-full pin:mt-0 pin:h-[clamp(260px,38vh,420px)]"
+          >
+            {/* Ambient luminous atmospheric glow directly behind the map/globe */}
+            <div className="pointer-events-none absolute inset-x-8 -inset-y-6 rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(56,189,248,0.28)_0%,rgba(29,99,237,0.14)_50%,transparent_75%)] blur-3xl -z-10" />
+
+            <canvas
+              ref={canvasRef}
+              role="img"
+              aria-label={`${viewMode === "map" ? "World map" : "Globe"} highlighting our client cities: ${LOCATIONS.map((l) => l.name).join(", ")}`}
+              className="absolute inset-0 h-full w-full"
+            />
+          </div>
         </div>
 
         <p
@@ -776,3 +785,4 @@ export default function CrossCountry() {
     </section>
   );
 }
+

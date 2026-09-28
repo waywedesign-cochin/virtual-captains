@@ -321,7 +321,7 @@ export default function SideNav() {
   return (
     <div
       ref={navRef}
-      className="pointer-events-none fixed left-4 top-1/2 z-60 hidden -translate-y-1/2 opacity-0 sm:left-6 lg:left-10 lg:block"
+      className="pointer-events-none fixed left-4 top-1/2 z-60 hidden -translate-y-1/2 opacity-0 sm:left-6 pin:left-10 pin:block"
     >
       <div className="relative flex flex-col gap-3">
         <span

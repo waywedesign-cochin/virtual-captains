@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import BookACallModal from "./BookACallModal";
 import DottedBackground from "./DottedBackground";
+import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -276,7 +277,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
       const mm = gsap.matchMedia();
 
       // Desktop (>= 1024px): Clean, strictly sequential transition with zero opacity overlap
-      mm.add("(min-width: 1024px)", () => {
+      mm.add(PIN_QUERY, () => {
         gsap.set(wordmarkRef.current, {
           opacity: 0,
           y: 30,
@@ -355,7 +356,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
       });
 
       // Mobile & Tablet (< 1024px): Direct reveal with actions immediately primary
-      mm.add("(max-width: 1023px)", () => {
+      mm.add(NO_PIN_QUERY, () => {
         gsap.set(wordmarkRef.current, {
           opacity: 0,
           display: "none",
@@ -524,7 +525,11 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
   );
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (window.__lenis) {
+      window.__lenis.scrollTo(0, { duration: 1.4 });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
@@ -533,7 +538,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
       {showCTA && (
         <section
           ref={ctaSectionRef}
-          className="relative -mt-px z-10 flex min-h-0 lg:min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-[#040507] px-6 py-12 sm:py-16 lg:py-20 text-center sm:px-10"
+          className="relative -mt-px z-10 flex min-h-0 pin:min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-[#040507] px-6 py-12 sm:py-16 pin:py-20 text-center sm:px-10"
         >
           {/* Subtle Dotted Background */}
           <DottedBackground theme="dark" />
@@ -558,7 +563,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
               ref={ctaRef}
               type="button"
               onClick={() => setIsBookingOpen(true)}
-              className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-md px-[clamp(26px,6vw,90px)] py-[clamp(12px,2vh,24px)] font-serif text-[clamp(1.25rem,4vw,2.75rem)] leading-none transition-all duration-300 hover:border-white/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061230]"
+              className="group relative isolate cursor-pointer overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-md px-[clamp(26px,6vw,90px)] py-[clamp(12px,2vh,24px)] font-sans text-[clamp(1.25rem,4vw,2.75rem)] leading-none transition-all duration-300 hover:border-white/40 hover:shadow-[0_12px_40px_rgba(47,111,224,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061230]"
               aria-label="Book a call with Virtual Captains"
             >
               <span
@@ -582,7 +587,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
 
             <p
               ref={ctaHeadingRef}
-              className="mt-2 text-center font-serif text-[clamp(1.15rem,3.2vw,2rem)] font-medium text-white/90 tracking-tight max-w-xl px-2"
+              className="mt-2 text-center font-sans text-[clamp(1.15rem,3.2vw,2rem)] font-medium text-white/90 tracking-tight max-w-xl px-2"
             >
               Great Conversations Create Greater Possibilities
             </p>
@@ -597,7 +602,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
         <footer
           ref={footerRef}
           id="resources"
-          className="relative -mt-px flex min-h-0 lg:min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 lg:px-16 py-8 sm:py-10 lg:pt-[clamp(36px,6vh,72px)] lg:pb-8 text-white"
+          className="relative -mt-px flex min-h-0 pin:min-h-svh w-full flex-col justify-between overflow-hidden px-4 sm:px-6 md:px-10 pin:px-16 py-8 sm:py-10 pin:pt-[clamp(36px,6vh,72px)] pin:pb-8 text-white"
           style={{
             background: isLightBlue
               ? "linear-gradient(180deg, #040507 0%, #050b24 30%, #051d5c 70%, #0c318f 100%)"
@@ -640,8 +645,8 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
               stacked on top of each other, so as the logo fades away the
               links are already sitting right where it was — no dead space,
               no slide-in-from-nowhere. */}
-            <div className="relative flex w-full min-h-0 lg:min-h-67.5 items-center justify-center">
-              <div ref={wordmarkRef} className="hidden lg:flex w-full justify-center">
+            <div className="relative flex w-full min-h-0 pin:min-h-67.5 items-center justify-center">
+              <div ref={wordmarkRef} className="hidden pin:flex w-full justify-center">
                 <Image
                   src="/home/logo.png"
                   alt="Virtual Captains"
@@ -649,22 +654,22 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
                   height={240}
                   // w-[min(1100px,76%)]: sized against the padded container's
                   // own width, not the raw viewport (92vw ignored the container's
-                  // lg:px-16 padding and overflowed past it at lg widths). 76%
+                  // pin:px-16 padding and overflowed past it at lg widths). 76%
                   // (not 92%) is deliberate: it leaves enough centering margin
                   // that the logo's left edge clears the fixed SideNav's ~160px
                   // footprint too — the nav stays bold on "Hiring Partners"
                   // through the whole footer, so this isn't just a container-fit
                   // problem, it needs real clearance from the page edge.
-                  className="h-auto w-[min(1100px,92%)] drop-shadow-[0_8px_40px_rgba(0,0,0,0.25)] lg:w-[min(1100px,76%)] object-contain"
+                  className="h-auto w-[min(1100px,92%)] drop-shadow-[0_8px_40px_rgba(0,0,0,0.25)] pin:w-[min(1100px,76%)] object-contain"
                   priority={false}
                 />
               </div>
 
               <div
                 ref={actionsRef}
-                className="relative lg:absolute lg:inset-0 flex flex-col items-center justify-center gap-4 sm:gap-5 px-2 sm:px-4 w-full py-4 lg:py-0"
+                className="relative pin:absolute pin:inset-0 flex flex-col items-center justify-center gap-4 sm:gap-5 px-2 sm:px-4 w-full py-4 pin:py-0"
               >
-                <p className="text-center font-serif font-bold text-[clamp(1.2rem,3.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm max-w-xl">
+                <p className="text-center font-sans font-bold text-[clamp(1.2rem,3.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm max-w-xl">
                   Trusted Partner for <br className="hidden sm:block" /> People, Teams & Organizations
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
@@ -723,42 +728,42 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
           {/* Legal / Copyright Bar: Cleanly anchored at the bottom with no dead void */}
           <div
             ref={legalRef}
-            className="relative z-10 mx-auto mt-auto flex w-full max-w-350 flex-col items-center gap-3 border-t border-white/15 pt-5 sm:pt-6 pb-12 sm:pb-1 text-[11px] text-white/65 sm:flex-row sm:justify-between sm:text-[12px]"
+            className="relative z-10 mx-auto mt-auto flex w-full max-w-350 flex-col items-center gap-3 border-t border-white/15 pt-5 sm:pt-6 pb-16 pin:pb-1 text-[11px] text-white/65 sm:text-[12px] pin:flex-row pin:justify-between pin:pr-16"
           >
-            <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:order-1 sm:justify-start">
+            <div className="order-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-0 pin:order-1 pin:justify-start">
               <Link
                 href="/privacy"
-                className="transition-colors hover:text-white"
+                className="inline-block py-1.5 transition-colors hover:text-white"
               >
                 Privacy Policy
               </Link>
               <span className="text-white/30 select-none">·</span>
               <Link
                 href="/terms"
-                className="transition-colors hover:text-white"
+                className="inline-block py-1.5 transition-colors hover:text-white"
               >
                 Terms &amp; Conditions
               </Link>
               <span className="text-white/30 select-none">·</span>
               <Link
                 href="/refund"
-                className="transition-colors hover:text-white"
+                className="inline-block py-1.5 transition-colors hover:text-white"
               >
                 Refund Policy
               </Link>
               <span className="text-white/30 select-none">·</span>
               <Link
                 href="/refund#disclaimer"
-                className="transition-colors hover:text-white"
+                className="inline-block py-1.5 transition-colors hover:text-white"
               >
                 Disclaimer
               </Link>
             </div>
-            <p className="order-1 text-center sm:order-2">
+            <p className="order-1 text-center pin:order-2">
               © All Rights Reserved by Virtual Captains{" "}
               {new Date().getFullYear()}
             </p>
-            <p className="order-3">
+            <p className="order-3 text-center">
               Built by <span className="text-white/85">Web WeDesign</span>
             </p>
           </div>
@@ -793,3 +798,4 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
     </div>
   );
 }
+

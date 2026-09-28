@@ -78,7 +78,7 @@ export default function BookACallModal({
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
-            <h3 className="mt-5 font-serif text-2xl text-[#101010]">
+            <h3 className="mt-5 font-sans text-2xl text-[#101010]">
               Thanks — we&apos;ll be in touch
             </h3>
             <p className="mt-2 max-w-80 font-sans text-[13px] leading-relaxed text-black/55">
@@ -95,7 +95,7 @@ export default function BookACallModal({
           >
             <h3
               id="book-a-call-title"
-              className="pr-8 font-serif text-2xl text-[#101010]"
+              className="pr-8 font-sans text-2xl text-[#101010]"
             >
               Book a Call
             </h3>
@@ -240,3 +240,4 @@ export default function BookACallModal({
     </div>
   );
 }
+
