@@ -217,7 +217,7 @@ export default function AboutFounder() {
       {/* ====================================================================
          MOBILE & TABLET VIEW (< 1024px): Responsive Vertical Layout
          ==================================================================== */}
-      <div className="block pin:hidden relative w-full overflow-hidden py-16 sm:py-20 select-none">
+      <div className="block pin:hidden relative w-full overflow-hidden py-12 sm:py-16 select-none">
 
 
         <div className="w-full max-w-xl mx-auto px-5 sm:px-8 flex flex-col items-center text-center relative z-10">

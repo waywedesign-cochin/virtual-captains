@@ -63,7 +63,7 @@ export default function AboutPage() {
             has no visible colour edge */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative z-0 h-48 sm:h-64 bg-linear-to-b from-transparent to-[#040507]"
+          className="pointer-events-none relative z-0 h-12 sm:h-20 lg:h-40 bg-linear-to-b from-transparent to-[#040507]"
         />
       </div>
 

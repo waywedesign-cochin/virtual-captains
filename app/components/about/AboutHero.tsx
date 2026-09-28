@@ -64,7 +64,7 @@ export default function AboutHero() {
     <section
       role="region"
       aria-label="About Virtual Captains Hero"
-      className="relative w-full min-h-[65svh] lg:min-h-svh flex items-center justify-center pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8 overflow-hidden select-none"
+      className="relative w-full lg:min-h-svh flex items-center justify-center pt-32 sm:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8 overflow-hidden select-none"
     >
       <div
         ref={containerRef}

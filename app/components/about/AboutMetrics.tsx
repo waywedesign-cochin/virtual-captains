@@ -228,7 +228,7 @@ export default function AboutMetrics() {
     <section
       ref={sectionRef}
       aria-labelledby="about-metrics-title"
-      className="relative flex w-full flex-col items-center justify-center overflow-hidden px-4 py-16 sm:py-20 hex:min-h-svh hex:py-24 hex:motion-safe:h-svh hex:motion-safe:pt-20 hex:motion-safe:pb-6"
+      className="relative flex w-full flex-col items-center justify-center overflow-hidden px-4 py-12 sm:py-16 hex:min-h-svh hex:py-24 hex:motion-safe:h-svh hex:motion-safe:pt-20 hex:motion-safe:pb-6"
     >
       {/* Full metric list for screen readers — the visual sequence is decorative */}
       <ul className="sr-only">
