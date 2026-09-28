@@ -10,6 +10,7 @@ import {
   Mail,
 } from "lucide-react";
 import Link from "next/link";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { BlogPost } from "@/sanity/lib/types";
 import { CTASection } from "./CTASection";
 
@@ -24,6 +25,85 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
     <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45c-.94 0-1.7.76-1.7 1.7 0 .95.76 1.71 1.7 1.71s1.71-.76 1.71-1.71c0-.94-.77-1.7-1.71-1.7Z" />
   </svg>
 );
+
+// Rich text renderer — same styling as the old sections layout
+const portableTextComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => (
+      <p className="text-base sm:text-lg text-[#444444] leading-[1.85] font-normal">
+        {children}
+      </p>
+    ),
+    h2: ({ children }) => (
+      <h2 className="font-serif text-2xl sm:text-3xl font-normal tracking-tight pt-6 pb-1 bg-linear-to-r from-[#141414] via-[#1d4ed8] to-[#141414] bg-clip-text text-transparent">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="font-serif text-xl sm:text-2xl font-normal tracking-tight pt-4 text-[#141414]">
+        {children}
+      </h3>
+    ),
+    h4: ({ children }) => (
+      <h4 className="font-serif text-lg sm:text-xl font-normal tracking-tight pt-3 text-[#141414]">
+        {children}
+      </h4>
+    ),
+    blockquote: ({ children }) => (
+      <div className="p-6 sm:p-7 rounded-2xl bg-white border border-black/6 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
+        <p className="text-sm sm:text-base text-[#141414] italic leading-relaxed font-serif">
+          {children}
+        </p>
+      </div>
+    ),
+  },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="space-y-3 my-5 pl-2">{children}</ul>
+    ),
+    number: ({ children }) => (
+      <ol className="space-y-3 my-5 pl-6 list-decimal marker:text-[#1d4ed8] text-base sm:text-lg text-[#444444]">
+        {children}
+      </ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }) => (
+      <li className="flex items-start gap-3 text-base sm:text-lg text-[#444444] leading-relaxed">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] mt-3 shrink-0" />
+        <span>{children}</span>
+      </li>
+    ),
+    number: ({ children }) => (
+      <li className="leading-relaxed pl-1">{children}</li>
+    ),
+  },
+  marks: {
+    link: ({ children, value }) => (
+      <a
+        href={value?.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[#1d4ed8] underline underline-offset-4 hover:text-[#0369a1] transition-colors"
+      >
+        {children}
+      </a>
+    ),
+  },
+  types: {
+    image: ({ value }) =>
+      value?.url ? (
+        <figure className="my-6">
+          <img
+            src={value.url}
+            alt={value.alt || ""}
+            loading="lazy"
+            className="w-full rounded-2xl border border-black/5"
+          />
+        </figure>
+      ) : null,
+  },
+};
 
 interface BlogSlugPageProps {
   post: BlogPost;
@@ -48,6 +128,9 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
   }, [post.slug]);
 
   const recentBlogs = recentPosts;
+
+  // Heading shown on the page (falls back to title if detailTitle is empty)
+  const heading = post.detailTitle || post.title;
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -121,10 +204,10 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
             {/* Main Title — last word gets blue gradient */}
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight leading-[1.12]">
               <span className="text-[#141414]">
-                {post.title.split(" ").slice(0, -2).join(" ")}{" "}
+                {heading.split(" ").slice(0, -2).join(" ")}{" "}
               </span>
               <span className="bg-linear-to-r from-[#1d4ed8] via-[#0369a1] to-[#141414] bg-clip-text text-transparent">
-                {post.title.split(" ").slice(-2).join(" ")}
+                {heading.split(" ").slice(-2).join(" ")}
               </span>
             </h1>
 
@@ -188,49 +271,15 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               </div>
             )}
 
-            {/* Dynamic Content Sections */}
-            {post.content?.sections?.map((section, idx: number) => (
-              <div key={idx} className="space-y-4 pt-2">
-                {section.heading && (
-                  <h2 className="font-serif text-2xl sm:text-3xl font-normal tracking-tight pt-6 pb-1 bg-linear-to-r from-[#141414] via-[#1d4ed8] to-[#141414] bg-clip-text text-transparent">
-                    {section.heading}
-                  </h2>
-                )}
-
-                {section.paragraphs.map((para: string, pIdx: number) => (
-                  <p
-                    key={pIdx}
-                    className="text-base sm:text-lg text-[#444444] leading-[1.85] font-normal"
-                  >
-                    {para}
-                  </p>
-                ))}
-
-                {/* Bullet list */}
-                {section.listItems && section.listItems.length > 0 && (
-                  <ul className="space-y-3 my-5 pl-2">
-                    {section.listItems.map((item: string, lIdx: number) => (
-                      <li
-                        key={lIdx}
-                        className="flex items-start gap-3 text-base sm:text-lg text-[#444444] leading-relaxed"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] mt-3 shrink-0" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                {/* Callout quote/box */}
-                {section.note && (
-                  <div className="p-6 sm:p-7 rounded-2xl bg-white border border-black/6 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
-                    <p className="text-sm sm:text-base text-[#141414] italic leading-relaxed font-serif">
-                      "{section.note}"
-                    </p>
-                  </div>
-                )}
+            {/* Rich text body */}
+            {post.content?.body && (
+              <div className="space-y-5">
+                <PortableText
+                  value={post.content.body}
+                  components={portableTextComponents}
+                />
               </div>
-            ))}
+            )}
           </div>
 
           {/* Social Sharing Row */}

@@ -1,8 +1,8 @@
 import { post } from "./post";
 import { category } from "./category";
 import { author } from "./author";
-import { section } from "./section";
+import { blockContentType } from "./blockContent";
 
 export const schema = {
-  types: [post, category, author, section],
+  types: [post, category, author, blockContentType],
 };
