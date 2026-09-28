@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import Link from "next/link";
+import { NewsHero } from "../components/news/NewsHero";
 
 export const metadata: Metadata = {
   title: "News & Updates | Virtual Captains",
@@ -18,7 +19,7 @@ type NewsItem = {
   title: string;
   summary: string;
   readTime: string;
-  dot: string; // category color dot
+  dot: string;
 };
 
 const CATEGORIES = [
@@ -107,6 +108,17 @@ const DUMMY_NEWS: NewsItem[] = [
 const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38bdf8]";
 
+const CONTAINER = "w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12";
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex items-center gap-3 mb-5">
+    <span className="text-[11px] font-bold tracking-widest uppercase text-[#38bdf8]">
+      {children}
+    </span>
+    <div className="flex-1 h-px bg-linear-to-r from-[#38bdf8]/30 to-transparent" />
+  </div>
+);
+
 export default async function NewsAndUpdatesPage({
   searchParams,
 }: {
@@ -116,206 +128,214 @@ export default async function NewsAndUpdatesPage({
   const active =
     CATEGORIES.find((c) => c.slug === params.category)?.slug ?? "all";
 
+  // Featured is always the newest item (independent of filter, like the blog)
+  const featured = DUMMY_NEWS[0];
+
   const filtered =
     active === "all" ? DUMMY_NEWS : DUMMY_NEWS.filter((n) => n.slug === active);
-
-  const [featured, ...rest] = filtered;
+  const gridItems = filtered.filter((n) => n.id !== featured.id);
 
   return (
-    <main className="min-h-screen bg-[#040507] text-white selection:bg-[#38bdf8] selection:text-black font-sans antialiased overflow-x-clip">
+    <main className="min-h-screen bg-[#040507] text-white selection:bg-[#38bdf8] selection:text-black font-sans antialiased overflow-x-clip flex flex-col">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative pt-32 sm:pt-40 pb-10 sm:pb-14 px-4 sm:px-6 lg:px-13  w-full mx-auto">
-        <div className="pointer-events-none absolute -top-24 left-0 w-175 h-87.5 bg-linear-to-r from-[#1d4ed8]/15 via-[#38bdf8]/10 to-transparent blur-[140px] rounded-full" />
+      <div className="flex-1 w-full pb-16">
+        {/* 1. Hero (centered) */}
+        <NewsHero />
 
-        <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
-          <h1 className="font-sans font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight leading-[1.02] max-w-3xl">
-            What&apos;s new at Virtual Captains
-          </h1>
-          <p className="text-sm sm:text-base text-slate-300 max-w-sm leading-relaxed lg:pb-2">
-            Product releases, partnerships, and milestones from Virtual Captains
-            and SalesX, newest first.
-          </p>
-        </div>
+        {/* 2. Featured card */}
+        <section className={`${CONTAINER} mb-16`}>
+          <SectionLabel>Featured</SectionLabel>
+          <article className="group relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-[28px] sm:rounded-[36px] lg:rounded-[40px] p-6 sm:p-8 lg:p-10 border border-white/12 bg-slate-900/50 backdrop-blur-xl hover:border-white/25 transition-all duration-500">
+            {/* Left column */}
+            <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <span className="text-xs sm:text-sm font-medium text-slate-400">
+                  <time dateTime={featured.iso}>{featured.date}</time>
+                </span>
 
-        {/* Filters */}
-        <nav
-          aria-label="Filter news by category"
-          className="relative mt-10 sm:mt-12 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {CATEGORIES.map((c) => {
-            const isActive = c.slug === active;
-            return (
-              <Link
-                key={c.slug}
-                href={
-                  c.slug === "all" ? "/news-and-updates" : `?category=${c.slug}`
-                }
-                scroll={false}
-                aria-current={isActive ? "page" : undefined}
-                className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${FOCUS_RING} ${
-                  isActive
-                    ? "bg-white text-black border-white"
-                    : "border-white/15 text-slate-300 hover:border-white/40 hover:text-white"
-                }`}
-              >
-                {c.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </section>
+                <h2 className="font-sans font-black text-2xl sm:text-3xl lg:text-4xl leading-[1.18] tracking-tight text-white group-hover:text-slate-300 transition-colors">
+                  <a
+                    href="#"
+                    className={`after:absolute after:inset-0 after:content-[''] after:rounded-[inherit] rounded-sm ${FOCUS_RING}`}
+                  >
+                    {featured.title}
+                  </a>
+                </h2>
 
-      {/* Featured story */}
-      {featured && (
-        <section className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-          <article className="group relative overflow-hidden rounded-3xl border border-white/12 bg-slate-900/50 backdrop-blur-xl">
-            <div className="grid lg:grid-cols-[1.15fr_1fr]">
-              {/* Copy */}
-              <div className="relative z-10 flex flex-col justify-between gap-10 p-6 sm:p-10 lg:p-12">
-                <div className="flex items-center gap-3 text-sm text-slate-300">
-                  <span className={`h-2 w-2 rounded-full ${featured.dot}`} />
-                  <span className="font-semibold text-white">
-                    {featured.category}
-                  </span>
-                  <time dateTime={featured.iso} className="text-slate-400">
-                    {featured.date}
-                  </time>
-                </div>
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed line-clamp-3">
+                  {featured.summary}
+                </p>
 
                 <div>
-                  <h2 className="font-sans font-black text-2xl sm:text-4xl lg:text-[2.75rem] leading-[1.1] tracking-tight max-w-xl">
-                    <a
-                      href="#"
-                      className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
-                    >
-                      {featured.title}
-                    </a>
-                  </h2>
-                  <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-lg">
-                    {featured.summary}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-4 text-sm">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#e7ff3d] px-5 py-2 font-bold text-black transition-transform group-hover:translate-x-0.5">
-                    Read announcement
-                    <span aria-hidden="true">&rarr;</span>
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium bg-white/8 text-white">
+                    <span className={`h-1.5 w-1.5 rounded-full ${featured.dot}`} />
+                    {featured.category}
                   </span>
-                  <span className="text-slate-400">{featured.readTime}</span>
                 </div>
               </div>
 
-              {/* Visual: static conviction-telemetry graphic */}
-              <div
-                aria-hidden="true"
-                className="relative min-h-64 lg:min-h-full border-t lg:border-t-0 lg:border-l border-white/10 bg-[radial-gradient(ellipse_at_70%_20%,rgba(56,189,248,0.22),transparent_60%)]"
+              <div className="flex items-center justify-between pt-6 border-t border-white/10">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#e7ff3d] px-5 py-2 text-xs font-bold text-black transition-transform group-hover:translate-x-0.5">
+                  Read announcement
+                  <span aria-hidden="true">&rarr;</span>
+                </span>
+                <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                  {featured.readTime}
+                </span>
+              </div>
+            </div>
+
+            {/* Right column visual */}
+            <div
+              aria-hidden="true"
+              className="lg:col-span-6 overflow-hidden rounded-[20px] sm:rounded-3xl aspect-16/10 relative ring-1 ring-white/10 bg-[radial-gradient(ellipse_at_70%_20%,rgba(56,189,248,0.22),transparent_60%)]"
+            >
+              <svg
+                viewBox="0 0 400 250"
+                className="absolute inset-0 h-full w-full group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                preserveAspectRatio="xMidYMid slice"
               >
-                <svg
-                  viewBox="0 0 400 300"
-                  className="absolute inset-0 h-full w-full"
-                  preserveAspectRatio="xMidYMid slice"
-                >
-                  <defs>
-                    <linearGradient id="fillLine" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stopColor="#38bdf8" stopOpacity="0.35" />
-                      <stop offset="1" stopColor="#38bdf8" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  {[60, 120, 180, 240].map((y) => (
-                    <line
-                      key={y}
-                      x1="0"
-                      x2="400"
-                      y1={y}
-                      y2={y}
-                      stroke="white"
-                      strokeOpacity="0.07"
-                    />
-                  ))}
-                  <path
-                    d="M0 230 C40 220 60 190 100 195 S160 150 200 140 S260 165 300 110 S360 70 400 50 L400 300 L0 300 Z"
-                    fill="url(#fillLine)"
+                <defs>
+                  <linearGradient id="fillLine" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="#38bdf8" stopOpacity="0.35" />
+                    <stop offset="1" stopColor="#38bdf8" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {[50, 100, 150, 200].map((y) => (
+                  <line
+                    key={y}
+                    x1="0"
+                    x2="400"
+                    y1={y}
+                    y2={y}
+                    stroke="white"
+                    strokeOpacity="0.07"
                   />
-                  <path
-                    d="M0 230 C40 220 60 190 100 195 S160 150 200 140 S260 165 300 110 S360 70 400 50"
-                    fill="none"
-                    stroke="#38bdf8"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="300" cy="110" r="5" fill="#e7ff3d" />
-                  <circle
-                    cx="300"
-                    cy="110"
-                    r="12"
-                    fill="none"
-                    stroke="#e7ff3d"
-                    strokeOpacity="0.5"
-                  />
-                </svg>
-                <div className="absolute left-6 bottom-6 rounded-xl border border-white/15 bg-black/40 backdrop-blur-md px-4 py-3">
-                  <p className="text-xs text-slate-400">Buyer conviction</p>
-                  <p className="text-2xl font-black text-white">
-                    72<span className="text-[#e7ff3d]">%</span>
-                  </p>
-                </div>
+                ))}
+                <path
+                  d="M0 200 C40 190 60 165 100 168 S160 128 200 120 S260 140 300 95 S360 60 400 42 L400 250 L0 250 Z"
+                  fill="url(#fillLine)"
+                />
+                <path
+                  d="M0 200 C40 190 60 165 100 168 S160 128 200 120 S260 140 300 95 S360 60 400 42"
+                  fill="none"
+                  stroke="#38bdf8"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+                <circle cx="300" cy="95" r="5" fill="#e7ff3d" />
+                <circle
+                  cx="300"
+                  cy="95"
+                  r="12"
+                  fill="none"
+                  stroke="#e7ff3d"
+                  strokeOpacity="0.5"
+                />
+              </svg>
+              <div className="absolute left-5 bottom-5 rounded-xl border border-white/15 bg-black/40 backdrop-blur-md px-4 py-3">
+                <p className="text-xs text-slate-400">Buyer conviction</p>
+                <p className="text-2xl font-black text-white">
+                  72<span className="text-[#e7ff3d]">%</span>
+                </p>
               </div>
             </div>
           </article>
         </section>
-      )}
 
-      {/* Timeline list */}
-      {rest.length > 0 && (
-        <section className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto pt-12 sm:pt-16 pb-24">
-          <h2 className="text-lg font-bold text-white mb-2">Earlier updates</h2>
-          <ul className="divide-y divide-white/10 border-y border-white/10">
-            {rest.map((item) => (
-              <li key={item.id}>
-                <article className="group relative grid gap-3 py-7 sm:py-8 md:grid-cols-[10rem_1fr_auto] md:items-baseline md:gap-10 transition-colors hover:bg-white/[0.02]">
-                  <div className="flex items-center gap-2.5 text-sm">
-                    <span className={`h-2 w-2 rounded-full ${item.dot}`} />
-                    <time dateTime={item.iso} className="text-slate-400">
-                      {item.date}
-                    </time>
-                  </div>
-
-                  <div className="max-w-2xl">
-                    <p className="text-xs font-semibold text-slate-400 mb-1.5">
-                      {item.category}
-                    </p>
-                    <h3 className="font-sans font-extrabold text-lg sm:text-2xl leading-snug tracking-tight text-white transition-colors group-hover:text-[#38bdf8]">
-                      <a
-                        href="#"
-                        className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
-                      >
-                        {item.title}
-                      </a>
-                    </h3>
-                    <p className="mt-2.5 text-sm text-slate-300 leading-relaxed">
-                      {item.summary}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 text-sm text-slate-400 md:justify-end">
-                    <span>{item.readTime}</span>
-                    <span
-                      aria-hidden="true"
-                      className="grid h-9 w-9 place-items-center rounded-full border border-white/15 text-white transition-all group-hover:bg-white group-hover:text-black group-hover:border-white"
-                    >
-                      &rarr;
-                    </span>
-                  </div>
-                </article>
-              </li>
-            ))}
-          </ul>
+        {/* 3. Category filter tabs (same placement as blog) */}
+        <section className={`${CONTAINER} mb-12`}>
+          <nav
+            aria-label="Filter news by category"
+            className="flex overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
+          >
+            <div className="flex items-center gap-2 p-1 bg-white/4 rounded-full border border-white/10">
+              {CATEGORIES.map((c) => {
+                const isActive = c.slug === active;
+                return (
+                  <Link
+                    key={c.slug}
+                    href={
+                      c.slug === "all"
+                        ? "/news-and-updates"
+                        : `?category=${c.slug}`
+                    }
+                    scroll={false}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors select-none ${FOCUS_RING} ${
+                      isActive
+                        ? "bg-white text-black"
+                        : "text-slate-300 hover:text-white"
+                    }`}
+                  >
+                    {c.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
         </section>
-      )}
 
-      {/* Footer */}
+        {/* 4. Grid of updates */}
+        <section className={`${CONTAINER} mb-24`}>
+          <SectionLabel>All Updates</SectionLabel>
+
+          {gridItems.length === 0 ? (
+            <div className="text-center py-16 rounded-3xl border border-white/10 bg-slate-900/50 space-y-2">
+              <p className="text-slate-300 text-sm">
+                No updates found in this category.
+              </p>
+              <Link
+                href="/news-and-updates"
+                className="text-xs font-semibold text-white underline hover:text-[#38bdf8]"
+              >
+                Reset filters
+              </Link>
+            </div>
+          ) : (
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {gridItems.map((item) => (
+                <li key={item.id} className="flex">
+                  <article className="group relative w-full rounded-3xl sm:rounded-[26px] p-5 sm:p-6 border border-white/12 bg-slate-900/50 backdrop-blur-xl hover:border-white/25 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+                    <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#38bdf8] via-[#1d4ed8] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    <div className="flex flex-col">
+                      <span className="text-[11px] font-mono uppercase tracking-widest text-slate-400">
+                        <time dateTime={item.iso}>{item.date}</time>
+                      </span>
+
+                      <h3 className="font-sans font-extrabold text-xl sm:text-[22px] text-white group-hover:text-[#38bdf8] transition-colors leading-[1.24] tracking-tight mt-2.5 mb-1.5 line-clamp-2">
+                        <a
+                          href="#"
+                          className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
+                        >
+                          {item.title}
+                        </a>
+                      </h3>
+
+                      <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed line-clamp-3 mb-4">
+                        {item.summary}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                      <span className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full text-[11px] font-medium bg-white/8 text-white">
+                        <span className={`h-1.5 w-1.5 rounded-full ${item.dot}`} />
+                        {item.category}
+                      </span>
+                      <span className="text-[11px] font-mono text-slate-400">
+                        {item.readTime}
+                      </span>
+                    </div>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+
       <SiteFooter showCTA={false} />
     </main>
   );
