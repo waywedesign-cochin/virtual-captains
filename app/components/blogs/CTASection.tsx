@@ -55,7 +55,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onBookCall }) => {
           </div>
 
           {/* Heading with Blue-White Gradient Accent */}
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-normal text-white tracking-tight leading-[1.12]">
+          <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-normal text-white tracking-tight leading-[1.12]">
             Got a great idea you <br />
             <span className="bg-linear-to-r from-white via-[#bae6fd] to-[#38bdf8] bg-clip-text text-transparent">
               want to bring to life?

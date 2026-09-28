@@ -30,28 +30,28 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
 const portableTextComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
-      <p className="text-base sm:text-lg text-[#444444] leading-[1.85] font-normal">
+      <p className="text-base sm:text-lg text-white/75 leading-[1.85] font-normal">
         {children}
       </p>
     ),
     h2: ({ children }) => (
-      <h2 className="font-serif text-2xl sm:text-3xl font-normal tracking-tight pt-6 pb-1 bg-linear-to-r from-[#141414] via-[#1d4ed8] to-[#141414] bg-clip-text text-transparent">
+      <h2 className="font-sans text-2xl sm:text-3xl font-normal tracking-tight pt-6 pb-1 bg-linear-to-r from-white via-[#8fd0ff] to-white bg-clip-text text-transparent">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="font-serif text-xl sm:text-2xl font-normal tracking-tight pt-4 text-[#141414]">
+      <h3 className="font-sans text-xl sm:text-2xl font-normal tracking-tight pt-4 text-white">
         {children}
       </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="font-serif text-lg sm:text-xl font-normal tracking-tight pt-3 text-[#141414]">
+      <h4 className="font-sans text-lg sm:text-xl font-normal tracking-tight pt-3 text-white">
         {children}
       </h4>
     ),
     blockquote: ({ children }) => (
-      <div className="p-6 sm:p-7 rounded-2xl bg-white border border-black/6 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
-        <p className="text-sm sm:text-base text-[#141414] italic leading-relaxed font-serif">
+      <div className="p-6 sm:p-7 rounded-2xl bg-white/[0.05] border border-white/10 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
+        <p className="text-sm sm:text-base text-white italic leading-relaxed font-sans">
           {children}
         </p>
       </div>
@@ -62,15 +62,15 @@ const portableTextComponents: PortableTextComponents = {
       <ul className="space-y-3 my-5 pl-2">{children}</ul>
     ),
     number: ({ children }) => (
-      <ol className="space-y-3 my-5 pl-6 list-decimal marker:text-[#1d4ed8] text-base sm:text-lg text-[#444444]">
+      <ol className="space-y-3 my-5 pl-6 list-decimal marker:text-[#8fd0ff] text-base sm:text-lg text-white/75">
         {children}
       </ol>
     ),
   },
   listItem: {
     bullet: ({ children }) => (
-      <li className="flex items-start gap-3 text-base sm:text-lg text-[#444444] leading-relaxed">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] mt-3 shrink-0" />
+      <li className="flex items-start gap-3 text-base sm:text-lg text-white/75 leading-relaxed">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8] mt-3 shrink-0" />
         <span>{children}</span>
       </li>
     ),
@@ -84,7 +84,7 @@ const portableTextComponents: PortableTextComponents = {
         href={value?.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-[#1d4ed8] underline underline-offset-4 hover:text-[#0369a1] transition-colors"
+        className="text-[#8fd0ff] underline underline-offset-4 hover:text-[#38bdf8] transition-colors"
       >
         {children}
       </a>
@@ -98,7 +98,7 @@ const portableTextComponents: PortableTextComponents = {
             src={value.url}
             alt={value.alt || ""}
             loading="lazy"
-            className="w-full rounded-2xl border border-black/5"
+            className="w-full rounded-2xl border border-white/10"
           />
         </figure>
       ) : null,
@@ -168,9 +168,9 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
       <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 pt-8 pb-4">
         <button
           onClick={onNavigateBack}
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#737373] hover:text-[#1d4ed8] transition-colors cursor-pointer group"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/60 hover:text-[#8fd0ff] transition-colors cursor-pointer group"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#1d4ed8]" />
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-[#8fd0ff]" />
           <span>Back to all articles</span>
         </button>
       </div>
@@ -191,22 +191,22 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               <span className="inline-flex items-center px-4 py-1 rounded-full text-xs font-semibold bg-linear-to-r from-[#1d4ed8] to-[#0369a1] text-white shadow-[0_2px_10px_rgba(29,78,216,0.25)]">
                 {post.category}
               </span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-[#737373]">
+              <span className="inline-flex items-center gap-1.5 text-xs text-white/60">
                 <Clock className="w-3 h-3" />
                 {post.readTime}
               </span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-[#737373]">
+              <span className="inline-flex items-center gap-1.5 text-xs text-white/60">
                 <Calendar className="w-3 h-3" />
                 {formatDate(post.publishedDate)}
               </span>
             </div>
 
             {/* Main Title — last word gets blue gradient */}
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight leading-[1.12]">
-              <span className="text-[#141414]">
+            <h1 className="font-sans text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight leading-[1.12]">
+              <span className="text-white">
                 {heading.split(" ").slice(0, -2).join(" ")}{" "}
               </span>
-              <span className="bg-linear-to-r from-[#1d4ed8] via-[#0369a1] to-[#141414] bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-[#8fd0ff] via-[#38bdf8] to-[#4d82f5] bg-clip-text text-transparent">
                 {heading.split(" ").slice(-2).join(" ")}
               </span>
             </h1>
@@ -219,20 +219,20 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
                   alt={post.author.name}
                   className="w-10 h-10 rounded-full object-cover border-2 border-[#1d4ed8]/20"
                 />
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-linear-to-br from-[#1d4ed8] to-[#0369a1] border-2 border-white" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-linear-to-br from-[#1d4ed8] to-[#0369a1] border-2 border-[#040507]" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-[#141414]">
+                <p className="text-sm font-semibold text-white">
                   {post.author.name}
                 </p>
-                <p className="text-xs text-[#737373]">{post.author.role}</p>
+                <p className="text-xs text-white/60">{post.author.role}</p>
               </div>
               <div className="h-8 w-px bg-linear-to-b from-transparent via-[#1d4ed8]/30 to-transparent" />
               <div className="text-right">
-                <p className="text-xs font-medium text-[#737373]">
+                <p className="text-xs font-medium text-white/60">
                   {formatDate(post.publishedDate)}
                 </p>
-                <p className="text-[11px] font-mono text-[#A4A4A4] uppercase tracking-wider">
+                <p className="text-[11px] font-mono text-white/45 uppercase tracking-wider">
                   {post.readTime}
                 </p>
               </div>
@@ -250,7 +250,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
           >
             {/* Soft blue glow behind image */}
             <div className="absolute -inset-3 rounded-[36px] bg-linear-to-br from-[#1d4ed8]/10 via-[#0ea5e9]/6 to-transparent blur-xl pointer-events-none" />
-            <div className="relative overflow-hidden rounded-3xl sm:rounded-4xl bg-[#F2EFE9] border border-[#1d4ed8]/10 shadow-[0_8px_40px_rgba(29,78,216,0.08)] aspect-video ring-1 ring-[#1d4ed8]/8">
+            <div className="relative overflow-hidden rounded-3xl sm:rounded-4xl bg-white/5 border border-[#1d4ed8]/10 shadow-[0_8px_40px_rgba(29,78,216,0.08)] aspect-video ring-1 ring-[#1d4ed8]/8">
               <img
                 src={post.bannerImage || post.image}
                 alt={post.title}
@@ -260,12 +260,12 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
           </motion.div>
 
           {/* Article Prose */}
-          <div className="space-y-8 text-[#333333] pt-8 leading-[1.85]">
+          <div className="space-y-8 text-white/75 pt-8 leading-[1.85]">
             {/* Lead Paragraph — with subtle blue left accent */}
             {post.content?.lead && (
               <div className="flex gap-4">
                 <div className="w-1 shrink-0 rounded-full bg-linear-to-b from-[#1d4ed8] to-[#0ea5e9]/30 mt-1 mb-1" />
-                <p className="text-lg sm:text-xl md:text-2xl text-[#141414] font-serif leading-relaxed font-normal">
+                <p className="text-lg sm:text-xl md:text-2xl text-white font-sans leading-relaxed font-normal">
                   {post.content.lead}
                 </p>
               </div>
@@ -283,15 +283,15 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
           </div>
 
           {/* Social Sharing Row */}
-          <div className="pt-10 mt-8 border-t border-black/6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <p className="text-sm font-semibold bg-linear-to-r from-[#1d4ed8] to-[#0369a1] bg-clip-text text-transparent">
+          <div className="pt-10 mt-8 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <p className="text-sm font-semibold bg-linear-to-r from-[#8fd0ff] to-[#38bdf8] bg-clip-text text-transparent">
               Liked it? Share it with your people
             </p>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={handleShareX}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-neutral-100 border border-black/6 text-xs font-medium text-[#141414] transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-white transition-colors cursor-pointer shadow-sm"
               >
                 <TwitterIcon className="w-3.5 h-3.5" />
                 <span>Share on X</span>
@@ -299,7 +299,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
 
               <button
                 onClick={handleShareLinkedIn}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-neutral-100 border border-black/6 text-xs font-medium text-[#141414] transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-white transition-colors cursor-pointer shadow-sm"
               >
                 <LinkedinIcon className="w-3.5 h-3.5" />
                 <span>LinkedIn</span>
@@ -307,12 +307,12 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
 
               <button
                 onClick={handleCopyLink}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-neutral-100 border border-black/6 text-xs font-medium text-[#141414] transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-white transition-colors cursor-pointer shadow-sm"
               >
                 {copied ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="text-emerald-700">Copied!</span>
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="text-emerald-400">Copied!</span>
                   </>
                 ) : (
                   <>
@@ -329,7 +329,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
         <aside className="hidden xl:block w-[320px] shrink-0 sticky top-28 self-start">
           {/* Sidebar header */}
           <div className="flex items-center gap-3 mb-5">
-            <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#1d4ed8] to-[#0369a1] bg-clip-text text-transparent">
+            <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#8fd0ff] to-[#38bdf8] bg-clip-text text-transparent">
               Recent Articles
             </span>
             <div className="flex-1 h-px bg-linear-to-r from-[#1d4ed8]/30 to-transparent" />
@@ -341,10 +341,10 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
                 <Link
                   key={recent._id}
                   href={`/blogs/${recent.slug}`}
-                  className="group flex gap-3.5 p-3.5 rounded-2xl bg-white border border-black/5 hover:border-[#1d4ed8]/20 hover:shadow-[0_4px_20px_rgba(29,78,216,0.08)] transition-all duration-300 relative overflow-hidden"
+                  className="group flex gap-3.5 p-3.5 rounded-2xl bg-white/[0.05] border border-white/10 hover:border-[#1d4ed8]/20 hover:shadow-[0_4px_20px_rgba(29,78,216,0.08)] transition-all duration-300 relative overflow-hidden"
                 >
                   <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#1d4ed8] to-[#0ea5e9] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
-                  <div className="shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-[#F2EFE9]">
+                  <div className="shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-white/5">
                     <img
                       src={recent.image}
                       alt={recent.title}
@@ -354,14 +354,14 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-black/5 text-[#555] inline-block mb-1">
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/8 text-white/65 inline-block mb-1">
                         {recent.category}
                       </span>
-                      <h4 className="text-[13px] font-semibold text-[#141414] leading-snug line-clamp-2 group-hover:text-[#1d4ed8] transition-colors">
+                      <h4 className="text-[13px] font-semibold text-white leading-snug line-clamp-2 group-hover:text-[#8fd0ff] transition-colors">
                         {recent.title}
                       </h4>
                     </div>
-                    <span className="text-[11px] text-[#A4A4A4] font-mono mt-1.5">
+                    <span className="text-[11px] text-white/45 font-mono mt-1.5">
                       {recent.readTime}
                     </span>
                   </div>
@@ -369,9 +369,9 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center gap-2 py-10 px-5 rounded-2xl bg-white border border-dashed border-black/10">
+            <div className="flex flex-col items-center justify-center text-center gap-2 py-10 px-5 rounded-2xl bg-white/[0.05] border border-dashed border-white/15">
               <span className="text-2xl">📝</span>
-              <p className="text-xs font-medium text-[#737373]">
+              <p className="text-xs font-medium text-white/60">
                 More articles coming soon
               </p>
             </div>
@@ -380,7 +380,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
           {/* View all link */}
           <Link
             href="/blogs"
-            className="mt-5 flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-black/[0.07] text-xs font-semibold text-[#555] hover:text-[#1d4ed8] hover:border-[#1d4ed8]/30 transition-all group"
+            className="mt-5 flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-white/12 text-xs font-semibold text-white/65 hover:text-[#8fd0ff] hover:border-[#1d4ed8]/30 transition-all group"
           >
             <span>View all articles</span>
             <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -391,13 +391,13 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
       {/* ── Mobile-only: Recent Articles below article ── */}
       <section className="xl:hidden w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 mt-16 mb-12">
         <div className="flex items-center gap-3 mb-5">
-          <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#1d4ed8] to-[#0369a1] bg-clip-text text-transparent">
+          <span className="text-[11px] font-bold tracking-widest uppercase bg-linear-to-r from-[#8fd0ff] to-[#38bdf8] bg-clip-text text-transparent">
             Recent Articles
           </span>
           <div className="flex-1 h-px bg-linear-to-r from-[#1d4ed8]/30 to-transparent" />
           <Link
             href="/blogs"
-            className="inline-flex items-center gap-1 text-xs font-medium text-[#737373] hover:text-[#141414] transition-colors"
+            className="inline-flex items-center gap-1 text-xs font-medium text-white/60 hover:text-[#8fd0ff] transition-colors"
           >
             <span>View all</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -411,36 +411,36 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               href={`/blogs/${recent.slug}`}
               data-cursor="read"
               data-cursor-text="Read article"
-              className="bg-white rounded-3xl sm:rounded-[26px] p-4 sm:p-5 border border-black/5 shadow-[0_10px_25px_-12px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_35px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
+              className="bg-white/[0.05] rounded-3xl sm:rounded-[26px] p-4 sm:p-5 border border-white/10 shadow-[0_10px_25px_-12px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_35px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
             >
               <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#1d4ed8] via-[#0ea5e9] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl sm:rounded-t-[26px]" />
 
               {/* Top Section */}
               <div className="flex flex-col">
-                <span className="text-[11px] font-mono uppercase tracking-widest text-[#8c8c8c]">
+                <span className="text-[11px] font-mono uppercase tracking-widest text-white/45">
                   {formatDate(recent.publishedDate)}
                 </span>
 
-                <h4 className="font-serif text-xl sm:text-[22px] font-normal text-[#141414] group-hover:text-[#1d4ed8] transition-colors leading-[1.24] tracking-tight mt-2.5 mb-1.5 line-clamp-2">
+                <h4 className="font-sans text-xl sm:text-[22px] font-normal text-white group-hover:text-[#8fd0ff] transition-colors leading-[1.24] tracking-tight mt-2.5 mb-1.5 line-clamp-2">
                   {recent.title}
                 </h4>
 
-                <p className="text-xs sm:text-[13px] text-[#666666] leading-relaxed line-clamp-2 mb-3">
+                <p className="text-xs sm:text-[13px] text-white/60 leading-relaxed line-clamp-2 mb-3">
                   {recent.excerpt}
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center px-3 py-0.5 rounded-full text-[11px] font-medium bg-[#F0EDE8] text-[#141414]">
+                  <span className="inline-flex items-center px-3 py-0.5 rounded-full text-[11px] font-medium bg-white/8 text-white">
                     {recent.category}
                   </span>
-                  <span className="text-[11px] font-mono text-[#999999]">
+                  <span className="text-[11px] font-mono text-white/45">
                     {recent.readTime}
                   </span>
                 </div>
               </div>
 
               {/* Bottom Section: Image */}
-              <div className="mt-4 overflow-hidden rounded-2xl aspect-16/11 bg-[#F2EFE9] ring-1 ring-black/4">
+              <div className="mt-4 overflow-hidden rounded-2xl aspect-16/11 bg-white/5 ring-1 ring-white/10">
                 <img
                   src={recent.image}
                   alt={recent.title}
@@ -455,13 +455,13 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
 
       {/* Newsletter Subscribe Section */}
       <section className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 mb-24">
-        <div className="bg-white rounded-[28px] sm:rounded-4xl p-8 sm:p-12 relative overflow-hidden border border-black/5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.06)]">
+        <div className="bg-white/[0.05] rounded-[28px] sm:rounded-4xl p-8 sm:p-12 relative overflow-hidden border border-white/10 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.06)]">
           {/* Subtle blue accent in the corner */}
-          <div className="absolute top-0 right-0 w-100 h-100 bg-linear-to-bl from-[#e0e7ff] via-transparent to-transparent opacity-60 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-100 h-100 bg-linear-to-bl from-[#1d4ed8]/25 via-transparent to-transparent opacity-60 pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 md:gap-12">
             <div className="max-w-xl">
-              <h3 className="font-serif text-2xl sm:text-3xl text-[#141414]">
+              <h3 className="font-sans text-2xl sm:text-3xl text-white">
                 Get more insights in your inbox
               </h3>
             </div>
@@ -472,12 +472,12 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
                 onSubmit={(e) => e.preventDefault()}
               >
                 <div className="relative flex-1 sm:w-72">
-                  <Mail className="w-4 h-4 text-[#A4A4A4] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-white/45 absolute left-4 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     placeholder="Enter your email address"
                     required
-                    className="w-full bg-[#F9F8F6] border border-black/6 rounded-full py-3.5 pl-11 pr-4 text-sm text-[#141414] placeholder-[#A4A4A4] focus:outline-none focus:border-[#1d4ed8] focus:bg-white transition-colors"
+                    className="w-full bg-white/5 border border-white/10 rounded-full py-3.5 pl-11 pr-4 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#1d4ed8] focus:bg-white/10 transition-colors"
                   />
                 </div>
                 <button
