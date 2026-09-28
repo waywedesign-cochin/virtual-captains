@@ -100,7 +100,7 @@ export default function AboutVideoCTA({
         ref={sectionRef}
         role="region"
         aria-label="Video presentation and audience paths"
-        className="relative z-20 w-full overflow-hidden py-16 sm:py-20 lg:py-24 xl:py-28 select-none flex flex-col items-center justify-center"
+        className="relative z-20 w-full overflow-hidden py-12 sm:py-16 lg:py-24 select-none flex flex-col items-center justify-center"
       >
 
         {/* ── Standard Navbar max-width Container (max-w-372) ── */}

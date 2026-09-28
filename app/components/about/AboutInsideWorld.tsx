@@ -5,10 +5,10 @@ import { useScroll } from "motion/react";
 import gsap from "gsap";
 import { useHeadingZoom } from "./useHeadingZoom";
 
-// Below this height the sticky stage (heading + copy + card) cannot fit on
-// one screen (e.g. a rotated phone), so the section renders as a normal block
-// and the arrows / pills switch pillars instead of scroll position.
-const STATIC_QUERY = "(max-height: 559px)";
+// Phones/tablets, and screens too short for the sticky stage (rotated
+// phones): the section renders as a normal block — no scroll-locking, even
+// section spacing — and the arrows / pills switch pillars instead.
+const STATIC_QUERY = "(max-width: 1023px), (max-height: 559px)";
 
 interface Pillar {
   id: string;
@@ -176,12 +176,12 @@ export default function AboutInsideWorld() {
       id="inside-our-world-section"
       role="region"
       aria-label="Inside Our World Pinned Scroll Experience"
-      className="relative w-full h-[280vh] [@media(max-height:559px)]:h-auto"
+      className="relative w-full h-[280vh] [@media(max-width:1023px)]:h-auto [@media(max-height:559px)]:h-auto"
     >
       {/* ── STICKY VIEWPORT STAGE (Locks on screen while scrolling through the 4 pillars) ── */}
       <div
         id="inside-world-sticky-stage"
-        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center select-none [@media(max-height:559px)]:static [@media(max-height:559px)]:h-auto [@media(max-height:559px)]:py-16"
+        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center select-none [@media(max-width:1023px)]:static [@media(max-width:1023px)]:h-auto [@media(max-width:1023px)]:py-12 sm:[@media(max-width:1023px)]:py-16 [@media(max-height:559px)]:static [@media(max-height:559px)]:h-auto [@media(max-height:559px)]:py-16"
       >
 
 

@@ -118,7 +118,7 @@ export default function AboutCertifications() {
       ref={sectionRef}
       role="region"
       aria-label="Certifications"
-      className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-24 xl:py-28 select-none flex flex-col items-center justify-center min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] xl:min-h-[540px]"
+      className="relative w-full overflow-hidden py-12 sm:py-16 lg:py-24 select-none flex flex-col items-center justify-center"
     >
       {/* Accessible semantic heading for screen readers */}
       <h2 className="sr-only">Certifications</h2>

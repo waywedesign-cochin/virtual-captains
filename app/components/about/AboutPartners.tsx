@@ -185,7 +185,7 @@ export default function AboutPartners() {
       ref={sectionRef}
       role="region"
       aria-label="Partner Network"
-      className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-24 xl:py-28 select-none"
+      className="relative w-full overflow-hidden py-12 sm:py-16 lg:py-24 select-none"
     >
 
       <div className="w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 xl:px-12 relative z-10">
