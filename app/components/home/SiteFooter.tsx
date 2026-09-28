@@ -58,6 +58,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
   const wordmarkRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
   const legalRef = useRef<HTMLDivElement>(null);
+  const footerHeadingRef = useRef<HTMLParagraphElement>(null);
   const backToTopRef = useRef<HTMLButtonElement>(null);
 
   useGSAP(
@@ -108,8 +109,10 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
 
         const ctaTl = gsap.timeline({
           scrollTrigger: {
-            trigger: ctaSectionRef.current,
-            start: "top 78%",
+            // Trigger on the content itself: it is centred in a full-screen
+            // band, so the section top fired while it was still off screen.
+            trigger: ctaEyebrowRef.current,
+            start: "top 90%",
             toggleActions: "play none none reverse",
           },
         });
@@ -371,6 +374,13 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
         });
         gsap.set(legalRef.current, { opacity: 0, y: 20 });
         gsap.set(backToTopRef.current, { opacity: 0, y: 12 });
+        // Same zoom-bounce entrance as every other section heading
+        gsap.set(footerHeadingRef.current, {
+          opacity: 0,
+          scale: 0.65,
+          y: 20,
+          transformOrigin: "center center",
+        });
 
         if (!footerRef.current) return;
 
@@ -390,6 +400,20 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
             duration: 0.6,
             ease: "power3.out",
           })
+          .to(
+            footerHeadingRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              keyframes: [
+                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
+                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
+                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
+              ],
+            },
+            "<0.1",
+          )
           .to(
             legalRef.current,
             {
@@ -669,7 +693,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
                 ref={actionsRef}
                 className="relative pin:absolute pin:inset-0 flex flex-col items-center justify-center gap-4 sm:gap-5 px-2 sm:px-4 w-full py-4 pin:py-0"
               >
-                <p className="text-center font-sans font-bold text-[clamp(1.2rem,3.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm max-w-xl">
+                <p ref={footerHeadingRef} className="text-center font-sans font-bold text-[clamp(1.2rem,3.8vw,2.35rem)] text-white tracking-tight drop-shadow-sm max-w-xl">
                   Trusted Partner for <br className="hidden sm:block" /> People, Teams & Organizations
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">

@@ -689,10 +689,10 @@ export default function CrossCountry() {
           ref={headingRef}
           className="max-w-3xl text-center font-sans text-[clamp(1.5rem,1.6vw+1.2vh,2.5rem)] font-normal leading-[1.2] text-white"
         >
-          <span className="block">Empowering sales</span>
+          <span className="block">Empowering Sales</span>
           <span className="block">
-            professionals{" "}
-            <span className="italic text-[#2563eb]">worldwide</span>
+            Professionals{" "}
+            <span className="italic text-[#2563eb]">Worldwide</span>
           </span>
         </h2>
 

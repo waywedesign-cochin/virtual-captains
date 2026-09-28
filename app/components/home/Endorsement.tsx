@@ -235,7 +235,7 @@ export default function Endorsement() {
       id="endorsement"
       data-nav-section="Endorsement"
       data-nav-theme="dark"
-      className="relative z-10 flex min-h-0 pin:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 pin:pt-[clamp(68px,12vh,152px)] pin:pb-[clamp(28px,5vh,72px)] text-white sm:px-10 pin:px-16"
+      className="relative z-10 flex min-h-0 pin:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 pin:pt-[clamp(68px,12vh,152px)] pin:[@media(max-height:540px)]:pt-14 pin:[@media(max-height:540px)]:pb-3 pin:pb-[clamp(28px,5vh,72px)] text-white sm:px-10 pin:px-16"
       style={{
         background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}
@@ -261,6 +261,9 @@ export default function Endorsement() {
           Our Partners, in Their Own Words.
         </h2>
 
+        {/* Stack + controls shrink together on short pinned desktops (the
+            section is locked to one screen there, so it must fit 480px+) */}
+        <div className="flex w-full flex-col items-center pin:[@media(max-height:640px)]:[zoom:0.85] pin:[@media(max-height:540px)]:[zoom:0.72]">
         {/* ---------- CARD STACK ---------- */}
         <div
           ref={stackRef}
@@ -455,6 +458,7 @@ export default function Endorsement() {
               />
             </svg>
           </button>
+        </div>
         </div>
       </div>
     </section>

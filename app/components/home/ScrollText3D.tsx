@@ -272,8 +272,11 @@ export default function ScrollText3D() {
 
             gsap.to(introInnerRef.current, {
               scrollTrigger: {
-                trigger: section,
-                start: "top 80%",
+                // The heading itself, not the section: the title sits mid
+                // way down a full-screen section, so a section trigger played
+                // the zoom while it was still below the fold on phones.
+                trigger: introInnerRef.current,
+                start: "top 90%",
                 toggleActions: "play none none reverse",
               },
               opacity: 1,
