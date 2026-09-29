@@ -238,11 +238,11 @@ export default function SalesXTestimonials() {
         }}
       />
 
-      <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-24 sm:py-32">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-32">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
 
           {/* ── LEFT COLUMN ── */}
-          <div className="lg:col-span-5 order-2 lg:order-1 text-left pr-0 lg:pr-6">
+          <div className="lg:col-span-5 order-1 lg:order-1 text-center lg:text-left pr-0 lg:pr-6">
             <div>
               <h2
                 ref={headingRef}
@@ -267,7 +267,7 @@ export default function SalesXTestimonials() {
 
           {/* ── RIGHT COLUMN: Vertical marquee ── */}
           <div
-            className="lg:col-span-6 order-1 lg:order-2 relative"
+            className="lg:col-span-6 order-2 lg:order-2 relative"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >

@@ -51,7 +51,6 @@ interface MethodSlide {
 
 export default function SalesXMethod() {
   const [activeDot, setActiveDot] = useState(0);
-  const [cardsVisible, setCardsVisible] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -104,12 +103,7 @@ export default function SalesXMethod() {
   ];
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
     if (
-      prefersReducedMotion ||
       !sectionRef.current ||
       !stageRef.current ||
       !introHeadingRef.current ||
@@ -117,7 +111,24 @@ export default function SalesXMethod() {
     )
       return;
 
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia(sectionRef);
+
+    // Below 1024px there is no pin: the three slides stack in normal flow
+    // and only the heading gets the site-wide entrance.
+    mm.add("(max-width: 1023px) and (prefers-reduced-motion: no-preference)", () => {
+      gsap.set(introHeadingRef.current, { ...HEADING_REVEAL_FROM, transformOrigin: "center center" });
+      gsap.to(introHeadingRef.current, {
+        scrollTrigger: {
+          trigger: introHeadingRef.current,
+          start: "top 88%",
+          toggleActions: "play none none reverse",
+          refreshPriority: -1,
+        },
+        ...HEADING_REVEAL,
+      });
+    });
+
+    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
       const slidesElements = slideRefs.current.filter(
         Boolean,
       ) as HTMLDivElement[];
@@ -199,8 +210,6 @@ export default function SalesXMethod() {
                 introHeadingRef.current.style.pointerEvents = "auto";
               }
             }
-
-            setCardsVisible(p > 0.08);
 
             if (p < 0.38) {
               setActiveDot(0);
@@ -296,9 +305,13 @@ export default function SalesXMethod() {
 
       // Settle on Slide 2
       tl.to({}, { duration: 0.08 });
-    }, sectionRef);
 
-    return () => ctx.revert();
+      return () => {
+        scrollTriggerRef.current = null;
+      };
+    });
+
+    return () => mm.revert();
   }, []);
 
   const goToSlide = (index: number) => {
@@ -368,7 +381,7 @@ export default function SalesXMethod() {
       {/* Pinned Stage Container: fits 100% within dynamic viewport height */}
       <div
         ref={stageRef}
-        className="min-h-screen h-dvh w-full flex flex-col items-center justify-center relative overflow-hidden px-3 sm:px-6 lg:px-12 py-4 sm:py-6"
+        className="min-h-screen h-dvh w-full flex flex-col items-center justify-center relative overflow-hidden px-3 sm:px-6 lg:px-12 py-4 sm:py-6 max-lg:h-auto max-lg:min-h-0 max-lg:py-14 sm:max-lg:py-20"
       >
         <style>{`
           @keyframes sxm-twinkle {
@@ -389,7 +402,7 @@ export default function SalesXMethod() {
         {/* 1. INTRO HEADING: Comes first in center, then dissolves on scrolling */}
         <div
           ref={introHeadingRef}
-          className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 pointer-events-none px-4"
+          className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 pointer-events-none px-4 max-lg:static max-lg:mb-8 sm:max-lg:mb-10"
         >
           <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-[#3b82f6] drop-shadow-[0_0_35px_rgba(59,130,246,0.7)]">
             The SalesX Method
@@ -397,7 +410,7 @@ export default function SalesXMethod() {
           <p className="mt-3 sm:mt-5 text-xs sm:text-base md:text-lg text-slate-300/80 max-w-lg tracking-wide font-sans">
             Precision Simulation Engine. Practice Real Deals Before Going Live.
           </p>
-          <div className="mt-6 sm:mt-8 flex items-center gap-2 text-xs font-medium text-slate-400">
+          <div className="mt-6 sm:mt-8 flex items-center gap-2 text-xs font-medium text-slate-400 max-lg:hidden">
             <span>Scroll down to enter</span>
             <svg
               className="w-4 h-4 text-blue-400 animate-bounce"
@@ -438,14 +451,14 @@ export default function SalesXMethod() {
               <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-radial from-blue-600/25 via-pink-500/10 to-transparent blur-3xl pointer-events-none z-0" />
 
               {/* Grid-stacked Deck Slides (Clean slide-over without opacity ghosting) */}
-              <div className="grid grid-cols-1 grid-rows-1 relative z-10 w-full min-h-87.5 sm:min-h-100 lg:min-h-110">
+              <div className="grid grid-cols-1 lg:grid-rows-1 relative z-10 w-full lg:min-h-110">
                 {slides.map((slide, index) => (
                   <div
                     key={slide.id}
                     ref={(el) => {
                       slideRefs.current[index] = el;
                     }}
-                    className={`col-start-1 row-start-1 w-full h-full min-h-87.5 sm:min-h-100 lg:min-h-110 bg-[#050816] p-4 sm:p-6 lg:p-9 xl:p-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 xl:gap-12 items-center will-change-transform relative overflow-hidden rounded-[22px] sm:rounded-[28px] lg:rounded-[30px] ${
+                    className={`col-start-1 lg:row-start-1 w-full h-full lg:min-h-110 bg-[#050816] p-4 sm:p-6 lg:p-9 xl:p-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 xl:gap-12 items-center will-change-transform relative overflow-hidden rounded-[22px] sm:rounded-[28px] lg:rounded-[30px] ${
                       index === 1
                         ? "border-t border-[#38bdf8]/50 shadow-[0_-30px_70px_rgba(0,0,0,0.95)]"
                         : index === 2
@@ -567,28 +580,6 @@ export default function SalesXMethod() {
           </div>
         </div>
 
-        {/* Mobile / Tablet Horizontal Dots */}
-        {cardsVisible && (
-          <div className="flex lg:hidden items-center justify-center gap-3 mt-4 z-30">
-            {slides.map((slide, idx) => (
-              <button
-                key={slide.id}
-                type="button"
-                onClick={() => goToSlide(idx)}
-                className="p-1.5"
-                aria-label={`Slide ${idx + 1}`}
-              >
-                <div
-                  className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
-                    activeDot === idx
-                      ? "bg-white shadow-[0_0_8px_#ffffff]"
-                      : "border border-slate-500 bg-transparent"
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </section>
   );

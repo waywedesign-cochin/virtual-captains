@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHeadingZoom } from "@/components/about/useHeadingZoom";
@@ -298,7 +298,7 @@ export default function SalesXMoments() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24 items-start">
             
             {/* Left Column: Fixed statement */}
-            <div className="flex flex-col justify-start">
+            <div className="flex flex-col items-center justify-start text-center lg:items-start lg:text-left">
               <h2
                 ref={headingRef}
                 aria-label={HEADING_LINES.join(" ")}
@@ -322,7 +322,7 @@ export default function SalesXMoments() {
                 ))}
               </h2>
 
-              <p className="mt-10 sm:mt-12 lg:mt-14 font-sans text-sm sm:text-[0.95rem] leading-relaxed text-slate-300 max-w-[340px] sm:max-w-[380px]">
+              <p className="mt-6 sm:mt-8 lg:mt-14 font-sans text-base sm:text-lg lg:text-[0.95rem] leading-relaxed text-slate-300 max-w-[340px] sm:max-w-[440px] lg:max-w-[380px]">
                 Look closely at the moments that decide a career. Almost none of
                 them happen in a sales department. All of them are sales.
               </p>
@@ -360,33 +360,120 @@ export default function SalesXMoments() {
                 ))}
               </div>
 
-              {/* Mobile / Tablet flow layout */}
-              <div className="flex lg:hidden flex-col gap-12 mt-4">
-                {MOMENTS.map((item) => (
-                  <div
-                    key={`mob-${item.id}`}
-                    className="flex flex-col justify-start"
-                  >
-                    <span
-                      style={item.tagStyle}
-                      className="font-sans text-5xl sm:text-6xl font-normal tracking-tight inline-block leading-none"
-                    >
-                      {item.tag}
-                    </span>
-                    <p className="mt-5 text-xl sm:text-2xl text-white font-medium leading-[1.25] tracking-tight">
-                      {item.description}
-                    </p>
-                    <p className="mt-3 text-xl sm:text-2xl font-semibold text-[#2998ff] leading-[1.25] tracking-tight">
-                      {item.punchline}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              {/* Mobile / Tablet: swipeable moment cards */}
+              <MomentsCarousel />
             </div>
 
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/* Phones & tablets: a native scroll-snap carousel (one card + peek on phones,
+   two per view on tablets). Swipe, or tap a dot to jump. */
+function MomentsCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const [active, setActive] = useState(0);
+
+  // The card whose left edge is nearest the track's left edge is "current".
+  const onScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const left = track.getBoundingClientRect().left;
+    let best = 0;
+    let bestDist = Infinity;
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      const d = Math.abs(card.getBoundingClientRect().left - left - 16);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    });
+    // At the very end the last card can't reach the left edge — count it.
+    if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) best = MOMENTS.length - 1;
+    setActive(best);
+  };
+
+  const goTo = (i: number) => {
+    const track = trackRef.current;
+    const card = cardRefs.current[i];
+    if (!track || !card) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    track.scrollTo({ left: card.offsetLeft - 16, behavior: reduce ? "auto" : "smooth" });
+  };
+
+  return (
+    <div className="lg:hidden mt-2" aria-roledescription="carousel" aria-label="Moments that decide a career">
+      <div
+        ref={trackRef}
+        onScroll={onScroll}
+        className="no-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto overscroll-x-contain px-4 pb-2 sm:-mx-8 sm:scroll-px-8 sm:px-8"
+      >
+        {MOMENTS.map((item, i) => (
+          <article
+            key={`mob-${item.id}`}
+            ref={(el) => {
+              cardRefs.current[i] = el;
+            }}
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${MOMENTS.length}`}
+            className={`relative flex w-[84%] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border bg-white/[0.03] p-6 backdrop-blur-md transition-[border-color,box-shadow] duration-500 sm:w-[calc(50%-0.5rem)] sm:p-7 ${
+              i === active
+                ? "border-blue-400/40 shadow-[0_0_40px_rgba(41,152,255,0.18)]"
+                : "border-white/10"
+            }`}
+          >
+            {/* soft corner glow in the card's own gradient */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full opacity-25 blur-3xl"
+              style={{ backgroundImage: item.tagStyle.backgroundImage }}
+            />
+            <span className="text-xs font-medium tracking-[0.2em] text-white/50">
+              {String(i + 1).padStart(2, "0")} / {String(MOMENTS.length).padStart(2, "0")}
+            </span>
+            <span
+              style={item.tagStyle}
+              className="mt-4 inline-block text-5xl font-normal leading-none tracking-tight sm:text-6xl"
+            >
+              {item.tag}
+            </span>
+            <p className="mt-6 text-lg font-medium leading-[1.3] tracking-tight text-white text-pretty sm:text-xl">
+              {item.description}
+            </p>
+            <div className="mt-auto pt-6">
+              <div aria-hidden className="mb-4 h-px w-full bg-linear-to-r from-blue-400/50 to-transparent" />
+              <p className="text-lg font-semibold leading-[1.3] tracking-tight text-[#2998ff] text-pretty sm:text-xl">
+                {item.punchline}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* Progress dots */}
+      <div className="mt-6 flex items-center justify-center gap-1">
+        {MOMENTS.map((m, i) => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => goTo(i)}
+            aria-label={`Show moment ${i + 1}: ${m.tag}`}
+            aria-current={i === active}
+            className="cursor-pointer p-2 focus-visible:outline-2 focus-visible:outline-blue-400"
+          >
+            <span
+              className={`block h-1.5 rounded-full transition-all duration-500 ${
+                i === active ? "w-8 bg-[#2998ff] shadow-[0_0_10px_rgba(41,152,255,0.8)]" : "w-2 bg-white/30"
+              }`}
+            />
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

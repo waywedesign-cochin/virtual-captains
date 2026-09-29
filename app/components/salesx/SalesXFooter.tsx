@@ -270,7 +270,7 @@ export default function SalesXFooter() {
   return (
     <footer
       ref={footerRef}
-      className="relative overflow-hidden bg-gradient-to-b from-salesx-bg via-[#040d30] to-[#071b5c] pt-16 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 text-white"
+      className="relative overflow-hidden bg-gradient-to-b from-salesx-bg via-[#040d30] to-[#071b5c] pt-10 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 text-white"
     >
       {/* ── Deterministic Twinkling Cosmic Stars ── */}
       <div className="absolute inset-0 pointer-events-none z-0">

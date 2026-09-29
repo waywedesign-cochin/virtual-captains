@@ -81,7 +81,7 @@ export default function SalesXResultsHub() {
       ref={sectionRef}
       role="region"
       aria-label="Quantified SalesX Outcomes and Results Hub"
-      className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-salesx-bg"
+      className="relative py-12 sm:py-24 lg:py-28 overflow-hidden bg-salesx-bg"
     >
       {/* ── Deep blue radial gradient background ── */}
       <div

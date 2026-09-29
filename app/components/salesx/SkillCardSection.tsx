@@ -142,7 +142,7 @@ export default function SkillCardSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-transparent px-4 sm:px-8 xl:px-12 py-16 sm:py-20 lg:py-28 text-white"
+      className="relative w-full overflow-hidden bg-transparent px-4 sm:px-8 xl:px-12 py-12 sm:py-20 lg:py-28 text-white"
       aria-label="The VC Skill Card"
     >
       {/* Background glow matching top-left radiance */}
@@ -153,7 +153,7 @@ export default function SkillCardSection() {
 
       <div className="relative mx-auto w-full max-w-372">
         {/* Header */}
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-16">
+        <div className="flex flex-col items-center gap-6 text-center sm:gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-16 lg:text-left">
           <h2 ref={headingRef} className="text-3xl sm:text-4xl lg:text-[2.75rem] font-medium leading-[1.15] tracking-tight">
             <span className="sc-heading block text-white">
               Not a certificate
@@ -166,11 +166,11 @@ export default function SkillCardSection() {
             </span>
           </h2>
 
-          <div className="sc-intro max-w-sm lg:pt-1">
+          <div className="sc-intro max-w-md lg:max-w-sm lg:pt-1">
             <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.15em] text-[#1d72fe]">
               THE VC SKILL CARD
             </p>
-            <p className="mt-3 text-xs sm:text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 text-sm leading-relaxed text-slate-300">
               Scored 0–100 on the five skills that decide whether a deal
               happens. Pass with 60+ in four of the five. Not there yet? A resit
               within 30 days is included.

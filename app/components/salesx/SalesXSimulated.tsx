@@ -91,7 +91,7 @@ export default function SalesXSimulated() {
       window.addEventListener("resize", fitDial);
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference) and (min-height: 560px)", () => {
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 560px)", () => {
         const q = gsap.utils.selector(sectionRef);
         const dialProgress = { p: 0 };
         setProgress(0);
@@ -150,7 +150,7 @@ export default function SalesXSimulated() {
     <section
       ref={sectionRef}
       aria-labelledby="salesx-sim-title"
-      className="relative w-full overflow-hidden bg-salesx-bg text-white py-16 sm:py-20 [@media(min-height:560px)]:h-svh [@media(min-height:560px)]:py-0"
+      className="relative w-full overflow-hidden bg-salesx-bg text-white py-14 sm:py-20 lg:[@media(min-height:560px)]:h-svh lg:[@media(min-height:560px)]:py-0"
     >
       <div className="relative mx-auto flex h-full w-full max-w-372 flex-col items-center justify-center gap-[clamp(0.9rem,3.2svh,2.25rem)] px-4 sm:px-8 lg:px-12">
         {/* Headline */}

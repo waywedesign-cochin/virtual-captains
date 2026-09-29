@@ -233,7 +233,7 @@ export default function SalesXPartnerCloud() {
       ref={sectionRef}
       role="region"
       aria-label="SalesX Partner Network and Ecosystem"
-      className="relative bg-salesx-bg overflow-hidden py-24 sm:py-32 select-none"
+      className="relative bg-salesx-bg overflow-hidden py-14 sm:py-32 select-none"
     >
       {/* Central Blue Ambient Radial Glow matching reference image */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[950px] h-[350px] sm:h-[450px] lg:h-[550px] bg-radial from-[#1e40af]/25 via-[#0a1740]/15 to-transparent blur-[140px] pointer-events-none -z-10" />
