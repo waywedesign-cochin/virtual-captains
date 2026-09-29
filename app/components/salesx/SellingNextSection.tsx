@@ -408,7 +408,11 @@ export default function SellingNextSection() {
   };
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia(sectionRef);
+
+    // Below 1024px there is no pin or portal reveal: heading, line and the
+    // card stack sit in normal flow, and cards change by tap / dots.
+    mm.add("(min-width: 1024px)", () => {
       // Glow line eases in just after the heading
       gsap.from(".ss-line", {
         opacity: 0,
@@ -555,19 +559,29 @@ export default function SellingNextSection() {
         updateReveal();
         ScrollTrigger.refresh();
       });
-    }, sectionRef);
 
-    return () => ctx.revert();
+      return () => {
+        window.removeEventListener("resize", updateReveal);
+        scrollTriggerRef.current = null;
+        if (revealRef.current) revealRef.current.style.clipPath = "";
+        if (lineRef.current) {
+          lineRef.current.style.width = "260px";
+          lineRef.current.style.opacity = "";
+        }
+      };
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen w-full overflow-hidden bg-salesx-bg text-white select-none"
+      className="relative h-screen w-full overflow-hidden bg-salesx-bg text-white select-none max-lg:h-auto max-lg:py-14 sm:max-lg:py-20"
       aria-label="What are you selling next"
     >
       {/* ---------- INITIAL SCREEN ---------- */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center pointer-events-none z-10">
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center pointer-events-none z-10 max-lg:static max-lg:mb-4">
         <div ref={headingRef}>
           <h2 ref={titleRef} className="ss-title text-4xl sm:text-5xl lg:text-6xl font-light leading-tight text-white tracking-tight">
             What are you
@@ -585,12 +599,12 @@ export default function SellingNextSection() {
       {/* ---------- REVEALED SCREEN (starts clipped to the line) ---------- */}
       <div
         ref={revealRef}
-        className="absolute inset-0 bg-[#030614] bg-[radial-gradient(ellipse_at_center,rgba(30,64,175,0.45),#030614_70%)] [clip-path:inset(100%_0_0_0)] z-20 overflow-hidden"
+        className="absolute inset-0 bg-[#030614] bg-[radial-gradient(ellipse_at_center,rgba(30,64,175,0.45),#030614_70%)] [clip-path:inset(100%_0_0_0)] z-20 overflow-hidden max-lg:relative max-lg:inset-auto max-lg:h-130 sm:max-lg:h-140 max-lg:bg-none max-lg:bg-transparent max-lg:[clip-path:none]"
       >
         {/* Blue beam veil during expansion */}
         <div
           ref={veilRef}
-          className="pointer-events-none absolute inset-0 z-30 bg-blue-600 shadow-[0_0_50px_rgba(37,99,235,1)]"
+          className="pointer-events-none absolute inset-0 z-30 bg-blue-600 shadow-[0_0_50px_rgba(37,99,235,1)] max-lg:hidden"
         />
 
         {/* 3D Coverflow Stage with Center, Left, and Right cards */}
@@ -613,7 +627,7 @@ export default function SellingNextSection() {
         </div>
 
         {/* Interactive Progress indicator dots */}
-        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
+        <div className="absolute bottom-8 max-lg:bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
           {CARDS.map((c, i) => (
             <button
               key={c.id}

@@ -23,6 +23,8 @@ gsap.registerPlugin(ScrollTrigger);
  * Every animated element has exactly one tween owner (entrance tweens run on
  * inner wrappers, scroll tweens on outer ones) so they can't fight.
  * Reduced motion: no pin — the finished composition is shown.
+ * Below 1024px: no pin either — pill, image, copy and Enroll stack in normal
+ * flow, so a tall phone screen has no dead gap between image and headline.
  */
 export default function SalesXHero() {
   const [selectedBrand, setSelectedBrand] = useState<"salesx" | "captains">("salesx");
@@ -40,13 +42,19 @@ export default function SalesXHero() {
     () => {
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: reduce)", () => {
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: reduce)", () => {
         // Finished composition, no motion
         gsap.set(videoLayerRef.current, { autoAlpha: 0 });
         gsap.set(enrollOuterRef.current, { autoAlpha: 0 });
       });
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // Compact screens: just the page-load entrance, no scroll stage
+      mm.add("(max-width: 1023px) and (prefers-reduced-motion: no-preference)", () => {
+        gsap.from(pillInnerRef.current, { y: -30, opacity: 0, scale: 0.92, duration: 1, ease: "back.out(1.4)", delay: 0.2 });
+        gsap.from(copyRef.current, { y: 30, opacity: 0, duration: 1, ease: "power3.out", delay: 0.3 });
+      });
+
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
         const lines = gsap.utils.toArray<HTMLElement>("[data-hero-line]", copyRef.current);
 
         // Page-load entrance (inner wrappers only)
@@ -90,14 +98,14 @@ export default function SalesXHero() {
       ref={sectionRef}
       role="region"
       aria-label="SalesX Hero Section"
-      className="relative w-full h-svh overflow-hidden bg-salesx-bg select-none"
+      className="relative w-full h-svh overflow-hidden bg-salesx-bg select-none max-lg:h-auto max-lg:flex max-lg:flex-col max-lg:items-center max-lg:gap-8 max-lg:pt-24 max-lg:pb-14 sm:max-lg:gap-10 sm:max-lg:pt-28"
     >
       <h1 className="sr-only">
         SalesX | High-Velocity AI Sales Simulation Engine by Virtual Captains
       </h1>
 
       {/* ── Layer 1: video (fades to transparent as the image rises) ── */}
-      <div ref={videoLayerRef} className="absolute inset-0 will-change-[opacity,transform]">
+      <div ref={videoLayerRef} className="absolute inset-0 will-change-[opacity,transform] max-lg:hidden">
         <video
           src="/salesx/m.mp4"
           autoPlay
@@ -112,7 +120,7 @@ export default function SalesXHero() {
       {/* ── Layer 2: dashboard image (rises from the bottom) ──
           Width is capped by both viewport width and height so it composes on
           phones, tablets, desktops and rotated phones alike. */}
-      <div className="absolute inset-x-0 top-[11%] sm:top-[9%] flex justify-center px-4 pointer-events-none">
+      <div className="absolute inset-x-0 top-[11%] sm:top-[9%] flex justify-center px-4 pointer-events-none max-lg:static max-lg:w-full">
         <div
           ref={imageRef}
           className="relative w-[min(94vw,1180px,128svh)] [@media(max-height:500px)]:w-[min(94vw,110svh)] will-change-transform"
@@ -133,13 +141,13 @@ export default function SalesXHero() {
       {/* ── Layer 3: gradient rising over the image's lower half ── */}
       <div
         ref={fadeRef}
-        className="absolute inset-x-0 bottom-0 h-[62%] pointer-events-none bg-linear-to-b from-transparent via-[#030614]/85 to-[#030614]"
+        className="absolute inset-x-0 bottom-0 h-[62%] pointer-events-none max-lg:hidden bg-linear-to-b from-transparent via-[#030614]/85 to-[#030614]"
       />
 
       {/* ── Layer 4: headline + copy ── */}
       <div
         ref={copyRef}
-        className="absolute inset-x-0 bottom-[7%] sm:bottom-[9%] z-10 mx-auto flex max-w-3xl flex-col items-center px-5 text-center font-sans"
+        className="absolute inset-x-0 bottom-[7%] sm:bottom-[9%] z-10 mx-auto max-lg:static flex max-w-3xl flex-col items-center px-5 text-center font-sans"
       >
         <h2 className="text-[clamp(2rem,1.1rem+3.6vw,4.5rem)] font-medium leading-[1.05] tracking-tight [@media(max-height:500px)]:text-[clamp(1.5rem,5svh,2.25rem)]">
           <span data-hero-line className="block text-white">
@@ -221,7 +229,7 @@ export default function SalesXHero() {
       {/* ── Enroll badge (fades out as the stage takes over) ── */}
       <div
         ref={enrollOuterRef}
-        className="absolute bottom-6 sm:bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-8 md:right-16 z-20 w-max max-w-[calc(100%-2rem)]"
+        className="absolute bottom-6 sm:bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-8 md:right-16 z-20 w-max max-w-[calc(100%-2rem)] max-lg:static max-lg:translate-x-0"
       >
         <div ref={enrollInnerRef} className="relative group">
           <div className="absolute -inset-1 rounded-full bg-linear-to-r from-blue-600/25 to-indigo-600/25 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />

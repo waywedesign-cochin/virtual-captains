@@ -765,7 +765,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
               {new Date().getFullYear()}
             </p>
             <p className="order-3 text-center">
-              Built by <span className="text-white/85">Web WeDesign</span>
+              Built by <span className="text-white/85">Way WeDesign</span>
             </p>
           </div>
 

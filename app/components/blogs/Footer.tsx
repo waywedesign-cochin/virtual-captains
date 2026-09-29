@@ -34,12 +34,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onBookCall }) => {
             >
               <img
                 src="/assets/blog/orionix_logo.svg"
-                alt="Orionix Studio"
+                alt="Virtual Captains"
                 className="h-6 w-auto object-contain"
               />
             </button>
             <p className="text-xs sm:text-sm text-[#737373] max-w-sm leading-relaxed">
-              Orionix is an independent digital design & engineering studio crafting high-impact digital experiences, living brand systems, and converted web platforms.
+              Virtual Captains turns everyday conversations into career-defining sales skills, with AI simulations validated by real sales leaders.
             </p>
           </div>
 
@@ -144,7 +144,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onBookCall }) => {
 
         {/* Bottom bar */}
         <div className="pt-6 border-t border-black/[0.05] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-[#A4A4A4]">
-          <p>© 2026 Orionix. All rights reserved.</p>
+          <p>© 2026 Virtual Captains. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Independent Design &amp; Technology</span>
             <span>•</span>

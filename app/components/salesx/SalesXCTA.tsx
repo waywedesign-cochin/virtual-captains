@@ -98,7 +98,7 @@ export default function SalesXCTA() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-salesx-bg overflow-hidden py-28 sm:py-36 lg:py-44 select-none"
+      className="relative bg-salesx-bg overflow-hidden py-14 sm:py-36 lg:py-44 select-none"
     >
       {/* Ambient Blue-Purple Deep Space Radial Glow */}
       <div
@@ -129,7 +129,7 @@ export default function SalesXCTA() {
         </div>
 
         {/* ── LOWER SECTION: Split Subtext & Stacked CTA Buttons ── */}
-        <div className="mt-16 sm:mt-24 lg:mt-28 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div className="mt-10 sm:mt-24 lg:mt-28 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: Subtitle Description */}
           <div
             ref={textRef}

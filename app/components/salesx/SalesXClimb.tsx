@@ -163,7 +163,7 @@ export default function SalesXClimb() {
     <section
       ref={sectionRef}
       aria-labelledby="salesx-climb-heading"
-      className="relative w-full overflow-hidden bg-salesx-bg px-4 py-20 text-white sm:px-8 sm:py-24 lg:py-28"
+      className="relative w-full overflow-hidden bg-salesx-bg px-4 py-14 text-white sm:px-8 sm:py-24 lg:py-28"
     >
       <div className="mx-auto w-full max-w-5xl">
         {/* Heading */}
@@ -189,7 +189,7 @@ export default function SalesXClimb() {
           onBlur={() => setPaused(false)}
           className="relative mt-10 rounded-2xl border border-blue-500/25 bg-white/[0.02] p-5 shadow-[0_0_60px_rgba(30,64,175,0.15)] backdrop-blur-md sm:mt-14 sm:rounded-3xl sm:p-8 lg:p-10"
         >
-          <p className="text-right text-xs text-blue-400 sm:absolute sm:right-8 sm:top-6 sm:text-sm lg:right-10">
+          <p className="text-center text-xs text-blue-400 sm:text-sm md:absolute md:right-8 md:top-6 md:text-right lg:right-10">
             {level.range}
           </p>
 
@@ -275,7 +275,7 @@ export default function SalesXClimb() {
             {/* Module list */}
             <ul
               key={`list-${level.id}`}
-              className="vc-climb-in mx-auto flex w-full max-w-xs flex-col gap-2.5 md:mx-0 md:justify-self-end"
+              className="vc-climb-in mx-auto flex w-fit max-w-xs flex-col gap-2.5 md:mx-0 md:w-full md:justify-self-end"
               style={{ animationDelay: "80ms" }}
             >
               {level.modules.map((m) => (
