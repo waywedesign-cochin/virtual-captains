@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
+import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import CurriculumSection from "../components/salesx/CurriculumSection";
 
 export const metadata: Metadata = {
@@ -206,7 +207,7 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
       className={`vc-in group flex flex-col overflow-hidden rounded-3xl border transition-transform duration-300 hover:-translate-y-1 ${
         featured
           ? "border-[#38bdf8]/40 bg-linear-to-br from-[#2563eb] to-[#1e3a8a] text-white shadow-[0_20px_60px_-20px_#2563eb]"
-          : "border-white/10 bg-white/4 text-white hover:border-white/25"
+          : "border-white/10 bg-[#0b0e14] text-white hover:border-white/25"
       }`}
     >
       {/* Cover */}
@@ -397,7 +398,7 @@ function TestimonialsSection() {
           {TESTIMONIALS.map((t) => (
             <figure
               key={t.room}
-              className={`group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/4 p-7 transition duration-300 hover:border-[#38bdf8]/40 hover:bg-white/[0.07] ${
+              className={`group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0b0e14] p-7 transition duration-300 hover:border-[#38bdf8]/40 hover:bg-[#121620] ${
                 t.span ?? ""
               }`}
             >
@@ -576,7 +577,7 @@ export default function ProgramsPage() {
   const programs = DUMMY_PROGRAMS;
 
   return (
-    <main className="min-h-screen bg-[#07090e] text-white selection:bg-[#38bdf8] selection:text-black">
+    <main className="relative min-h-screen bg-[#040507] text-white selection:bg-[#38bdf8] selection:text-black antialiased overflow-x-clip">
       {/* Page-load entrance: CSS only (transform + opacity), no JS, no flash */}
       <style>{`
         @keyframes vc-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
@@ -586,77 +587,93 @@ export default function ProgramsPage() {
 
       <Navbar />
 
-      {/* Hero */}
-      <section className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-16 pt-36 text-center sm:px-10 lg:px-16">
-        <div
-          style={delay(0)}
-          className="vc-in mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1 text-xs font-medium text-[#8b9cff] backdrop-blur-md"
-        >
-          <span>Virtual Captains Programs</span>
-        </div>
+      {/* Home-page atmosphere: diagonal blue glow from the top-left + dot grid */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-225"
+        style={{
+          background:
+            "radial-gradient(120% 70% at -5% -10%, #3f74e6 0%, #1c4fc0 12%, #0c318f 26%, #051d5c 42%, #050b24 60%, #040507 78%)",
+        }}
+      />
+      {/* Home-hero dot grid: dots light up around the cursor, page-wide */}
+      <DotGridSpotlight />
 
-        <h1
-          style={delay(120)}
-          className="vc-in max-w-4xl font-serif text-4xl font-normal leading-[1.15] text-white sm:text-5xl lg:text-6xl"
-        >
-          Structured Enablement from{" "}
-          <span className="italic text-[#8b9cff]">Induction</span> to Quota
-        </h1>
-
-        <p
-          style={delay(260)}
-          className="vc-in mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg"
-        >
-          From new-hire induction to enterprise deal desk coaching, our tailored
-          curricula combine human mentorship with generative simulations to
-          build resilient, quota-crushing sellers.
-        </p>
-
-        <div
-          style={delay(380)}
-          className="vc-in mt-10 flex flex-wrap items-center justify-center gap-4"
-        >
-          <Link
-            href="/organisations"
-            className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#1d4ed8]"
+      {/* relative keeps all content above the glow layer */}
+      <div className="relative">
+        {/* Hero */}
+        <section className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-16 pt-36 text-center sm:px-10 lg:px-16">
+          <div
+            style={delay(0)}
+            className="vc-in mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1 text-xs font-medium text-[#8b9cff] backdrop-blur-md"
           >
-            Organisation Curricula
-          </Link>
-          <Link
-            href="/individuals"
-            className="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
-          >
-            Individual Coaching
-          </Link>
-        </div>
-      </section>
-
-      {/* Program cards (from Sanity) */}
-      <section className="mx-auto max-w-350 px-6 pb-24 sm:px-10 lg:px-16">
-        {programs.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {programs.map((p, i) => (
-              <ProgramCard key={p._id} program={p} index={i} />
-            ))}
+            <span>Virtual Captains Programs</span>
           </div>
-        ) : (
-          <p className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-white/70">
-            New programs are being added. Check back soon or{" "}
-            <Link href="/contact" className="text-[#38bdf8] underline">
-              talk to us
-            </Link>
-            .
+
+          <h1
+            style={delay(120)}
+            className="vc-in max-w-4xl font-serif text-4xl font-normal leading-[1.15] text-white sm:text-5xl lg:text-6xl"
+          >
+            Structured Enablement from{" "}
+            <span className="italic text-[#8b9cff]">Induction</span> to Quota
+          </h1>
+
+          <p
+            style={delay(260)}
+            className="vc-in mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg"
+          >
+            From new-hire induction to enterprise deal desk coaching, our
+            tailored curricula combine human mentorship with generative
+            simulations to build resilient, quota-crushing sellers.
           </p>
-        )}
-      </section>
 
-      {/* Curriculum with Students / Professionals / Founders toggle */}
-      <CurriculumSection />
+          <div
+            style={delay(380)}
+            className="vc-in mt-10 flex flex-wrap items-center justify-center gap-4"
+          >
+            <Link
+              href="/organisations"
+              className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#1d4ed8]"
+            >
+              Organisation Curricula
+            </Link>
+            <Link
+              href="/individuals"
+              className="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
+            >
+              Individual Coaching
+            </Link>
+          </div>
+        </section>
 
-      <TestimonialsSection />
-      <PartnersMarquee />
+        {/* Program cards (from Sanity) */}
+        <section className="mx-auto max-w-350 px-6 pb-24 sm:px-10 lg:px-16">
+          {programs.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {programs.map((p, i) => (
+                <ProgramCard key={p._id} program={p} index={i} />
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-white/70">
+              New programs are being added. Check back soon or{" "}
+              <Link href="/contact" className="text-[#38bdf8] underline">
+                talk to us
+              </Link>
+              .
+            </p>
+          )}
+        </section>
 
-      <SiteFooter />
+        {/* Curriculum with Students / Professionals / Founders toggle */}
+        <CurriculumSection />
+
+        <TestimonialsSection />
+        <PartnersMarquee />
+      </div>
+
+      {/* Same footer as the blog/news/home page (dark → blue) */}
+      <SiteFooter theme="light-blue" />
     </main>
   );
 }

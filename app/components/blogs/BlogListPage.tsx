@@ -38,7 +38,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
         searchQuery.trim() === ""
           ? true
           : post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
             post.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesQuery;
     });
@@ -156,7 +156,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
           href={`/blogs/${featuredPost.slug}`}
           data-cursor="read"
           data-cursor-text="Read article"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-[28px] sm:rounded-[36px] lg:rounded-[40px] p-5 sm:p-8 lg:p-10 border border-white/10 bg-linear-to-br from-white/[0.07] via-white/[0.03] to-transparent backdrop-blur-xl shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7)] hover:border-white/20 hover:shadow-[0_28px_70px_-20px_rgba(29,78,216,0.45)] transition-all duration-500 cursor-pointer group"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-[28px] sm:rounded-[36px] lg:rounded-[40px] p-5 sm:p-8 lg:p-10 border border-white/10 bg-linear-to-br from-white/[0.07] via-white/3 to-transparent backdrop-blur-xl shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7)] hover:border-white/20 hover:shadow-[0_28px_70px_-20px_rgba(29,78,216,0.45)] transition-all duration-500 cursor-pointer group"
         >
           {/* Left Column Content */}
           <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
@@ -170,7 +170,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
               </h2>
 
               <p className="text-[15px] sm:text-base text-white/65 leading-relaxed line-clamp-3">
-                {featuredPost.excerpt}
+                {featuredPost.summary}
               </p>
 
               <div>
@@ -221,9 +221,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`relative min-h-10 px-4 rounded-full text-[13px] sm:text-sm font-medium transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#38bdf8]/60 ${
-                    isActive
-                      ? "text-black"
-                      : "text-white/60 hover:text-white"
+                    isActive ? "text-black" : "text-white/60 hover:text-white"
                   }`}
                 >
                   {isActive && (
@@ -298,7 +296,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
                 href={`/blogs/${post.slug}`}
                 data-cursor="read"
                 data-cursor-text="Read article"
-                className="rounded-3xl sm:rounded-[26px] p-4 sm:p-5 border border-white/10 bg-linear-to-b from-white/[0.06] to-white/[0.02] backdrop-blur-xl shadow-[0_16px_40px_-18px_rgba(0,0,0,0.7)] hover:border-white/20 hover:shadow-[0_24px_50px_-18px_rgba(29,78,216,0.45)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
+                className="rounded-3xl sm:rounded-[26px] p-4 sm:p-5 border border-white/10 bg-linear-to-b from-white/6 to-white/2 backdrop-blur-xl shadow-[0_16px_40px_-18px_rgba(0,0,0,0.7)] hover:border-white/20 hover:shadow-[0_24px_50px_-18px_rgba(29,78,216,0.45)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
               >
                 {/* Blue gradient accent top border on hover */}
                 <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#38bdf8] via-[#8fd0ff] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl sm:rounded-t-[26px]" />
@@ -317,7 +315,7 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
 
                   {/* Subtitle / Excerpt */}
                   <p className="text-sm text-white/60 leading-relaxed line-clamp-2 mb-3">
-                    {post.excerpt}
+                    {post.summary}
                   </p>
 
                   {/* Category Pill & Read Time */}

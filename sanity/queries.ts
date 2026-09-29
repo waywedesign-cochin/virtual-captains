@@ -1,11 +1,13 @@
 import { groq } from "next-sanity";
+import { NewsCategory, NewsPost } from "./lib/types";
+import { client } from "./lib/client";
 
 // Fragment for consistent post shape across queries
 const postFields = groq`
   _id,
   title,
   "slug": slug.current,
-  excerpt,
+  "summary": coalesce(summary, excerpt),
   "category": category->title,
   publishedDate,
   readTime,
@@ -30,11 +32,9 @@ export const ALL_POSTS_QUERY = groq`
 export const POST_BY_SLUG_QUERY = groq`
   *[_type == "post" && slug.current == $slug][0] {
     ${postFields},
-    detailTitle,
     seo {
       metaTitle,
       metaDescription,
-      canonicalUrl
     },
     content {
       lead,
@@ -83,3 +83,73 @@ export const RECENT_POSTS_QUERY = groq`
     ${postFields}
   }
 `;
+
+//NEWS QUERIES
+
+const newsPostProjection = /* groq */ `{
+  _id,
+  title,
+  "slug": slug.current,
+  category->{
+    _id,
+    title,
+    "slug": slug.current
+  },
+  summary,
+  publishedDate,
+  readTime,
+  featured,
+  image{
+    "url": asset->url,
+    "alt": coalesce(alt, ^.title)
+  },
+  content{
+    lead,
+    body
+  },
+  seo{
+    metaTitle,
+    metaDescription,
+  }
+}`;
+
+export const allNewsQuery = groq`
+  *[_type == "newsPost"] | order(publishedDate desc) ${newsPostProjection}
+`;
+
+export const newsByCategoryQuery = groq`
+  *[_type == "newsPost" && category->slug.current == $categorySlug]
+    | order(publishedDate desc) ${newsPostProjection}
+`;
+
+export const newsBySlugQuery = groq`
+  *[_type == "newsPost" && slug.current == $slug][0] ${newsPostProjection}
+`;
+
+export const newsCategoriesQuery = groq`
+  *[_type == "newsCategory"] | order(title asc) {
+    _id,
+    title,
+    "slug": slug.current
+  }
+`;
+
+// --- Fetch helpers -----------------------------------------------------
+
+export async function getAllNews(): Promise<NewsPost[]> {
+  return client.fetch(allNewsQuery);
+}
+
+export async function getNewsByCategory(
+  categorySlug: string,
+): Promise<NewsPost[]> {
+  return client.fetch(newsByCategoryQuery, { categorySlug });
+}
+
+export async function getNewsBySlug(slug: string): Promise<NewsPost | null> {
+  return client.fetch(newsBySlugQuery, { slug });
+}
+
+export async function getNewsCategories(): Promise<NewsCategory[]> {
+  return client.fetch(newsCategoriesQuery);
+}

@@ -50,7 +50,7 @@ const portableTextComponents: PortableTextComponents = {
       </h4>
     ),
     blockquote: ({ children }) => (
-      <div className="p-6 sm:p-7 rounded-2xl bg-white/[0.05] border border-white/10 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
+      <div className="p-6 sm:p-7 rounded-2xl bg-white/5 border border-white/10 border-l-4 border-l-[#1d4ed8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] my-6">
         <p className="text-sm sm:text-base text-white italic leading-relaxed font-sans">
           {children}
         </p>
@@ -130,7 +130,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
   const recentBlogs = recentPosts;
 
   // Heading shown on the page (falls back to title if detailTitle is empty)
-  const heading = post.detailTitle || post.title;
+  const heading = post.title;
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -341,7 +341,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
                 <Link
                   key={recent._id}
                   href={`/blogs/${recent.slug}`}
-                  className="group flex gap-3.5 p-3.5 rounded-2xl bg-white/[0.05] border border-white/10 hover:border-[#1d4ed8]/20 hover:shadow-[0_4px_20px_rgba(29,78,216,0.08)] transition-all duration-300 relative overflow-hidden"
+                  className="group flex gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#1d4ed8]/20 hover:shadow-[0_4px_20px_rgba(29,78,216,0.08)] transition-all duration-300 relative overflow-hidden"
                 >
                   <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#1d4ed8] to-[#0ea5e9] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
                   <div className="shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-white/5">
@@ -369,7 +369,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center gap-2 py-10 px-5 rounded-2xl bg-white/[0.05] border border-dashed border-white/15">
+            <div className="flex flex-col items-center justify-center text-center gap-2 py-10 px-5 rounded-2xl bg-white/5 border border-dashed border-white/15">
               <span className="text-2xl">📝</span>
               <p className="text-xs font-medium text-white/60">
                 More articles coming soon
@@ -411,7 +411,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
               href={`/blogs/${recent.slug}`}
               data-cursor="read"
               data-cursor-text="Read article"
-              className="bg-white/[0.05] rounded-3xl sm:rounded-[26px] p-4 sm:p-5 border border-white/10 shadow-[0_10px_25px_-12px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_35px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
+              className="bg-white/5 rounded-3xl sm:rounded-[26px] p-4 sm:p-5 border border-white/10 shadow-[0_10px_25px_-12px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_35px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
             >
               <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#1d4ed8] via-[#0ea5e9] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl sm:rounded-t-[26px]" />
 
@@ -426,7 +426,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
                 </h4>
 
                 <p className="text-xs sm:text-[13px] text-white/60 leading-relaxed line-clamp-2 mb-3">
-                  {recent.excerpt}
+                  {recent.summary}
                 </p>
 
                 <div className="flex items-center justify-between">
@@ -455,7 +455,7 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
 
       {/* Newsletter Subscribe Section */}
       <section className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 mb-24">
-        <div className="bg-white/[0.05] rounded-[28px] sm:rounded-4xl p-8 sm:p-12 relative overflow-hidden border border-white/10 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.06)]">
+        <div className="bg-white/5 rounded-[28px] sm:rounded-4xl p-8 sm:p-12 relative overflow-hidden border border-white/10 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.06)]">
           {/* Subtle blue accent in the corner */}
           <div className="absolute top-0 right-0 w-100 h-100 bg-linear-to-bl from-[#1d4ed8]/25 via-transparent to-transparent opacity-60 pointer-events-none" />
 

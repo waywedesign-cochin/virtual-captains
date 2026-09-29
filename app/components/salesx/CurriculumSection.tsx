@@ -268,7 +268,7 @@ export default function CurriculumSection() {
             {STATS.map((s) => (
               <div
                 key={s.label}
-                className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3"
+                className="rounded-2xl border border-white/10 bg-[#0b0e14] px-4 py-3"
               >
                 <p className="font-serif text-3xl text-white">{s.value}</p>
                 <p className="mt-0.5 text-xs leading-tight text-white/55">
@@ -294,8 +294,8 @@ export default function CurriculumSection() {
                   onClick={() => selectTrack(t.key)}
                   className={`group relative flex items-center justify-between overflow-hidden rounded-2xl border px-5 py-4 text-left transition ${
                     active
-                      ? "border-[#38bdf8]/50 bg-[#38bdf8]/10"
-                      : "border-white/10 bg-white/3 hover:border-white/25 hover:bg-white/6"
+                      ? "border-[#38bdf8]/50 bg-[#0a1a26]"
+                      : "border-white/10 bg-[#0a0d13] hover:border-white/25 hover:bg-[#121620]"
                   }`}
                 >
                   <span
@@ -392,8 +392,8 @@ export default function CurriculumSection() {
                     aria-expanded={isOpen}
                     className={`relative mb-4 w-full overflow-hidden rounded-2xl border p-5 text-left transition-colors duration-500 ${
                       isOpen
-                        ? "border-white/15 bg-white/[0.07]"
-                        : "border-transparent hover:bg-white/4"
+                        ? "border-white/15 bg-[#121620]"
+                        : "border-transparent hover:bg-[#0b0e14]"
                     }`}
                   >
                     {/* accent bar */}
@@ -458,7 +458,7 @@ export default function CurriculumSection() {
           </ol>
 
           {/* outcome */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 rounded-3xl border border-white/10 bg-linear-to-br from-[#2563eb]/25 to-[#38bdf8]/10 p-6">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 rounded-3xl border border-white/10 bg-linear-to-br from-[#0d1f4d] to-[#0a1b2b] p-6">
             <div className="min-w-55 flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/55">
                 The outcome
@@ -475,7 +475,9 @@ export default function CurriculumSection() {
                 Full SalesX curriculum →
               </Link>
               <Link
-                href="/individuals"
+                href={
+                  track.key === "founders" ? "/organisations" : "/individuals"
+                }
                 className="whitespace-nowrap rounded-full bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-[#1d4ed8]"
               >
                 Start this path
