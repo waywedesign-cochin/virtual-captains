@@ -17,8 +17,8 @@
  * everything smaller gets a plain card grid. Keep in sync with HEX_QUERY in
  * app/components/about/AboutMetrics.tsx. */
 @custom-variant hex (@media (min-width: 768px) and (min-height: 501px));
-/* About page sticky stages whose content needs a tall viewport (~620px) */
-@custom-variant stage (@media (min-width: 1024px) and (min-height: 620px));
+/* Desktop sticky stages: wide and tall enough for full-screen pinned stage (matches pin variant) */
+@custom-variant stage (@media (min-width: 1024px) and (min-height: 480px));
 @custom-variant pin-xl (@media (min-width: 1280px) and (min-height: 480px));
 
 /*
@@ -27,7 +27,7 @@
  * text-[clamp(...)] values so headings, leads and body copy stay consistent.
  */
 @utility type-eyebrow {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.25em;
@@ -70,6 +70,8 @@
   --font-sans: var(--font-dm-sans), sans-serif;
   --font-serif: var(--font-dm-sans), sans-serif;
   --font-display: var(--font-dm-sans), sans-serif;
+  /* SalesX page canvas — one shared background so sections flow seamlessly */
+  --color-salesx-bg: #030614;
 }
 
 body {
@@ -160,4 +162,16 @@ body {
   to {
     transform: scaleX(1);
   }
+}
+
+/* SalesX climb: content swap when a level tab changes */
+@keyframes vc-climb-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.vc-climb-in {
+  animation: vc-climb-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vc-climb-in { animation: none; }
 }

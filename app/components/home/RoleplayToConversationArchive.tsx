@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import TwoAudiences, { TwoAudiencesRef } from "./TwoAudiences";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 const RIGHT_TEXT = [
@@ -276,12 +277,7 @@ export default function RoleplayToConversation() {
           titleBlockRef.current,
           {
             autoAlpha: 1,
-            duration: 0.85,
-            keyframes: [
-              { scale: 1.15, autoAlpha: 1, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, duration: 0.21, ease: "power2.out" },
-            ],
+            ...HEADING_REVEAL,
           },
           0,
         );
@@ -680,7 +676,7 @@ export default function RoleplayToConversation() {
               <span className="block">
                 <span
                   ref={eyebrowRef}
-                  className="mb-4 inline-block font-mono text-[10px] uppercase tracking-[0.2em] text-black/65 sm:text-[11px] lg:mb-6 lg:text-[13px] lg:whitespace-nowrap"
+                  className="mb-4 inline-block font-sans text-[10px] uppercase tracking-[0.2em] text-black/65 sm:text-[11px] lg:mb-6 lg:text-[13px] lg:whitespace-nowrap"
                 >
                   What Drives Us
                 </span>

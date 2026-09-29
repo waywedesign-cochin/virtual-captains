@@ -6,6 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -22,18 +23,7 @@ function seededRandom(seed: number) {
   };
 }
 
-const STAR_COUNT = 55;
-const starRandom = seededRandom(9001);
-const METHOD_STARS = Array.from({ length: STAR_COUNT }, () => ({
-  left: starRandom() * 100,
-  top: starRandom() * 100,
-  size: 1 + starRandom() * 1.7,
-  delay: starRandom() * 5,
-  duration: 2.6 + starRandom() * 3.6,
-  baseOpacity: 0.2 + starRandom() * 0.5,
-}));
-
-// A sparser, dimmer scatter for inside the cards — enough to feel alive
+// A sparse, dim star scatter inside the cards only — enough to feel alive
 // without competing with the dashboard image and copy sitting on top.
 const CARD_STAR_COUNT = 26;
 const cardStarRandom = seededRandom(4242);
@@ -135,9 +125,7 @@ export default function SalesXMethod() {
 
       // 1. Initial visual states with signature zoom-in spring reveal
       gsap.set(introHeadingRef.current, {
-        opacity: 0,
-        scale: 0.65,
-        y: 20,
+        ...HEADING_REVEAL_FROM,
         transformOrigin: "center center",
         force3D: true,
       });
@@ -150,16 +138,8 @@ export default function SalesXMethod() {
         once: true,
         onEnter: () => {
           entranceTween = gsap.to(introHeadingRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.85,
-            ease: "none",
             force3D: true,
-            keyframes: [
-              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
+            ...HEADING_REVEAL,
           });
         },
       });
@@ -384,7 +364,7 @@ export default function SalesXMethod() {
   );
 
   return (
-    <section ref={sectionRef} className="relative bg-[#000207] select-none">
+    <section ref={sectionRef} className="relative bg-salesx-bg select-none">
       {/* Pinned Stage Container: fits 100% within dynamic viewport height */}
       <div
         ref={stageRef}
@@ -403,41 +383,8 @@ export default function SalesXMethod() {
         {/* Background Ambient Radial Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 sm:w-260 lg:w-7xl h-100 sm:h-140 bg-radial from-[#1e40af]/25 via-[#312e81]/10 to-transparent blur-[140px] pointer-events-none -z-10" />
 
-        {/* Subtle Star Particles - Standardized Cosmic Grid Token */}
-        <div
-          className="absolute inset-0 opacity-15 pointer-events-none -z-10"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(147, 197, 253, 0.35) 1px, transparent 0)",
-            backgroundSize: "44px 44px",
-          }}
-        />
-
-        {/* Galaxy Starfield: a scattered, twinkling dust of distant stars,
-            matching the orbit galaxy effect on the About page */}
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none overflow-hidden -z-10"
-        >
-          {METHOD_STARS.map((star, i) => (
-            <span
-              key={i}
-              className="sxm-star absolute rounded-full bg-white"
-              style={
-                {
-                  left: `${star.left}%`,
-                  top: `${star.top}%`,
-                  width: `${star.size}px`,
-                  height: `${star.size}px`,
-                  opacity: star.baseOpacity,
-                  boxShadow: `0 0 ${star.size * 2.5}px rgba(147,197,253,0.8)`,
-                  animation: `sxm-twinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
-                  "--sxm-star-base": star.baseOpacity,
-                } as React.CSSProperties
-              }
-            />
-          ))}
-        </div>
+        {/* Dot/star texture lives only inside the card (see "Inner star
+            particles" below) — not behind the intro heading */}
 
         {/* 1. INTRO HEADING: Comes first in center, then dissolves on scrolling */}
         <div

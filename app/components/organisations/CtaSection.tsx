@@ -4,6 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { motion } from "framer-motion";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -44,11 +45,11 @@ export default function CtaSection() {
           className="text-center lg:text-left"
         >
           <p className="text-sm font-semibold text-[#8A8FA3]">For Organisations</p>
-          <h2 className="mt-2 text-3xl font-extrabold leading-tight text-[#1B2559] sm:text-4xl lg:text-[2.75rem]">
+          <ZoomHeading className="mt-2 text-3xl font-extrabold leading-tight text-[#1B2559] sm:text-4xl lg:text-[2.75rem]">
             Talk to Us About
             <br />
             Your Next Quarter.
-          </h2>
+          </ZoomHeading>
           <button
             type="button"
             className="mt-7 rounded-full border border-black/15 px-6 py-2.5 text-sm font-semibold text-[#1B2559] transition hover:-translate-y-0.5 hover:bg-black/[0.03] hover:shadow-md"

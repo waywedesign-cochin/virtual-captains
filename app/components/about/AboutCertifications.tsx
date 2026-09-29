@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -134,10 +133,10 @@ export default function AboutCertifications() {
           {/* 8 items (two 4-item cycles) for an infinite, gapless, seamless loop */}
           {[...Array(8)].map((_, i) => (
             <span key={i} className="inline-flex items-center">
-              <span className="font-serif italic font-light tracking-tight text-[#2550b3] text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[12.5rem] leading-none whitespace-nowrap px-6 sm:px-10 lg:px-14 drop-shadow-[0_0_50px_rgba(23,61,161,0.45)]">
+              <span className="font-serif italic font-light tracking-tight text-[#344E8F] text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[12.5rem] leading-none whitespace-nowrap px-6 sm:px-10 lg:px-14">
                 Certifications
               </span>
-              <span className="text-[#3b82f6]/40 text-xl sm:text-3xl lg:text-5xl select-none">
+              <span className="text-[#344E8F]/40 text-xl sm:text-3xl lg:text-5xl select-none">
                 •
               </span>
             </span>
@@ -164,17 +163,18 @@ export default function AboutCertifications() {
                 {/* 32-Point Serrated Rosette Seal Container */}
                 <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-38 md:h-38 lg:w-44 lg:h-44 xl:w-52 xl:h-52 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-2">
                   {/* Subtle Vibrant Blue Glow on Hover */}
-                  <div className="absolute inset-0 rounded-full bg-blue-500/0 group-hover:bg-blue-500/35 blur-2xl transition-all duration-300 pointer-events-none" />
+                  <div className="absolute inset-0 rounded-full bg-[#344E8F]/0 group-hover:bg-[#344E8F]/35 blur-2xl transition-all duration-300 pointer-events-none" />
 
                   {/* 32-Point Blue Serrated Rosette Star Badge */}
-                  <Image
-                    src="/salesx/Star.png"
-                    alt={item.title}
-                    width={220}
-                    height={220}
-                    className="w-full h-full object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.65)] group-hover:drop-shadow-[0_0_35px_rgba(37,99,235,0.85)] transition-all duration-300 pointer-events-none"
-                    priority={false}
-                  />
+                  {/* Star shape masked from Star.png and filled with the brand blue,
+                      so the badge colour lives here rather than in the image */}
+                  <div
+                    role="img"
+                    aria-label={item.title}
+                    className="w-full h-full drop-shadow-[0_8px_24px_rgba(0,0,0,0.65)] group-hover:drop-shadow-[0_0_35px_rgba(52,78,143,0.85)] transition-all duration-300 pointer-events-none"
+                  >
+                    <div className="w-full h-full bg-[#344E8F]" style={{ maskImage: "url(/salesx/Star.png)", WebkitMaskImage: "url(/salesx/Star.png)", maskSize: "contain", WebkitMaskSize: "contain", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: "center", WebkitMaskPosition: "center" }} />
+                  </div>
 
                   {/* Center "Certification" White Typography */}
                   <div className="absolute inset-0 flex items-center justify-center p-3 text-center pointer-events-none select-none">

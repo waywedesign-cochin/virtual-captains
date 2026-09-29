@@ -6,7 +6,7 @@ import { BlogPost, Category } from "@/sanity/lib/types";
 import Navbar from "../home/Navbar";
 import { BlogListPage } from "./BlogListPage";
 import { MouseFollower } from "./MouseFollower";
-import { BookCallModal } from "./BookCallModal";
+import BookACallModal from "../home/BookACallModal";
 import SiteFooter from "../home/SiteFooter";
 import DotGridSpotlight from "../common/DotGridSpotlight";
 
@@ -52,8 +52,9 @@ export function BlogsPageClient({ posts, categories }: BlogsPageClientProps) {
       {/* Mouse Follower "Read article" Bubble */}
       <MouseFollower />
 
-      <BookCallModal
-        isOpen={isBookCallOpen}
+      {/* Same "Book a Call" popup as the home page and the rest of the site */}
+      <BookACallModal
+        open={isBookCallOpen}
         onClose={() => setIsBookCallOpen(false)}
       />
 

@@ -270,7 +270,7 @@ export default function SalesXFooter() {
   return (
     <footer
       ref={footerRef}
-      className="relative overflow-hidden bg-gradient-to-b from-[#020512] via-[#040d30] to-[#071b5c] pt-16 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 text-white"
+      className="relative overflow-hidden bg-gradient-to-b from-salesx-bg via-[#040d30] to-[#071b5c] pt-16 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 text-white"
     >
       {/* ── Deterministic Twinkling Cosmic Stars ── */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -304,26 +304,22 @@ export default function SalesXFooter() {
               ref={(el) => {
                 certBadgesRef.current[idx] = el;
               }}
-              className="group relative flex flex-col items-center justify-center cursor-pointer will-change-transform last:col-span-2 sm:last:col-span-1 md:last:col-span-1"
+              className="relative flex flex-col items-center justify-center will-change-transform last:col-span-2 sm:last:col-span-1 md:last:col-span-1"
             >
               {/* 32-Point Blue Star Badge */}
-              <div className="relative w-28 h-28 sm:w-34 sm:h-34 md:w-38 md:h-38 lg:w-44 lg:h-44 xl:w-48 xl:h-48 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                {/* Glowing Radial Halo on Hover */}
-                <div className="absolute inset-0 rounded-full bg-blue-600/0 group-hover:bg-blue-600/35 blur-xl transition-all duration-300 pointer-events-none" />
-
+              <div className="relative w-28 h-28 sm:w-34 sm:h-34 md:w-38 md:h-38 lg:w-44 lg:h-44 xl:w-48 xl:h-48 flex items-center justify-center">
                 {/* Star Image */}
-                <Image
-                  src={item.badgeImage}
-                  alt={item.title}
-                  width={200}
-                  height={200}
-                  className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] group-hover:drop-shadow-[0_0_25px_rgba(37,99,235,0.75)] transition-all duration-300"
-                  priority={false}
-                />
+                <div
+                  role="img"
+                  aria-label={item.title}
+                  className="w-full h-full drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
+                >
+                  <div className="w-full h-full bg-[#344E8F]" style={{ maskImage: `url(${item.badgeImage})`, WebkitMaskImage: `url(${item.badgeImage})`, maskSize: "contain", WebkitMaskSize: "contain", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: "center", WebkitMaskPosition: "center" }} />
+                </div>
 
-                {/* Center "Certification" Label matching reference screenshot */}
+                {/* Center "Certification" Label */}
                 <div className="absolute inset-0 flex items-center justify-center p-3 text-center pointer-events-none">
-                  <span className="text-white text-xs sm:text-sm lg:text-base font-semibold tracking-wide font-sans drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] group-hover:text-cyan-100 transition-colors">
+                  <span className="text-white text-xs sm:text-sm lg:text-base font-semibold tracking-wide font-sans drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
                     {item.title}
                   </span>
                 </div>

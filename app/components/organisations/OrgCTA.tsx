@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -82,6 +83,12 @@ export default function OrgCTA() {
       ref={containerRef}
       className="w-full bg-white py-12 sm:py-16 lg:py-24 overflow-hidden relative"
     >
+      {/* Same fade at the top edge, so the clipped blue orb blends up into
+          the programmes showcase instead of starting on a hard line */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-30 h-28 sm:h-36 bg-linear-to-t from-transparent to-white"
+      />
       {/* Fade the glow orbs out to pure white at the bottom edge, so the
           section meets the footer's white → blue gradient without a seam */}
       <div
@@ -95,9 +102,9 @@ export default function OrgCTA() {
           <p className="cta-text text-sm sm:text-base font-normal text-slate-700 mb-2 sm:mb-3.5">
             For Organisations
           </p>
-          <h2 className="cta-text text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-medium text-slate-900 leading-[1.16] tracking-tight mb-6 sm:mb-8 md:mb-10 max-w-lg">
+          <ZoomHeading className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-medium text-slate-900 leading-[1.16] tracking-tight mb-6 sm:mb-8 md:mb-10 max-w-lg">
             Talk to Us About<br />Your Next Quarter.
-          </h2>
+          </ZoomHeading>
           <div className="cta-text">
             <Link
               href="/discovery"

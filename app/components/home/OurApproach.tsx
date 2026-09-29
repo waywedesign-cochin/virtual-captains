@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 interface ModelSlide {
@@ -148,9 +149,7 @@ export default function OurApproach() {
       // Signature Zoom-in Heading Entrance
       if (headerRef.current) {
         gsap.set(headerRef.current, {
-          opacity: 0,
-          scale: 0.65,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
         });
 
@@ -160,14 +159,7 @@ export default function OurApproach() {
             start: "top 75%",
             toggleActions: "play none none reverse",
           },
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          keyframes: [
-            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-          ],
+          ...HEADING_REVEAL,
         });
       }
 
@@ -234,7 +226,7 @@ export default function OurApproach() {
             1. CONSTANT TOP HEADER
         ============================================================ */}
         <div ref={headerRef} className="text-center pt-1 sm:pt-2 shrink-0">
-          <span className="block font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-white/40 mb-1.5 sm:mb-2">
+          <span className="block font-sans text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.24em] text-white/40 mb-1.5 sm:mb-2">
             target. engage. Convert.
           </span>
           <h2 className="font-sans text-[clamp(1.4rem,4.2vw,2.4rem)] font-normal leading-[1.15] text-white">
@@ -306,7 +298,7 @@ export default function OurApproach() {
                   : "bg-white/8 text-white/60 hover:bg-white/15"
               }`}
             >
-              <span className="mr-1 opacity-60 font-mono text-[9px]">
+              <span className="mr-1 opacity-60 font-sans text-[9px]">
                 {slide.number}
               </span>
               {slide.title}
@@ -358,7 +350,7 @@ export default function OurApproach() {
               y={90}
               textAnchor="end"
               className="select-none transition-all duration-300 ease-out group-hover:fill-white"
-              style={{ fontFamily: "var(--font-sans), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-sans)" }}
               fill="rgba(255,255,255,0.42)"
               fontSize="12.5"
               fontWeight="400"
@@ -388,7 +380,7 @@ export default function OurApproach() {
               y={224}
               textAnchor="end"
               className="select-none transition-all duration-300 ease-out"
-              style={{ fontFamily: "var(--font-sans), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-sans)" }}
               fill="#ffffff"
               fontSize="18"
               fontWeight="700"
@@ -432,7 +424,7 @@ export default function OurApproach() {
               y={358}
               textAnchor="end"
               className="select-none transition-all duration-300 ease-out group-hover:fill-white"
-              style={{ fontFamily: "var(--font-sans), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-sans)" }}
               fill="rgba(255,255,255,0.42)"
               fontSize="12.5"
               fontWeight="400"

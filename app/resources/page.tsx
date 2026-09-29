@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import Link from "next/link";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 export const metadata: Metadata = {
   title: "Resources | Sales Research & Frameworks",
@@ -19,10 +20,10 @@ export default function ResourcesPage() {
           <span>Insights &amp; Research</span>
         </div>
 
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.15] max-w-4xl text-white">
+        <ZoomHeading as="h1" className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.15] max-w-4xl text-white">
           Sales Intelligence &amp;{" "}
           <span className="italic text-[#e7ff3d]">Behavioral</span> Frameworks
-        </h1>
+        </ZoomHeading>
 
         <p className="mt-6 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
           Access research papers, playbooks, objection teardowns, and conversational

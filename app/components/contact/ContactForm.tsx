@@ -5,6 +5,9 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { quickContacts, socialLinks } from "./data";
+import { isValidPhoneNumber } from "react-phone-number-input";
+import PhoneField from "../common/PhoneField";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,7 +20,6 @@ type FormState = {
   firstName: string;
   lastName: string;
   email: string;
-  countryCode: string;
   phone: string;
   role: string;
   employees: string;
@@ -30,7 +32,6 @@ const initialState: FormState = {
   firstName: "",
   lastName: "",
   email: "",
-  countryCode: "+91",
   phone: "",
   role: "",
   employees: "",
@@ -38,15 +39,6 @@ const initialState: FormState = {
 };
 
 type Status = "idle" | "submitting" | "success" | "error";
-
-const COUNTRY_CODES = [
-  { value: "+1", label: "+1 (US)" },
-  { value: "+44", label: "+44 (UK)" },
-  { value: "+61", label: "+61 (AU)" },
-  { value: "+91", label: "+91 (IN)" },
-  { value: "+971", label: "+971 (AE)" },
-  { value: "+65", label: "+65 (SG)" },
-];
 
 const EMPLOYEE_RANGES = ["1-10", "11-50", "51-100", "101-200", "201-500", "500+"];
 
@@ -162,7 +154,9 @@ export default function ContactForm() {
     if (!values.lastName.trim()) next.lastName = "Please enter your last name.";
     if (!values.email.trim()) next.email = "Please enter your email address.";
     else if (!emailPattern.test(values.email)) next.email = "Please enter a valid email address.";
-    if (!values.phone.trim()) next.phone = "A phone number helps us follow up faster.";
+    if (!values.phone) next.phone = "A phone number helps us follow up faster.";
+    else if (!isValidPhoneNumber(values.phone))
+      next.phone = "That number doesn't look valid for the selected country.";
     if (isOrg && !values.role.trim()) next.role = "Please enter your role.";
     if (isOrg && !values.employees) next.employees = "Please select your team size.";
     setErrors(next);
@@ -186,7 +180,7 @@ export default function ContactForm() {
           firstName: values.firstName.trim(),
           lastName: values.lastName.trim(),
           email: values.email.trim(),
-          phone: `${values.countryCode} ${values.phone.trim()}`,
+          phone: values.phone, // E.164, e.g. +919876543210
           role: isOrg ? values.role.trim() : undefined,
           employees: isOrg ? values.employees : undefined,
           message: values.message.trim(),
@@ -247,13 +241,13 @@ export default function ContactForm() {
             />
 
             <div className="relative z-10">
-              <span className="font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+              <span className="font-sans text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
                 Direct Floor Access
               </span>
-              <h2 className="mt-2 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              <ZoomHeading className="mt-2 font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
                 Feel Free to <br />
                 <span className="italic text-[#8fd0ff]">Contact Us</span>
-              </h2>
+              </ZoomHeading>
               <span className="mt-3 block h-1 w-12 rounded-full bg-[#e7ff3d] shadow-[0_0_12px_rgba(231,255,61,0.7)]" />
 
               <p className="mt-5 text-sm sm:text-[15px] leading-relaxed text-white/70">
@@ -420,22 +414,17 @@ export default function ContactForm() {
                   <label htmlFor="phone" className={labelClass}>
                     Phone Number<span className="text-[#ffd60a]"> *</span>
                   </label>
-                  <div className="flex gap-2">
-                    <select
-                      aria-label="Country code"
-                      value={values.countryCode}
-                      onChange={handleChange("countryCode")}
-                      // w-28! overrides controlClass's w-full so the number field keeps its room
-                      className={`${controlClass(false)} w-28! shrink-0 cursor-pointer px-3! [&>option]:bg-[#0a0d16]`}
-                    >
-                      {COUNTRY_CODES.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
-                      ))}
-                    </select>
-                    <input id="phone" name="phone" type="tel" autoComplete="tel-national" placeholder="9876543210"
-                      value={values.phone} onChange={handleChange("phone")} {...a11y("phone")}
-                      className={`${controlClass(Boolean(errors.phone))} flex-1`} />
-                  </div>
+                  <PhoneField
+                    id="phone"
+                    tone="dark"
+                    value={values.phone || undefined}
+                    onChange={(v) => {
+                      setValues((prev) => ({ ...prev, phone: v ?? "" }));
+                      if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+                    }}
+                    invalid={Boolean(errors.phone)}
+                    describedBy={errors.phone ? "phone-error" : undefined}
+                  />
                   {errorText("phone")}
                 </div>
 

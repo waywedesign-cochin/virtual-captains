@@ -8,6 +8,7 @@ import { LAND_DOTS } from "./globeDots";
 import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 type Location = {
@@ -563,9 +564,7 @@ export default function CrossCountry() {
         draw(0);
       } else {
         gsap.set(headingRef.current, {
-          opacity: 0,
-          scale: 0.65,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
         });
         gsap.set(globeWrapRef.current, {
@@ -589,14 +588,7 @@ export default function CrossCountry() {
         });
         intro
           .to(headingRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.85,
-            keyframes: [
-              { scale: 1.16, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
+            ...HEADING_REVEAL,
           })
           .to(
             globeWrapRef.current,

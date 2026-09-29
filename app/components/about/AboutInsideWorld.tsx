@@ -194,7 +194,7 @@ export default function AboutInsideWorld() {
               {/* Section Kicker Pill */}
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 mb-4 shadow-[0_0_16px_rgba(243,252,0,0.12)]">
                 <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-[#D08817] to-[#F3FC00] animate-pulse shadow-[0_0_6px_#F3FC00]" />
-                <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
+                <span className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.2em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                   Core Foundations
                 </span>
               </div>
@@ -244,7 +244,7 @@ export default function AboutInsideWorld() {
                         <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-bold tracking-tight text-white font-sans text-center lg:text-left">
                           {activePillar.title}
                         </h3>
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#8fd0ff] border border-[#8fd0ff]/30 rounded-md px-2 py-0.5">
+                        <span className="font-sans text-[10px] uppercase tracking-wider text-[#8fd0ff] border border-[#8fd0ff]/30 rounded-md px-2 py-0.5">
                           0{activeIndex + 1}
                         </span>
                       </div>

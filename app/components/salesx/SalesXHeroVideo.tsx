@@ -77,7 +77,7 @@ export default function SalesXHeroVideo({
             <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-rose-500/80 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
             <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-amber-500/80 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
             <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
-            <span className="ml-2 font-mono text-[10px] sm:text-xs text-slate-400">
+            <span className="ml-2 tabular-nums text-[10px] sm:text-xs text-slate-400">
               SALESX_HERO_ACCELERATION_ENGINE.webm
             </span>
           </div>
@@ -316,7 +316,7 @@ export default function SalesXHeroVideo({
                 )}
               </button>
 
-              <span className="font-mono text-[11px] text-slate-400">
+              <span className="tabular-nums text-[11px] text-slate-400">
                 {currentTimeStr} / {durationStr}
               </span>
             </div>

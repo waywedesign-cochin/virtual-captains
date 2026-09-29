@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 export const metadata: Metadata = {
   title: "Refund & Cancellation Policy | Disclaimer | Virtual Captains",
@@ -28,7 +29,7 @@ export default function RefundPage() {
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-2 text-xs font-mono text-slate-400 mb-6"
+          className="flex items-center gap-2 text-xs font-sans text-slate-400 mb-6"
         >
           <Link href="/" className="hover:text-white transition-colors">
             Home
@@ -40,15 +41,15 @@ export default function RefundPage() {
         {/* Section Pill Badge */}
         <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 mb-5 shadow-[0_0_16px_rgba(229,255,0,0.12)]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#e5ff00] shadow-[0_0_6px_#e5ff00]" />
-          <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#e5ff00]">
+          <span className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#e5ff00]">
             Legal &amp; Transparency
           </span>
         </div>
 
         {/* Headline */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight text-white font-sans leading-[1.12]">
+        <ZoomHeading as="h1" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight text-white font-sans leading-[1.12]">
           Refund / Cancellation Policy &amp; Disclaimer
-        </h1>
+        </ZoomHeading>
 
         {/* Introductory Overview Card */}
         <div className="mt-8 sm:mt-10 rounded-2xl border border-white/12 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
@@ -94,9 +95,9 @@ export default function RefundPage() {
             <span className="flex items-center justify-center h-7 w-7 rounded-full bg-[#e5ff00] text-black font-bold text-xs">
               01
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+            <ZoomHeading className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
               Refund Policy
-            </h2>
+            </ZoomHeading>
           </div>
 
           <div className="space-y-6">
@@ -174,9 +175,9 @@ export default function RefundPage() {
             <span className="flex items-center justify-center h-7 w-7 rounded-full bg-[#e5ff00] text-black font-bold text-xs">
               02
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+            <ZoomHeading className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
               Cancellation Policy
-            </h2>
+            </ZoomHeading>
           </div>
 
           <div className="space-y-6">
@@ -241,9 +242,9 @@ export default function RefundPage() {
             <span className="flex items-center justify-center h-7 w-7 rounded-full bg-[#e5ff00] text-black font-bold text-xs">
               03
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+            <ZoomHeading className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
               Disclaimer
-            </h2>
+            </ZoomHeading>
           </div>
 
           <div className="space-y-6">

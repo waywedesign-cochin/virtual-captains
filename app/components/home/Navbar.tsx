@@ -566,7 +566,7 @@ export default function Navbar() {
                               <div className="absolute -top-10 -right-10 w-36 h-36 bg-[#38bdf8]/10 rounded-full blur-3xl pointer-events-none" />
 
                               {/* Header label */}
-                              <div className="px-3 pt-1 pb-0.5 text-[10px] font-mono uppercase tracking-wider text-[#A4A4A4]">
+                              <div className="px-3 pt-1 pb-0.5 text-[10px] font-sans uppercase tracking-wider text-[#A4A4A4]">
                                 Resources
                               </div>
 

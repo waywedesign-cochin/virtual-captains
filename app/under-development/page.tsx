@@ -11,7 +11,7 @@ export default function UnderDevelopmentPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen w-full items-center justify-center bg-[#040507] text-white/50">
-          <span className="font-mono text-xs uppercase tracking-widest">
+          <span className="font-sans text-xs uppercase tracking-widest">
             Loading...
           </span>
         </div>

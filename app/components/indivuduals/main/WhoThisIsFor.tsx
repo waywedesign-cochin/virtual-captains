@@ -213,7 +213,7 @@ export function WhoThisIsFor() {
     <section
       id="who"
       ref={containerRef}
-      className="section bg-(--white) text-(--ink) overflow-hidden flex flex-col justify-center py-12 sm:py-16 lg:min-h-screen lg:pt-24 lg:pb-8"
+      className="section bg-(--white) text-(--ink) overflow-hidden flex flex-col justify-center py-12 sm:py-16 lg:min-h-screen lg:pt-20 lg:pb-6"
       aria-labelledby="who-heading"
     >
       <div className="frame w-full max-w-372 px-4 sm:px-8 lg:px-12 mx-auto flex flex-col items-center">
@@ -237,11 +237,11 @@ export function WhoThisIsFor() {
                                          desktop grid), with a shorter image
             Arbitrary media variants are used because the max-* breakpoint
             variants aren't generated in this project. */}
-        <div className="w-[85%] mt-6 md:mt-10 [@media(max-width:1023px)]:w-full [@media(max-width:1023px)_and_(max-height:500px)]:mt-5">
+        <div className="w-[85%] mt-4 md:mt-6 [@media(max-width:1023px)]:w-full [@media(max-width:1023px)_and_(max-height:500px)]:mt-5">
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-x-[min(3.97vw,60px)] items-center [@media(max-width:1023px)_and_(min-height:501px)]:grid-cols-1 [@media(max-width:1023px)_and_(min-height:501px)]:gap-y-[clamp(1.5rem,5vw,3rem)] [@media(max-width:1023px)_and_(min-height:501px)]:justify-items-center [@media(max-width:1023px)_and_(min-height:501px)]:text-center [@media(max-width:1023px)_and_(max-height:500px)]:gap-x-6">
             {/* Wave Graphic */}
             <div
-              className="relative w-full overflow-hidden rounded-[28px] h-70 sm:h-87.5 md:h-100 [@media(max-width:1023px)_and_(min-height:501px)]:max-w-130 [@media(max-height:500px)]:h-50 [@media(max-height:500px)]:rounded-2xl"
+              className="relative w-full overflow-hidden rounded-[28px] h-60 sm:h-72 md:h-80 [@media(max-width:1023px)_and_(min-height:501px)]:max-w-130 [@media(max-height:500px)]:h-50 [@media(max-height:500px)]:rounded-2xl"
               data-who-wave=""
               ref={waveRef}
               style={
@@ -320,7 +320,7 @@ export function WhoThisIsFor() {
           </div>
 
           <div
-            className="flex justify-center gap-2 md:gap-3 mt-10 relative z-10"
+            className="flex justify-center gap-2 md:gap-3 mt-6 relative z-10"
             role="tablist"
             aria-label="Audience segments"
           >

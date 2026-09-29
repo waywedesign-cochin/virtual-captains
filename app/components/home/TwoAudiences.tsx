@@ -9,6 +9,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 const ORG_ITEMS = [
   { title: "Groom Studio", desc: "Induction and onboarding", accent: false },
   { title: "Sales Audit", desc: "Identifying the blind spot", accent: false },
@@ -189,9 +190,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
 
       if (headlineRef.current) {
         gsap.set(headlineRef.current, {
-          opacity: 0,
-          scale: 0.65,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
         });
 
@@ -201,14 +200,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
             start: "top 80%",
             toggleActions: "play none none reverse",
           },
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          keyframes: [
-            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-          ],
+          ...HEADING_REVEAL,
         });
       }
     },
@@ -241,7 +233,7 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
         {/* TOP EYEBROW */}
         <p
           ref={topTitleRef}
-          className="ta-eyebrow text-center font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white/50 max-w-xl mx-auto px-4 shrink-0 mb-2 sm:mb-4 pin:mb-2"
+          className="ta-eyebrow text-center font-sans text-[10px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white/50 max-w-xl mx-auto px-4 shrink-0 mb-2 sm:mb-4 pin:mb-2"
         >
           <span className="whitespace-nowrap">Two Audiences · One Discipline</span>{" "}
           <span className="whitespace-nowrap">: Execution</span>

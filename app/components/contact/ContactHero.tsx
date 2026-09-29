@@ -321,7 +321,7 @@ export default function ContactHero() {
           className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-4 py-1.5 shadow-[0_0_20px_rgba(56,189,248,0.15)] will-change-transform"
         >
           <span className="h-2 w-2 rounded-full bg-[#e7ff3d] animate-pulse shadow-[0_0_8px_#e7ff3d]" />
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+          <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
             Get In Touch · Sales Floor Readiness
           </span>
         </div>

@@ -130,7 +130,7 @@ export default function SiteFooter() {
 
             {/* 2. Navigation column 1 */}
             <div>
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#38bdf8] font-semibold mb-4">
+              <p className="text-xs font-sans uppercase tracking-[0.2em] text-[#38bdf8] font-semibold mb-4">
                 Explore
               </p>
               <ul className="flex flex-col gap-2.5 text-xs sm:text-sm text-white/70 font-medium">
@@ -149,7 +149,7 @@ export default function SiteFooter() {
 
             {/* 3. Navigation column 2 */}
             <div>
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#38bdf8] font-semibold mb-4">
+              <p className="text-xs font-sans uppercase tracking-[0.2em] text-[#38bdf8] font-semibold mb-4">
                 Programs
               </p>
               <ul className="flex flex-col gap-2.5 text-xs sm:text-sm text-white/70 font-medium">
@@ -190,7 +190,7 @@ export default function SiteFooter() {
 
             {/* 4. SalesX Fast CTA */}
             <div>
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#38bdf8] font-semibold mb-4">
+              <p className="text-xs font-sans uppercase tracking-[0.2em] text-[#38bdf8] font-semibold mb-4">
                 Sales Readiness
               </p>
               <p className="text-xs sm:text-sm text-white/60 leading-relaxed mb-4">

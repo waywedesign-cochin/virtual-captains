@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { isValidPhoneNumber, type Value } from "react-phone-number-input";
+import PhoneField from "../common/PhoneField";
 
 /**
  * Dummy "Book a Call" form dialog — no backend, just a form that shows a
@@ -20,6 +22,8 @@ export default function BookACallModal({
   const [submitted, setSubmitted] = useState(false);
   const [audience, setAudience] = useState<"individual" | "organisation">("individual");
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [phone, setPhone] = useState<Value | undefined>();
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -31,11 +35,28 @@ export default function BookACallModal({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
+  // Lock the page behind the dialog while it's open: pause the site-wide
+  // Lenis smooth scroller (it otherwise captures the wheel, so scrolling over
+  // the form moved the page instead) and stop native body scroll.
+  useEffect(() => {
+    if (!open) return;
+    const lenis = window.__lenis;
+    lenis?.stop();
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      lenis?.start();
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
   // Reset back to the form the next time it's opened.
   useEffect(() => {
     if (open) {
       setSubmitted(false);
       setAudience("individual");
+      setPhone(undefined);
+      setPhoneError(null);
     }
   }, [open]);
 
@@ -43,7 +64,7 @@ export default function BookACallModal({
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center p-6"
+      className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="book-a-call-title"
@@ -53,9 +74,18 @@ export default function BookACallModal({
         onClick={onClose}
       />
 
+      {/* data-lenis-prevent: wheel/trackpad scroll the form, not the page.
+          max-h in dvh so Submit stays reachable under mobile browser bars. */}
       <div
         ref={dialogRef}
-        className="relative z-10 w-full max-w-110 max-h-[90vh] overflow-y-auto rounded-2xl border border-black/10 bg-white p-6 sm:p-9 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.45)]"
+        data-lenis-prevent
+        // Height cap as an inline style: arbitrary max-h classes weren't
+        // reliably generated here, and without a cap the form can't scroll.
+        style={{ maxHeight: "min(90dvh, calc(100dvh - 2rem))" }}
+        // text-[#101010]: the dialog sets its own text colour — on dark pages
+        // it used to inherit white, making typed text and the country-code
+        // select invisible on the white card
+        className="relative z-10 w-full max-w-110 overflow-y-auto overscroll-contain text-[#101010] rounded-2xl border border-black/10 bg-white p-6 sm:p-9 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.45)]"
       >
         <button
           type="button"
@@ -90,6 +120,9 @@ export default function BookACallModal({
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              if (!phone) return setPhoneError("Please enter your phone number.");
+              if (!isValidPhoneNumber(phone))
+                return setPhoneError("That number doesn't look valid for the selected country.");
               setSubmitted(true);
             }}
           >
@@ -133,74 +166,72 @@ export default function BookACallModal({
               {/* First Name & Last Name */}
               <div className="flex flex-col sm:flex-row gap-4 w-full">
                 <label className="flex flex-1 flex-col gap-1.5 min-w-0">
-                  <span className="text-[12px] font-medium text-black/70">First Name</span>
+                  <span className="text-[12px] font-medium text-black/70">First Name<Req /></span>
                   <input
                     type="text"
                     required
                     placeholder="Jane"
-                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                   />
                 </label>
                 <label className="flex flex-1 flex-col gap-1.5 min-w-0">
-                  <span className="text-[12px] font-medium text-black/70">Last Name</span>
+                  <span className="text-[12px] font-medium text-black/70">Last Name<Req /></span>
                   <input
                     type="text"
                     required
                     placeholder="Doe"
-                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                   />
                 </label>
               </div>
 
               <label className="flex flex-col gap-1.5 w-full">
-                <span className="text-[12px] font-medium text-black/70">Work Email</span>
+                <span className="text-[12px] font-medium text-black/70">Work Email<Req /></span>
                 <input
                   type="email"
                   required
                   placeholder="jane@company.com"
-                  className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                  className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                 />
               </label>
 
-              {/* Phone with Country Code */}
-              <label className="flex flex-col gap-1.5 w-full">
-                <span className="text-[12px] font-medium text-black/70">Phone Number</span>
-                <div className="flex gap-2 w-full">
-                  <select
-                    className="w-25 shrink-0 rounded-lg border border-black/15 px-3 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
-                    defaultValue="+91"
-                  >
-                    <option value="+1">+1 (US)</option>
-                    <option value="+44">+44 (UK)</option>
-                    <option value="+61">+61 (AU)</option>
-                    <option value="+91">+91 (IN)</option>
-                    <option value="+971">+971 (AE)</option>
-                    <option value="+65">+65 (SG)</option>
-                  </select>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="9876543210"
-                    className="flex-1 w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
-                  />
-                </div>
-              </label>
+              {/* Phone — every country, flag + dialling code, validated */}
+              <div className="flex flex-col gap-1.5 w-full">
+                <label htmlFor="book-call-phone" className="text-[12px] font-medium text-black/70">
+                  Phone Number<Req />
+                </label>
+                <PhoneField
+                  id="book-call-phone"
+                  value={phone}
+                  onChange={(v) => {
+                    setPhone(v);
+                    if (phoneError) setPhoneError(null);
+                  }}
+                  invalid={Boolean(phoneError)}
+                  describedBy={phoneError ? "book-call-phone-error" : undefined}
+                />
+                {phoneError && (
+                  <p id="book-call-phone-error" className="text-[12px] text-red-600">
+                    {phoneError}
+                  </p>
+                )}
+              </div>
 
               {/* Conditional: Fields Only for Organisation */}
               {audience === "organisation" && (
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
                   <label className="flex flex-col gap-1.5 w-full">
-                    <span className="text-[12px] font-medium text-black/70">Your Role/Designation</span>
+                    <span className="text-[12px] font-medium text-black/70">Your Role/Designation<Req /></span>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Sales Manager"
-                      className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                      className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                     />
                   </label>
                   
                   <label className="flex flex-col gap-1.5 w-full">
-                    <span className="text-[12px] font-medium text-black/70">Number of Employees</span>
+                    <span className="text-[12px] font-medium text-black/70">Number of Employees<Req /></span>
                     <select
                       required
                       defaultValue=""
@@ -223,14 +254,14 @@ export default function BookACallModal({
                 <textarea
                   rows={2}
                   placeholder="What would you like to talk about?"
-                  className="w-full min-w-0 resize-none rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5]"
+                  className="w-full min-w-0 resize-none rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                 />
               </label>
             </div>
 
             <button
               type="submit"
-              className="mt-6 w-full cursor-pointer rounded-full bg-[#101010] py-3 text-[13.5px] font-medium text-white transition-colors hover:bg-[#3478e5]"
+              className="mt-6 w-full cursor-pointer rounded-full bg-[#3478e5] py-3 text-[13.5px] font-medium text-white shadow-[0_8px_20px_-8px_rgba(52,120,229,0.6)] transition-colors hover:bg-[#2563eb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3478e5]/50 focus-visible:ring-offset-2"
             >
               Submit
             </button>
@@ -241,3 +272,11 @@ export default function BookACallModal({
   );
 }
 
+/** Required-field marker (decorative — the input itself carries `required`). */
+function Req() {
+  return (
+    <span className="text-red-500" aria-hidden="true">
+      {" "}*
+    </span>
+  );
+}

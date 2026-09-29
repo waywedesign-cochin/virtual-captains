@@ -32,7 +32,7 @@ export const orbitLabels: ReadonlyArray<OrbitLabel> = [
 
 export const hero = {
   eyebrow: "Launch Your Career as a",
-  headline: ["High-Performing", "Seller"],
+  headline: ["High Performing", "Seller"],
   primaryCta: { label: "Apply to Next Cohort", href: "/contact" },
   secondaryCta: { label: "Partner Network", href: "/partner" },
 } as const;

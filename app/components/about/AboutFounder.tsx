@@ -224,7 +224,7 @@ export default function AboutFounder() {
           {/* Top Kicker */}
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 mb-6 shadow-[0_0_16px_rgba(243,252,0,0.12)]">
             <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-[#D08817] to-[#F3FC00] shadow-[0_0_6px_#F3FC00]" />
-            <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.2em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
+            <span className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.2em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
               Founder &amp; Executive Leader
             </span>
           </div>
@@ -261,7 +261,7 @@ export default function AboutFounder() {
             <p className="font-serif italic font-normal text-white text-xl tracking-wide mt-4">
               Roshna Saffar
             </p>
-            <p className="text-[11px] font-mono uppercase tracking-[0.22em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent mt-0.5 font-semibold">
+            <p className="text-[11px] font-sans uppercase tracking-[0.22em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent mt-0.5 font-semibold">
               Founder · Virtual Captains
             </p>
           </div>
@@ -385,7 +385,7 @@ export default function AboutFounder() {
                   Roshna Saffar
                 </p>
                 <div className="inline-flex items-center gap-2 mt-1">
-                  <span className="text-[11px] font-mono uppercase tracking-[0.24em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent font-semibold">
+                  <span className="text-[11px] font-sans uppercase tracking-[0.24em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent font-semibold">
                     Founder · Virtual Captains
                   </span>
                 </div>
@@ -414,7 +414,7 @@ export default function AboutFounder() {
                 {/* Kicker Pill */}
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/4 backdrop-blur-md px-3.5 py-1 mb-3.5 shadow-[0_0_16px_rgba(243,252,0,0.08)]">
                   <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-[#D08817] to-[#F3FC00] animate-pulse shadow-[0_0_6px_#F3FC00]" />
-                  <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.22em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
+                  <span className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.22em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                     Leadership &amp; Vision
                   </span>
                 </div>

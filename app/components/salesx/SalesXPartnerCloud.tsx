@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -127,18 +128,14 @@ export default function SalesXPartnerCloud() {
     // 0. Initial Headings State: Signature spring reveal
     if (desktopHeadingRef.current) {
       gsap.set(desktopHeadingRef.current, {
-        opacity: 0,
-        scale: 0.65,
-        y: 20,
+        ...HEADING_REVEAL_FROM,
         transformOrigin: "center center",
         force3D: true,
       });
     }
     if (mobileHeadingRef.current) {
       gsap.set(mobileHeadingRef.current, {
-        opacity: 0,
-        scale: 0.65,
-        y: 20,
+        ...HEADING_REVEAL_FROM,
         transformOrigin: "center center",
         force3D: true,
       });
@@ -179,16 +176,8 @@ export default function SalesXPartnerCloud() {
           const headings = [desktopHeadingRef.current, mobileHeadingRef.current].filter(Boolean);
           if (headings.length > 0) {
             gsap.to(headings, {
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              ease: "none",
               force3D: true,
-              keyframes: [
-                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
+              ...HEADING_REVEAL,
             });
           }
 
@@ -244,7 +233,7 @@ export default function SalesXPartnerCloud() {
       ref={sectionRef}
       role="region"
       aria-label="SalesX Partner Network and Ecosystem"
-      className="relative bg-[#030614] overflow-hidden py-24 sm:py-32 select-none"
+      className="relative bg-salesx-bg overflow-hidden py-24 sm:py-32 select-none"
     >
       {/* Central Blue Ambient Radial Glow matching reference image */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[950px] h-[350px] sm:h-[450px] lg:h-[550px] bg-radial from-[#1e40af]/25 via-[#0a1740]/15 to-transparent blur-[140px] pointer-events-none -z-10" />

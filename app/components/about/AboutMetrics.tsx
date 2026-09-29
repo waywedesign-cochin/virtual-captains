@@ -242,7 +242,7 @@ export default function AboutMetrics() {
       {/* ── Phones & rotated phones: heading + card grid ── */}
       <div className="w-full max-w-3xl hex:hidden">
         <div className="text-center">
-          <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/50 sm:text-[11px]">
+          <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-white/50 sm:text-[11px]">
             By the numbers
           </span>
           <h2
@@ -335,7 +335,7 @@ export default function AboutMetrics() {
           ref={titleRef}
           className="absolute inset-0 flex flex-col items-center justify-center px-[14%] text-center"
         >
-          <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/50 sm:text-[11px]">
+          <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-white/50 sm:text-[11px]">
             By the numbers
           </span>
           <h2
