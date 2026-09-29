@@ -113,16 +113,10 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({
                 Ideas,
               </motion.span>
               <motion.span variants={wordVariants} className="inline-block">
-                Insights
+                Insights,
               </motion.span>
             </span>
             <span className="block">
-              <motion.span
-                variants={wordVariants}
-                className="inline-block mr-3 sm:mr-4 text-white"
-              >
-                &amp;
-              </motion.span>
               <motion.span
                 variants={wordVariants}
                 className="inline-block italic bg-linear-to-r from-[#8fd0ff] via-[#38bdf8] to-[#4d82f5] bg-clip-text text-transparent pr-1"
