@@ -53,7 +53,7 @@ const MASK = `url(${IMG}) center / contain no-repeat`;
  * while a gradient line draws over the white curve — then the closing title
  * + copy appear.
  *
- * Desktop shows the dial; below lg the same three steps are a chip row.
+ * Wide screens (xl+) show the dial; below that the same three steps are a chip row.
  * Short screens / reduced motion: static, everything visible.
  */
 export default function SalesXSimulated() {
@@ -84,7 +84,8 @@ export default function SalesXSimulated() {
     () => {
       setProgress(1);
       const fitDial = () => {
-        const scale = Math.min(1, (window.innerHeight * 0.74) / DIAL_H);
+        // Fit both height and width, so the dial never runs into the artwork
+        const scale = Math.min(1, (window.innerHeight * 0.74) / DIAL_H, window.innerWidth / 1500);
         dialRef.current?.style.setProperty("--dial-scale", String(scale));
       };
       fitDial();
@@ -170,7 +171,7 @@ export default function SalesXSimulated() {
         </h2>
 
         {/* Illustration — gradient painted through the line-art mask */}
-        <div className="relative w-[min(92vw,900px,120svh)] lg:w-[min(58vw,900px,105svh)]">
+        <div className="relative w-[min(92vw,900px,120svh)] xl:w-[min(52vw,900px,95svh)]">
           <div
             aria-hidden="true"
             className="absolute inset-x-[10%] inset-y-[5%] -z-10 rounded-full bg-radial from-[#a855f7]/25 via-[#3b82f6]/12 to-transparent blur-[70px]"
@@ -192,7 +193,7 @@ export default function SalesXSimulated() {
         </div>
 
         {/* Steps as chips below the image (phones & tablets) */}
-        <ol className="flex flex-wrap items-center justify-center gap-2 lg:hidden" aria-label="How SalesX trains">
+        <ol className="flex flex-wrap items-center justify-center gap-2 xl:hidden" aria-label="How SalesX trains">
           {STEPS.map((step, i) => (
             <li
               key={step}
@@ -208,7 +209,7 @@ export default function SalesXSimulated() {
         </ol>
 
         {/* Closing title + description */}
-        <div className="max-w-2xl text-center">
+        <div className="max-w-2xl xl:max-w-xl text-center">
           <h3 data-sim-foot className="text-[clamp(1.1rem,min(0.9rem+0.8vw,3.6svh),1.5rem)] font-medium leading-snug tracking-tight">
             The Approach Is Built on Repetition and Evaluation
           </h3>
@@ -225,7 +226,7 @@ export default function SalesXSimulated() {
       <div
         data-sim-dial
         aria-hidden="true"
-        className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block"
+        className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 xl:block"
         style={{ width: DIAL_W, height: DIAL_H }}
       >
        {/* Scales down on shorter screens (origin: right edge, centre) */}

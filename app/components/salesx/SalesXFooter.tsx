@@ -52,6 +52,34 @@ const certifications: CertificationItem[] = [
   },
 ];
 
+const FOOTER_COLUMNS = [
+  {
+    title: "Explore",
+    links: [
+      { label: "Individuals", href: "/individuals" },
+      { label: "Organisations", href: "/organisations" },
+      { label: "About Us", href: "/about" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Blogs", href: "/blogs" },
+      { label: "Newsletter", href: "#newsletter" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms & Conditions", href: "/terms" },
+      { label: "Refund Policy", href: "/refund" },
+      { label: "Disclaimer", href: "/disclaimer" },
+    ],
+  },
+];
+
 // Deterministic cosmic star coordinates (avoids SSR hydration mismatches)
 const COSMIC_STARS = [
   { top: "6%", left: "8%", size: 2, opacity: 0.85, animDur: "3.2s" },
@@ -115,13 +143,13 @@ export default function SalesXFooter() {
         gsap.set(logoBoxRef.current, { opacity: 0, y: 30, scale: 0.96 });
       }
       if (linksColRef.current) {
-        gsap.set(linksColRef.current, { opacity: 0, x: -25 });
+        gsap.set(linksColRef.current, { opacity: 0, y: 24 });
       }
       if (centerLogoRef.current) {
-        gsap.set(centerLogoRef.current, { opacity: 0, scale: 0.92 });
+        gsap.set(centerLogoRef.current, { opacity: 0 });
       }
       if (ctaColRef.current) {
-        gsap.set(ctaColRef.current, { opacity: 0, x: 25, scale: 0.94 });
+        gsap.set(ctaColRef.current, { opacity: 0, y: 24, scale: 0.98 });
       }
       if (copyrightRef.current) {
         gsap.set(copyrightRef.current, { opacity: 0, y: 15 });
@@ -185,11 +213,11 @@ export default function SalesXFooter() {
               linksColRef.current,
               {
                 opacity: 1,
-                x: 0,
+                y: 0,
                 duration: 0.75,
                 ease: "power3.out",
               },
-              0.35
+              0.55
             );
           }
 
@@ -211,12 +239,12 @@ export default function SalesXFooter() {
               ctaColRef.current,
               {
                 opacity: 1,
-                x: 0,
+                y: 0,
                 scale: 1,
                 duration: 0.85,
-                ease: "back.out(1.4)",
+                ease: "power3.out",
               },
-              0.45
+              0.35
             );
           }
 
@@ -271,7 +299,7 @@ export default function SalesXFooter() {
   return (
     <footer
       ref={footerRef}
-      className="relative overflow-hidden bg-gradient-to-b from-salesx-bg via-[#040d30] to-[#071b5c] pt-10 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 text-white"
+      className="relative overflow-hidden bg-gradient-to-b from-salesx-bg via-[#040d30] to-[#071b5c] pt-10 sm:pt-24 lg:pt-28 pb-8 sm:pb-10 text-white"
     >
       {/* ── Deterministic Twinkling Cosmic Stars ── */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -298,14 +326,14 @@ export default function SalesXFooter() {
       {/* Standardized Max-Width Container Matching All Sections Above */}
       <div className="relative z-10 w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
         {/* ── 1. CERTIFICATION STARS ROW (Matching Reference Screenshots 1 & 2) ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8 lg:gap-10 xl:gap-12 items-center justify-items-center mb-14 sm:mb-20 lg:mb-24">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10 xl:gap-12 items-center justify-items-center mb-10 sm:mb-16 lg:mb-20">
           {certifications.map((item, idx) => (
             <div
               key={item.id}
               ref={(el) => {
                 certBadgesRef.current[idx] = el;
               }}
-              className="relative flex flex-col items-center justify-center will-change-transform last:col-span-2 sm:last:col-span-1 md:last:col-span-1"
+              className="relative flex flex-col items-center justify-center will-change-transform last:col-span-2 sm:last:col-span-1"
             >
               {/* 32-Point Blue Star Badge */}
               <div className="relative w-28 h-28 sm:w-34 sm:h-34 md:w-38 md:h-38 lg:w-44 lg:h-44 xl:w-48 xl:h-48 flex items-center justify-center">
@@ -349,119 +377,106 @@ export default function SalesXFooter() {
           </div>
         </div>
 
-        {/* ── 3. THREE-COLUMN MIDDLE ROW (Blogs/Newsletter/Contact | Virtual Captains | Book A Call) ── */}
-        <div className="mt-14 sm:mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 items-center">
-          {/* Left Column: Vertical Links */}
-          <div
-            ref={linksColRef}
-            className="flex flex-col items-center md:items-start space-y-3 sm:space-y-4 text-center md:text-left will-change-transform"
-          >
-            <Link
-              href="/blogs"
-              className="text-base sm:text-lg text-slate-300 font-normal hover:text-white hover:translate-x-1 transition-all duration-200 block"
-            >
-              Blogs
-            </Link>
-            <Link
-              href="#newsletter"
-              className="text-base sm:text-lg text-slate-300 font-normal hover:text-white hover:translate-x-1 transition-all duration-200 block"
-            >
-              Newsletter
-            </Link>
-            <Link
-              href="/contact"
-              className="text-base sm:text-lg text-slate-300 font-normal hover:text-white hover:translate-x-1 transition-all duration-200 block"
-            >
-              Contact
-            </Link>
-          </div>
-
-          {/* Center Column: Virtual Captains Brand Logo */}
-          <div
-            ref={centerLogoRef}
-            className="flex items-center justify-center will-change-transform"
-          >
-            <Link
-              href="/"
-              className="inline-block group cursor-pointer"
-              aria-label="Virtual Captains Home"
-            >
-              <div className="relative h-9 sm:h-10 md:h-11 w-44 sm:w-52 flex items-center justify-center">
-                <Image
-                  src="/wlogo.png"
-                  alt="Virtual Captains"
-                  width={220}
-                  height={44}
-                  className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </Link>
-          </div>
-
-          {/* Right Column: Book A Call Button with Vibrant Glow */}
-          <div
-            ref={ctaColRef}
-            className="flex justify-center md:justify-end will-change-transform"
-          >
-            <Link
-              href="/contact"
-              className="group relative inline-flex items-center justify-center px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 border border-indigo-400/40 text-base sm:text-lg font-medium text-white tracking-wide shadow-[0_0_30px_rgba(59,130,246,0.5),0_0_25px_rgba(168,85,247,0.35)] hover:shadow-[0_0_40px_rgba(99,102,241,0.7),0_0_35px_rgba(56,189,248,0.5)] transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer overflow-hidden"
-            >
-              <span className="relative z-10 font-sans font-medium text-white group-hover:text-cyan-100 transition-colors">
+        {/* ── 3. CTA CARD: one clear next step before the link grid ── */}
+        <div
+          ref={ctaColRef}
+          className="relative mt-10 sm:mt-14 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-white/[0.07] via-white/[0.03] to-transparent p-6 sm:p-8 lg:p-10 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] will-change-transform"
+        >
+          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-radial from-blue-500/30 to-transparent blur-3xl" />
+          <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="text-center md:text-left">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+                Start Practising
+              </p>
+              <h3 className="mt-2 text-2xl sm:text-3xl font-medium tracking-tight text-white">
+                Your Next Deal Deserves A Rehearsal.
+              </h3>
+              <p className="mt-2 max-w-lg mx-auto md:mx-0 text-sm sm:text-[15px] leading-relaxed text-slate-300/85">
+                Talk to a Captain about the SalesX programme for yourself or your team.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center md:shrink-0">
+              <Link
+                href="/contact"
+                className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-7 text-sm sm:text-base font-medium text-white shadow-[0_0_28px_rgba(59,130,246,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(99,102,241,0.7)] active:translate-y-0"
+              >
                 Book A Call
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            </Link>
+                <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5-5 5M6 12h12" />
+                </svg>
+              </Link>
+              <Link
+                href="/individuals"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/20 px-7 text-sm sm:text-base font-medium text-white/90 transition-colors duration-300 hover:border-white/40 hover:bg-white/5"
+              >
+                Enroll Now
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* ── 4. BOTTOM COPYRIGHT ROW (Matching Reference Screenshot 2) ── */}
+        {/* ── 4. LINK GRID: brand blurb + three labelled columns ── */}
+        <div
+          ref={linksColRef}
+          className="mt-12 sm:mt-16 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-12 will-change-transform"
+        >
+          <div ref={centerLogoRef} className="col-span-2 sm:col-span-3 lg:col-span-5">
+            <Link href="/" aria-label="Virtual Captains Home" className="inline-block">
+              <Image
+                src="/wlogo.png"
+                alt="Virtual Captains"
+                width={220}
+                height={44}
+                className="h-9 sm:h-10 w-auto object-contain"
+              />
+            </Link>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-300/80">
+              Execution-backed sales training. SalesX is where every seller rehearses
+              the conversation before it counts.
+            </p>
+          </div>
+
+          {FOOTER_COLUMNS.map((col) => (
+            <nav
+              key={col.title}
+              aria-label={col.title}
+              className="lg:col-span-2 last:col-span-2 sm:last:col-span-1 lg:last:col-span-3"
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+                {col.title}
+              </p>
+              <ul className="mt-4 space-y-3">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="text-sm sm:text-[15px] text-slate-300 transition-colors duration-200 hover:text-white"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+
+        {/* ── 5. BOTTOM BAR ── */}
         <div
           ref={copyrightRef}
-          className="mt-16 sm:mt-24 pt-8 border-t border-blue-900/30 flex flex-col md:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-300/80 font-sans will-change-transform text-center md:text-left"
+          className="mt-12 sm:mt-16 flex flex-col-reverse items-center gap-4 border-t border-white/10 pt-6 text-xs sm:text-sm text-slate-400 sm:flex-row sm:justify-between will-change-transform"
         >
-          {/* Left: Legal Links */}
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1">
-            <Link
-              href="/privacy"
-              className="underline hover:text-white transition-colors"
-            >
-              • Privacy Policy
-            </Link>
-            <Link
-              href="/terms"
-              className="underline hover:text-white transition-colors"
-            >
-              • Terms &amp; Conditions
-            </Link>
-            <Link
-              href="/refund"
-              className="underline hover:text-white transition-colors"
-            >
-              • Refund Policy
-            </Link>
-            <Link
-              href="/refund#disclaimer"
-              className="underline hover:text-white transition-colors"
-            >
-              • Disclaimer
-            </Link>
-          </div>
-
-          {/* Center: © All Right Reserved by Virtual Captain 2026y */}
-          <div className="text-slate-300">
-            © All Right Reserved by Virtual Captain 2026y
-          </div>
-
-          {/* Right: • Built By Way WeDesign + back to top */}
-          <div className="flex flex-col items-center gap-4 md:flex-row">
+          <p className="text-center sm:text-left">
+            © {new Date().getFullYear()} Virtual Captains. All Rights Reserved.
+          </p>
+          <div className="flex items-center gap-4">
             <a
               href="https://waywedesign.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-white transition-colors"
+              className="transition-colors hover:text-white"
             >
-              • Built By Way WeDesign
+              Built By Way WeDesign
             </a>
             <BackToTop />
           </div>

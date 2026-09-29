@@ -15,7 +15,8 @@ interface PartnerItem {
   logoSrc: string;
   filterClass?: string;
   imgClass?: string;
-  // Symmetrical pixel offsets relative to exact center (0, 0)
+  // Horizontal offset from centre as a % of the stage width (so the side
+  // cards always stay inside it), vertical offset in px (scaled with the stage)
   offsetX: number;
   offsetY: number;
 }
@@ -28,8 +29,8 @@ const partners: PartnerItem[] = [
     name: "AHAD",
     logoSrc: "/partners/AHAD.png",
     filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-8 sm:h-10 w-auto max-w-[145px] sm:max-w-[170px]",
-    offsetX: -390,
+    imgClass: "h-8 xl:h-10 w-auto max-w-[130px] xl:max-w-[170px]",
+    offsetX: -34,
     offsetY: -165,
   },
   {
@@ -37,7 +38,7 @@ const partners: PartnerItem[] = [
     name: "JSR",
     logoSrc: "/partners/JSR.png",
     filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[170px] py-2",
+    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-2",
     offsetX: 0,
     offsetY: -195,
   },
@@ -46,8 +47,8 @@ const partners: PartnerItem[] = [
     name: "Skylark",
     logoSrc: "/partners/SKYLARK.png",
     filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[170px] py-2",
-    offsetX: 390,
+    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-2",
+    offsetX: 34,
     offsetY: -165,
   },
 
@@ -57,8 +58,8 @@ const partners: PartnerItem[] = [
     name: "MoonHive",
     logoSrc: "/partners/MOONHIV.png",
     filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[170px] py-2",
-    offsetX: -270,
+    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-2",
+    offsetX: -22,
     offsetY: 175,
   },
   {
@@ -66,8 +67,8 @@ const partners: PartnerItem[] = [
     name: "Unifirm",
     logoSrc: "/partners/UNIFIRM.png",
     filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-8 sm:h-14 w-auto max-w-[145px] sm:max-w-[180px] py-2",
-    offsetX: 270,
+    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[180px] py-2",
+    offsetX: 22,
     offsetY: 175,
   },
 ];
@@ -145,7 +146,8 @@ export default function SalesXPartnerCloud() {
     desktopCards.forEach((card, idx) => {
       const p = partners[idx];
       // Offset originating from near center behind the title
-      const startX = -p.offsetX * 0.8;
+      const stageW = stageRef.current?.offsetWidth ?? 1024;
+      const startX = -((p.offsetX / 100) * stageW) * 0.8;
       const startY = -p.offsetY * 0.8;
 
       gsap.set(card, {
@@ -270,7 +272,6 @@ export default function SalesXPartnerCloud() {
           {/* 12 Floating Partner Cards (Bilateral & Vertical Reflection Symmetry) */}
           <div className="absolute inset-0 pointer-events-none">
             {partners.map((p, idx) => {
-              const xPos = p.offsetX * stageScale;
               const yPos = p.offsetY * stageScale;
 
               return (
@@ -281,12 +282,12 @@ export default function SalesXPartnerCloud() {
                   }}
                   className="absolute pointer-events-auto cursor-pointer group will-change-transform"
                   style={{
-                    left: `calc(50% + ${xPos}px)`,
+                    left: `${50 + p.offsetX}%`,
                     top: `calc(50% + ${yPos}px)`,
                     transform: "translate(-50%, -50%)",
                   }}
                 >
-                  <div className="relative w-48 sm:w-56 h-15 sm:h-17 px-5 sm:px-6 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/25 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-108 hover:-translate-y-1 overflow-hidden">
+                  <div className="relative w-44 xl:w-56 h-14 xl:h-17 px-4 xl:px-6 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/25 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-108 hover:-translate-y-1 overflow-hidden">
                     {/* Ambient subtle backlight behind logo */}
                     <div className="absolute inset-0 bg-radial from-sky-400/15 via-transparent to-transparent opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500 pointer-events-none" />
 
