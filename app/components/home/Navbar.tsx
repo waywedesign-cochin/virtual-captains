@@ -55,9 +55,10 @@ export const NAV_ITEMS: NavItem[] = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const isLightPage = Boolean(
-    pathname?.startsWith("/blog") || pathname?.startsWith("/blogs")
-  );
+  // No page currently uses the light navbar: the blog listing and articles
+  // were moved to the dark home theme. The light styles are kept below in
+  // case a light page is added again — flip this for that route.
+  const isLightPage = false;
   const [isSticky, setIsSticky] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -66,19 +67,75 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileResourcesOpen, setIsMobileResourcesOpen] = useState(true);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // A dropdown opened by click/tap is "pinned": hover-leave won't close it,
+  // only a second click, an outside click or Escape does.
+  const pinnedDropdownRef = useRef<string | null>(null);
+  const dropdownRootRef = useRef<HTMLDivElement | null>(null);
 
-  const handleDropdownEnter = (label: string) => {
+  const clearCloseTimer = () => {
     if (dropdownTimeoutRef.current) {
       clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
     }
+  };
+
+  const closeDropdown = () => {
+    clearCloseTimer();
+    pinnedDropdownRef.current = null;
+    setActiveDropdown(null);
+  };
+
+  // Hover only for real mouse pointers — on touch, pointerenter + click used
+  // to open and then immediately toggle the menu shut.
+  const handleDropdownEnter = (label: string, e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    clearCloseTimer();
     setActiveDropdown(label);
   };
 
-  const handleDropdownLeave = () => {
+  const handleDropdownLeave = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse" || pinnedDropdownRef.current) return;
+    // Always reset: stacked timers used to close a menu you had re-entered
+    clearCloseTimer();
     dropdownTimeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
     }, 220);
   };
+
+  // Click / tap / Enter: open (or keep open if hover already opened it and
+  // pin it); a click on an already-pinned menu closes it.
+  const handleDropdownClick = (label: string) => {
+    clearCloseTimer();
+    if (activeDropdown === label && pinnedDropdownRef.current === label) {
+      closeDropdown();
+      return;
+    }
+    pinnedDropdownRef.current = label;
+    setActiveDropdown(label);
+  };
+
+  // Outside click / tap and Escape close the open dropdown
+  useEffect(() => {
+    if (!activeDropdown) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (dropdownRootRef.current && !dropdownRootRef.current.contains(e.target as Node)) {
+        closeDropdown();
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      const trigger = dropdownRootRef.current?.querySelector<HTMLButtonElement>("button[aria-haspopup]");
+      closeDropdown();
+      trigger?.focus();
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeDropdown]);
 
   useEffect(() => {
     setActiveDropdown(null);
@@ -223,14 +280,17 @@ export default function Navbar() {
                     return (
                       <div
                         key={item.label}
+                        ref={dropdownRootRef}
                         className="relative py-1 select-none"
-                        onMouseEnter={() => handleDropdownEnter(item.label)}
-                        onMouseLeave={handleDropdownLeave}
+                        onPointerEnter={(e) => handleDropdownEnter(item.label, e)}
+                        onPointerLeave={handleDropdownLeave}
                       >
                         {/* Interactive Trigger Capsule with smooth hover glow */}
                         <button
                           type="button"
-                          onClick={() => setActiveDropdown(isOpen ? null : item.label)}
+                          onClick={() => handleDropdownClick(item.label)}
+                          aria-haspopup="true"
+                          aria-controls={`nav-dropdown-${item.label}`}
                           className={`group/trigger flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                             isOpen
                               ? isLightPage
@@ -264,9 +324,8 @@ export default function Navbar() {
                         {/* Minimalist Ultra-Luxury Dropdown Menu Card */}
                         {isOpen && (
                           <div
+                            id={`nav-dropdown-${item.label}`}
                             className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 z-50 animate-in fade-in zoom-in-95 duration-200"
-                            onMouseEnter={() => handleDropdownEnter(item.label)}
-                            onMouseLeave={handleDropdownLeave}
                           >
                             {/* Invisible hover bridge to prevent premature closing */}
                             <div className="absolute -top-3 inset-x-0 h-3 pointer-events-auto" />
@@ -293,7 +352,7 @@ export default function Navbar() {
                                       key={child.label}
                                       href={child.href}
                                       onClick={() => {
-                                        setActiveDropdown(null);
+                                        closeDropdown();
                                         setIsMobileMenuOpen(false);
                                       }}
                                       className={`group/child relative flex items-start gap-3 p-2.5 sm:p-3 rounded-xl transition-all duration-200 border ${
@@ -433,19 +492,22 @@ export default function Navbar() {
                     return (
                       <div
                         key={item.label}
+                        ref={dropdownRootRef}
                         className="relative h-8 min-w-6 sm:min-w-7 flex items-center justify-center select-none"
-                        onMouseEnter={() => {
+                        onPointerEnter={(e) => {
                           setHoveredIndex(index);
-                          handleDropdownEnter(item.label);
+                          handleDropdownEnter(item.label, e);
                         }}
-                        onMouseLeave={() => {
+                        onPointerLeave={(e) => {
                           setHoveredIndex(null);
-                          handleDropdownLeave();
+                          handleDropdownLeave(e);
                         }}
                       >
                         <button
                           type="button"
-                          onClick={() => setActiveDropdown(isOpen ? null : item.label)}
+                          onClick={() => handleDropdownClick(item.label)}
+                          aria-haspopup="true"
+                          aria-controls={`nav-dropdown-sticky-${item.label}`}
                           className="h-full w-full flex items-center justify-center cursor-pointer group"
                           aria-expanded={isOpen}
                           aria-label={`${item.label} menu`}
@@ -486,9 +548,8 @@ export default function Navbar() {
                         {/* Sticky State Dropdown Menu Card */}
                         {isOpen && (
                           <div
+                            id={`nav-dropdown-sticky-${item.label}`}
                             className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-50 animate-in fade-in zoom-in-95 duration-200"
-                            onMouseEnter={() => handleDropdownEnter(item.label)}
-                            onMouseLeave={handleDropdownLeave}
                           >
                             {/* Hover bridge to prevent closing while moving mouse down */}
                             <div className="absolute -top-3 inset-x-0 h-3 pointer-events-auto" />
@@ -520,7 +581,7 @@ export default function Navbar() {
                                       key={child.label}
                                       href={child.href}
                                       onClick={() => {
-                                        setActiveDropdown(null);
+                                        closeDropdown();
                                         setIsMobileMenuOpen(false);
                                       }}
                                       className={`group/child relative flex items-start gap-3 p-2.5 rounded-xl transition-all duration-200 border ${
