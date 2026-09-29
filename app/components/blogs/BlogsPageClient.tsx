@@ -31,7 +31,7 @@ export function BlogsPageClient({ posts, categories }: BlogsPageClientProps) {
       {/* Home-page atmosphere: diagonal blue glow from the top-left + dot grid */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[900px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-225"
         style={{
           background:
             "radial-gradient(120% 70% at -5% -10%, #3f74e6 0%, #1c4fc0 12%, #0c318f 26%, #051d5c 42%, #050b24 60%, #040507 78%)",

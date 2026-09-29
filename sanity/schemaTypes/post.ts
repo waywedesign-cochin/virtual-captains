@@ -19,18 +19,11 @@ export const post = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "excerpt",
-      title: "Excerpt",
+      name: "summary",
+      title: "Summary",
       type: "text",
       rows: 3,
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "detailTitle",
-      title: "Detail Page Title",
-      type: "string",
-      description:
-        "Heading shown on the article page. Falls back to Title if empty.",
+      validation: (Rule) => Rule.required().max(240),
     }),
     defineField({
       name: "category",
@@ -121,13 +114,6 @@ export const post = defineType({
             Rule.max(160).warning(
               "Meta description should be under 160 characters",
             ),
-        }),
-        defineField({
-          name: "canonicalUrl",
-          title: "Canonical URL",
-          type: "url",
-          description:
-            "Leave blank to use the default page URL. Set this if the content is duplicated elsewhere.",
         }),
       ],
     }),

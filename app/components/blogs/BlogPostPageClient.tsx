@@ -38,7 +38,7 @@ export function BlogPostPageClient({
       {/* Home-page atmosphere: diagonal blue glow + dot grid */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[800px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-200"
         style={{
           background:
             "radial-gradient(110% 60% at -5% -10%, #3f74e6 0%, #1c4fc0 12%, #0c318f 26%, #051d5c 42%, #050b24 60%, #040507 78%)",

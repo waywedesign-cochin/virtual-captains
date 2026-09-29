@@ -1,17 +1,38 @@
 import type { StructureResolver } from "sanity/structure";
 
-// https://www.sanity.io/docs/structure-builder-cheat-sheet
+const groupedTypes = ["post", "category", "author", "newsPost", "newsCategory"];
+
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title("Blog")
+    .title("Content")
     .items([
-      S.documentTypeListItem("post").title("Posts"),
-      S.documentTypeListItem("category").title("Categories"),
-      S.documentTypeListItem("author").title("Authors"),
+      S.listItem()
+        .title("Blogs")
+        .child(
+          S.list()
+            .title("Blogs")
+            .items([
+              S.documentTypeListItem("post").title("Posts"),
+              S.documentTypeListItem("category").title("Categories"),
+              S.documentTypeListItem("author").title("Authors"),
+            ]),
+        ),
+
+      S.listItem()
+        .title("News")
+        .child(
+          S.list()
+            .title("News")
+            .items([
+              S.documentTypeListItem("newsPost").title("News Posts"),
+              S.documentTypeListItem("newsCategory").title("News Categories"),
+            ]),
+        ),
+
       S.divider(),
+
+      // Everything else
       ...S.documentTypeListItems().filter(
-        (item) =>
-          item.getId() &&
-          !["post", "category", "author"].includes(item.getId()!),
+        (item) => item.getId() && !groupedTypes.includes(item.getId()!),
       ),
     ]);
