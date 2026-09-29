@@ -35,7 +35,7 @@ export const BlogVisual: React.FC<BlogVisualProps> = ({
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-grid-subtle opacity-60" />
 
-      {/* Domain-specific vector artworks matching Orionix design agency standards */}
+      {/* Domain-specific vector artworks for each blog topic */}
       {type === 'wireframe' && (
         <svg
           className="absolute inset-0 w-full h-full p-6 sm:p-10"

@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import gsap from "gsap";
+import BackToTop from "../common/BackToTop";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 if (typeof window !== "undefined") {
@@ -452,8 +453,8 @@ export default function SalesXFooter() {
             © All Right Reserved by Virtual Captain 2026y
           </div>
 
-          {/* Right: • Built By Way WeDesign */}
-          <div>
+          {/* Right: • Built By Way WeDesign + back to top */}
+          <div className="flex flex-col items-center gap-4 md:flex-row">
             <a
               href="https://waywedesign.com"
               target="_blank"
@@ -462,6 +463,7 @@ export default function SalesXFooter() {
             >
               • Built By Way WeDesign
             </a>
+            <BackToTop />
           </div>
         </div>
       </div>

@@ -555,7 +555,7 @@ export default function IndividualsOrgFooter() {
                 {new Date().getFullYear()}
               </p>
               <p className="order-3">
-                Built by <span className="text-white/85">Web WeDesign</span>
+                Built by <span className="text-white/85">Way WeDesign</span>
               </p>
             </div>
           </div>
