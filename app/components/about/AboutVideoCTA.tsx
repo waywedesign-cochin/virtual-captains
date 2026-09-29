@@ -133,7 +133,7 @@ export default function AboutVideoCTA({
               ref={ctaOuterRef}
               className="lg:col-span-5 w-full flex flex-col items-center gap-4 sm:gap-5 lg:items-start lg:pl-6 xl:pl-10"
             >
-              <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/50">
+              <p className="font-sans text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/50">
                 Where do you fit?
               </p>
               {[

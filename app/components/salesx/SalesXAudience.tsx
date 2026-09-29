@@ -1,555 +1,462 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface AudienceItem {
-  id: number;
+interface Feature {
   title: string;
-  subtitle: string;
+  subtitle?: string;
+}
+
+interface Track {
+  word: string;
+  eyebrow: string;
+  headline: string[];
+  intro: string;
+  features: Feature[];
+  ctas: [{ label: string; href: string }, { label: string; href: string }];
+}
+
+const TRACKS: Track[] = [
+  {
+    word: "Individuals",
+    eyebrow: "For Individuals",
+    headline: ["Prepare Yourself", "for the Deal,", "Not Just the Interview."],
+    intro:
+      "Enroll in an execution-backed sales training program built to transition students, freshers, and professionals into top-performing sellers.",
+    features: [
+      { title: "ISM Certified Sales Professional™", subtitle: "Globally recognised credential" },
+      { title: "SalesX by Virtual Captains", subtitle: "Execution-backed sales training platform" },
+      { title: "Career Placement Support", subtitle: "Direct access to Virtual Captains' hiring network" },
+      { title: "Live CRM & Sales-Call Simulations" },
+      { title: "Real Sales-Call Practice, Evaluated by Practitioners" },
+      { title: "VC Certified Badge (LinkedIn-ready)" },
+      { title: "Placement Assistance for Top Performers" },
+    ],
+    ctas: [
+      { label: "View Course Details", href: "/individuals" },
+      { label: "Book Free Counselling", href: "/contact" },
+    ],
+  },
+  {
+    word: "Organisations",
+    eyebrow: "For Organisations",
+    headline: ["Hire Proven Sellers,", "Not Potential."],
+    intro:
+      "Hire revenue-ready sellers who hit targets from day one, or scale your existing sales team with our high-intensity simulation training.",
+    features: [
+      { title: "Hire VC Certified Grads", subtitle: "Skip the ramp-up, start closing faster" },
+      { title: "Custom Corporate Training", subtitle: "Tailored execution programmes for your sales team" },
+      { title: "Sales Team Transformation", subtitle: "Backed by Virtual Captains' execution expertise" },
+      { title: "Pre-Vetted, Certified Candidates" },
+      { title: "Ongoing Performance Coaching" },
+      { title: "Access to Virtual Captains' Hiring Network" },
+    ],
+    ctas: [
+      { label: "Consult With Us", href: "/organisations" },
+      { label: "Request a Demo", href: "/contact" },
+    ],
+  },
+];
+
+const WORD_GRADIENT =
+  "linear-gradient(90deg, #ff6b35 0%, #ff477e 25%, #a855f7 50%, #38bdf8 75%, #60a5fa 100%)";
+
+// Scroll map of the pinned sequence (0 → 1). Individuals plays completely,
+// hands over, then Organisations plays completely.
+const P = {
+  auraEnd: 0.06,
+  unfoldEnd: 0.12,
+  rollA: [0.12, 0.46] as const,
+  outA: [0.48, 0.56] as const,
+  inB: [0.54, 0.64] as const,
+  rollB: [0.64, 0.94] as const,
+};
+
+function Arrow() {
+  return (
+    <svg className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function Ctas({ track, className = "" }: { track: Track; className?: string }) {
+  const [outline, primary] = track.ctas;
+  return (
+    <div className={`flex flex-col gap-2.5 xl:gap-3 w-full max-w-sm ${className}`}>
+      <Link
+        href={outline.href}
+        className="group w-full min-h-10 xl:min-h-11 flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/5 hover:bg-white/10 hover:border-white/50 px-5 xl:px-6 py-2 xl:py-3 text-xs xl:text-sm font-semibold text-white/90 hover:text-white transition-all duration-300 backdrop-blur-md"
+      >
+        <span>{outline.label}</span>
+        <Arrow />
+      </Link>
+      <Link
+        href={primary.href}
+        className="group w-full min-h-10 xl:min-h-11 flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-700 via-blue-600 to-indigo-600 hover:from-blue-600 hover:to-indigo-500 border border-blue-400/40 px-5 xl:px-6 py-2 xl:py-3 text-xs xl:text-sm font-semibold text-white shadow-[0_0_25px_rgba(30,58,138,0.5)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45)] transition-all duration-300"
+      >
+        <span>{primary.label}</span>
+        <Arrow />
+      </Link>
+    </div>
+  );
+}
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 mb-3 text-[10px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-sky-400/80">
+      <span className="w-4 h-px bg-sky-400/60" />
+      {children}
+      <span className="w-4 h-px bg-sky-400/60" />
+    </span>
+  );
 }
 
 export default function SalesXAudience() {
-  const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
-
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const centerAuraRef = useRef<HTMLDivElement>(null);
-  const centerTitleRef = useRef<HTMLDivElement>(null);
-  const leftColRef = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
-  const wheelWindowRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const auraRef = useRef<HTMLDivElement>(null);
+  const titleOuterRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const titleInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const leftRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const wheelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[][]>([[], []]);
+  const pillRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const flowRef = useRef<HTMLDivElement>(null);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
-  const items: AudienceItem[] = [
-    {
-      id: 0,
-      title: "ISM Certified Sales Professional™",
-      subtitle: "Globally recognised credential",
-    },
-    {
-      id: 1,
-      title: "SalesX by Virtual Captains",
-      subtitle: "Execution-backed sales training platform",
-    },
-    {
-      id: 2,
-      title: "Career Placement Support",
-      subtitle: "Direct access to Virtual Captains' hiring network",
-    },
-    {
-      id: 3,
-      title: "Live CRM & Sales-Call Simulations",
-      subtitle: "Practice live enterprise objection handling & CRM navigation",
-    },
-    {
-      id: 4,
-      title: "Real Sales-Call Practice, Evaluated by Practitioners",
-      subtitle: "Objective feedback from seasoned revenue leaders",
-    },
-    {
-      id: 5,
-      title: "VC Certified Badge (LinkedIn-ready)",
-      subtitle: "Verifiable competency & closing skill accreditation",
-    },
-    {
-      id: 6,
-      title: "Placement Assistance for Top Performers",
-      subtitle: "Priority fast-track recruitment opportunities",
-    },
-  ];
-
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const mm = gsap.matchMedia();
 
-    if (
-      prefersReducedMotion ||
-      !sectionRef.current ||
-      !stageRef.current ||
-      !centerTitleRef.current ||
-      !leftColRef.current ||
-      !rightColRef.current ||
-      !wheelWindowRef.current
-    )
-      return;
+    mm.add(
+      {
+        pin: "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+        flow: "(max-width: 1023px)",
+        reduce: "(prefers-reduced-motion: reduce)",
+      },
+      (context) => {
+        const { pin, reduce } = context.conditions ?? {};
+        if (reduce) return;
 
-    const ctx = gsap.context(() => {
-      const cardEls = cardRefs.current.filter(Boolean) as HTMLDivElement[];
-      if (cardEls.length < items.length) return;
-
-      const isMobile = window.innerWidth < 1024;
-      // Cylinder geometry radius: 155px on mobile, 195px on desktop
-      const cylinderRadius = isMobile ? 150 : 195;
-      const stepAngleDeg = isMobile ? 27 : 24;
-
-      // 1. Initial entrance states for center title: Signature jumping zoom-in spring reveal
-      gsap.set(centerTitleRef.current, {
-        opacity: 0,
-        scale: 0.65,
-        y: 20,
-        transformOrigin: "center center",
-        force3D: true,
-      });
-
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top 75%",
-        once: true,
-        onEnter: () => {
-          gsap.to(centerTitleRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.85,
-            ease: "none",
-            force3D: true,
-            keyframes: [
-              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
+        // ── Phones, tablets: natural flow, each block reveals ──
+        if (!pin) {
+          const flow = flowRef.current;
+          if (!flow) return;
+          flow.querySelectorAll<HTMLElement>("[data-sx-reveal]").forEach((el) => {
+            gsap.set(el, { ...HEADING_REVEAL_FROM });
+            gsap.to(el, {
+              scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" },
+              ...HEADING_REVEAL,
+            });
           });
-        },
-      });
-
-      if (centerAuraRef.current)
-        gsap.set(centerAuraRef.current, { opacity: 0, scale: 0.6 });
-      gsap.set(leftColRef.current, {
-        opacity: 0,
-        x: -45,
-        pointerEvents: "none",
-      });
-      gsap.set(rightColRef.current, {
-        opacity: 0,
-        x: 45,
-        pointerEvents: "none",
-      });
-
-      // CRITICAL: Set xPercent/yPercent ONCE per card so GSAP never recalculates
-      // layout-affecting properties on every frame — this eliminates the jitter.
-      gsap.set(cardEls, {
-        xPercent: -50,
-        yPercent: -50,
-        force3D: true,
-        backfaceVisibility: "hidden",
-        WebkitBackfaceVisibility: "hidden",
-      });
-
-      /**
-       * Front-view 3D Cylindrical Wheel Math:
-       * Places every card along the vertical frontal circumference of a cylinder.
-       * - Center card (float diff = 0): Y=0, Z=0, rotateX=0, scale=1.03, opacity=1.0 (Highlighted!)
-       * - Cards above (diff < 0): Y < 0, Z < 0, rotateX < 0 (tilts backward into background), opacity falls off
-       * - Cards below (diff > 0): Y > 0, Z < 0, rotateX > 0 (tilts forward into background), opacity falls off
-       */
-      const renderCylinderWheel = (currentFloat: number) => {
-        cardEls.forEach((card, i) => {
-          const delta = i - currentFloat;
-          const thetaDeg = delta * stepAngleDeg;
-          const thetaRad = (thetaDeg * Math.PI) / 180;
-          const absDelta = Math.abs(delta);
-
-          // Front-facing cylindrical wheel coordinates
-          // Round y to nearest 0.5px to prevent sub-pixel jitter without visible stutter
-          const yRaw = cylinderRadius * Math.sin(thetaRad);
-          const y = Math.round(yRaw * 2) / 2;
-          // Pin Z to integer pixels to avoid sub-pixel compositor oscillation
-          const z = Math.round(cylinderRadius * (Math.cos(thetaRad) - 1));
-          const rotateX = -thetaDeg;
-
-          // Graduated order of opacity: Center is 1.0, cards above & below fade out with depth
-          const opacity =
-            Math.abs(thetaDeg) > 85
-              ? 0
-              : Math.max(0.06, Math.pow(Math.cos(thetaRad), 3.2));
-
-          const scale = Math.max(0.85, 1.025 - Math.min(absDelta, 2.5) * 0.055);
-          const isCenter = absDelta < 0.45;
-
-          // Only mutate GPU-compositable properties per frame.
-          // xPercent/yPercent are set once above and NEVER touched again here.
-          gsap.set(card, {
-            y,
-            z,
-            rotateX,
-            scale,
-            opacity,
-            force3D: true,
-            zIndex: isCenter ? 25 : Math.max(1, 15 - Math.round(absDelta)),
-            visibility: opacity > 0.02 ? "visible" : "hidden",
+          flow.querySelectorAll<HTMLElement>("[data-sx-list]").forEach((list) => {
+            gsap.from(list.children, {
+              opacity: 0,
+              y: 20,
+              duration: 0.6,
+              stagger: 0.06,
+              ease: "power2.out",
+              scrollTrigger: { trigger: list, start: "top 85%", toggleActions: "play none none reverse" },
+            });
           });
+          return;
+        }
 
-          // Center Highlight: Active card in the middle slot gets pure liquid glass styling
-          if (isCenter) {
-            card.style.border = "1px solid rgba(56, 189, 248, 0.55)";
-            card.style.borderTop = "1px solid rgba(255, 255, 255, 0.5)";
-            card.style.boxShadow =
-              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 1px 0 rgba(56, 189, 248, 0.15)";
-            card.style.background =
-              "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(14, 25, 65, 0.5) 40%, rgba(10, 18, 48, 0.65) 100%)";
-            card.style.backdropFilter = "blur(24px) saturate(180%)";
-            (
-              card.style as unknown as Record<string, string>
-            ).webkitBackdropFilter = "blur(24px) saturate(180%)";
-            const titleEl = card.querySelector(
-              ".card-title",
-            ) as HTMLElement | null;
-            if (titleEl) titleEl.style.color = "#38bdf8";
-            const subEl = card.querySelector(
-              ".card-subtitle",
-            ) as HTMLElement | null;
-            if (subEl) subEl.style.color = "#e2e8f0";
-          } else {
-            card.style.border = "1px solid rgba(255, 255, 255, 0.08)";
-            card.style.borderTop = "1px solid rgba(255, 255, 255, 0.14)";
-            card.style.boxShadow =
-              "inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.1)";
-            card.style.background =
-              "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(7, 12, 32, 0.4) 50%, rgba(7, 11, 30, 0.55) 100%)";
-            card.style.backdropFilter = "blur(16px) saturate(150%)";
-            (
-              card.style as unknown as Record<string, string>
-            ).webkitBackdropFilter = "blur(16px) saturate(150%)";
-            const titleEl = card.querySelector(
-              ".card-title",
-            ) as HTMLElement | null;
-            if (titleEl) titleEl.style.color = "#94a3b8";
-            const subEl = card.querySelector(
-              ".card-subtitle",
-            ) as HTMLElement | null;
-            if (subEl) subEl.style.color = "#475569";
-          }
+        // ── Desktop: one pinned sequence, Individuals → Organisations ──
+        const outers = titleOuterRefs.current as HTMLDivElement[];
+        const inners = titleInnerRefs.current as HTMLDivElement[];
+        const lefts = leftRefs.current as HTMLDivElement[];
+        const wheels = wheelRefs.current as HTMLDivElement[];
+        const cards = cardRefs.current.map((set) => set.filter(Boolean) as HTMLDivElement[]);
+        const pills = pillRefs.current as HTMLSpanElement[];
+        if (!sectionRef.current || !stageRef.current || outers.length < 2 || inners.length < 2) return;
+
+        const radius = 195;
+        const stepDeg = 24;
+        const expo = gsap.parseEase("expo.out");
+        const seg = (p: number, [a, b]: readonly [number, number]) => gsap.utils.clamp(0, 1, (p - a) / (b - a));
+
+        // Heading entrance for "Individuals" (inner wrapper — the scrubbed
+        // hand-over below only ever touches the outer wrapper).
+        gsap.set(inners[0], { ...HEADING_REVEAL_FROM, transformOrigin: "center center" });
+        ScrollTrigger.create({
+          trigger: sectionRef.current,
+          start: "top 75%",
+          once: true,
+          onEnter: () => gsap.to(inners[0], { ...HEADING_REVEAL }),
         });
-      };
+        gsap.set(inners[1], { ...HEADING_REVEAL_FROM, transformOrigin: "center center" });
 
-      // Set initial wheel state centered on Card 0
-      renderCylinderWheel(0);
+        cards.forEach((set) =>
+          gsap.set(set, { xPercent: -50, yPercent: -50, force3D: true, backfaceVisibility: "hidden" }),
+        );
 
-      // 2. Master pinned presentation ScrollTrigger
-      const tl = gsap.timeline({
-        scrollTrigger: {
+        const renderWheel = (set: HTMLDivElement[], current: number) => {
+          set.forEach((card, i) => {
+            const delta = i - current;
+            const thetaDeg = delta * stepDeg;
+            const theta = (thetaDeg * Math.PI) / 180;
+            const abs = Math.abs(delta);
+            const opacity = Math.abs(thetaDeg) > 85 ? 0 : Math.max(0.06, Math.pow(Math.cos(theta), 3.2));
+            const isCenter = abs < 0.45;
+            gsap.set(card, {
+              y: Math.round(radius * Math.sin(theta) * 2) / 2,
+              z: Math.round(radius * (Math.cos(theta) - 1)),
+              rotateX: -thetaDeg,
+              scale: Math.max(0.85, 1.025 - Math.min(abs, 2.5) * 0.055),
+              opacity,
+              zIndex: isCenter ? 25 : Math.max(1, 15 - Math.round(abs)),
+              visibility: opacity > 0.02 ? "visible" : "hidden",
+            });
+            card.dataset.center = isCenter ? "true" : "false";
+          });
+        };
+
+        const show = (el: HTMLElement, o: number, x: number) =>
+          gsap.set(el, { opacity: o, x, visibility: o > 0.01 ? "visible" : "hidden", pointerEvents: o > 0.6 ? "auto" : "none" });
+
+        const update = (p: number) => {
+          const aura = gsap.utils.clamp(0, 1, p / P.auraEnd);
+          if (auraRef.current) gsap.set(auraRef.current, { opacity: aura, scale: 0.6 + aura * 0.4 });
+
+          const unfold = gsap.utils.clamp(0, 1, (p - P.auraEnd) / (P.unfoldEnd - P.auraEnd));
+          const out = seg(p, P.outA);
+          const inn = expo(seg(p, P.inB));
+
+          // Individuals: unfold, roll, then step back
+          gsap.set(outers[0], { opacity: 1 - out, scale: 1 - 0.08 * out, y: -24 * out });
+          show(lefts[0], unfold * (1 - out), -45 * (1 - unfold) - 30 * out);
+          show(wheels[0], unfold * (1 - out), 45 * (1 - unfold) + 30 * out);
+          renderWheel(cards[0], seg(p, P.rollA) * (cards[0].length - 1));
+
+          // Organisations: heading reveal (scrubbed, same values), then roll
+          gsap.set(inners[1], {
+            opacity: inn,
+            scale: HEADING_REVEAL_FROM.scale + (1 - HEADING_REVEAL_FROM.scale) * inn,
+            y: HEADING_REVEAL_FROM.y * (1 - inn),
+          });
+          show(lefts[1], inn, -45 * (1 - inn));
+          show(wheels[1], inn, 45 * (1 - inn));
+          renderWheel(cards[1], seg(p, P.rollB) * (cards[1].length - 1));
+
+          const onB = p >= (P.outA[0] + P.inB[1]) / 2;
+          pills.forEach((pill, i) => (pill.dataset.active = String(i === (onB ? 1 : 0))));
+        };
+
+        update(0);
+
+        const st = ScrollTrigger.create({
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=2200",
+          end: "+=4200",
           pin: stageRef.current,
           scrub: 0.8,
           anticipatePin: 1,
-          onEnter: () => {
-            gsap.killTweensOf(centerTitleRef.current);
-            gsap.set(centerTitleRef.current, { opacity: 1, scale: 1, y: 0 });
-          },
-          onUpdate: (self) => {
-            const p = self.progress;
+          invalidateOnRefresh: true,
+          onUpdate: (self) => update(self.progress),
+        });
+        scrollTriggerRef.current = st;
 
-            // Phase 1: Center Blue Gradient (0.00 -> 0.12) - Center title is stable and revealed
-            if (p < 0.12) {
-              const ratio = p / 0.12;
-              gsap.set(centerTitleRef.current, { opacity: 1, scale: 1, y: 0 });
-              if (centerAuraRef.current) {
-                gsap.set(centerAuraRef.current, {
-                  opacity: ratio,
-                  scale: 0.6 + ratio * 0.4,
-                });
-              }
-              gsap.set(leftColRef.current, {
-                opacity: 0,
-                x: -45,
-                pointerEvents: "none",
-              });
-              gsap.set(rightColRef.current, {
-                opacity: 0,
-                x: 45,
-                pointerEvents: "none",
-              });
-            }
-            // Phase 2: Left & Right columns unfold into 3-column layout (0.12 -> 0.22)
-            else if (p < 0.22) {
-              const ratio = (p - 0.12) / 0.1;
-              gsap.set(centerTitleRef.current, { opacity: 1, scale: 1, y: 0 });
-              if (centerAuraRef.current)
-                gsap.set(centerAuraRef.current, { opacity: 1, scale: 1 });
+        return () => {
+          scrollTriggerRef.current = null;
+        };
+      },
+    );
 
-              gsap.set(leftColRef.current, {
-                opacity: ratio,
-                x: -45 * (1 - ratio),
-                pointerEvents: ratio > 0.5 ? "auto" : "none",
-              });
-              gsap.set(rightColRef.current, {
-                opacity: ratio,
-                x: 45 * (1 - ratio),
-                pointerEvents: ratio > 0.5 ? "auto" : "none",
-              });
+    return () => mm.revert();
+  }, []);
 
-              // Keep card 0 in center
-              renderCylinderWheel(0);
-              setActiveCardIndex(0);
-            }
-            // Phase 3: 3D Cylindrical Wheel Roll (0.22 -> 0.88)
-            // As user scrolls, the wheel rotates forward: the next card below replaces the middle card!
-            else {
-              gsap.set(centerTitleRef.current, { opacity: 1, scale: 1 });
-              if (centerAuraRef.current)
-                gsap.set(centerAuraRef.current, { opacity: 1, scale: 1 });
-              gsap.set(leftColRef.current, {
-                opacity: 1,
-                x: 0,
-                pointerEvents: "auto",
-              });
-              gsap.set(rightColRef.current, {
-                opacity: 1,
-                x: 0,
-                pointerEvents: "auto",
-              });
-
-              const rollRatio = gsap.utils.clamp(
-                0,
-                1,
-                (p - 0.22) / (0.88 - 0.22),
-              );
-              const currentFloat = rollRatio * (items.length - 1);
-
-              renderCylinderWheel(currentFloat);
-
-              const roundedIndex = Math.round(currentFloat);
-              setActiveCardIndex(roundedIndex);
-            }
-          },
-        },
-      });
-
-      scrollTriggerRef.current = tl.scrollTrigger || null;
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [items.length]);
-
-  // Clicking any card rotates the wheel directly so that card becomes the highlighted center card
-  const handleCardClick = (index: number) => {
-    if (!scrollTriggerRef.current) {
-      setActiveCardIndex(index);
-      return;
-    }
+  // Clicking a card rolls its wheel so that card becomes the centre one
+  const handleCardClick = (track: number, index: number) => {
     const st = scrollTriggerRef.current;
-    // Map card index to progress position in Phase 3
-    const progressTarget = 0.22 + (index / (items.length - 1)) * (0.88 - 0.22);
-    const targetScroll = st.start + (st.end - st.start) * progressTarget;
-
-    const lenis = (
-      window as unknown as {
-        __lenis?: { scrollTo: (target: number, opts?: object) => void };
-      }
-    ).__lenis;
-    if (lenis) {
-      lenis.scrollTo(targetScroll, { duration: 0.8, lock: false });
-    } else {
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
-    }
+    if (!st) return;
+    const [a, b] = track === 0 ? P.rollA : P.rollB;
+    const n = TRACKS[track].features.length - 1;
+    const target = st.start + (st.end - st.start) * (a + (index / n) * (b - a));
+    const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number, o?: object) => void } }).__lenis;
+    if (lenis) lenis.scrollTo(target, { duration: 0.8, lock: false });
+    else window.scrollTo({ top: target, behavior: "smooth" });
   };
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative bg-[#030612] select-none overflow-hidden"
-    >
-      {/* Pinned Stage: Dynamic viewport fit across all devices */}
+    <section ref={sectionRef} className="relative bg-salesx-bg select-none overflow-hidden" aria-label="Who SalesX is for">
+      {/* ── Pinned stage (desktop & laptop, motion allowed) ── */}
       <div
         ref={stageRef}
-        className="h-dvh min-h-150 w-full flex flex-col items-center justify-center relative overflow-hidden px-4 sm:px-8 lg:px-12 py-6"
+        className="hidden lg:motion-safe:flex h-screen min-h-screen w-full flex-col items-center justify-center relative overflow-hidden px-6 lg:px-8 xl:px-12 py-3 lg:py-4 xl:py-6"
       >
-        {/* Deep Space Background Ambient Glow */}
         <div
-          ref={centerAuraRef}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 sm:w-120 lg:w-162.5 h-75 sm:h-105 bg-radial from-[#1e40af]/30 via-[#312e81]/15 to-transparent blur-[120px] pointer-events-none -z-10 transition-transform duration-300"
+          ref={auraRef}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-162.5 h-105 bg-radial from-[#1e40af]/30 via-[#312e81]/15 to-transparent blur-[120px] pointer-events-none -z-10"
         />
-
-        {/* Subtle Constellation Grid Background */}
+        {/* Constellation grid, faded at the edges so the section has no visible border */}
         <div
           className="absolute inset-0 opacity-15 pointer-events-none -z-10"
           style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(147, 197, 253, 0.35) 1px, transparent 0)",
+            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(147, 197, 253, 0.35) 1px, transparent 0)",
             backgroundSize: "44px 44px",
+            maskImage: "radial-gradient(ellipse at center, black 35%, transparent 75%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, black 35%, transparent 75%)",
           }}
         />
 
-        {/* Main Content Grid matching 3-zone layout */}
-        <div className="w-full max-w-372 mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
-            {/* 1. LEFT COLUMN: Value Proposition & Action Buttons */}
-            <div
-              ref={leftColRef}
-              className="lg:col-span-4 text-center lg:text-left flex flex-col items-center lg:items-start pr-0 lg:pr-6 will-change-transform order-2 lg:order-1"
-            >
-              {/* Eyebrow label */}
-              <span className="inline-flex items-center gap-1.5 mb-3 text-[10px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-sky-400/80 font-sans">
-                <span className="w-4 h-px bg-sky-400/60" />
-                For Individuals
-                <span className="w-4 h-px bg-sky-400/60" />
-              </span>
-
-              <h2 className="text-2xl sm:text-3xl lg:text-[1.75rem] xl:text-[2.2rem] font-extrabold tracking-tight text-white leading-[1.2] font-sans">
-                Prepare Yourself
-                <br />
-                for the Deal,
-                <br />
-                Not Just the Interview
-              </h2>
-
-              <p className="mt-4 sm:mt-5 text-sm sm:text-base text-slate-300 leading-relaxed max-w-104 mx-auto lg:mx-0 font-sans">
-                Enroll in an execution-backed sales training program built to
-                transition students, freshers, and professionals into
-                top-performing sellers.
-              </p>
-
-              <div className="mt-6 sm:mt-8 flex flex-col items-center lg:items-start gap-3 w-full max-w-sm mx-auto lg:mx-0">
-                {/* View Course Details */}
-                <Link
-                  href="/individuals"
-                  className="group w-full flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/5 hover:bg-white/10 hover:border-white/50 px-6 py-3 text-sm font-semibold text-white/90 hover:text-white transition-all duration-300 backdrop-blur-md hover:shadow-[0_0_20px_rgba(255,255,255,0.12)]"
-                >
-                  <span>View Course Details</span>
-                  <svg
-                    className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all duration-200"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-
-                {/* Book Free Counselling */}
-                <Link
-                  href="/contact"
-                  className="group w-full flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-blue-700 via-blue-600 to-indigo-600 hover:from-blue-600 hover:to-indigo-500 border border-blue-400/40 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(30,58,138,0.5)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45)] transition-all duration-300 transform hover:scale-[1.015] active:scale-[0.985]"
-                >
-                  <span>Book Free Counselling</span>
-                  <svg
-                    className="w-4 h-4 text-white/80 group-hover:text-white group-hover:translate-x-1 transition-all duration-200"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-
-            {/* 2. CENTER COLUMN: Flanked by vertical hairline dividers with gradient "Individuals" */}
-            <div className="lg:col-span-4 relative flex items-center justify-center min-h-20 sm:min-h-35 lg:min-h-115 order-1 lg:order-2">
-              {/* Left Vertical Glowing Hairline Divider */}
-              <div className="hidden lg:block absolute left-0 top-6 bottom-6 w-px bg-linear-to-b from-transparent via-blue-500/35 to-transparent" />
-
-              {/* Center Gradient Title: Orange -> Pink -> Purple -> Cyan */}
-              <div
-                ref={centerTitleRef}
-                className="relative px-4 text-center will-change-transform"
-              >
-                <span
-                  className="text-3xl sm:text-4xl lg:text-[2.6rem] xl:text-[3.25rem] font-extrabold tracking-tight bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(168,85,247,0.4)] font-sans select-none"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(90deg, #ff6b35 0%, #ff477e 25%, #a855f7 50%, #38bdf8 75%, #60a5fa 100%)",
+        <div className="w-full max-w-372 mx-auto relative z-10 my-auto">
+          <div className="grid grid-cols-12 gap-4 lg:gap-6 items-center">
+            {/* Left: copy + CTAs, both tracks stacked in one grid cell */}
+            <div className="col-span-4 grid">
+              {TRACKS.map((t, ti) => (
+                <div
+                  key={t.word}
+                  ref={(el) => {
+                    leftRefs.current[ti] = el;
                   }}
+                  className="[grid-area:1/1] self-center flex flex-col items-start text-left pr-4 xl:pr-6 opacity-0 invisible will-change-transform"
                 >
-                  Individuals
-                </span>
-              </div>
-
-              {/* Right Vertical Glowing Hairline Divider */}
-              <div className="hidden lg:block absolute right-0 top-6 bottom-6 w-px bg-linear-to-b from-transparent via-blue-500/35 to-transparent" />
+                  <Eyebrow>{t.eyebrow}</Eyebrow>
+                  <h3 className="text-xl lg:text-2xl xl:text-[2.2rem] font-extrabold tracking-tight text-white leading-[1.2]">
+                    {t.headline.map((line, i) => (
+                      <React.Fragment key={line}>
+                        {i > 0 && <br />}
+                        {line}
+                      </React.Fragment>
+                    ))}
+                  </h3>
+                  <p className="mt-3 lg:mt-4 xl:mt-5 text-xs lg:text-sm xl:text-base text-slate-300 leading-relaxed max-w-104">{t.intro}</p>
+                  <Ctas track={t} className="mt-4 lg:mt-6 xl:mt-8" />
+                </div>
+              ))}
             </div>
 
-            {/* 3. RIGHT COLUMN: Frontal 3D Cylindrical Roller Wheel */}
-            <div
-              ref={rightColRef}
-              className="lg:col-span-4 relative flex items-center justify-center pl-0 lg:pl-4 will-change-transform order-3"
-            >
-              {/* 3D Wheel Viewing Stage */}
-              <div
-                ref={wheelWindowRef}
-                className="relative w-full max-w-md h-90 sm:h-105 lg:h-115 flex items-center justify-center"
-                style={{
-                  perspective: "1100px",
-                  perspectiveOrigin: "center center",
-                  // Mask lives on a separate stacking context so it never forces
-                  // the composited card layer to repaint during scroll.
-                  maskImage:
-                    "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
-                  WebkitMaskImage:
-                    "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
-                  // Isolate this stacking context so child GPU layers don't leak
-                  isolation: "isolate",
-                  // Force the container itself onto the compositor
-                  transform: "translateZ(0)",
-                  willChange: "transform",
-                }}
-              >
-                {/* Cards mounted on the virtual 3D front-view cylinder with liquid glass styling */}
-                {items.map((item, index) => {
-                  return (
-                    <div
-                      key={item.id}
-                      ref={(el) => {
-                        cardRefs.current[index] = el;
-                      }}
-                      onClick={() => handleCardClick(index)}
-                      className="absolute w-[88%] max-w-xs sm:max-w-sm cursor-pointer rounded-2xl backdrop-blur-2xl p-3.5 sm:p-4 border select-none will-change-transform overflow-hidden flex items-center justify-center text-center"
-                      style={{
-                        // Static layout anchor — GSAP's xPercent/yPercent use these as origin.
-                        // They are pure CSS, never written by GSAP on each frame.
-                        top: "50%",
-                        left: "50%",
-                        transformStyle: "preserve-3d",
-                        backfaceVisibility: "hidden",
-                        WebkitBackfaceVisibility: "hidden",
-                        // Disable CSS transitions — GSAP owns all transforms
-                        transition: "none",
-                      }}
+            {/* Centre: the audience word, flanked by hairlines */}
+            <div className="col-span-4 relative flex items-center justify-center min-h-80 lg:min-h-95 xl:min-h-115">
+              <div className="absolute left-0 top-4 lg:top-6 bottom-4 lg:bottom-6 w-px bg-linear-to-b from-transparent via-blue-500/35 to-transparent" />
+              {TRACKS.map((t, ti) => (
+                <div
+                  key={t.word}
+                  ref={(el) => {
+                    titleOuterRefs.current[ti] = el;
+                  }}
+                  className={`${ti === 0 ? "relative" : "absolute inset-0 flex items-center justify-center"} px-4 text-center will-change-transform`}
+                >
+                  <div
+                    ref={(el) => {
+                      titleInnerRefs.current[ti] = el;
+                    }}
+                    className="will-change-transform"
+                  >
+                    <h2
+                      className="text-2xl lg:text-3xl xl:text-[2.6rem] 2xl:text-[3.25rem] font-extrabold tracking-tight bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(168,85,247,0.4)]"
+                      style={{ backgroundImage: WORD_GRADIENT }}
                     >
-                      {/* Specular liquid glass top sheen */}
-                      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+                      {t.word}
+                    </h2>
+                  </div>
+                </div>
+              ))}
+              <div className="absolute right-0 top-4 lg:top-6 bottom-4 lg:bottom-6 w-px bg-linear-to-b from-transparent via-blue-500/35 to-transparent" />
+            </div>
 
-                      <div className="text-center flex flex-col items-center justify-center w-full relative z-10">
-                        <h4 className="card-title text-xs sm:text-sm font-semibold text-center transition-colors duration-200">
-                          {item.title}
-                        </h4>
-
-                        {item.subtitle && (
-                          <p className="card-subtitle mt-0.5 text-[10px] sm:text-xs leading-relaxed text-center transition-colors duration-200">
-                            {item.subtitle}
-                          </p>
-                        )}
+            {/* Right: one 3D wheel per track, stacked */}
+            <div className="col-span-4 relative flex items-center justify-center pl-2 lg:pl-4">
+              <div className="relative w-full max-w-md h-80 lg:h-95 xl:h-115">
+                {TRACKS.map((t, ti) => (
+                  <div
+                    key={t.word}
+                    ref={(el) => {
+                      wheelRefs.current[ti] = el;
+                    }}
+                    className="absolute inset-0 flex items-center justify-center opacity-0 invisible"
+                    style={{
+                      perspective: "1100px",
+                      maskImage: "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+                      WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+                      isolation: "isolate",
+                    }}
+                  >
+                    {t.features.map((f, i) => (
+                      <div
+                        key={f.title}
+                        ref={(el) => {
+                          cardRefs.current[ti][i] = el;
+                        }}
+                        onClick={() => handleCardClick(ti, i)}
+                        data-center="false"
+                        className="sx-wheel-card group absolute w-[90%] max-w-xs xl:max-w-sm cursor-pointer rounded-2xl p-3 xl:p-4 overflow-hidden flex items-center justify-center text-center will-change-transform border border-white/8 border-t-white/14 bg-linear-to-br from-white/5 via-[#070c20]/40 to-[#070b1e]/55 backdrop-blur-lg data-[center=true]:border-sky-400/55 data-[center=true]:border-t-white/50 data-[center=true]:from-white/12 data-[center=true]:via-[#0e1941]/50 data-[center=true]:to-[#0a1230]/65 data-[center=true]:backdrop-blur-2xl data-[center=true]:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.35)]"
+                        style={{ top: "50%", left: "50%", transformStyle: "preserve-3d", transition: "none" }}
+                      >
+                        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+                        <div className="relative z-10 flex flex-col items-center">
+                          <h4 className="sx-card-title text-xs lg:text-sm font-semibold text-slate-400 group-data-[center=true]:text-sky-400">{f.title}</h4>
+                          {f.subtitle && <p className="sx-card-sub mt-0.5 text-[11px] lg:text-xs leading-relaxed text-slate-600 group-data-[center=true]:text-slate-200">{f.subtitle}</p>}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
+
+        {/* Which half of the sequence we're in */}
+        <div className="absolute bottom-3 lg:bottom-5 xl:bottom-8 left-1/2 -translate-x-1/2 flex gap-2" aria-hidden="true">
+          {TRACKS.map((t, ti) => (
+            <span
+              key={t.word}
+              ref={(el) => {
+                pillRefs.current[ti] = el;
+              }}
+              data-active={ti === 0 ? "true" : "false"}
+              className="rounded-full border px-3 py-0.5 xl:py-1 text-[10px] xl:text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors duration-300 border-white/10 text-white/35 data-[active=true]:border-sky-400/50 data-[active=true]:text-sky-300"
+            >
+              {t.word}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Flow layout (phones, tablets, reduced motion) ── */}
+      <div ref={flowRef} className="lg:motion-safe:hidden px-4 sm:px-8">
+        {TRACKS.map((t) => (
+          <div key={t.word} className="max-w-3xl mx-auto py-12 sm:py-16 flex flex-col items-center text-center">
+            <div data-sx-reveal className="mb-6">
+              <h2
+                className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(168,85,247,0.4)]"
+                style={{ backgroundImage: WORD_GRADIENT }}
+              >
+                {t.word}
+              </h2>
+            </div>
+            <Eyebrow>{t.eyebrow}</Eyebrow>
+            <h3 data-sx-reveal className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-[1.2] text-balance">
+              {t.headline.join(" ")}
+            </h3>
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">{t.intro}</p>
+            <ul data-sx-list className="mt-8 grid w-full gap-3 sm:grid-cols-2 text-left">
+              {t.features.map((f) => (
+                <li
+                  key={f.title}
+                  className="flex gap-3 rounded-2xl border border-white/10 bg-white/4 p-4 backdrop-blur-md"
+                >
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" />
+                  <span>
+                    <span className="block text-sm font-semibold text-white">{f.title}</span>
+                    {f.subtitle && <span className="mt-0.5 block text-xs text-slate-400 leading-relaxed">{f.subtitle}</span>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <Ctas track={t} className="mt-8 sm:flex-row sm:max-w-lg" />
+          </div>
+        ))}
       </div>
     </section>
   );

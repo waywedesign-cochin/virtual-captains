@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { allProgrammes, ProgramCard } from "./data";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -289,9 +290,9 @@ export default function GroomStudio() {
           <div className="w-full border-b border-slate-200 pb-2 sm:pb-3 mb-1.5 sm:mb-2">
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-3 lg:gap-4">
               {/* LEFT: Active Programme Title */}
-              <h2 className="order-2 lg:order-none text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-slate-900 tracking-tight transition-all duration-300 shrink-0">
+              <ZoomHeading className="order-2 lg:order-none text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-slate-900 tracking-tight transition-all duration-300 shrink-0">
                 {renderStyledTitle(allProgrammes[activeTab].tabTitle)}
-              </h2>
+              </ZoomHeading>
 
               {/* RIGHT: Other Programme Tabs */}
               <div className="order-1 lg:order-none grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:items-center lg:gap-7 text-[13px] sm:text-sm lg:text-base font-medium py-0.5 lg:-mb-1 max-w-full">

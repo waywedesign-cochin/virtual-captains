@@ -452,7 +452,7 @@ export default function IndividualsOrgFooter() {
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 w-full py-4 sm:py-6">
                   {/* Column 1: Company / Main Pages */}
                   <div className="flex flex-col gap-2.5 sm:gap-3">
-                    <p className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-[#38bdf8]">
+                    <p className="font-sans text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-[#38bdf8]">
                       Company
                     </p>
                     <nav className="flex flex-col gap-2 text-xs sm:text-[13.5px] text-white/75" aria-label="Company Links">
@@ -466,7 +466,7 @@ export default function IndividualsOrgFooter() {
 
                   {/* Column 2: Programmes */}
                   <div className="flex flex-col gap-2.5 sm:gap-3">
-                    <p className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-[#e7ff3d]">
+                    <p className="font-sans text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-[#e7ff3d]">
                       Programmes
                     </p>
                     <nav className="flex flex-col gap-2 text-xs sm:text-[13.5px] text-white/75" aria-label="Programmes Links">
@@ -480,7 +480,7 @@ export default function IndividualsOrgFooter() {
 
                   {/* Column 3: Resources & Contact */}
                   <div className="flex flex-col gap-2.5 sm:gap-3">
-                    <p className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-[#8fd0ff]">
+                    <p className="font-sans text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-[#8fd0ff]">
                       Resources
                     </p>
                     <nav className="flex flex-col gap-2 text-xs sm:text-[13.5px] text-white/75" aria-label="Resources Links">
@@ -495,7 +495,7 @@ export default function IndividualsOrgFooter() {
 
                   {/* Column 4: Booking & Quick Connect */}
                   <div className="flex flex-col gap-3 col-span-2 sm:col-span-2 md:col-span-1">
-                    <p className="font-mono text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-white/90">
+                    <p className="font-sans text-[10.5px] sm:text-[11.5px] font-semibold uppercase tracking-[0.22em] text-white/90">
                       Talk to a Captain
                     </p>
                     <p className="text-xs text-white/65 leading-relaxed">
@@ -505,7 +505,7 @@ export default function IndividualsOrgFooter() {
                       <button
                         type="button"
                         onClick={() => setIsBookingOpen(true)}
-                        className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-50 border border-white px-6 py-2.5 text-xs sm:text-sm font-bold text-black tracking-wide shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.18)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+                        className="inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-[#e7ff3d] border border-white hover:border-[#e7ff3d] px-6 py-2.5 text-xs sm:text-sm font-bold text-black tracking-wide shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.18)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 shrink-0"
                       >
                         <span>Book a Call</span>
                         <span aria-hidden="true">&rarr;</span>

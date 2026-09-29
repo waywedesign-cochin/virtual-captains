@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -82,9 +83,9 @@ export default function ProgrammeTabs() {
         
         {/* Tabs Navigation */}
         <div className="flex flex-wrap justify-between items-end border-b border-slate-200 pb-4 mb-16 prog-text">
-          <h2 className="text-4xl md:text-5xl font-medium text-slate-900 tracking-tight relative">
+          <ZoomHeading className="text-4xl md:text-5xl font-medium text-slate-900 tracking-tight relative">
             <span className="font-bold underline decoration-4 decoration-slate-900 underline-offset-8">Groom</span> Studio
-          </h2>
+          </ZoomHeading>
           <div className="flex flex-wrap gap-6 md:gap-10 text-sm md:text-base font-medium text-slate-400 mt-6 md:mt-0">
             <button className="hover:text-slate-800 transition-colors">Sales Audit</button>
             <button className="hover:text-slate-800 transition-colors">Outbound Lead Gen</button>

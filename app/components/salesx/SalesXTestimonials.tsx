@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -187,9 +188,7 @@ export default function SalesXTestimonials() {
     if (typeof window === "undefined") return;
     const ctx = gsap.context(() => {
       gsap.set(headingRef.current, {
-        opacity: 0,
-        scale: 0.65,
-        y: 20,
+        ...HEADING_REVEAL_FROM,
         transformOrigin: "left center",
         force3D: true,
       });
@@ -206,16 +205,8 @@ export default function SalesXTestimonials() {
         once: true,
         onEnter: () => {
           gsap.to(headingRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.85,
-            ease: "none",
             force3D: true,
-            keyframes: [
-              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
+            ...HEADING_REVEAL,
           });
           if (subtextRef.current) {
             gsap.to(subtextRef.current, {
@@ -235,7 +226,7 @@ export default function SalesXTestimonials() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#07090e] overflow-hidden border-t border-blue-950/40"
+      className="relative bg-salesx-bg overflow-hidden"
     >
       {/* Subtle dot grid */}
       <div

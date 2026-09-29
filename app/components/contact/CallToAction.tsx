@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { motion } from "framer-motion";
 import BookACallModal from "../home/BookACallModal";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -70,15 +71,15 @@ export default function CallToAction() {
                 transition={{ duration: 0.7, ease: easeOut }}
                 className="text-center lg:text-left"
               >
-                <span className="font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+                <span className="font-sans text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
                   Prefer To Talk It Through?
                 </span>
-                <h2 className="mt-3 font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-bold leading-tight tracking-tight text-white">
+                <ZoomHeading className="mt-3 font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-bold leading-tight tracking-tight text-white">
                   Book a 20-Minute <br />
                   <span className="italic text-[#8fd0ff] drop-shadow-[0_0_24px_rgba(143,208,255,0.4)]">
                     Strategy Call.
                   </span>
-                </h2>
+                </ZoomHeading>
                 <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-white/70 mx-auto lg:mx-0">
                   No pitch deck, no pressure — just a straight conversation about
                   where your sales floor is losing time and where Virtual Captains
@@ -133,7 +134,7 @@ export default function CallToAction() {
                   <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight">
                     Book A Call
                   </span>
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-[#38bdf8]">
+                  <span className="text-[11px] font-sans uppercase tracking-widest text-[#38bdf8]">
                     20 Min Strategy
                   </span>
                 </motion.button>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -25,9 +26,7 @@ export default function SalesXCTA() {
       // 1. Initial entrance states
       if (headingRef.current) {
         gsap.set(headingRef.current, {
-          opacity: 0,
-          scale: 0.65,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
           force3D: true,
         });
@@ -53,16 +52,8 @@ export default function SalesXCTA() {
             tl.to(
               headingRef.current,
               {
-                opacity: 1,
-                y: 0,
-                duration: 0.85,
-                ease: "none",
                 force3D: true,
-                keyframes: [
-                  { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                  { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                  { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-                ],
+                ...HEADING_REVEAL,
               },
               0
             );
@@ -107,7 +98,7 @@ export default function SalesXCTA() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#020510] overflow-hidden border-t border-blue-950/40 py-28 sm:py-36 lg:py-44 select-none"
+      className="relative bg-salesx-bg overflow-hidden py-28 sm:py-36 lg:py-44 select-none"
     >
       {/* Ambient Blue-Purple Deep Space Radial Glow */}
       <div

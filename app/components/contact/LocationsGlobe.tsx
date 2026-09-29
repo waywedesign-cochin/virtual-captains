@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { offices } from "./data";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -102,13 +103,13 @@ export default function LocationsGlobe() {
       {/* Container aligned with Navbar */}
       <div className="relative z-10 w-full max-w-372 mx-auto">
         <div ref={headerRef} className="mx-auto max-w-2xl text-center will-change-transform">
-          <span className="font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+          <span className="font-sans text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
             Where To Find Us · Global Presence
           </span>
-          <h2 className="mt-3 font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white">
+          <ZoomHeading className="mt-3 font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white">
             Two Offices,{" "}
             <span className="italic text-[#8fd0ff]">One Sales Floor</span>
-          </h2>
+          </ZoomHeading>
           <p className="mt-4 text-sm sm:text-base leading-relaxed text-white/70 font-sans">
             Rooted in India, active across the Gulf, and working with high-growth
             sales teams across 8+ countries in between.

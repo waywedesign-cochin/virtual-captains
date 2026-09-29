@@ -8,6 +8,7 @@ import TwoAudiences, { TwoAudiencesRef } from "./TwoAudiences";
 import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 const PROMISE_PARAGRAPH_1 = [
@@ -50,9 +51,7 @@ export default function RoleplayToConversation() {
         gsap.set(wordElements, { opacity: 0 });
         gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
         gsap.set(mainHeadingRef.current, {
-          opacity: 0,
-          scale: 0.65,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
         });
         gsap.set(twoAudiencesContainerRef.current, { autoAlpha: 0, scale: 0.95 });
@@ -78,14 +77,7 @@ export default function RoleplayToConversation() {
         headingEntryTl.to(
           mainHeadingRef.current,
           {
-            opacity: 1,
-            y: 0,
-            duration: 0.85,
-            keyframes: [
-              { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-            ],
+            ...HEADING_REVEAL,
           },
           eyebrowRef.current ? "-=0.25" : undefined,
         );
@@ -158,16 +150,9 @@ export default function RoleplayToConversation() {
         if (taHeading) {
           masterTl.fromTo(
             taHeading,
-            { opacity: 0, scale: 0.65, y: 20, transformOrigin: "center center" },
+            { ...HEADING_REVEAL_FROM, transformOrigin: "center center" },
             {
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              keyframes: [
-                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
+              ...HEADING_REVEAL,
             },
             "-=0.5",
           );
@@ -194,9 +179,7 @@ export default function RoleplayToConversation() {
         }
 
         gsap.set(mainHeadingRef.current, {
-          opacity: 0,
-          scale: 0.65,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
         });
 
@@ -206,14 +189,7 @@ export default function RoleplayToConversation() {
             start: "top 70%",
             toggleActions: "play none none reverse",
           },
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          keyframes: [
-            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-          ],
+          ...HEADING_REVEAL,
         });
       });
     },

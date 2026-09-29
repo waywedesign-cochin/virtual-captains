@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 type Testimonial = {
@@ -150,9 +151,7 @@ export default function Endorsement() {
 
       if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
       gsap.set(headingRef.current, {
-        opacity: 0,
-        scale: 0.65,
-        y: 20,
+        ...HEADING_REVEAL_FROM,
         transformOrigin: "center center",
       });
       gsap.set(stackRef.current, { opacity: 0, y: 40 });
@@ -178,14 +177,7 @@ export default function Endorsement() {
       entranceTl.to(
         headingRef.current,
         {
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          keyframes: [
-            { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-            { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-            { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-          ],
+          ...HEADING_REVEAL,
         },
         eyebrowRef.current ? "-=0.25" : undefined,
       ).to(
@@ -247,7 +239,7 @@ export default function Endorsement() {
         {/* ---------- EYEBROW ---------- */}
         <span
           ref={eyebrowRef}
-          className="mb-[clamp(12px,2vh,24px)] block text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/50"
+          className="mb-[clamp(12px,2vh,24px)] block text-center font-sans text-[10px] uppercase tracking-[0.25em] text-white/50"
         >
           <span className="whitespace-nowrap">Social Proof · Enterprise</span>{" "}
           <span className="whitespace-nowrap">· Individual · Global</span>

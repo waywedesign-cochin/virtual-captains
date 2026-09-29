@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
 import { PIN_QUERY } from "./pinQuery";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
@@ -264,9 +265,7 @@ export default function ScrollText3D() {
           // Zoom-in entrance animation for intro heading
           if (introInnerRef.current) {
             gsap.set(introInnerRef.current, {
-              opacity: 0,
-              scale: 0.65,
-              y: 20,
+              ...HEADING_REVEAL_FROM,
               transformOrigin: "center center",
             });
 
@@ -279,14 +278,7 @@ export default function ScrollText3D() {
                 start: "top 90%",
                 toggleActions: "play none none reverse",
               },
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              keyframes: [
-                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
+              ...HEADING_REVEAL,
             });
           }
 

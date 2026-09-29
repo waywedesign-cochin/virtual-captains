@@ -11,6 +11,7 @@ import BookACallModal from "./BookACallModal";
 import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
@@ -104,7 +105,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
 
       if (showCTA && ctaSectionRef.current && ctaRef.current) {
         gsap.set(ctaEyebrowRef.current, { opacity: 0, y: 14 });
-        gsap.set(ctaRef.current, { opacity: 0, scale: 0.65, y: 20 });
+        gsap.set(ctaRef.current, { ...HEADING_REVEAL_FROM, });
         if (ctaLabelRef.current)
           gsap.set(ctaLabelRef.current, { color: "#ffffff" });
         if (ctaArrowRef.current)
@@ -129,42 +130,20 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
           .to(
             ctaRef.current,
             {
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              keyframes: [
-                {
-                  scale: 1.15,
-                  opacity: 1,
-                  y: -4,
-                  duration: 0.42,
-                  ease: "power2.out",
-                },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
+              ...HEADING_REVEAL,
             },
             "-=0.25",
           );
 
         if (ctaHeadingRef.current) {
           gsap.set(ctaHeadingRef.current, {
-            opacity: 0,
-            scale: 0.65,
-            y: 20,
+            ...HEADING_REVEAL_FROM,
             transformOrigin: "center center",
           });
           ctaTl.to(
             ctaHeadingRef.current,
             {
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              keyframes: [
-                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
+              ...HEADING_REVEAL,
             },
             "-=0.4",
           );
@@ -377,11 +356,9 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
         });
         gsap.set(legalRef.current, { opacity: 0, y: 20 });
         gsap.set(backToTopRef.current, { opacity: 0, y: 12 });
-        // Same zoom-bounce entrance as every other section heading
+        // Same entrance as every other section heading (headingReveal)
         gsap.set(footerHeadingRef.current, {
-          opacity: 0,
-          scale: 0.65,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
         });
 
@@ -406,14 +383,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
           .to(
             footerHeadingRef.current,
             {
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              keyframes: [
-                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
+              ...HEADING_REVEAL,
             },
             "<0.1",
           )

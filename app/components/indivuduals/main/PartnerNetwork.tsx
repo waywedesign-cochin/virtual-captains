@@ -3,6 +3,7 @@ import { PartnerLines } from "./PartnerLines";
 import { PartnerStage } from "./PartnerStage";
 import { PartnerNetworkCompact } from "./PartnerNetworkCompact";
 import Image from "next/image";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 export function PartnerNetwork() {
   return (
@@ -15,11 +16,11 @@ export function PartnerNetwork() {
       {/* Desktop: the pinned, percentage-positioned stage */}
       <div className="hidden h-full lg:block">
       <PartnerStage>
-        <h2 className="partner__title type-h2" id="partner-heading">
+        <ZoomHeading className="partner__title type-h2" id="partner-heading">
           {partner.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
-        </h2>
+        </ZoomHeading>
 
         {/* Right side text */}
         <div className="absolute top-[8.7%] md:left-[55%] left-[8.47%] max-md:top-[25%] z-3 max-w-lg pr-4 md:pr-8">

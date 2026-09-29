@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import SalesXHero from "../components/salesx/SalesXHero";
-import SalesXShowcase from "../components/salesx/SalesXShowcase";
+import SalesXSimulated from "../components/salesx/SalesXSimulated";
 import SalesXMethod from "../components/salesx/SalesXMethod";
 import SalesXAudience from "../components/salesx/SalesXAudience";
+import SalesXMoments from "../components/salesx/SalesXMoments";
+import SellingNextSection from "../components/salesx/SellingNextSection";
+import SalesXClimb from "../components/salesx/SalesXClimb";
+import SkillCardSection from "../components/salesx/SkillCardSection";
 import SalesXResultsHub from "../components/salesx/SalesXResultsHub";
 import SalesXTestimonials from "../components/salesx/SalesXTestimonials";
 import SalesXPartnerCloud from "../components/salesx/SalesXPartnerCloud";
@@ -17,15 +21,15 @@ export const metadata: Metadata = {
 
 export default function SalesXPage() {
   return (
-    <main className="min-h-screen bg-[#030614] text-white selection:bg-[#38bdf8] selection:text-black">
-      {/* 1. Full Banner Video Hero with m.webm and Branding Pills */}
+    <main className="min-h-screen bg-salesx-bg text-white selection:bg-[#38bdf8] selection:text-black">
+      {/* 1. Pinned hero: video → dashboard image rises in → headline over gradient */}
       <SalesXHero />
 
       {/*
        * Continuous Cosmic Void Canvas:
        * All sections flow seamlessly with zero borders and shared ambient nebula glows.
        */}
-      <div className="relative bg-[#030614] overflow-hidden">
+      <div className="relative bg-salesx-bg overflow-hidden">
         {/* Shared ambient cosmic nebula lighting */}
         <div
           aria-hidden
@@ -41,16 +45,30 @@ export default function SalesXPage() {
           <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 w-[1100px] h-[700px] rounded-full bg-[#1e3a8a]/14 blur-[160px]" />
         </div>
 
-        {/* 2. 3-Layer Stacked Perspective Mockup Showcase */}
-        <SalesXShowcase />
+        {/* (The dashboard showcase now lives inside the pinned hero) */}
+
+        {/* 2. Simulated by AI / Validated by humans — pinned illustration + rotating dial */}
+        <SalesXSimulated />
 
         {/* 3. The SalesX Method with Interactive Pinned Slides & 3 Vertical Indicator Dots */}
         <SalesXMethod />
 
-        {/* 4. Career Track for Individuals with Rotating Perspective Halo & Stacked Benefit Cards */}
+        {/* 4. Career Track for Individuals and Organisations */}
         <SalesXAudience />
 
-        {/* 5. Quantified Outcomes: Orbital Results Hub with 4 Satellite Telemetry Nodes */}
+        {/* 5. Moments that Decide a Career (Pinned changing story) */}
+        <SalesXMoments />
+
+        {/* 6. What are you selling next? (Interactive 3D Perspective Card Stack) */}
+        <SellingNextSection />
+
+        {/* 7. The Climb: 3 levels, tab-driven module list (not pinned) */}
+        <SalesXClimb />
+
+        {/* 7. The VC Skill Card: A Certificate of Ability */}
+        <SkillCardSection />
+
+        {/* 8. Quantified Outcomes: Orbital Results Hub with 4 Satellite Telemetry Nodes */}
         <SalesXResultsHub />
 
         {/* 6. Conversational Testimonials: Fixed Sticky Left & Real-Time Flowing Chat Bubbles */}

@@ -126,7 +126,7 @@ export default function AboutFounderStory() {
             {/* Kicker Pill */}
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-4 py-1.5 mb-8 shadow-[0_0_20px_rgba(243,252,0,0.15)]">
               <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-[#D08817] to-[#F3FC00] animate-pulse shadow-[0_0_8px_#F3FC00]" />
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.25em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
+              <span className="font-sans text-xs font-semibold uppercase tracking-[0.25em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                 The Founder&rsquo;s Creed
               </span>
             </div>
@@ -181,7 +181,7 @@ export default function AboutFounderStory() {
               <p className="font-serif italic text-white text-xl sm:text-2xl tracking-wide">
                 &mdash; Roshna Saffar
               </p>
-              <p className="text-xs font-mono uppercase tracking-[0.25em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent mt-1">
+              <p className="text-xs font-sans uppercase tracking-[0.25em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent mt-1">
                 Founder · Virtual Captains
               </p>
             </div>

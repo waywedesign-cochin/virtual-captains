@@ -30,7 +30,7 @@ export default function UnderDevelopmentContent() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e7ff3d] opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e7ff3d]" />
           </span>
-          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/70">
+          <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-white/70">
             Notice
           </span>
         </div>

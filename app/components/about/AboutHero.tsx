@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 export default function AboutHero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -21,23 +22,14 @@ export default function AboutHero() {
       // Initial headline zoom-in reveal state
       if (headingRef.current) {
         gsap.set(headingRef.current, {
-          opacity: 0,
-          scale: 0.68,
-          y: 20,
+          ...HEADING_REVEAL_FROM,
           transformOrigin: "center center",
         });
 
         tl.to(
           headingRef.current,
           {
-            opacity: 1,
-            y: 0,
-            duration: 0.95,
-            keyframes: [
-              { scale: 1.15, opacity: 1, y: -4, duration: 0.45, ease: "power2.out" },
-              { scale: 0.94, y: 2, duration: 0.24, ease: "sine.inOut" },
-              { scale: 1.0, y: 0, duration: 0.22, ease: "power2.out" },
-            ],
+            ...HEADING_REVEAL,
           },
           0.1
         );

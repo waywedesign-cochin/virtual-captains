@@ -7,6 +7,7 @@ import { gsap } from "@/lib/animations/gsap";
 import { useGSAP } from "@/lib/animations/gsap";
 import { one } from "@/lib/animations/shared";
 
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 export function CareerCta() {
   const scope = useRef<HTMLDivElement>(null);
 
@@ -34,21 +35,14 @@ export function CareerCta() {
           // heading, and the button is already visible beneath it.
           if (!isDesktop) {
             if (!textContainer) return;
-            gsap.set(textContainer, { opacity: 0, scale: 0.65, y: 20 });
+            gsap.set(textContainer, { ...HEADING_REVEAL_FROM, });
             gsap.to(textContainer, {
               scrollTrigger: {
                 trigger: textContainer,
                 start: "top 88%",
                 toggleActions: "play none none reverse",
               },
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              keyframes: [
-                { scale: 1.15, opacity: 1, y: -4, duration: 0.42, ease: "power2.out" },
-                { scale: 0.94, y: 2, duration: 0.22, ease: "sine.inOut" },
-                { scale: 1.0, y: 0, duration: 0.21, ease: "power2.out" },
-              ],
+              ...HEADING_REVEAL,
             });
             return;
           }

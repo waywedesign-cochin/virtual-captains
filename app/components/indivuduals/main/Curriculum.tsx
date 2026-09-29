@@ -1,5 +1,6 @@
 import { curriculum, curriculumModules } from "@/content/site";
 import { CurriculumStage } from "./CurriculumStage";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 export function Curriculum() {
   return (
@@ -19,12 +20,12 @@ export function Curriculum() {
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-4 py-1.5 shadow-[0_0_20px_rgba(56,189,248,0.15)] mb-6">
                 <span className="h-2 w-2 rounded-full bg-[#38bdf8] animate-pulse shadow-[0_0_8px_#38bdf8]" />
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+                <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
                   {curriculum.title}
                 </p>
               </div>
 
-              <h2
+              <ZoomHeading
                 className="w-full text-left"
                 data-curriculum-statement=""
                 id="curriculum-heading"
@@ -41,7 +42,7 @@ export function Curriculum() {
                     {line}
                   </span>
                 ))}
-              </h2>
+              </ZoomHeading>
             </div>
 
             {/* Right Side: Scrollable Cards with Timeline */}
@@ -74,7 +75,7 @@ export function Curriculum() {
                         <div className="flex items-center gap-3 mb-4">
                           <div className="inline-flex items-center rounded-xl border border-white/15 bg-white/[0.06] backdrop-blur-md p-1 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 group-hover:border-white/25">
                             <span
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg font-mono text-[10px] font-bold uppercase tracking-[0.2em] ${
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg font-sans text-[10px] font-bold uppercase tracking-[0.2em] ${
                                 isCool
                                   ? "bg-[#38bdf8]/20 text-[#38bdf8] shadow-[0_0_10px_rgba(56,189,248,0.25)]"
                                   : "bg-[#e7ff3d]/20 text-[#e7ff3d] shadow-[0_0_10px_rgba(231,255,61,0.25)]"
@@ -89,7 +90,7 @@ export function Curriculum() {
                               />
                               {module.weeks.includes("–") ? "WEEKS" : "WEEK"}
                             </span>
-                            <span className="px-3 py-0.5 font-mono text-sm font-bold text-white tracking-wider">
+                            <span className="px-3 py-0.5 font-sans text-sm font-bold text-white tracking-wider">
                               {module.weeks}
                             </span>
                           </div>
@@ -115,7 +116,7 @@ export function Curriculum() {
             <div className="flex flex-col items-center mb-10 text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-4 py-1.5 shadow-[0_0_20px_rgba(56,189,248,0.15)] mb-4">
                 <span className="h-2 w-2 rounded-full bg-[#38bdf8] animate-pulse shadow-[0_0_8px_#38bdf8]" />
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+                <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
                   {curriculum.title}
                 </p>
               </div>
@@ -149,7 +150,7 @@ export function Curriculum() {
                       <div className="flex items-center gap-3 mb-3">
                         <div className="inline-flex items-center rounded-xl border border-white/15 bg-white/[0.06] backdrop-blur-md p-0.5 shadow-sm">
                           <span
-                            className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg font-mono text-[9px] font-bold uppercase tracking-[0.2em] ${
+                            className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg font-sans text-[9px] font-bold uppercase tracking-[0.2em] ${
                               isCool
                                 ? "bg-[#38bdf8]/20 text-[#38bdf8]"
                                 : "bg-[#e7ff3d]/20 text-[#e7ff3d]"
@@ -162,7 +163,7 @@ export function Curriculum() {
                             />
                             {module.weeks.includes("–") ? "WEEKS" : "WEEK"}
                           </span>
-                          <span className="px-2.5 py-0.5 font-mono text-xs font-bold text-white tracking-wider">
+                          <span className="px-2.5 py-0.5 font-sans text-xs font-bold text-white tracking-wider">
                             {module.weeks}
                           </span>
                         </div>
