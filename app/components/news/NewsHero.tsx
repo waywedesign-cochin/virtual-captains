@@ -48,16 +48,10 @@ export function NewsHero() {
               News,
             </motion.span>
             <motion.span variants={wordVariants} className="inline-block">
-              Releases
+              Releases,
             </motion.span>
           </span>
           <span className="block">
-            <motion.span
-              variants={wordVariants}
-              className="inline-block mr-3 sm:mr-4 text-white"
-            >
-              &amp;
-            </motion.span>
             <motion.span
               variants={wordVariants}
               className="inline-block bg-linear-to-r from-[#38bdf8] via-[#60a5fa] to-white bg-clip-text text-transparent"
