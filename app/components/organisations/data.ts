@@ -142,8 +142,6 @@ export type ProgrammeItem = {
   ctaText: string;
   /** A page path ("/programs") links there; "book" opens the Book a Call popup. */
   ctaAction: string;
-  /** Optional extra link shown after the demo button (e.g. Sales Training → SalesX). */
-  linkCta?: { text: string; href: string };
   accentColor: string;
   cards: ProgramCard[];
 };
@@ -313,7 +311,6 @@ export const allProgrammes: ProgrammeItem[] = [
       "Battle-tested sales workshops and live call coaching tailored to your product value. We train frontline reps to command negotiations, overcome complex objections, and defend deal margins without discounting.",
     ctaText: "Enroll in Sales Training",
     ctaAction: "/programs",
-    linkCta: { text: "Explore SalesX", href: "/salesx" },
     accentColor: "#8b5cf6",
     cards: [
       {

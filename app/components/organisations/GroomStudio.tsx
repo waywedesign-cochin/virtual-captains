@@ -435,40 +435,16 @@ export default function GroomStudio() {
                         </Link>
                         )}
 
-                        {/* Product demo — placeholder until a demo exists (no link yet) */}
-                        <button
-                          type="button"
+                        {/* Product demo → SalesX */}
+                        <Link
+                          href="/salesx"
                           className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3 sm:px-3.5 py-1 text-[11px] sm:text-xs font-semibold text-slate-800 shadow-xs transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
                         >
                           <svg aria-hidden className="h-3 w-3 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M8 5v14l11-7z" />
                           </svg>
                           View Product Demo
-                        </button>
-
-                        {prog.linkCta && (
-                          <Link
-                            href={prog.linkCta.href}
-                            className="group inline-flex items-center gap-2 bg-white border border-slate-200/90 rounded-full pl-2 pr-3 sm:pr-3.5 py-1 shadow-xs hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0"
-                          >
-                            <span className="text-[11px] sm:text-xs font-semibold text-slate-800 pl-1">
-                              {prog.linkCta.text}
-                            </span>
-                            <svg
-                              className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                          >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </Link>
-                        )}
+                        </Link>
                       </div>
                     </div>
 
