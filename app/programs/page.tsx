@@ -6,6 +6,7 @@ import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import CurriculumSection from "../components/salesx/CurriculumSection";
+import EnrollNowButton from "../components/programs/EnrollModal";
 
 export const metadata: Metadata = {
   title: "Programs | Virtual Captains Sales Enablement",
@@ -303,16 +304,18 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
 
         <div className="mt-auto flex items-center justify-between pt-6">
           <span className="font-serif text-2xl">{program.price ?? ""}</span>
-          <Link
-            href={`/programs/${program.slug}`}
-            className={`rounded-full px-5 py-2.5 text-sm font-bold transition ${
+          <EnrollNowButton
+            programTitle={program.title}
+            programSlug={program.slug}
+            price={program.price}
+            className={`cursor-pointer rounded-full px-5 py-2.5 text-sm font-bold transition ${
               featured
                 ? "bg-white text-[#1e3a8a] hover:bg-white/90"
                 : "bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
             }`}
           >
-            {program.ctaLabel || "View program"}
-          </Link>
+            Enroll now
+          </EnrollNowButton>
         </div>
       </div>
     </article>
