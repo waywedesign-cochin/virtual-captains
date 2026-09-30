@@ -1,5 +1,8 @@
-import Link from "next/link";
+"use client";
+
+import { useState } from "react";
 import { site } from "@/content/site";
+import BookACallModal from "@/components/home/BookACallModal";
 
 interface BookACallButtonProps {
   /** Footer uses a translucent glass treatment instead of the gradient. */
@@ -28,15 +31,18 @@ export function BookACallButton({ variant = "gradient" }: BookACallButtonProps) 
     className = "inline-flex items-center justify-center rounded-full bg-[#111217] hover:bg-[#181920] border border-white/14 hover:border-white/28 px-8 py-4 text-base md:text-lg font-bold text-white tracking-[0.02em] shadow-[0_4px_16px_rgba(0,0,0,0.3)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 shrink-0";
   }
 
+  const [open, setOpen] = useState(false);
+
+  // Opens the site-wide Book a Call form (same popup as every other page)
   return (
-    <Link
-      href={site.bookACall.href}
-      className={className}
-    >
-      <span className="inline-flex items-center gap-2">
-        <span>{site.bookACall.label}</span>
-        <span className="inline-block text-[0.8em]" aria-hidden="true">&rarr;</span>
-      </span>
-    </Link>
+    <>
+      <button type="button" onClick={() => setOpen(true)} className={className}>
+        <span className="inline-flex items-center gap-2">
+          <span>{site.bookACall.label}</span>
+          <span className="inline-block text-[0.8em]" aria-hidden="true">&rarr;</span>
+        </span>
+      </button>
+      <BookACallModal open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }

@@ -33,7 +33,7 @@ export const orbitLabels: ReadonlyArray<OrbitLabel> = [
 export const hero = {
   eyebrow: "Launch Your Career as a",
   headline: ["High Performing", "Seller"],
-  primaryCta: { label: "Apply to Next Cohort", href: "/contact" },
+  primaryCta: { label: "Apply to Next Cohort", href: "/programs" },
   secondaryCta: { label: "Partner Network", href: "/partner" },
 } as const;
 
@@ -156,7 +156,7 @@ export const audienceSlides: ReadonlyArray<AudienceSlide> = [
     title: "The High-Velocity On-Ramp",
     body: "Launch directly into high-paying sales, business development, and GTM roles without waiting through months of low-level onboarding.",
     cta: "Enroll Now",
-    href: "/contact",
+    href: "/programs",
     image: "/inidividuals/wave.webp",
     waveHue: 0,
   },
@@ -166,7 +166,7 @@ export const audienceSlides: ReadonlyArray<AudienceSlide> = [
     title: "The Second-Act Accelerator",
     body: "Convert the domain expertise you already have into quota-carrying revenue work, with a structured bridge from your current craft into enterprise selling.",
     cta: "Enroll Now",
-    href: "/contact",
+    href: "/programs",
     image: "/inidividuals/wave.webp",
     waveHue: -38,
     placeholder: true,
@@ -177,7 +177,7 @@ export const audienceSlides: ReadonlyArray<AudienceSlide> = [
     title: "The Quota-Breaker Program",
     body: "Already selling but plateaued. Rebuild your discovery, multithreading and negotiation reps against live scenarios until the numbers move.",
     cta: "Enroll Now",
-    href: "/contact",
+    href: "/programs",
     image: "/inidividuals/wave.webp",
     waveHue: 42,
     placeholder: true,
