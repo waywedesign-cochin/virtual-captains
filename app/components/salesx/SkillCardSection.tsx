@@ -47,6 +47,13 @@ const SKILLS = [
   { id: "closure", label: "Closure" },
 ];
 
+// Example card: one candidate's real-looking result
+const EXAMPLE = {
+  name: "Candidate Name",
+  band: BANDS[3],
+  scores: [50, 38, 65, 43, 52],
+};
+
 const RADIUS = 46;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -107,6 +114,30 @@ export default function SkillCardSection() {
               duration: 1.4,
               ease: "power2.inOut",
               stagger: 0.08,
+            },
+          );
+          // Example card: arcs fill to each score, dots travel to the arc's end
+          gsap.fromTo(
+            ".sc-ex-arc",
+            { strokeDashoffset: CIRCUMFERENCE },
+            {
+              strokeDashoffset: (_: number, el: Element) => Number((el as SVGElement).dataset.offset),
+              duration: 1.4,
+              ease: "power2.inOut",
+              stagger: 0.08,
+              delay: 0.3,
+            },
+          );
+          gsap.fromTo(
+            ".sc-ex-dot",
+            { rotate: 0 },
+            {
+              rotate: (_: number, el: Element) => Number((el as HTMLElement).dataset.rot),
+              duration: 1.4,
+              ease: "power2.inOut",
+              stagger: 0.08,
+              delay: 0.3,
+              transformOrigin: "50% 50%",
             },
           );
           gsap.fromTo(
@@ -287,6 +318,76 @@ export default function SkillCardSection() {
                 </span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* ── Example card: what a candidate actually receives ── */}
+        <p className="mt-12 sm:mt-16 text-center text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-white/50 lg:text-left">
+          Example
+        </p>
+        <div className="mt-3 rounded-2xl sm:rounded-3xl border border-[#1e40af]/50 bg-[#03081c]/75 backdrop-blur-md p-6 sm:p-8 lg:p-10 xl:p-12 shadow-[0_0_50px_rgba(30,64,175,0.15)]">
+          <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
+                VC Skill Card
+              </h3>
+              <p className="mt-1.5 text-sm sm:text-base text-slate-300">{EXAMPLE.name}</p>
+            </div>
+            <div
+              className={`sc-band flex min-w-44 flex-col items-center justify-center rounded-xl sm:rounded-2xl px-6 py-4 sm:py-5 text-center ${EXAMPLE.band.containerClass}`}
+            >
+              <span className={`text-[11px] sm:text-xs font-medium ${EXAMPLE.band.labelClass}`}>
+                {EXAMPLE.band.label}
+              </span>
+              <span className="mt-1 text-base sm:text-lg font-semibold text-white tracking-tight">
+                {EXAMPLE.band.title}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-10 sm:mt-12 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 justify-items-center items-start">
+            {SKILLS.map((skill, i) => {
+              const score = EXAMPLE.scores[i];
+              return (
+                <div
+                  key={`ex-${skill.id}`}
+                  className={`sc-skill flex flex-col items-center ${
+                    i === SKILLS.length - 1 ? "col-span-2 sm:col-span-1" : ""
+                  }`}
+                >
+                  <div className="relative h-28 w-28 sm:h-32 sm:w-32 lg:h-36 lg:w-36">
+                    <svg viewBox="0 0 110 110" className="h-full w-full -rotate-90" aria-hidden="true">
+                      <circle cx="55" cy="55" r={RADIUS} fill="none" strokeWidth="10" className="stroke-[#0c224d]" />
+                      <circle
+                        cx="55"
+                        cy="55"
+                        r={RADIUS}
+                        fill="none"
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeDasharray={CIRCUMFERENCE}
+                        strokeDashoffset={CIRCUMFERENCE * (1 - score / 100)}
+                        data-offset={CIRCUMFERENCE * (1 - score / 100)}
+                        className="sc-ex-arc stroke-[#1d4ed8]"
+                      />
+                    </svg>
+                    <div
+                      className="sc-ex-dot pointer-events-none absolute inset-0"
+                      data-rot={score * 3.6}
+                      style={{ transform: `rotate(${score * 3.6}deg)` }}
+                    >
+                      <span className="absolute left-1/2 top-[4%] h-2.5 w-4 sm:h-3 sm:w-4.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d946ef] shadow-[0_0_12px_#d946ef,0_0_20px_rgba(217,70,239,0.7)]" />
+                    </div>
+                    <span className="absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+                      {score}
+                    </span>
+                  </div>
+                  <span className="mt-4 max-w-[8rem] text-center text-xs sm:text-sm font-normal text-white/90 leading-tight whitespace-pre-line">
+                    {skill.label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

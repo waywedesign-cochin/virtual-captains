@@ -60,8 +60,8 @@ const TRACKS: Track[] = [
       { title: "Access to Virtual Captains' Hiring Network" },
     ],
     ctas: [
-      { label: "Consult With Us", href: "/organisations" },
-      { label: "Request a Demo", href: "/contact" },
+      { label: "Partner With Us", href: "/partner-with-us" },
+      { label: "Book Now", href: "/contact" },
     ],
   },
 ];

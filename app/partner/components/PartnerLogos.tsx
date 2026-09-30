@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { Handshake } from "./Icons";
 
 interface PartnerItem {
   id: string;
@@ -112,7 +111,7 @@ function MarqueeRow({ items, direction = "left", speedSeconds = 28 }: MarqueeRow
 
 export function PartnerLogos() {
   return (
-    <section className="relative w-full bg-[#040507] py-14 sm:py-20 md:py-24 overflow-hidden border-t border-white/10 select-none">
+    <section className="relative w-full bg-[#020B25] py-16 sm:py-20 md:py-24 overflow-hidden select-none">
       {/* Background ambient lighting */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-175 sm:w-225 h-87.5 bg-linear-to-r from-[#1d4ed8]/10 via-[#38bdf8]/10 to-[#1d4ed8]/10 blur-[130px] rounded-full" />
@@ -120,21 +119,20 @@ export function PartnerLogos() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center mb-8 sm:mb-12">
         {/* Eyebrow Pill */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2563eb]/15 border border-[#38bdf8]/35 backdrop-blur-md mb-3 text-[#38bdf8] text-[9.5px] sm:text-[10px] font-black uppercase tracking-widest shadow-md">
-          <Handshake className="w-3 h-3 text-[#38bdf8]" />
-          <span>JOIN OUR GROWING ECOSYSTEM</span>
-        </div>
+        <p className="mb-3 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+          Join Our Growing Ecosystem
+        </p>
 
         {/* Section Heading */}
-        <h2 className="font-sans font-black text-2xl xs:text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-tight uppercase">
+        <h2 className="font-sans font-medium text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
           Trusted by Forward-Thinking{" "}
-          <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-slate-100 to-[#38bdf8]">
-            Organizations
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8]">
+            Organisations
           </span>
         </h2>
 
         {/* Subtitle */}
-        <p className="mt-3 max-w-xl text-slate-300 text-xs sm:text-sm font-normal leading-relaxed px-2">
+        <p className="mt-4 max-w-xl text-slate-400 text-sm font-normal leading-relaxed px-2">
           From premier universities and vocational hubs to rapid-scaling corporate enterprises, our network creates unfair revenue and hiring advantages.
         </p>
       </div>
@@ -144,11 +142,11 @@ export function PartnerLogos() {
         {/* Left & Right gradient fade masks */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-36 md:w-56 z-20 bg-linear-to-r from-[#040507] via-[#040507]/90 to-transparent"
+          className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-36 md:w-56 z-20 bg-linear-to-r from-[#020B25] via-[#020B25]/90 to-transparent"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-36 md:w-56 z-20 bg-linear-to-l from-[#040507] via-[#040507]/90 to-transparent"
+          className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-36 md:w-56 z-20 bg-linear-to-l from-[#020B25] via-[#020B25]/90 to-transparent"
         />
 
         {/* Row 1: Scrolling Left */}
