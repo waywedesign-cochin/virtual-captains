@@ -120,10 +120,14 @@ export default function GroomStudio() {
       return;
     }
     {
-      const scrollStart = st.start;
-      const scrollRange = st.end - st.start;
-      const targetProgress = (index + 0.15) / 4;
-      const targetScroll = scrollStart + targetProgress * scrollRange;
+      // Land where this programme is fully shown (its `stage-N` label), not
+      // an equal quarter of the scroll — the transitions aren't evenly spaced,
+      // so quarters could stop mid-crossfade and leave the slide half-faded.
+      const tl = st.animation as gsap.core.Timeline | undefined;
+      const labelTime = tl?.labels[`stage-${index}`];
+      const targetProgress =
+        tl && labelTime !== undefined ? labelTime / tl.duration() : index / (allProgrammes.length - 1);
+      const targetScroll = st.start + targetProgress * (st.end - st.start);
 
       if (window.__lenis) {
         window.__lenis.scrollTo(targetScroll, { duration: 1.2 });
@@ -163,11 +167,12 @@ export default function GroomStudio() {
           scrub: 0.8,
           anticipatePin: 1,
           onUpdate: (self) => {
-            const p = self.progress;
-            const currentIdx = Math.min(
-              numStages - 1,
-              Math.floor(p * numStages),
-            );
+            // Active tab flips at the moment each slide swaps in
+            const t = self.progress * masterTl.duration();
+            let currentIdx = 0;
+            for (let i = 0; i < numStages - 1; i++) {
+              if (t >= masterTl.labels[`trans-${i}-in`]) currentIdx = i + 1;
+            }
             setActiveTab(currentIdx);
           },
         },
@@ -185,6 +190,8 @@ export default function GroomStudio() {
           gsap.set(`.prog-slide-${i} .cards-stack`, { y: 25, opacity: 0 });
         }
       });
+
+      masterTl.addLabel("stage-0", 0);
 
       // Smooth clean transitions across programmes on scroll
       for (let i = 0; i < numStages - 1; i++) {
@@ -249,6 +256,8 @@ export default function GroomStudio() {
           `${inLabel}+=0.08`,
         );
 
+        // Programme fully settled — tab clicks scroll exactly here
+        masterTl.addLabel(`stage-${nextIdx}`);
         masterTl.to({}, { duration: 0.4 });
       }
       });

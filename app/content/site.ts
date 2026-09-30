@@ -49,7 +49,7 @@ export const curriculum = {
    * informed reading rather than a verbatim transcription. Confirm with the
    * client before launch.
    */
-  statement: ["12 Weeks · 100s of Reps", "1 Unstoppable Sales Career"],
+  statement: ["12 Weeks · 100s of Reps", "1 Unstoppable Selling Career"],
 } as const;
 
 /**
@@ -190,7 +190,7 @@ export const audienceSlides: ReadonlyArray<AudienceSlide> = [
 
 export const careerCta = {
   lead: "Your Unstoppable ",
-  accent: "Sales Career",
+  accent: "Selling Career",
   trail: " Starts Here",
 } as const;
 

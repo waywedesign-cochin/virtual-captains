@@ -26,6 +26,19 @@ gsap.registerPlugin(ScrollTrigger);
  * Below 1024px: no pin either — pill, image, copy and Enroll stack in normal
  * flow, so a tall phone screen has no dead gap between image and headline.
  */
+// React doesn't reliably render the `muted` attribute, and iOS won't autoplay
+// a video it thinks has sound — so force it on the element, and snap it back
+// if anything ever unmutes it. The hero videos are always silent.
+const keepMuted = (v: HTMLVideoElement | null) => {
+  if (!v) return;
+  v.muted = true;
+  v.defaultMuted = true;
+  v.setAttribute("muted", "");
+};
+const onVolumeChange = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+  if (!e.currentTarget.muted) e.currentTarget.muted = true;
+};
+
 export default function SalesXHero() {
   const [selectedBrand, setSelectedBrand] = useState<"salesx" | "captains">("salesx");
 
@@ -98,7 +111,7 @@ export default function SalesXHero() {
       ref={sectionRef}
       role="region"
       aria-label="SalesX Hero Section"
-      className="relative w-full h-svh overflow-hidden bg-salesx-bg select-none max-lg:h-auto max-lg:flex max-lg:flex-col max-lg:items-center max-lg:gap-8 max-lg:pt-24 max-lg:pb-14 sm:max-lg:gap-10 sm:max-lg:pt-28"
+      className="relative w-full h-svh overflow-hidden bg-salesx-bg select-none max-lg:h-auto max-lg:flex max-lg:flex-col max-lg:items-center max-lg:gap-8 max-lg:pb-14 sm:max-lg:gap-10"
     >
       <h1 className="sr-only">
         SalesX | High-Velocity AI Sales Simulation Engine by Virtual Captains
@@ -111,10 +124,29 @@ export default function SalesXHero() {
           autoPlay
           loop
           muted
+          ref={keepMuted}
+          onVolumeChange={onVolumeChange}
           playsInline
           className="absolute inset-0 h-full w-full object-cover object-bottom pointer-events-none"
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_45%,rgba(2,5,20,0.55)_100%)] pointer-events-none" />
+      </div>
+
+      {/* ── Phones & tablets: portrait video fills the first screen, then the
+          stacked image + copy follow. (Desktop uses the landscape video above.) */}
+      <div className="relative -mb-16 h-svh w-full shrink-0 overflow-hidden lg:hidden">
+        <video
+          src="/salesx/hero-mobile.mp4"
+          autoPlay
+          loop
+          muted
+          ref={keepMuted}
+          onVolumeChange={onVolumeChange}
+          playsInline
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-b from-transparent via-[#030614]/70 to-[#030614] pointer-events-none" />
       </div>
 
       {/* ── Layer 2: dashboard image (rises from the bottom) ──
@@ -171,8 +203,8 @@ export default function SalesXHero() {
       </div>
 
       {/* ── Brand switcher pill (top) ── */}
-      <div className="absolute top-5 sm:top-6 md:top-7 left-1/2 -translate-x-1/2 z-30">
-        <div ref={pillInnerRef} className="relative group">
+      <div className="absolute inset-x-0 top-5 sm:top-6 md:top-7 z-30 flex justify-center px-4 pointer-events-none">
+        <div ref={pillInnerRef} className="relative group pointer-events-auto">
           <div className="absolute -inset-1 rounded-full bg-linear-to-r from-sky-500/25 via-indigo-500/20 to-blue-500/25 blur-md opacity-75 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
           <div
             role="tablist"
@@ -233,15 +265,19 @@ export default function SalesXHero() {
       >
         <div ref={enrollInnerRef} className="relative group">
           <div className="absolute -inset-1 rounded-full bg-linear-to-r from-blue-600/25 to-indigo-600/25 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
-          <div className="flex items-center gap-3 sm:gap-4 rounded-full border border-white/20 group-hover:border-white/35 bg-[#080d26]/85 px-4 sm:px-6 py-2.5 sm:py-3 backdrop-blur-xl shadow-[0_14px_45px_rgba(0,0,0,0.75),inset_0_1px_1px_rgba(255,255,255,0.2)] transition-all duration-300">
-            <div className="text-left font-sans pr-1 sm:pr-2">
-              <p className="text-[11px] sm:text-xs font-medium text-white/95 leading-tight">India&apos;s first sales</p>
-              <p className="text-[11px] sm:text-xs font-medium text-white/95 leading-tight">execution-backed</p>
-              <p className="text-[11px] sm:text-xs font-medium text-white/95 leading-tight">training program</p>
+          <div className="flex items-center gap-4 sm:gap-5 rounded-full border border-white/20 group-hover:border-white/35 bg-[#080d26]/85 py-2 pl-5 pr-2 sm:py-2.5 sm:pl-6 sm:pr-2.5 backdrop-blur-xl shadow-[0_14px_45px_rgba(0,0,0,0.75),inset_0_1px_1px_rgba(255,255,255,0.2)] transition-all duration-300">
+            {/* Eyebrow + one line, instead of three hard-broken lines */}
+            <div className="text-left font-sans">
+              <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] text-[#60a5fa] leading-none">
+                India&apos;s First
+              </p>
+              <p className="mt-1.5 text-[13px] sm:text-sm font-medium text-white/95 leading-snug">
+                Execution-Backed Sales Training
+              </p>
             </div>
             <Link
               href="/individuals"
-              className="inline-flex min-h-10 items-center justify-center rounded-full bg-white hover:bg-slate-100 px-4 sm:px-6 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer select-none shrink-0"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white hover:bg-slate-100 px-5 sm:px-6 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer select-none shrink-0"
             >
               <span className="text-[#f97316] font-extrabold text-xs sm:text-sm">Enroll</span>
               <span className="text-[#6366f1] font-extrabold text-xs sm:text-sm ml-1">Now</span>
