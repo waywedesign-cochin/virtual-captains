@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRef, type CSSProperties } from "react";
 import { audienceSlides, whoThisIsFor } from "@/content/site";
@@ -21,9 +20,6 @@ export function WhoThisIsFor() {
       if (!section || !wave) return;
 
       const slides = gsap.utils.toArray<HTMLElement>("[data-who-copy-slide]");
-      const imageSlides = gsap.utils.toArray<HTMLElement>(
-        "[data-who-image-slide]",
-      );
       const dots = gsap.utils.toArray<HTMLButtonElement>("[role='tab']");
       let activeIndex = 0;
 
@@ -36,24 +32,15 @@ export function WhoThisIsFor() {
         });
       });
 
-      imageSlides.forEach((slide, i) => {
-        gsap.set(slide, {
-          opacity: i === 0 ? 1 : 0,
-          zIndex: i === 0 ? 2 : 0,
-        });
-      });
-
       function goToSlide(index: number) {
         if (index === activeIndex) return;
 
         const currentSlide = slides[activeIndex];
         const nextSlide = slides[index];
-        const currentImg = imageSlides[activeIndex];
-        const nextImg = imageSlides[index];
 
         // Stop ongoing animations so rapid clicks/scrolls don't stack up
         const nextLines = Array.from(nextSlide.children) as HTMLElement[];
-        gsap.killTweensOf([...slides, ...imageSlides, ...nextLines]);
+        gsap.killTweensOf([...slides, ...nextLines]);
 
         // Only opacity + transform are animated (GPU-composited). The old
         // blur/rotate fly-out repainted the whole slide every frame.
@@ -61,8 +48,6 @@ export function WhoThisIsFor() {
 
         gsap.set(currentSlide, { zIndex: 1, pointerEvents: "none" });
         gsap.set(nextSlide, { zIndex: 2, pointerEvents: "auto", opacity: 1, x: 0, y: 0 });
-        gsap.set(currentImg, { zIndex: 1 });
-        gsap.set(nextImg, { zIndex: 2 });
 
         // 1. Outgoing copy: quick fade + lift away in the travel direction
         gsap.to(currentSlide, {
@@ -87,38 +72,10 @@ export function WhoThisIsFor() {
           },
         );
 
-        // 3. Image: soft crossfade with a gentle settle
-        gsap.to(currentImg, { opacity: 0, duration: 0.5, ease: "power1.out" });
-        gsap.fromTo(
-          nextImg,
-          { opacity: 0, scale: 1.04 },
-          { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" },
-        );
-
         // Update dots
         dots.forEach((dot, i) => {
           dot.setAttribute("aria-selected", (i === index).toString());
         });
-
-        // Update wave hue
-        const nextHue = nextSlide.getAttribute("data-hue");
-        if (nextHue && wave) {
-          gsap.to(wave, {
-            "--wave-hue": `${nextHue}deg`,
-            duration: 0.6,
-            ease: "power2.out",
-          });
-
-          // Also retrigger the wave sweep animation by resetting its keyframe
-          const sweep = wave.querySelector(
-            ".who__wave-sweep",
-          ) as HTMLElement | null;
-          if (sweep) {
-            sweep.style.animation = "none";
-            sweep.offsetHeight; // trigger reflow
-            sweep.style.animation = "";
-          }
-        }
 
         activeIndex = index;
       }
@@ -198,6 +155,7 @@ export function WhoThisIsFor() {
         });
       });
 
+
       return () => {
         window.clearTimeout(autoplay);
         visibility.disconnect();
@@ -250,23 +208,18 @@ export function WhoThisIsFor() {
                 } as CSSProperties
               }
             >
-              {audienceSlides.map((slide) => (
-                <div
-                  key={slide.id}
-                  className="absolute inset-0 w-full h-full will-change-transform"
-                  data-who-image-slide=""
-                >
-                  <Image
-                    src={slide.image || "/inidividuals/wave.webp"}
-                    alt="who-wave"
-                    width={600}
-                    height={495}
-                    sizes="(max-width: 1023px) 90vw, 42vw"
-                    className="w-full h-full object-cover mix-blend-multiply"
-                  />
-                </div>
-              ))}
-              <span className="who__wave-sweep" aria-hidden="true" />
+              <video
+                src="/inidividuals/1212.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+                aria-hidden="true"
+                tabIndex={-1}
+                className="absolute inset-0 h-full w-full object-cover mix-blend-multiply [mask-image:radial-gradient(ellipse_at_center,black_55%,transparent_78%)] [-webkit-mask-image:radial-gradient(ellipse_at_center,black_55%,transparent_78%)]"
+              />
             </div>
 
             {/* Text Copy */}
@@ -296,7 +249,7 @@ export function WhoThisIsFor() {
                     {slide.title}
                   </h3>
                   <p
-                    className="max-w-[25em] mt-4 md:mt-6 type-body text-(--ink-soft) [@media(max-width:1023px)_and_(min-height:501px)]:max-w-[46ch] [@media(max-height:500px)]:mt-2"
+                    className="max-w-[25em] mt-4 md:mt-6 type-body text-(--ink-soft) [@media(max-width:1023px)_and_(min-height:501px)]:mx-auto [@media(max-width:1023px)_and_(min-height:501px)]:max-w-[46ch] [@media(max-height:500px)]:mt-2"
                     data-who-body=""
                   >
                     {slide.body}
