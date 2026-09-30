@@ -64,13 +64,13 @@ const LEVELS: Level[] = [
 /* Bar heights climb left → right, like steps. */
 const BAR_HEIGHTS = ["h-[45%]", "h-[70%]", "h-full"];
 
-/* Auto-climb loop timing (ms): each bar fills slowly, holds so the level can
-   be read, then the next one starts. After Expert every bar drains and the
+/* Auto-climb loop timing (ms): each bar fills quickly, holds just long enough for a
+   quick read, then the next one starts. After Expert every bar drains and the
    climb begins again from Basic. */
-const FILL_MS = 1800;
-const HOLD_MS = 2200;
-const DRAIN_MS = 700;
-const REST_MS = 500;
+const FILL_MS = 900;
+const HOLD_MS = 1700;
+const DRAIN_MS = 500;
+const REST_MS = 300;
 
 /* --------------------------- COMPONENT --------------------------- */
 

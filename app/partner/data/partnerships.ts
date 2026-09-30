@@ -5,8 +5,11 @@ export const PARTNERSHIP_MODELS: PartnershipModel[] = [
     id: "academic",
     category: "Academic",
     title: "Academic & Institution Partners",
+    number: "01",
+    verb: "Educate",
+    headline: "Shape the Next Generation of Sales Talent.",
     description:
-      "Co-brand our ISM-certified sales curriculum with your institution. Offer your students a job-ready certification powered by SalesX and backed by real execution experience.",
+      "Give students practical sales skills through an ISM-certified SalesX curriculum, co-branded certification programs, and placement support that prepares them for real-world sales careers.",
     features: [
       "Co-branded certification programs",
       "Placement support for your students",
@@ -15,7 +18,7 @@ export const PARTNERSHIP_MODELS: PartnershipModel[] = [
     ],
     ctaText: "Explore Academic Partnership",
     iconType: "academic",
-    themeColor: "#2563eb",
+    themeColor: "#38bdf8",
   },
   {
     id: "corporate",
@@ -23,8 +26,11 @@ export const PARTNERSHIP_MODELS: PartnershipModel[] = [
     badge: "MOST POPULAR",
     isPopular: true,
     title: "Corporate & Hiring Partners",
+    number: "02",
+    verb: "Build",
+    headline: "Turn Stalled Deals Into Moving Pipeline.",
     description:
-      "Get first access to our pipeline of VC Certified Sales Professionals. Build a dedicated talent channel or let us train your existing team to exceed revenue targets.",
+      "Strengthen your sales team with certified sales professionals, dedicated talent pipelines, corporate sales training, and ongoing coaching built around performance.",
     features: [
       "Priority access to certified graduates",
       "Custom corporate training programs",
@@ -33,14 +39,17 @@ export const PARTNERSHIP_MODELS: PartnershipModel[] = [
     ],
     ctaText: "Become a Hiring Partner",
     iconType: "corporate",
-    themeColor: "#1d4ed8",
+    themeColor: "#38bdf8",
   },
   {
     id: "brand",
     category: "Brand",
     title: "Brand & Channel Partners",
+    number: "03",
+    verb: "Amplify",
+    headline: "Place Your Brand in Front of the Right Buyers.",
     description:
-      "Align your brand with India's fastest-growing sales training platform. Co-market, co-create content, or sponsor cohorts to reach an ambitious, career-driven audience.",
+      "Reach relevant business audiences through co-marketing campaigns, sponsored cohorts, content collaborations, and visibility across the SalesX ecosystem.",
     features: [
       "Co-marketing campaigns",
       "Sponsored cohorts & events",
@@ -49,6 +58,6 @@ export const PARTNERSHIP_MODELS: PartnershipModel[] = [
     ],
     ctaText: "Explore Brand Partnership",
     iconType: "brand",
-    themeColor: "#059669",
+    themeColor: "#38bdf8",
   },
 ];

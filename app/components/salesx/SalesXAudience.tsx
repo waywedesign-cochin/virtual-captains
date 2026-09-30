@@ -32,7 +32,7 @@ const TRACKS: Track[] = [
     intro:
       "Enroll in an execution-backed sales training program built to transition students, freshers, and professionals into top-performing sellers.",
     features: [
-      { title: "ISM Certified Sales Professional™", subtitle: "Globally recognised credential" },
+      { title: "Virtual Captains (VC) Certificate", subtitle: "Industry-recognised sales credential" },
       { title: "SalesX by Virtual Captains", subtitle: "Execution-backed sales training platform" },
       { title: "Career Placement Support", subtitle: "Direct access to Virtual Captains' hiring network" },
       { title: "Live CRM & Sales-Call Simulations" },
@@ -41,8 +41,8 @@ const TRACKS: Track[] = [
       { title: "Placement Assistance for Top Performers" },
     ],
     ctas: [
-      { label: "View Course Details", href: "/individuals" },
-      { label: "Book Free Counselling", href: "/contact" },
+      { label: "Partner With Us", href: "/partner-with-us" },
+      { label: "Book Now", href: "/contact" },
     ],
   },
   {
@@ -60,8 +60,8 @@ const TRACKS: Track[] = [
       { title: "Access to Virtual Captains' Hiring Network" },
     ],
     ctas: [
-      { label: "Consult With Us", href: "/organisations" },
-      { label: "Request a Demo", href: "/contact" },
+      { label: "Partner With Us", href: "/partner-with-us" },
+      { label: "Book Now", href: "/contact" },
     ],
   },
 ];

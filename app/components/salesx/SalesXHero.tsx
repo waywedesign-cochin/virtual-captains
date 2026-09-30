@@ -276,7 +276,7 @@ export default function SalesXHero() {
               </p>
             </div>
             <Link
-              href="/individuals"
+              href="/programs"
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-white hover:bg-slate-100 px-5 sm:px-6 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer select-none shrink-0"
             >
               <span className="text-[#f97316] font-extrabold text-xs sm:text-sm">Enroll</span>
