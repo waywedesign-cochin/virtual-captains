@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { isValidPhoneNumber, type Value } from "react-phone-number-input";
 import PhoneField from "../common/PhoneField";
 
@@ -65,7 +66,9 @@ export default function BookACallModal({
 
   if (!open) return null;
 
-  return (
+  // Portal to <body> so a transformed/animated ancestor can't trap the
+  // fixed overlay inside itself.
+  return createPortal(
     <div
       className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6"
       role="dialog"
@@ -271,7 +274,8 @@ export default function BookACallModal({
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

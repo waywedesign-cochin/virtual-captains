@@ -235,12 +235,12 @@ export default function AboutFounder() {
               {/* Soft Photographic Backlight */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -inset-6 rounded-t-full rounded-b-3xl bg-radial from-blue-600/30 via-indigo-950/25 to-transparent blur-2xl -z-10"
+                className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-radial from-blue-600/30 via-indigo-950/25 to-transparent blur-2xl -z-10"
               />
 
               {/* Jewelry-Grade Precision Glass Rim */}
-              <div className="relative h-full w-full rounded-t-full rounded-b-2xl p-[1.5px] bg-linear-to-b from-white/35 via-white/15 to-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
-                <div className="relative h-full w-full overflow-hidden rounded-t-full rounded-b-2xl bg-linear-to-b from-[#0e2456] via-[#071333] to-[#020819]">
+              <div className="relative h-full w-full rounded-3xl p-[1.5px] bg-linear-to-b from-white/35 via-white/15 to-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
+                <div className="relative h-full w-full overflow-hidden rounded-3xl bg-linear-to-b from-[#0e2456] via-[#071333] to-[#020819]">
                   <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-44 h-44 rounded-full bg-blue-500/25 blur-2xl pointer-events-none" />
                   <Image
                     src={cutoutUrl || FOUNDER_IMAGE}
@@ -252,7 +252,7 @@ export default function AboutFounder() {
                     className="h-full w-full object-cover object-bottom select-none pointer-events-none transition-opacity duration-300"
                   />
                   <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-[#020819] via-[#020819]/60 to-transparent pointer-events-none z-10" />
-                  <div className="absolute top-0 inset-x-0 h-20 bg-linear-to-b from-white/15 to-transparent pointer-events-none rounded-t-full" />
+                  <div className="absolute top-0 inset-x-0 h-20 bg-linear-to-b from-white/15 to-transparent pointer-events-none rounded-t-3xl" />
                 </div>
               </div>
             </div>
@@ -349,13 +349,13 @@ export default function AboutFounder() {
                 {/* Soft Atmospheric Deep Blue Backlight */}
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute -inset-8 rounded-t-full rounded-b-3xl bg-radial from-blue-600/30 via-indigo-950/20 to-transparent blur-3xl -z-10"
+                  className="pointer-events-none absolute -inset-8 rounded-[2rem] bg-radial from-blue-600/30 via-indigo-950/20 to-transparent blur-3xl -z-10"
                 />
 
                 {/* Precision Jewelry Glass Rim (Clean, elegant, premium) */}
-                <div className="relative h-full w-full rounded-t-full rounded-b-2xl p-[1.5px] bg-linear-to-b from-white/35 via-white/15 to-white/5 shadow-[0_25px_60px_rgba(0,0,0,0.85)]">
+                <div className="relative h-full w-full rounded-3xl p-[1.5px] bg-linear-to-b from-white/35 via-white/15 to-white/5 shadow-[0_25px_60px_rgba(0,0,0,0.85)]">
                   {/* Inner Dark Studio Chamber */}
-                  <div className="relative h-full w-full overflow-hidden rounded-t-full rounded-b-2xl bg-linear-to-b from-[#0e2456] via-[#071333] to-[#020819]">
+                  <div className="relative h-full w-full overflow-hidden rounded-3xl bg-linear-to-b from-[#0e2456] via-[#071333] to-[#020819]">
                     {/* Interior spotlight behind silhouette */}
                     <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-blue-500/25 blur-3xl pointer-events-none" />
 
@@ -374,7 +374,7 @@ export default function AboutFounder() {
                     <div className="absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-[#020819] via-[#020819]/60 to-transparent pointer-events-none z-10" />
 
                     {/* Top Specular Glass Reflection */}
-                    <div className="absolute top-0 inset-x-0 h-24 bg-linear-to-b from-white/12 to-transparent pointer-events-none rounded-t-full" />
+                    <div className="absolute top-0 inset-x-0 h-24 bg-linear-to-b from-white/12 to-transparent pointer-events-none rounded-t-3xl" />
                   </div>
                 </div>
               </div>
