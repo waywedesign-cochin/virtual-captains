@@ -31,6 +31,7 @@ const LOCATIONS: Location[] = [
   { name: "Manama", country: "Bahrain", lon: 50.59, lat: 26.23 },
   { name: "Kuwait City", country: "Kuwait", lon: 47.98, lat: 29.38 },
   { name: "Muscat", country: "Oman", lon: 58.41, lat: 23.59 },
+  { name: "Kuala Lumpur", country: "Malaysia", lon: 101.69, lat: 3.14 },
 ];
 
 /**
@@ -45,7 +46,8 @@ const JOURNEY: { lon: number; lat: number; zoom: number; label?: string }[] = [
   { lon: 46.72, lat: 24.71, zoom: 2.2, label: "Riyadh" },
   { lon: 51.53, lat: 25.29, zoom: 2.2, label: "Doha" },
   { lon: 58.41, lat: 23.59, zoom: 2.2, label: "Muscat" },
-  { lon: 52, lat: 25, zoom: 1.45, label: "Middle East" },
+  { lon: 101.69, lat: 3.14, zoom: 2.2, label: "Kuala Lumpur" },
+  { lon: 76, lat: 15, zoom: 1.15, label: "Middle East & Asia" },
 ];
 
 const DEG = Math.PI / 180;
