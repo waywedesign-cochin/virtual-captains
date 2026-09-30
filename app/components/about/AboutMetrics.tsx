@@ -20,22 +20,23 @@ const METRICS: Metric[] = [
   { value: "3", label: "Continents" },
 ];
 
-type Star = { x: number; y: number };
+type LabelSide = "above" | "below" | "left" | "right";
+type Star = { x: number; y: number; label?: LabelSide };
 
 /**
- * Star positions in % of the stage. Wide: a left → right zig-zag, like a
- * zodiac figure; labels sit above the high stars and below the low ones, so
- * the connecting lines (which run between high and low) never cross them.
+ * Star positions in % of the stage. Wide: scattered irregularly across the
+ * whole sky like a real constellation; each star says which side its label
+ * sits on, chosen so no label crosses a line.
  * Narrow: a top → bottom zig-zag near the centre; labels sit on the outer
  * side of each star, clear of the lines running down the middle.
  */
 const WIDE: Star[] = [
-  { x: 7, y: 66 },
-  { x: 23, y: 30 },
-  { x: 40, y: 60 },
-  { x: 57, y: 24 },
-  { x: 75, y: 64 },
-  { x: 92, y: 32 },
+  { x: 6, y: 60, label: "below" },
+  { x: 23, y: 20, label: "above" },
+  { x: 41, y: 74, label: "below" },
+  { x: 59, y: 28, label: "above" },
+  { x: 77, y: 78, label: "below" },
+  { x: 94, y: 24, label: "above" },
 ];
 const NARROW: Star[] = [
   { x: 43, y: 5 },
@@ -97,41 +98,42 @@ function Constellation({ stars, variant }: { stars: Star[]; variant: "wide" | "n
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                stroke="rgba(147,197,253,0.12)"
-                strokeWidth="1"
-                strokeDasharray="3 5"
+                stroke="rgba(147,197,253,0.14)"
+                strokeWidth="0.6"
+                strokeDasharray="2 5"
                 vectorEffect="non-scaling-stroke"
               />
               <line
                 data-const-line
+                data-x2={b.x}
+                data-y2={b.y}
                 x1={a.x}
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                pathLength={1}
                 stroke={`url(#vc-const-${variant})`}
-                strokeWidth="1.5"
+                strokeWidth="0.8"
                 strokeLinecap="round"
                 vectorEffect="non-scaling-stroke"
-                style={{ filter: "drop-shadow(0 0 3px rgba(147,197,253,0.8))" }}
+                style={{ filter: "drop-shadow(0 0 1.5px rgba(147,197,253,0.7))" }}
               />
             </g>
           );
         })}
       </svg>
 
+
       {stars.map((p, i) => {
         const m = METRICS[i];
         const high = p.y < 50;
         const leftSide = i % 2 === 0;
-        const labelPos =
-          variant === "wide"
-            ? high
-              ? "bottom-full left-1/2 -translate-x-1/2 mb-4 text-center"
-              : "top-full left-1/2 -translate-x-1/2 mt-4 text-center"
-            : leftSide
-              ? "right-full top-1/2 -translate-y-1/2 mr-4 text-right"
-              : "left-full top-1/2 -translate-y-1/2 ml-4 text-left";
+        const side: LabelSide = p.label ?? (variant === "wide" ? (high ? "above" : "below") : leftSide ? "left" : "right");
+        const labelPos = {
+          above: "bottom-full left-1/2 -translate-x-1/2 mb-4 text-center",
+          below: "top-full left-1/2 -translate-x-1/2 mt-4 text-center",
+          left: "right-full top-1/2 -translate-y-1/2 mr-5 text-right",
+          right: "left-full top-1/2 -translate-y-1/2 ml-5 text-left",
+        }[side];
         return (
           <div
             key={m.label}
@@ -153,7 +155,7 @@ function Constellation({ stars, variant }: { stars: Star[]; variant: "wide" | "n
               data-const-label
               className={`absolute w-max ${variant === "wide" ? "max-w-44" : "max-w-[34vw]"} ${labelPos}`}
             >
-              <p className="text-[clamp(1.35rem,2.6vw,2.4rem)] font-bold leading-none tracking-tight text-white">
+              <p className="text-[clamp(1.5rem,3vw,3.25rem)] font-bold leading-none tracking-tight text-white">
                 {m.value}
               </p>
               <p className="mt-1.5 text-[11px] leading-tight text-white/65 text-balance sm:text-[13px]">
@@ -193,7 +195,16 @@ export default function AboutMetrics() {
         const halos = q("[data-const-halo]");
         const labels = q("[data-const-label]");
 
-        gsap.set(lines, { strokeDasharray: 1, strokeDashoffset: 1 });
+        // Lines "draw" by growing their end point from the start star to the
+        // next one. (Dash-offset drawing breaks with non-scaling strokes.)
+        const collapse = (els: Element[]) =>
+          els.forEach((el) =>
+            gsap.set(el, { attr: { x2: Number(el.getAttribute("x1")), y2: Number(el.getAttribute("y1")) } }),
+          );
+        const grow = (el: Element) => ({
+          attr: { x2: Number(el.getAttribute("data-x2")), y2: Number(el.getAttribute("data-y2")) },
+        });
+        collapse(lines);
         gsap.set(dots, { scale: 0.3, opacity: 0.35 });
         gsap.set(halos, { scale: 0.2, opacity: 0 });
         gsap.set(labels, { opacity: 0, y: 10 });
@@ -204,7 +215,7 @@ export default function AboutMetrics() {
           tl.to(dots[i], { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2.5)" }, at)
             .to(halos[i], { scale: 1, opacity: 1, duration: 0.4 }, at)
             .to(labels[i], { opacity: 1, y: 0, duration: 0.35 }, at + 0.1);
-          if (lines[i]) tl.to(lines[i], { strokeDashoffset: 0, duration: 0.6, ease: "none" }, at + 0.4);
+          if (lines[i]) tl.to(lines[i], { ...grow(lines[i]), duration: 0.6, ease: "none" }, at + 0.4);
         });
         tl.to({}, { duration: 0.4 });
       };
@@ -237,7 +248,7 @@ export default function AboutMetrics() {
     <section
       ref={sectionRef}
       aria-labelledby="about-metrics-title"
-      className="relative flex w-full flex-col items-center overflow-hidden px-4 py-14 sm:py-16 hex:h-svh hex:justify-center hex:py-10"
+      className="relative flex w-full flex-col items-center overflow-hidden px-4 py-14 sm:py-16 hex:h-svh hex:px-8 hex:pt-24 hex:pb-6"
     >
       {/* Night sky */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -291,7 +302,7 @@ export default function AboutMetrics() {
       {/* Wide: horizontal constellation, sized by both width and height */}
       <div
         ref={wideRef}
-        className="relative z-10 mt-6 hidden hex:block aspect-[2.4/1] w-[min(100%,72rem,calc((100svh-230px)*2.4))]"
+        className="relative z-10 mt-4 hidden hex:block min-h-0 w-full max-w-[92rem] flex-1 [@media(min-width:1024px)]:mx-10"
       >
         <Constellation stars={WIDE} variant="wide" />
       </div>

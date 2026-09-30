@@ -153,3 +153,34 @@ export async function getNewsBySlug(slug: string): Promise<NewsPost | null> {
 export async function getNewsCategories(): Promise<NewsCategory[]> {
   return client.fetch(newsCategoriesQuery);
 }
+
+// ── YouTube videos (About page "Recent & Upcoming Videos") ──
+export type YouTubeVideoDoc = {
+  _id: string;
+  title: string;
+  status: "recent" | "upcoming";
+  url?: string;
+  premiereDate?: string;
+};
+
+export const YOUTUBE_VIDEOS_QUERY = groq`
+  *[_type == "youtubeVideo" && defined(title)] | order(coalesce(order, 999) asc, _createdAt desc) {
+    _id,
+    title,
+    status,
+    url,
+    premiereDate
+  }
+`;
+
+// Server render: short safety-net cache; the About page also listens live
+// in the browser, so a publish shows up within seconds either way.
+export async function getYouTubeVideos(): Promise<YouTubeVideoDoc[]> {
+  try {
+    return await client.fetch<YouTubeVideoDoc[]>(YOUTUBE_VIDEOS_QUERY, {}, {
+      next: { revalidate: 60, tags: ["youtubeVideo"] },
+    });
+  } catch {
+    return [];
+  }
+}

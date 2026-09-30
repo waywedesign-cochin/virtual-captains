@@ -9,6 +9,7 @@ import AboutMetrics from "../components/about/AboutMetrics";
 import AboutPartners from "../components/about/AboutPartners";
 import AboutCertifications from "../components/about/AboutCertifications";
 import AboutVideoCTA from "../components/about/AboutVideoCTA";
+import { getYouTubeVideos } from "@/sanity/queries";
 
 export const metadata: Metadata = {
   title: "About Virtual Captains | Conversational Sales Intelligence",
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
     "A smarter way to build sales capability at scale. We empower sales professionals and global organisations with AI simulation and real-world execution capabilities.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const videos = await getYouTubeVideos();
   return (
     <main className="min-h-screen bg-[#020B25] text-white selection:bg-[#F3FC00] selection:text-black">
       <Navbar />
@@ -57,7 +59,7 @@ export default function AboutPage() {
         <AboutCertifications />
 
         {/* 7. Video & audience paths: YouTube video + Learner / Business buttons */}
-        <AboutVideoCTA />
+        <AboutVideoCTA initialVideos={videos} />
 
         {/* Blend the page navy into the footer's near-black so the hand-off
             has no visible colour edge */}

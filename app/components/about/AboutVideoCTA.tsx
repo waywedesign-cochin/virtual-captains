@@ -3,6 +3,9 @@
 import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { client } from "@/sanity/lib/client";
+import { YOUTUBE_VIDEOS_QUERY, type YouTubeVideoDoc } from "@/sanity/queries";
+import { getYouTubeId } from "@/sanity/lib/youtube";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -11,20 +14,91 @@ if (typeof window !== "undefined") {
 const CHANNEL_URL = "https://www.youtube.com/@VirtualCaptains";
 
 type ChannelVideo =
-  | { kind: "recent"; id: string; title: string; meta: string }
-  | { kind: "upcoming"; title: string; meta: string };
+  | { kind: "recent"; key: string; id: string; title: string; meta: string }
+  | { kind: "upcoming"; key: string; title: string; meta: string };
 
-// Edit this list as videos go live: a "recent" item needs its YouTube ID
-// (the part after watch?v=); "upcoming" items show a Coming Soon card.
-const VIDEOS: ChannelVideo[] = [
-  { kind: "recent", id: "ulkbdVqfCNI", title: "Virtual Captains Will Turn Your Leads to Lasting Sales", meta: "Latest Video" },
-  { kind: "upcoming", title: "Handling Objections Live", meta: "Premieres Soon" },
-  { kind: "upcoming", title: "From Fresher to Closer: A SalesX Story", meta: "Premieres Soon" },
+// Shown only if Sanity has no videos yet (or can't be reached), so the
+// section is never empty.
+const FALLBACK: ChannelVideo[] = [
+  {
+    kind: "recent",
+    key: "fallback",
+    id: "ulkbdVqfCNI",
+    title: "Virtual Captains Will Turn Your Leads to Lasting Sales",
+    meta: "Latest Video",
+  },
 ];
 
-export default function AboutVideoCTA() {
-  const firstRecent = VIDEOS.find((v) => v.kind === "recent");
-  const [activeId, setActiveId] = useState(firstRecent && firstRecent.kind === "recent" ? firstRecent.id : "");
+const dateFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
+
+/** Sanity documents → the cards this section renders. */
+function toVideos(docs: YouTubeVideoDoc[]): ChannelVideo[] {
+  let seenRecent = false;
+  const out: ChannelVideo[] = [];
+  for (const d of docs) {
+    if (d.status === "upcoming") {
+      out.push({
+        kind: "upcoming",
+        key: d._id,
+        title: d.title,
+        meta: d.premiereDate ? `Premieres ${dateFmt.format(new Date(d.premiereDate))}` : "Premieres Soon",
+      });
+      continue;
+    }
+    const id = getYouTubeId(d.url);
+    if (!id) continue; // a recent video without a valid link can't play
+    out.push({ kind: "recent", key: d._id, id, title: d.title, meta: seenRecent ? "Recent Video" : "Latest Video" });
+    seenRecent = true;
+  }
+  return out.some((v) => v.kind === "recent") ? out : [...FALLBACK, ...out];
+}
+
+const firstRecentId = (list: ChannelVideo[]) => {
+  const v = list.find((x) => x.kind === "recent");
+  return v && v.kind === "recent" ? v.id : "";
+};
+
+export default function AboutVideoCTA({ initialVideos = [] }: { initialVideos?: YouTubeVideoDoc[] }) {
+  const [videos, setVideos] = useState(() => toVideos(initialVideos));
+  const [activeId, setActiveId] = useState(() => firstRecentId(toVideos(initialVideos)));
+
+  // Live updates: listen for any publish/edit/delete of a YouTube Video in
+  // Sanity and refetch, so the section changes within seconds of publishing
+  // — no redeploy, no page reload.
+  useEffect(() => {
+    let cancelled = false;
+    const refetch = () =>
+      client
+        .fetch<YouTubeVideoDoc[]>(YOUTUBE_VIDEOS_QUERY)
+        .then((docs) => {
+          if (cancelled) return;
+          const next = toVideos(docs);
+          setVideos(next);
+          // Keep the current video playing unless it was removed
+          setActiveId((cur) =>
+            next.some((v) => v.kind === "recent" && v.id === cur) ? cur : firstRecentId(next),
+          );
+        })
+        .catch(() => {});
+
+    const sub = client
+      .listen('*[_type == "youtubeVideo"]', {}, { includeResult: false, visibility: "query" })
+      .subscribe({
+        next: (event) => {
+          if (event.type === "mutation") refetch();
+        },
+        error: () => {},
+      });
+
+    // Catch anything published between the server render and this mount
+    refetch();
+
+    return () => {
+      cancelled = true;
+      sub.unsubscribe();
+    };
+  }, []);
+
   const sectionRef = useRef<HTMLElement>(null);
   const videoWrapperRef = useRef<HTMLDivElement>(null);
   const ctaOuterRef = useRef<HTMLDivElement>(null);
@@ -156,7 +230,7 @@ export default function AboutVideoCTA() {
               </div>
 
               <ul className="flex w-full max-w-md flex-col gap-3">
-                {VIDEOS.map((v) => {
+                {videos.map((v) => {
                   const isActive = v.kind === "recent" && v.id === activeId;
                   const body = (
                     <>
@@ -194,7 +268,7 @@ export default function AboutVideoCTA() {
                   const base =
                     "vc-audience-cta flex w-full items-center gap-4 rounded-2xl border p-2.5 pr-4 backdrop-blur-md transition-all duration-300";
                   return (
-                    <li key={v.title}>
+                    <li key={v.key}>
                       {v.kind === "recent" ? (
                         <button
                           type="button"
