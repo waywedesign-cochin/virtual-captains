@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import gsap from "gsap";
+import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Link from "next/link";
+import BookACallModal from "@/components/home/BookACallModal";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
 if (typeof window !== "undefined") {
@@ -12,6 +13,8 @@ if (typeof window !== "undefined") {
 }
 
 export default function OrgCTA() {
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const openBooking = () => setBookingOpen(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -106,12 +109,13 @@ export default function OrgCTA() {
             Talk to Us About<br />Your Next Quarter.
           </ZoomHeading>
           <div className="cta-text">
-            <Link
-              href="/discovery"
+            <button
+              type="button"
+              onClick={openBooking}
               className="inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border border-slate-800 text-slate-900 text-sm sm:text-base font-normal hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
             >
               Book a Discovery Call
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -139,7 +143,7 @@ export default function OrgCTA() {
 
           {/* Central Frosted Glass Circle Button */}
           <Link
-            href="/enroll"
+            href="/programs"
             aria-label="Enroll Now"
             className="cta-circle group relative z-20 w-60 h-60 sm:w-72.5 sm:h-72.5 md:w-83.75 md:h-83.75 lg:w-91.25 lg:h-91.25 rounded-full bg-white/25 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.08),inset_0_1px_2px_rgba(255,255,255,0.85)] flex items-center justify-center cursor-pointer transition-all duration-500 hover:scale-103 hover:bg-white/35 hover:shadow-[0_24px_60px_rgba(0,0,0,0.14),inset_0_1.5px_3px_rgba(255,255,255,0.95)]"
           >
@@ -149,6 +153,11 @@ export default function OrgCTA() {
           </Link>
         </div>
       </div>
+      <BookACallModal
+        open={bookingOpen}
+        onClose={() => setBookingOpen(false)}
+        defaultAudience="organisation"
+      />
     </section>
   );
 }

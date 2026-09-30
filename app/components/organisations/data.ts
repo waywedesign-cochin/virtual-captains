@@ -140,7 +140,10 @@ export type ProgrammeItem = {
   title: string;
   description: string;
   ctaText: string;
+  /** A page path ("/programs") links there; "book" opens the Book a Call popup. */
   ctaAction: string;
+  /** Optional extra link shown after the demo button (e.g. Sales Training → SalesX). */
+  linkCta?: { text: string; href: string };
   accentColor: string;
   cards: ProgramCard[];
 };
@@ -156,7 +159,7 @@ export const allProgrammes: ProgrammeItem[] = [
     description:
       "Groom Studio is a first-of-its-kind offline sales agent onboarding programme. Induction, orientation, brand immersion, and first-week roleplay come together in-studio, so every new hire is ready for the floor before their first live call.",
     ctaText: "Get Started",
-    ctaAction: "/book?program=groom-studio",
+    ctaAction: "/programs",
     accentColor: "#2563eb",
     cards: [
       {
@@ -207,7 +210,7 @@ export const allProgrammes: ProgrammeItem[] = [
     description:
       "A forensic diagnostic of your entire revenue engine. From recorded sales calls to conversion drop-offs and tooling friction, we identify exactly where deals stall and deliver turnkey remedies.",
     ctaText: "Schedule Sales Audit",
-    ctaAction: "/book?program=sales-audit",
+    ctaAction: "book",
     accentColor: "#0ea5e9",
     cards: [
       {
@@ -258,7 +261,7 @@ export const allProgrammes: ProgrammeItem[] = [
     description:
       "We build and orchestrate multi-touch outbound sales engines. Precision account research, cold calling, and bespoke email cadences that deliver qualified decision-maker meetings straight to your calendar.",
     ctaText: "Launch Outbound Engine",
-    ctaAction: "/book?program=outbound-lead-gen",
+    ctaAction: "book",
     accentColor: "#f97316",
     cards: [
       {
@@ -309,7 +312,8 @@ export const allProgrammes: ProgrammeItem[] = [
     description:
       "Battle-tested sales workshops and live call coaching tailored to your product value. We train frontline reps to command negotiations, overcome complex objections, and defend deal margins without discounting.",
     ctaText: "Enroll in Sales Training",
-    ctaAction: "/book?program=sales-training",
+    ctaAction: "/programs",
+    linkCta: { text: "Explore SalesX", href: "/salesx" },
     accentColor: "#8b5cf6",
     cards: [
       {

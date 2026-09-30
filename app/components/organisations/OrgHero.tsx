@@ -2,8 +2,8 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import Link from "next/link";
+import { useGSAP } from "@gsap/react";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP);
@@ -184,14 +184,15 @@ export default function OrgHero() {
 
         {/* Right CTA */}
         <div className="relative z-10 lg:col-span-3 hero-text flex flex-row lg:flex-col gap-4 justify-center lg:justify-end items-center lg:items-end order-3 pt-4 lg:pt-0">
-          <Link
-            href="/demo"
+          {/* Product demo — placeholder until a demo exists (no link yet) */}
+          <button
+            type="button"
             className="flex min-h-11 items-center justify-center px-8 rounded-full border border-black bg-white text-black hover:bg-slate-50 transition-colors w-36 text-center text-[13.5px] font-medium shadow-sm"
           >
             Demo
-          </Link>
+          </button>
           <Link
-            href="/get-started"
+            href="/programs"
             className="flex min-h-11 items-center justify-center px-8 rounded-full bg-[#3b82f6] text-white hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30 w-36 text-center text-[13.5px] font-medium"
           >
             Get Started
