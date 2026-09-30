@@ -15,12 +15,15 @@ import PhoneField from "../common/PhoneField";
 export default function BookACallModal({
   open,
   onClose,
+  defaultAudience = "individual",
 }: {
   open: boolean;
   onClose: () => void;
+  /** Which audience the form starts on (e.g. "organisation" on /organisations). */
+  defaultAudience?: "individual" | "organisation";
 }) {
   const [submitted, setSubmitted] = useState(false);
-  const [audience, setAudience] = useState<"individual" | "organisation">("individual");
+  const [audience, setAudience] = useState<"individual" | "organisation">(defaultAudience);
   const dialogRef = useRef<HTMLDivElement>(null);
   const [phone, setPhone] = useState<Value | undefined>();
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -54,11 +57,11 @@ export default function BookACallModal({
   useEffect(() => {
     if (open) {
       setSubmitted(false);
-      setAudience("individual");
+      setAudience(defaultAudience);
       setPhone(undefined);
       setPhoneError(null);
     }
-  }, [open]);
+  }, [open, defaultAudience]);
 
   if (!open) return null;
 
