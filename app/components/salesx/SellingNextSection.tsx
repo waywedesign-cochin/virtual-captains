@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import BookACallModal from "../home/BookACallModal";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHeadingZoom } from "@/components/about/useHeadingZoom";
@@ -116,11 +116,14 @@ function Card({
   offset,
   spacing,
   onSelect,
+  onBook,
 }: {
   data: CardData;
   offset: number;
   spacing: number;
   onSelect: () => void;
+  /** Every button on a card opens the site's Book a Call popup */
+  onBook: () => void;
 }) {
   const outerRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
@@ -131,6 +134,11 @@ function Card({
 
   const setFlip = (value: boolean) => {
     flipped.current = value;
+    // A hidden (backface) side still catches taps in Chrome, so hand
+    // pointer events to whichever side is facing the viewer.
+    const [front, back] = Array.from(flipRef.current?.children ?? []) as HTMLElement[];
+    if (front) front.style.pointerEvents = value ? "none" : "";
+    if (back) back.style.pointerEvents = value ? "auto" : "none";
     gsap.to(flipRef.current, {
       rotationY: value ? 180 : 0,
       duration: 0.7,
@@ -206,7 +214,10 @@ function Card({
   }, [offset, spacing, isActive]);
 
   const onPointerEnter = (e: React.PointerEvent) => {
-    if (isActive && e.pointerType === "mouse") setFlip(true);
+    if (isActive && e.pointerType === "mouse") {
+      resetTilt();
+      setFlip(true);
+    }
   };
 
   const onPointerLeave = (e: React.PointerEvent) => {
@@ -216,7 +227,9 @@ function Card({
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isActive || e.pointerType !== "mouse") return;
+    // No tilt while the back is showing: its buttons must hold still under
+    // the cursor, and a tilted back face misses clicks in Chrome.
+    if (!isActive || e.pointerType !== "mouse" || flipped.current) return;
     const r = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
@@ -235,7 +248,7 @@ function Card({
       return;
     }
     // If clicking a link inside the back card, allow standard navigation
-    if ((e.target as HTMLElement).closest("a")) return;
+    if ((e.target as HTMLElement).closest("a, button")) return;
     setFlip(!flipped.current);
   };
 
@@ -282,7 +295,7 @@ function Card({
 
           {/* BACK */}
           <div
-            className={`absolute inset-0 flex flex-col items-center justify-center rounded-2xl sm:rounded-3xl border border-blue-400/30 px-6 text-center shadow-[0_20px_60px_rgba(37,99,235,0.35)] [backface-visibility:hidden] [transform:rotateY(180deg)] ${data.back}`}
+            className={`absolute inset-0 flex flex-col items-center justify-center rounded-2xl sm:rounded-3xl border border-blue-400/30 px-6 text-center shadow-[0_20px_60px_rgba(37,99,235,0.35)] pointer-events-none [backface-visibility:hidden] [transform:rotateY(180deg)] ${data.back}`}
           >
             <h3 className="text-xl font-medium leading-tight sm:text-2xl text-white">
               {data.heading}
@@ -321,12 +334,13 @@ function Card({
                   return (
                     <li key={it.title}>
                       {it.href ? (
-                        <Link
-                          href={it.href}
-                          className="block rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 transition hover:border-fuchsia-400/60 hover:bg-white/10"
+                        <button
+                          type="button"
+                          onClick={onBook}
+                          className="block w-full cursor-pointer text-left rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 transition hover:border-fuchsia-400/60 hover:bg-white/10"
                         >
                           {inner}
-                        </Link>
+                        </button>
                       ) : (
                         <div className="px-3 py-1">{inner}</div>
                       )}
@@ -336,12 +350,13 @@ function Card({
               </ul>
             )}
 
-            <Link
-              href={data.cta.href}
-              className={`mt-6 rounded-full px-5 py-2 text-xs font-semibold transition sm:text-sm ${ctaClass}`}
+            <button
+              type="button"
+              onClick={onBook}
+              className={`mt-6 cursor-pointer rounded-full px-5 py-2 text-xs font-semibold transition sm:text-sm ${ctaClass}`}
             >
               {data.cta.label} →
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -367,6 +382,8 @@ export default function SellingNextSection() {
   useHeadingZoom(titleRef);
 
   const [active, setActive] = useState(0);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [bookingAudience, setBookingAudience] = useState<"individual" | "organisation">("individual");
   const [spacing, setSpacing] = useState(330);
 
   // Responsive 3D fan spacing
@@ -578,15 +595,15 @@ export default function SellingNextSection() {
     <section
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden bg-salesx-bg text-white select-none max-lg:h-auto max-lg:py-14 sm:max-lg:py-20"
-      aria-label="What are you selling next"
+      aria-label="What Are You Selling Next"
     >
       {/* ---------- INITIAL SCREEN ---------- */}
       <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center pointer-events-none z-10 max-lg:static max-lg:mb-4">
         <div ref={headingRef}>
           <h2 ref={titleRef} className="ss-title text-4xl sm:text-5xl lg:text-6xl font-light leading-tight text-white tracking-tight">
-            What are you
+            What Are You
             <br />
-            <span className="font-semibold text-white">selling next?</span>
+            <span className="font-semibold text-white">Selling Next?</span>
           </h2>
         </div>
         <div
@@ -621,6 +638,10 @@ export default function SellingNextSection() {
                 offset={offset}
                 spacing={spacing}
                 onSelect={() => selectCard(i)}
+                onBook={() => {
+                  setBookingAudience(card.id === "organisations" ? "organisation" : "individual");
+                  setIsBookingOpen(true);
+                }}
               />
             );
           })}
@@ -647,6 +668,11 @@ export default function SellingNextSection() {
           ))}
         </div>
       </div>
+      <BookACallModal
+        open={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        defaultAudience={bookingAudience}
+      />
     </section>
   );
 }

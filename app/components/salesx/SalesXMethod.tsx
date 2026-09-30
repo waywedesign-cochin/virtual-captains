@@ -495,7 +495,7 @@ export default function SalesXMethod() {
 
                       <div className="mt-4 sm:mt-6 lg:mt-7 flex justify-center lg:justify-start w-full lg:w-auto">
                         <Link
-                          href="/individuals"
+                          href="/programs"
                           className="inline-flex items-center justify-center rounded-full border border-[#00a6ff] bg-transparent hover:bg-[#00a6ff]/10 px-5 sm:px-8 py-1.5 sm:py-2.5 text-xs sm:text-sm font-medium text-white shadow-[0_0_16px_rgba(0,166,255,0.4)] transition-all transform hover:scale-105"
                         >
                           Enroll Now

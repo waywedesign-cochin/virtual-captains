@@ -406,7 +406,7 @@ export default function SalesXFooter() {
                 </svg>
               </Link>
               <Link
-                href="/individuals"
+                href="/programs"
                 className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/20 px-7 text-sm sm:text-base font-medium text-white/90 transition-colors duration-300 hover:border-white/40 hover:bg-white/5"
               >
                 Enroll Now
