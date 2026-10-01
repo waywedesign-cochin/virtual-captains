@@ -306,7 +306,7 @@ export const allProgrammes: ProgrammeItem[] = [
     badgeCategory: "Continuous Capability Uplift",
     badgeMode: "Mastery",
     badgeModeType: "training",
-    title: "Transform Average Reps into Predictable High Performers",
+    title: "Transform Average Reps Into Predictable High Performers",
     description:
       "Battle-tested sales workshops and live call coaching tailored to your product value. We train frontline reps to command negotiations, overcome complex objections, and defend deal margins without discounting.",
     ctaText: "Enroll in Sales Training",

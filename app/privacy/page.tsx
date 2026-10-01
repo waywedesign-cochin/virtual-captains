@@ -95,7 +95,7 @@ const SECTIONS = [
   },
   {
     number: "07",
-    title: "Changes to this Policy",
+    title: "Changes to This Policy",
     content: (
       <p className="text-slate-300 font-sans leading-relaxed text-sm sm:text-base">
         We reserve the right to update or modify this privacy policy at any time.

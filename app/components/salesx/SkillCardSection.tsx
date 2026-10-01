@@ -187,13 +187,13 @@ export default function SkillCardSection() {
         <div className="flex flex-col items-center gap-6 text-center sm:gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-16 lg:text-left">
           <h2 ref={headingRef} className="text-3xl sm:text-4xl lg:text-[2.75rem] font-medium leading-[1.15] tracking-tight">
             <span className="sc-heading block text-white">
-              Not a certificate
+              Not a Certificate
             </span>
             <span className="sc-heading block text-white mt-1">
-              of attendance.
+              of Attendance.
             </span>
             <span className="sc-heading block font-semibold text-[#1d72fe] mt-1">
-              A certificate of ability.
+              A Certificate of Ability.
             </span>
           </h2>
 

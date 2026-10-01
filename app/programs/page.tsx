@@ -49,7 +49,7 @@ const DUMMY_PROGRAMS: Program[] = [
       url: "/programs/salesx-intensive.jpg",
       alt: "SalesX Intensive program cover",
     },
-    tagline: "From campus to offer",
+    tagline: "From Campus to Offer",
     description:
       "A 40-hour, practice-first certification for students between semesters. Rehearse, get scored and leave with proof.",
     audience: "students",
@@ -75,7 +75,7 @@ const DUMMY_PROGRAMS: Program[] = [
       url: "/programs/salesx-extended.jpg",
       alt: "SalesX Extended program cover",
     },
-    tagline: "Grow while you work",
+    tagline: "Grow While You Work",
     description:
       "20 sessions of 2 hours each, built to fit around a full calendar for working professionals.",
     audience: "professionals",
@@ -99,7 +99,7 @@ const DUMMY_PROGRAMS: Program[] = [
       url: "/programs/founders-first-sale.jpg",
       alt: "The Founder's First Sale program cover",
     },
-    tagline: "From builder to first seller",
+    tagline: "From Builder to First Seller",
     description:
       "Learn outreach, discovery and pricing conversations on your own product, then build a playbook you can hand over.",
     audience: "founders",
@@ -123,7 +123,7 @@ const DUMMY_PROGRAMS: Program[] = [
       url: "/programs/sales-team-induction.jpg",
       alt: "Sales Team Induction program cover",
     },
-    tagline: "Ramp new hires faster",
+    tagline: "Ramp New Hires Faster",
     description:
       "A structured onboarding curriculum that gets new sales hires selling sooner, measured in pipeline.",
     audience: "organisations",
@@ -147,7 +147,7 @@ const DUMMY_PROGRAMS: Program[] = [
       url: "/programs/outbound-lead-generation.jpg",
       alt: "Outbound Lead Generation program cover",
     },
-    tagline: "Fill the pipeline",
+    tagline: "Fill the Pipeline",
     description:
       "Multi-channel outreach training for teams, from list building to booked meetings.",
     audience: "organisations",
@@ -171,7 +171,7 @@ const DUMMY_PROGRAMS: Program[] = [
       url: "/programs/executive-negotiation.jpg",
       alt: "Executive Negotiation program cover",
     },
-    tagline: "Hold your ground",
+    tagline: "Hold Your Ground",
     description:
       "Deal-desk coaching for senior sellers: pricing, scope and the walk-away moment.",
     audience: "professionals",
@@ -392,9 +392,9 @@ function TestimonialsSection() {
             Proof, not promises
           </div>
           <h2 className="mt-6 font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
-            Real rooms.{" "}
+            Real Rooms.{" "}
             <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
-              Real results.
+              Real Results.
             </span>
           </h2>
         </div>
@@ -547,9 +547,9 @@ function PartnersMarquee() {
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
-            Hired by the teams{" "}
+            Hired by the Teams{" "}
             <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
-              you want to join.
+              You Want to Join.
             </span>
           </h2>
           <p className="mt-5 text-base text-white/60">
