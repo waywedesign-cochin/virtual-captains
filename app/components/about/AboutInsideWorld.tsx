@@ -294,16 +294,22 @@ export default function AboutInsideWorld() {
                               type="button"
                               onClick={() => scrollToPillar(idx)}
                               aria-label={`Jump to ${p.title}`}
-                              className={`h-2 rounded-full relative overflow-hidden transition-all duration-200 cursor-pointer ${
-                                isCurrent
-                                  ? "w-8 sm:w-10 bg-white/15 ring-1 ring-[#F3FC00]/40"
-                                  : "w-2.5 sm:w-3 bg-white/20 hover:bg-white/40"
-                              }`}
+                              aria-current={isCurrent ? "step" : undefined}
+                              // 24×24px hit area (WCAG 2.5.8); the visible pill stays 8px tall
+                              className="group flex h-6 min-w-6 cursor-pointer items-center justify-center"
                             >
                               <span
-                                style={{ width: `${fillWidth}%` }}
-                                className="absolute inset-y-0 left-0 bg-linear-to-r from-[#D08817] to-[#F3FC00] rounded-full transition-all duration-100 shadow-[0_0_8px_#F3FC00]"
-                              />
+                                className={`relative block h-2 overflow-hidden rounded-full transition-all duration-200 ${
+                                  isCurrent
+                                    ? "w-8 sm:w-10 bg-white/15 ring-1 ring-[#F3FC00]/40"
+                                    : "w-2.5 sm:w-3 bg-white/20 group-hover:bg-white/40"
+                                }`}
+                              >
+                                <span
+                                  style={{ width: `${fillWidth}%` }}
+                                  className="absolute inset-y-0 left-0 bg-linear-to-r from-[#D08817] to-[#F3FC00] rounded-full transition-all duration-100 shadow-[0_0_8px_#F3FC00]"
+                                />
+                              </span>
                             </button>
                           );
                         })}
