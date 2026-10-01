@@ -47,12 +47,12 @@ export const HeroSection: React.FC = () => {
     <div
       ref={containerRef}
       id="hero-experience"
-      className="relative w-full h-svh min-h-[560px] select-none"
+      className="relative w-full h-[80svh] min-h-[580px] sm:h-svh sm:min-h-[560px] select-none"
     >
       {/* ========================================================================= */}
       {/* PINNED STAGE VIEWPORT (Fixed to screen across all devices)                 */}
       {/* ========================================================================= */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center bg-[#020B25]">
+      <div className="sticky top-0 h-full w-full overflow-hidden flex flex-col justify-center items-center bg-[#020B25]">
         {/* ========================================================================= */}
         {/* SHARED BACKGROUND: Stepped Columns in Virtual Captains Home Navy / Cyan   */}
         {/* ========================================================================= */}

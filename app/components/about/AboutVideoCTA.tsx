@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { client } from "@/sanity/lib/client";
 import { YOUTUBE_VIDEOS_QUERY, type YouTubeVideoDoc } from "@/sanity/queries";
 import { getYouTubeId } from "@/sanity/lib/youtube";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -220,13 +221,13 @@ export default function AboutVideoCTA({ initialVideos = [] }: { initialVideos?: 
                 <p className="font-sans text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/50">
                   On YouTube
                 </p>
-                <h2 className="mt-2 text-2xl sm:text-3xl font-medium tracking-tight text-white">
+                <ZoomHeading className="mt-2 text-2xl sm:text-3xl font-medium tracking-tight text-white">
                   Recent &amp;{" "}
                   <span className="bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text italic text-transparent">
                     Upcoming
                   </span>{" "}
                   Videos
-                </h2>
+                </ZoomHeading>
               </div>
 
               <ul className="flex w-full max-w-md flex-col gap-3">

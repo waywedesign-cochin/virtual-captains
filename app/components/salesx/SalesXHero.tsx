@@ -65,6 +65,24 @@ export default function SalesXHero() {
       mm.add("(max-width: 1023px) and (prefers-reduced-motion: no-preference)", () => {
         gsap.from(pillInnerRef.current, { y: -30, opacity: 0, scale: 0.92, duration: 1, ease: "back.out(1.4)", delay: 0.2 });
         gsap.from(copyRef.current, { y: 30, opacity: 0, duration: 1, ease: "power3.out", delay: 0.3 });
+
+        // Dashboard image: tilted-back + small → bulges just past full size →
+        // settles, scrubbed to scroll so it "pops" up as it comes into view.
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: imageRef.current,
+              start: "top 95%",
+              end: "center 55%",
+              scrub: 0.6,
+            },
+          })
+          .fromTo(
+            imageRef.current,
+            { opacity: 0, y: 70, scale: 0.78, rotateX: 22, transformPerspective: 900, transformOrigin: "50% 100%" },
+            { opacity: 1, y: 0, scale: 1.06, rotateX: 0, ease: "power2.out", duration: 0.7 },
+          )
+          .to(imageRef.current, { scale: 1, ease: "sine.inOut", duration: 0.3 });
       });
 
       mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {

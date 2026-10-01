@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import ZoomHeading from "@/components/common/ZoomHeading";
 
 interface PartnerItem {
   id: string;
@@ -124,12 +125,12 @@ export function PartnerLogos() {
         </p>
 
         {/* Section Heading */}
-        <h2 className="font-sans font-medium text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
+        <ZoomHeading className="font-sans font-medium text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
           Trusted by Forward-Thinking{" "}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8]">
             Organisations
           </span>
-        </h2>
+        </ZoomHeading>
 
         {/* Subtitle */}
         <p className="mt-4 max-w-xl text-slate-400 text-sm font-normal leading-relaxed px-2">

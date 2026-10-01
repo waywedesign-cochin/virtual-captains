@@ -239,7 +239,7 @@
   font-weight: 700;
   line-height: 1.04;
   letter-spacing: -0.018em;
-  opacity: 0.88;
+  opacity: 1;
 }
 
 .hero__headline span {
@@ -364,7 +364,8 @@
     margin: 1.25rem auto 0;
     font-size: clamp(0.975rem, 0.9rem + 0.4vw, 1.125rem);
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.72);
+    /* Solid (not translucent) so the figure behind never shows through */
+    color: #cdd6e6;
   }
 
   .hero__cta-underline {
@@ -379,8 +380,9 @@
   }
 
   .hero__header {
-    position: static;
+    position: relative;
     inset: auto;
+    z-index: 6;
     margin-bottom: clamp(3rem, 16vw, 5rem);
     padding-inline: var(--gutter);
   }
@@ -399,9 +401,14 @@
     opacity: 0.3;
   }
 
+  /* Relative, not static: a static element ignores z-index, which let the
+     absolutely-positioned figure (z-index 1) paint over the headline. */
   .hero__copy,
   .hero__cta {
-    position: static;
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: 5;
     width: 100%;
     padding-inline: var(--gutter);
     transform: none;
