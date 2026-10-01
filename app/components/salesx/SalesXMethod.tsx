@@ -538,9 +538,9 @@ export default function SalesXMethod() {
 
                     {/* Left Column: Eyebrow, Heading, Paragraph, and Button */}
                     <div className="relative z-10 lg:col-span-5 text-center lg:text-left flex flex-col items-center lg:items-start">
-                      <h4 className="text-base sm:text-xl lg:text-3xl font-light text-white tracking-wide font-sans">
+                      <p className="text-base sm:text-xl lg:text-3xl font-light text-white tracking-wide font-sans">
                         {slide.eyebrow}
-                      </h4>
+                      </p>
 
                       <h3 className="mt-1 sm:mt-2 text-lg sm:text-2xl lg:text-3xl font-bold tracking-tight">
                         <span

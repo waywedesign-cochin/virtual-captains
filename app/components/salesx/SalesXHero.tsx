@@ -225,14 +225,13 @@ export default function SalesXHero() {
         <div ref={pillInnerRef} className="relative group pointer-events-auto">
           <div className="absolute -inset-1 rounded-full bg-linear-to-r from-sky-500/25 via-indigo-500/20 to-blue-500/25 blur-md opacity-75 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
           <div
-            role="tablist"
-            aria-label="Brand Selector"
+            role="navigation"
+            aria-label="Brand switcher"
             className="relative flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 rounded-full border border-white/20 hover:border-white/35 bg-[#050920]/80 backdrop-blur-2xl shadow-[0_14px_45px_rgba(0,0,0,0.7),inset_0_1px_1.5px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(255,255,255,0.06)] transition-all duration-300"
           >
             <button
               type="button"
-              role="tab"
-              aria-selected={selectedBrand === "salesx"}
+              aria-current={selectedBrand === "salesx" ? "page" : undefined}
               aria-label="SalesX Platform"
               onClick={() => setSelectedBrand("salesx")}
               className={`relative flex items-center justify-center px-4 sm:px-5 py-2 rounded-full transition-all duration-300 cursor-pointer ${
@@ -297,8 +296,8 @@ export default function SalesXHero() {
               href="/programs"
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-white hover:bg-slate-100 px-5 sm:px-6 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer select-none shrink-0"
             >
-              <span className="text-[#f97316] font-extrabold text-xs sm:text-sm">Enroll</span>
-              <span className="text-[#6366f1] font-extrabold text-xs sm:text-sm ml-1">Now</span>
+              <span className="text-[#c2410c] font-extrabold text-xs sm:text-sm">Enroll</span>
+              <span className="text-[#4f46e5] font-extrabold text-xs sm:text-sm ml-1">Now</span>
             </Link>
           </div>
         </div>
