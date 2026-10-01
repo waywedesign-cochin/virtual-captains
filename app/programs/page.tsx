@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,11 +9,12 @@ import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import CurriculumSection from "../components/salesx/CurriculumSection";
 import EnrollNowButton from "../components/programs/EnrollModal";
 
-export const metadata: Metadata = {
-  title: "Programs | Virtual Captains Sales Enablement",
+export const metadata: Metadata = pageMetadata({
+  title: "Sales Training Programs",
   description:
-    "Comprehensive sales training programs: Induction, Sales Audit, Outbound Lead Generation, and Executive Negotiation.",
-};
+    "Explore Virtual Captains programs: sales induction, sales audits, outbound lead generation, team development and personal sales training built for real pipeline results.",
+  path: "/programs",
+});
 
 // Stagger helper for the page-load animation (see .vc-in in ProgramsPage)
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;

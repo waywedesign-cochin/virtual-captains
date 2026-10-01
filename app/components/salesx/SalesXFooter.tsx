@@ -471,7 +471,7 @@ export default function SalesXFooter() {
           </p>
           <div className="flex items-center gap-4">
             <a
-              href="https://waywedesign.com"
+              href="https://www.waywedesign.com"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-white"

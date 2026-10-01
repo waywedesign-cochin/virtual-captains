@@ -233,7 +233,7 @@ export default function SiteFooter() {
               <span className="text-white/40">
                 Built by{" "}
                 <a
-                  href="https://waywedesign.com"
+                  href="https://www.waywedesign.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white/80 hover:text-white transition-colors"

@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions | Virtual Captains",
+export const metadata: Metadata = pageMetadata({
+  title: "Terms & Conditions",
   description:
-    "Review the terms, conditions, and service guidelines governing the use of Virtual Captains websites, training platforms, simulations, and enterprise services.",
-};
+    "The terms and conditions governing the use of Virtual Captains websites, training platforms, SalesX simulations and enterprise services.",
+  path: "/terms",
+});
 
 const SECTIONS = [
   {

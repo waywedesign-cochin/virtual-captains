@@ -227,5 +227,5 @@ export const footerMeta = {
   refund: { label: "Refund / Cancellation", href: "/refund" },
   disclaimer: { label: "Disclaimer", href: "/refund#disclaimer" },
   copyright: `© All Rights Reserved by Virtual Captains ${new Date().getFullYear()}`,
-  credit: { label: "Built By Way WeDesign", href: "https://waywedesign.com" },
+  credit: { label: "Built By Way WeDesign", href: "https://www.waywedesign.com" },
 } as const;

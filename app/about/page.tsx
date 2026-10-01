@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 
@@ -11,11 +12,12 @@ import AboutCertifications from "../components/about/AboutCertifications";
 import AboutVideoCTA from "../components/about/AboutVideoCTA";
 import { getYouTubeVideos } from "@/sanity/queries";
 
-export const metadata: Metadata = {
-  title: "About Virtual Captains | Conversational Sales Intelligence",
+export const metadata: Metadata = pageMetadata({
+  title: "About Us",
   description:
-    "A smarter way to build sales capability at scale. We empower sales professionals and global organisations with AI simulation and real-world execution capabilities.",
-};
+    "Founded on 16+ years of enterprise sales leadership, Virtual Captains builds sales capability at scale through SalesX simulation training and real-world sales execution.",
+  path: "/about",
+});
 
 export default async function AboutPage() {
   const videos = await getYouTubeVideos();

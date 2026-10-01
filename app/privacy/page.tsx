@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Virtual Captains",
+export const metadata: Metadata = pageMetadata({
+  title: "Privacy Policy",
   description:
-    "Learn how Virtual Captains collects, uses, and protects your personal information and privacy when visiting our website or using our services.",
-};
+    "How Virtual Captains collects, uses and protects your personal information when you visit our website or use our training platforms and services.",
+  path: "/privacy",
+});
 
 const SECTIONS = [
   {

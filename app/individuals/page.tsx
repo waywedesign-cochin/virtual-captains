@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 import { HomeSections } from "../components/indivuduals/main/HomeSections";
 
-export const metadata: Metadata = {
-  title: "Virtual Captains — Launch Your Career as a High-Performing Seller",
+export const metadata: Metadata = pageMetadata({
+  title: "Sales Training Course for Individuals",
   description:
-    "A 12-week cohort programme that turns graduates, switchers and working reps into high-performing B2B sellers through hundreds of live and AI-simulated reps.",
-};
+    "A 12-week cohort programme that turns graduates, career switchers and working reps into high-performing B2B sellers through live practice, AI simulations and placement support.",
+  path: "/individuals",
+});
 
 import Navbar from "../components/home/Navbar";
 

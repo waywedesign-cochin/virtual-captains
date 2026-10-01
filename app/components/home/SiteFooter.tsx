@@ -765,7 +765,7 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
               {new Date().getFullYear()}
             </p>
             <p className="order-3 text-center">
-              Built by <span className="text-white/85">Way WeDesign</span>
+              Built by{" "}<a href="https://www.waywedesign.com" target="_blank" rel="noopener noreferrer" className="text-white/85 underline-offset-4 transition-colors hover:text-white hover:underline">Way WeDesign</a>
             </p>
           </div>
 
