@@ -3,6 +3,7 @@ import { pageMetadata } from "@/lib/seo";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getPrograms } from "@/sanity/queries";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import DotGridSpotlight from "../components/common/DotGridSpotlight";
@@ -30,14 +31,14 @@ type Program = {
   hours?: number;
   duration?: string;
   format?: string;
-  price?: string;
+  price?: string; // display text, built from priceInr in Sanity
   image?: { url: string; alt?: string };
   highlights?: string[];
   outcome?: string;
   featured?: boolean;
-  ctaLabel?: string;
 };
 
+<<<<<<< Updated upstream
 // Dummy data (same shape as the Sanity "program" document).
 // Later: replace with client.fetch(PROGRAMS_QUERY) and add urlFor() for images.
 const DUMMY_PROGRAMS: Program[] = [
@@ -189,6 +190,8 @@ const DUMMY_PROGRAMS: Program[] = [
   },
 ];
 
+=======
+>>>>>>> Stashed changes
 const AUDIENCE_LABEL: Record<Program["audience"], string> = {
   students: "Students & Freshers",
   professionals: "Working Professionals",
@@ -216,10 +219,9 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
       {/* Cover */}
       <div className="relative aspect-16/10 w-full overflow-hidden bg-[#0d1438]">
         {program.image ? (
-          <Image
+          <img
             src={program.image.url}
             alt={program.image.alt || program.title}
-            fill
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -578,8 +580,12 @@ function PartnersMarquee() {
   );
 }
 
-export default function ProgramsPage() {
-  const programs = DUMMY_PROGRAMS;
+export default async function ProgramsPage() {
+  const docs = await getPrograms();
+  const programs: Program[] = docs.map(({ priceInr, ...p }) => ({
+    ...p,
+    price: priceInr ? `₹${priceInr.toLocaleString("en-IN")}` : "Contact us",
+  }));
 
   return (
     <main className="relative min-h-screen bg-[#040507] text-white selection:bg-[#38bdf8] selection:text-black antialiased overflow-x-clip">

@@ -177,10 +177,84 @@ export const YOUTUBE_VIDEOS_QUERY = groq`
 // in the browser, so a publish shows up within seconds either way.
 export async function getYouTubeVideos(): Promise<YouTubeVideoDoc[]> {
   try {
-    return await client.fetch<YouTubeVideoDoc[]>(YOUTUBE_VIDEOS_QUERY, {}, {
-      next: { revalidate: 60, tags: ["youtubeVideo"] },
-    });
+    return await client.fetch<YouTubeVideoDoc[]>(
+      YOUTUBE_VIDEOS_QUERY,
+      {},
+      {
+        next: { revalidate: 60, tags: ["youtubeVideo"] },
+      },
+    );
   } catch {
     return [];
   }
+}
+
+// ── Programs (Programs page + Razorpay price lookup) ──
+export type ProgramDoc = {
+  _id: string;
+  title: string;
+  slug: string;
+  tagline?: string;
+  description: string;
+  audience: "students" | "professionals" | "founders" | "organisations";
+  level?: string;
+  hours?: number;
+  duration?: string;
+  format?: string;
+  priceInr?: number | null;
+  image?: { url: string; alt?: string };
+  highlights?: string[];
+  outcome?: string;
+  featured?: boolean;
+};
+
+export const PROGRAMS_QUERY = groq`
+  *[_type == "program" && defined(slug.current)]
+    | order(coalesce(order, 999) asc, _createdAt asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    tagline,
+    description,
+    audience,
+    level,
+    hours,
+    duration,
+    format,
+    priceInr,
+    "image": select(defined(image.asset) => { "url": image.asset->url, "alt": image.alt }),
+    highlights,
+    outcome,
+    featured
+  }
+`;
+
+export async function getPrograms(): Promise<ProgramDoc[]> {
+  try {
+    return await client.fetch<ProgramDoc[]>(
+      PROGRAMS_QUERY,
+      {},
+      {
+        next: { revalidate: 60, tags: ["program"] },
+      },
+    );
+  } catch {
+    return [];
+  }
+}
+
+// Price used for payments. Always read live (no CDN, no Next cache) so the
+// amount charged is never stale.
+const PROGRAM_PRICE_QUERY = groq`
+  *[_type == "program" && slug.current == $slug][0].priceInr
+`;
+
+/** Price in whole rupees, or null if the program has no online price. */
+export async function getProgramPrice(slug: string): Promise<number | null> {
+  const price = await client
+    .withConfig({ useCdn: false })
+    .fetch<number | null>(PROGRAM_PRICE_QUERY, { slug }, { cache: "no-store" });
+  return Number.isInteger(price) && (price as number) > 0
+    ? (price as number)
+    : null;
 }
