@@ -188,10 +188,10 @@ export default function SalesXHeroVideo({
                 href="/programs"
                 className="inline-flex items-center justify-center rounded-full bg-white hover:bg-slate-100 px-3.5 sm:px-5 py-1.5 sm:py-2 shadow-lg transition-all transform hover:scale-105 active:scale-95 cursor-pointer select-none shrink-0"
               >
-                <span className="text-[#f97316] font-extrabold text-xs sm:text-sm">
+                <span className="text-[#c2410c] font-extrabold text-xs sm:text-sm">
                   Enroll
                 </span>
-                <span className="text-[#6366f1] font-extrabold text-xs sm:text-sm ml-1">
+                <span className="text-[#4f46e5] font-extrabold text-xs sm:text-sm ml-1">
                   Now
                 </span>
               </Link>
