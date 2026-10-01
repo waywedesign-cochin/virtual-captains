@@ -1,6 +1,14 @@
 import type { StructureResolver } from "sanity/structure";
 
-const groupedTypes = ["post", "category", "author", "newsPost", "newsCategory", "youtubeVideo"];
+const groupedTypes = [
+  "post",
+  "category",
+  "author",
+  "newsPost",
+  "newsCategory",
+  "youtubeVideo",
+  "program",
+];
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -27,6 +35,15 @@ export const structure: StructureResolver = (S) =>
               S.documentTypeListItem("newsPost").title("News Posts"),
               S.documentTypeListItem("newsCategory").title("News Categories"),
             ]),
+        ),
+
+      S.listItem()
+        .title("Programs")
+        .schemaType("program")
+        .child(
+          S.documentTypeList("program")
+            .title("Programs")
+            .defaultOrdering([{ field: "order", direction: "asc" }]),
         ),
 
       S.listItem()

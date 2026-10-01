@@ -3,6 +3,7 @@ import { pageMetadata } from "@/lib/seo";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getPrograms } from "@/sanity/queries";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import DotGridSpotlight from "../components/common/DotGridSpotlight";
@@ -30,164 +31,12 @@ type Program = {
   hours?: number;
   duration?: string;
   format?: string;
-  price?: string;
+  price?: string; // display text, built from priceInr in Sanity
   image?: { url: string; alt?: string };
   highlights?: string[];
   outcome?: string;
   featured?: boolean;
-  ctaLabel?: string;
 };
-
-// Dummy data (same shape as the Sanity "program" document).
-// Later: replace with client.fetch(PROGRAMS_QUERY) and add urlFor() for images.
-const DUMMY_PROGRAMS: Program[] = [
-  {
-    _id: "1",
-    title: "SalesX Intensive",
-    slug: "salesx-intensive",
-    image: {
-      url: "/programs/salesx-intensive.jpg",
-      alt: "SalesX Intensive program cover",
-    },
-    tagline: "From Campus to Offer",
-    description:
-      "A 40-hour, practice-first certification for students between semesters. Rehearse, get scored and leave with proof.",
-    audience: "students",
-    level: "Basic",
-    hours: 40,
-    duration: "10 days",
-    format: "Intensive",
-    price: "₹9,999",
-    highlights: [
-      "Beat stage fear and master the self-intro",
-      "Live roleplays with coach review",
-      "4 timed simulations scored by practitioners",
-    ],
-    outcome: "VC Skill Card + hiring partner access",
-    featured: true,
-    ctaLabel: "Start this path",
-  },
-  {
-    _id: "2",
-    title: "SalesX Extended",
-    slug: "salesx-extended",
-    image: {
-      url: "/programs/salesx-extended.jpg",
-      alt: "SalesX Extended program cover",
-    },
-    tagline: "Grow While You Work",
-    description:
-      "20 sessions of 2 hours each, built to fit around a full calendar for working professionals.",
-    audience: "professionals",
-    level: "Intermediate",
-    hours: 40,
-    duration: "30 days",
-    format: "Extended",
-    price: "₹14,999",
-    highlights: [
-      "14-question diagnostic to find your gap",
-      "Scenarios built from your own role",
-      "Multi-stakeholder simulations",
-    ],
-    outcome: "A scored Skill Card band",
-  },
-  {
-    _id: "3",
-    title: "The Founder's First Sale",
-    slug: "founders-first-sale",
-    image: {
-      url: "/programs/founders-first-sale.jpg",
-      alt: "The Founder's First Sale program cover",
-    },
-    tagline: "From Builder to First Seller",
-    description:
-      "Learn outreach, discovery and pricing conversations on your own product, then build a playbook you can hand over.",
-    audience: "founders",
-    level: "All levels",
-    hours: 40,
-    duration: "30 days",
-    format: "Live cohort",
-    price: "₹19,999",
-    highlights: [
-      "Outreach that gets replies",
-      "Discovery with real buyer personas",
-      "Full-Cycle Closer on your offer",
-    ],
-    outcome: "A repeatable sales playbook",
-  },
-  {
-    _id: "4",
-    title: "Sales Team Induction",
-    slug: "sales-team-induction",
-    image: {
-      url: "/programs/sales-team-induction.jpg",
-      alt: "Sales Team Induction program cover",
-    },
-    tagline: "Ramp New Hires Faster",
-    description:
-      "A structured onboarding curriculum that gets new sales hires selling sooner, measured in pipeline.",
-    audience: "organisations",
-    level: "All levels",
-    hours: 24,
-    duration: "2 weeks",
-    format: "On-site",
-    price: "Contact us",
-    highlights: [
-      "Product and buyer immersion",
-      "AI-simulated call rehearsals",
-      "Manager scorecards",
-    ],
-    outcome: "Faster ramp time",
-  },
-  {
-    _id: "5",
-    title: "Outbound Lead Generation",
-    slug: "outbound-lead-generation",
-    image: {
-      url: "/programs/outbound-lead-generation.jpg",
-      alt: "Outbound Lead Generation program cover",
-    },
-    tagline: "Fill the Pipeline",
-    description:
-      "Multi-channel outreach training for teams, from list building to booked meetings.",
-    audience: "organisations",
-    level: "Intermediate",
-    hours: 16,
-    duration: "3 weeks",
-    format: "Live cohort",
-    price: "Contact us",
-    highlights: [
-      "Multi-channel outreach",
-      "Cold calling without the dread",
-      "Weekly pipeline reviews",
-    ],
-    outcome: "Qualified meetings on the calendar",
-  },
-  {
-    _id: "6",
-    title: "Executive Negotiation",
-    slug: "executive-negotiation",
-    image: {
-      url: "/programs/executive-negotiation.jpg",
-      alt: "Executive Negotiation program cover",
-    },
-    tagline: "Hold Your Ground",
-    description:
-      "Deal-desk coaching for senior sellers: pricing, scope and the walk-away moment.",
-    audience: "professionals",
-    level: "Expert",
-    hours: 12,
-    duration: "2 weeks",
-    format: "Intensive",
-    price: "₹24,999",
-    highlights: [
-      "The Walk-Away Client simulation",
-      "Pricing and discount defence",
-      "Stakeholder mapping",
-    ],
-    outcome: "Negotiation band on your Skill Card",
-  },
-];
 
 const AUDIENCE_LABEL: Record<Program["audience"], string> = {
   students: "Students & Freshers",
@@ -216,12 +65,10 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
       {/* Cover */}
       <div className="relative aspect-16/10 w-full overflow-hidden bg-[#0d1438]">
         {program.image ? (
-          <Image
+          <img
             src={program.image.url}
             alt={program.image.alt || program.title}
-            fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="absolute inset-0 bg-linear-to-br from-[#1b2a7a] via-[#111a45] to-[#060b26]" />
@@ -578,8 +425,12 @@ function PartnersMarquee() {
   );
 }
 
-export default function ProgramsPage() {
-  const programs = DUMMY_PROGRAMS;
+export default async function ProgramsPage() {
+  const docs = await getPrograms();
+  const programs: Program[] = docs.map(({ priceInr, ...p }) => ({
+    ...p,
+    price: priceInr ? `₹${priceInr.toLocaleString("en-IN")}` : "Contact us",
+  }));
 
   return (
     <main className="relative min-h-screen bg-[#040507] text-white selection:bg-[#38bdf8] selection:text-black antialiased overflow-x-clip">
