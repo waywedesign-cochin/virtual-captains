@@ -68,9 +68,9 @@ const AUTOPLAY_MS = 5200;
 
 function Stars() {
   return (
-    <div className="flex items-center gap-1" aria-label="5 out of 5 stars">
+    <div className="flex items-center gap-1" role="img" aria-label="5 out of 5 stars">
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-white">
+        <svg key={i} viewBox="0 0 20 20" aria-hidden="true" className="h-3.5 w-3.5 fill-white">
           <path d="M10 1.6l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.2l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" />
         </svg>
       ))}
@@ -365,9 +365,9 @@ export default function Endorsement() {
 
                 {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
                 <div className="relative z-10 mt-auto max-w-40 pt-2">
-                  <h4 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
+                  <h3 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
                     {item.name}
-                  </h4>
+                  </h3>
                   <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
                     {item.role}
                   </p>
@@ -410,8 +410,8 @@ export default function Endorsement() {
             </svg>
           </button>
 
-          {/* The visible pill stays 8px tall; the button around it is a 24px
-              hit area so the dots are actually tappable on touch screens */}
+          {/* The visible pill stays 8px tall; the button around it is a 24×24px
+              hit area (WCAG 2.5.8 minimum) so the dots are tappable */}
           <div className="flex items-center">
             {TESTIMONIALS.map((item, i) => (
               <button
@@ -420,7 +420,7 @@ export default function Endorsement() {
                 onClick={() => setActive(i)}
                 aria-label={`Show testimonial from ${item.name}`}
                 aria-current={i === active}
-                className="group flex h-6 cursor-pointer items-center justify-center px-1 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                className="group flex h-6 min-w-6 cursor-pointer items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
               >
                 <span
                   className={`block h-2 rounded-full transition-all duration-500 ${
