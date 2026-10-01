@@ -59,6 +59,9 @@ export default function SalesXMethod() {
   const dotsRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  // Phones & tablets: the slides become a swipeable carousel
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [mobileActive, setMobileActive] = useState(0);
 
   const slides: MethodSlide[] = [
     {
@@ -350,6 +353,57 @@ export default function SalesXMethod() {
   // inside every slide (between its background and its content) rather
   // than as one shared layer behind the stack, or the slide's own bg-color
   // paints straight over it.
+  /* ---------- Phones & tablets carousel ---------- */
+  const scrollToMobile = (i: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    track.scrollTo({ left: i * track.clientWidth, behavior: reduce ? "auto" : "smooth" });
+  };
+
+  const onTrackScroll = () => {
+    const track = trackRef.current;
+    if (!track || !track.clientWidth) return;
+    setMobileActive(Math.round(track.scrollLeft / track.clientWidth));
+  };
+
+  // Auto-advance every 5s while on screen; any touch pauses it, and it
+  // resumes a few seconds after the visitor lets go.
+  useEffect(() => {
+    const track = trackRef.current;
+    const section = sectionRef.current;
+    if (!track || !section) return;
+    const compact = window.matchMedia("(max-width: 1023px)");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let onScreen = false;
+    let held = false;
+    let resume: number | undefined;
+    const timer = window.setInterval(() => {
+      if (!onScreen || held || !compact.matches || reduce.matches || !track.clientWidth) return;
+      const next = (Math.round(track.scrollLeft / track.clientWidth) + 1) % 3;
+      track.scrollTo({ left: next * track.clientWidth, behavior: "smooth" });
+    }, 5000);
+    const io = new IntersectionObserver(([e]) => (onScreen = e.isIntersecting), { threshold: 0.5 });
+    io.observe(section);
+    const hold = () => {
+      held = true;
+      window.clearTimeout(resume);
+    };
+    const release = () => {
+      window.clearTimeout(resume);
+      resume = window.setTimeout(() => (held = false), 6000);
+    };
+    track.addEventListener("touchstart", hold, { passive: true });
+    track.addEventListener("touchend", release);
+    return () => {
+      window.clearInterval(timer);
+      window.clearTimeout(resume);
+      io.disconnect();
+      track.removeEventListener("touchstart", hold);
+      track.removeEventListener("touchend", release);
+    };
+  }, []);
+
   const renderCardStars = () => (
     <div
       aria-hidden
@@ -451,14 +505,25 @@ export default function SalesXMethod() {
               <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-radial from-blue-600/25 via-pink-500/10 to-transparent blur-3xl pointer-events-none z-0" />
 
               {/* Grid-stacked Deck Slides (Clean slide-over without opacity ghosting) */}
-              <div className="grid grid-cols-1 lg:grid-rows-1 relative z-10 w-full lg:min-h-110">
+              {/* Desktop: grid-stacked deck. Below lg: a horizontal
+                  scroll-snap carousel (swipe, dots, auto-advance). */}
+              <div
+                ref={trackRef}
+                onScroll={onTrackScroll}
+                aria-roledescription="carousel"
+                className="grid grid-cols-1 lg:grid-rows-1 relative z-10 w-full lg:min-h-110 max-lg:flex max-lg:snap-x max-lg:snap-mandatory max-lg:overflow-x-auto max-lg:overscroll-x-contain no-scrollbar"
+              >
                 {slides.map((slide, index) => (
                   <div
                     key={slide.id}
                     ref={(el) => {
                       slideRefs.current[index] = el;
                     }}
-                    className={`col-start-1 lg:row-start-1 w-full h-full lg:min-h-110 bg-[#050816] p-4 sm:p-6 lg:p-9 xl:p-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 xl:gap-12 items-center will-change-transform relative overflow-hidden rounded-[22px] sm:rounded-[28px] lg:rounded-[30px] ${
+                    aria-roledescription="slide"
+                    aria-label={`${index + 1} of ${slides.length}`}
+                    className={`max-lg:shrink-0 max-lg:snap-center max-lg:transition-[opacity,scale] max-lg:duration-700 max-lg:ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                      mobileActive === index ? "max-lg:opacity-100 max-lg:scale-100" : "max-lg:opacity-35 max-lg:scale-90"
+                    } col-start-1 lg:row-start-1 w-full h-full lg:min-h-110 bg-[#050816] p-4 sm:p-6 lg:p-9 xl:p-10 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 xl:gap-12 items-center will-change-transform relative overflow-hidden rounded-[22px] sm:rounded-[28px] lg:rounded-[30px] ${
                       index === 1
                         ? "border-t border-[#38bdf8]/50 shadow-[0_-30px_70px_rgba(0,0,0,0.95)]"
                         : index === 2
@@ -578,6 +643,26 @@ export default function SalesXMethod() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Phones & tablets: carousel dots */}
+        <div className="mt-5 flex items-center justify-center gap-1 lg:hidden">
+          {slides.map((slide, idx) => (
+            <button
+              key={slide.id}
+              type="button"
+              onClick={() => scrollToMobile(idx)}
+              aria-label={`Show ${slide.eyebrow}`}
+              aria-current={mobileActive === idx}
+              className="cursor-pointer p-2 focus-visible:outline-2 focus-visible:outline-blue-400"
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-500 ${
+                  mobileActive === idx ? "w-8 bg-[#3b82f6] shadow-[0_0_10px_rgba(59,130,246,0.8)]" : "w-2 bg-white/30"
+                }`}
+              />
+            </button>
+          ))}
         </div>
 
       </div>

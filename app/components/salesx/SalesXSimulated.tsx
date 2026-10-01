@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHeadingZoom } from "@/components/about/useHeadingZoom";
@@ -80,6 +80,32 @@ export default function SalesXSimulated() {
     cometRef.current?.setAttribute("cy", String(CY + R * Math.sin(headRad)));
   };
 
+  // Phones & tablets: step the chip highlight through the three stages
+  // while the section is on screen (paused off-screen / reduced motion).
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const compact = window.matchMedia("(max-width: 1279px)");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number | undefined;
+    const stop = () => window.clearInterval(timer);
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        stop();
+        if (!entry.isIntersecting || !compact.matches || reduce.matches) return;
+        timer = window.setInterval(() => {
+          setDial((d) => ({ active: (d.active + 1) % STEPS.length, prev: d.active }));
+        }, 2200);
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => {
+      stop();
+      io.disconnect();
+    };
+  }, []);
+
   useGSAP(
     () => {
       setProgress(1);
@@ -129,7 +155,11 @@ export default function SalesXSimulated() {
               ease: "none",
               onUpdate: () => {
                 setProgress(dialProgress.p);
-                setActive(Math.min(2, Math.round(dialProgress.p * 2)));
+                // The dial drives the active step on xl; smaller screens
+                // cycle their chips on a timer instead (see effect below)
+                if (window.matchMedia("(min-width: 1280px)").matches) {
+                  setActive(Math.min(2, Math.round(dialProgress.p * 2)));
+                }
               },
             },
             0.9,
@@ -197,9 +227,10 @@ export default function SalesXSimulated() {
           {STEPS.map((step, i) => (
             <li
               key={step}
-              className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-300 ${
+              aria-current={active === i ? "step" : undefined}
+              className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 active === i
-                  ? "border-[#3b82f6] bg-[#3b82f6]/20 text-white shadow-[0_0_16px_rgba(59,130,246,0.35)]"
+                  ? "-translate-y-0.5 scale-105 border-[#3b82f6] bg-[#3b82f6]/25 text-white ring-2 ring-[#3b82f6]/70 ring-offset-2 ring-offset-salesx-bg shadow-[0_0_22px_rgba(59,130,246,0.6)]"
                   : "border-white/15 text-white/55"
               }`}
             >
