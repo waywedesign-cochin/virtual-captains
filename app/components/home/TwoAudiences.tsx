@@ -250,17 +250,17 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               >
                 <span className="block">
                   <span ref={headlineLine1Ref} className="inline-block">
-                    Turn training
+                    Turn Training
                   </span>
                 </span>
                 <span className="block">
                   <span ref={headlineLine2Ref} className="inline-block">
-                    into measurable
+                    Into Measurable
                   </span>
                 </span>
                 <span className="block italic text-[#4d82f5]">
                   <span ref={headlineLine3Ref} className="inline-block">
-                    sales performance
+                    Sales Performance
                   </span>
                 </span>
               </h2>

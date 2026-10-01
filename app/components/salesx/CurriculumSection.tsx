@@ -29,8 +29,8 @@ const TRACKS: Track[] = [
     key: "students",
     tab: "Students",
     blurb: "Campus to offer",
-    heading: "From campus",
-    accent: "to offer.",
+    heading: "From Campus",
+    accent: "to Offer.",
     meta: "Students & fresh graduates",
     outcome: "An offer, not just an interview.",
     stages: [
@@ -60,8 +60,8 @@ const TRACKS: Track[] = [
     key: "professionals",
     tab: "Professionals",
     blurb: "Job to promotion",
-    heading: "From doing the job",
-    accent: "to owning the room.",
+    heading: "From Doing the Job",
+    accent: "to Owning the Room.",
     meta: "Working professionals",
     outcome: "Growth your manager can see.",
     stages: [
@@ -91,8 +91,8 @@ const TRACKS: Track[] = [
     key: "founders",
     tab: "Founders",
     blurb: "Product to first sale",
-    heading: "From builder",
-    accent: "to first seller.",
+    heading: "From Builder",
+    accent: "to First Seller.",
     meta: "Founders & entrepreneurs",
     outcome: "A pipeline, not just a product.",
     stages: [
@@ -253,9 +253,9 @@ export default function CurriculumSection() {
           </div>
 
           <h2 className="mt-6 font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
-            Same discipline.{" "}
+            Same Discipline.{" "}
             <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
-              Your own climb.
+              Your Own Climb.
             </span>
           </h2>
           <p className="mt-5 max-w-md text-base leading-relaxed text-white/65">

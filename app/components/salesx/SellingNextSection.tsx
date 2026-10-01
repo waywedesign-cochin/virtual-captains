@@ -32,7 +32,7 @@ const CARDS: CardData[] = [
     id: "students",
     tag: "Yourself",
     title: "STUDENTS & FRESHERS",
-    heading: "Get hired, not just shortlisted.",
+    heading: "Get Hired, Not Just Shortlisted.",
     body: "Your degree gets you into the room. How you sell yourself gets you the offer.",
     bullets: [
       "Interview rehearsals",
@@ -48,7 +48,7 @@ const CARDS: CardData[] = [
     id: "professionals",
     tag: "Your Value",
     title: "WORKING PROFESSIONALS",
-    heading: "Be the one they promote.",
+    heading: "Be the One They Promote.",
     body: "Good work doesn't speak for itself. You do. Learn to make your value impossible to overlook.",
     bullets: [
       "Influence",
@@ -64,7 +64,7 @@ const CARDS: CardData[] = [
     id: "founders",
     tag: "Your Vision",
     title: "FOUNDERS & ENTREPRENEURS",
-    heading: "Your product can't pitch itself.",
+    heading: "Your Product Can't Pitch Itself.",
     body: "You know how to build. Now learn to make customers, investors and early hires believe what you already know.",
     bullets: [
       "Founder-led selling",
@@ -80,7 +80,7 @@ const CARDS: CardData[] = [
     id: "organisations",
     tag: "Your Product",
     title: "ORGANISATIONS",
-    heading: "Turn training into revenue.",
+    heading: "Turn Training Into Revenue.",
     body: "Most sales training ends when the workshop does. Ours is measured in the pipeline.",
     items: [
       { title: "Groom Studio", desc: "Induction that ramps faster" },

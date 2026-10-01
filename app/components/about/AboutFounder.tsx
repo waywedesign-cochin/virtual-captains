@@ -5,7 +5,8 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useHeadingZoom } from "./useHeadingZoom";
 
-const FOUNDER_IMAGE = "/about/founder.webp";
+// Background already removed in the file, so it sits straight on the section
+const FOUNDER_IMAGE = "/about/founder.png";
 
 /*
  * Desktop reading layout: portrait (260px) + 64px gap + story (500px) is one
@@ -24,110 +25,9 @@ export default function AboutFounder() {
   const mobileHeadingRef = useRef<HTMLHeadingElement>(null);
   useHeadingZoom(mobileHeadingRef);
   const [isMounted, setIsMounted] = useState(false);
-  const [cutoutUrl, setCutoutUrl] = useState<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
-
-    // Client-side luxury studio portrait processing:
-    // Seamlessly cuts out the stark white background of founder.webp
-    // so she sits immersed in the dark cathedral arch studio environment!
-    const img = new window.Image();
-    img.crossOrigin = "anonymous";
-    img.src = FOUNDER_IMAGE;
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        const w = img.naturalWidth;
-        const h = img.naturalHeight;
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        if (!ctx) return;
-        ctx.drawImage(img, 0, 0);
-        const imgData = ctx.getImageData(0, 0, w, h);
-        const data = imgData.data;
-
-        // BFS flood fill from the borders to ONLY remove background around her
-        // and strictly preserve all portrait skin, eyes, and attire details.
-        const visited = new Uint8Array(w * h);
-        const queue: number[] = [];
-
-        // Seed with border pixels with high brightness (> 215)
-        for (let x = 0; x < w; x++) {
-          const idxTop = x * 4;
-          if ((data[idxTop] + data[idxTop + 1] + data[idxTop + 2]) / 3 > 215) {
-            queue.push(x, 0);
-            visited[x] = 1;
-          }
-        }
-        for (let y = 0; y < h; y++) {
-          const idxLeft = y * w * 4;
-          if (
-            (data[idxLeft] + data[idxLeft + 1] + data[idxLeft + 2]) / 3 >
-            215
-          ) {
-            queue.push(0, y);
-            visited[y * w] = 1;
-          }
-          const idxRight = (y * w + (w - 1)) * 4;
-          if (
-            (data[idxRight] + data[idxRight + 1] + data[idxRight + 2]) / 3 >
-            215
-          ) {
-            queue.push(w - 1, y);
-            visited[y * w + (w - 1)] = 1;
-          }
-        }
-
-        let head = 0;
-        while (head < queue.length) {
-          const cx = queue[head++];
-          const cy = queue[head++];
-          const idx = (cy * w + cx) * 4;
-          const r = data[idx];
-          const g = data[idx + 1];
-          const b = data[idx + 2];
-          const brightness = (r + g + b) / 3;
-
-          if (brightness > 215) {
-            if (brightness > 242) {
-              data[idx + 3] = 0; // Pure transparent
-            } else {
-              // Smooth anti-aliased edge feathering
-              data[idx + 3] = Math.round(((242 - brightness) / 27) * 255);
-            }
-
-            const neighbors = [
-              [cx + 1, cy],
-              [cx - 1, cy],
-              [cx, cy + 1],
-              [cx, cy - 1],
-            ];
-            for (let i = 0; i < 4; i++) {
-              const nx = neighbors[i][0];
-              const ny = neighbors[i][1];
-              if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
-                const nPos = ny * w + nx;
-                if (!visited[nPos]) {
-                  visited[nPos] = 1;
-                  const nIdx = nPos * 4;
-                  const nB = (data[nIdx] + data[nIdx + 1] + data[nIdx + 2]) / 3;
-                  if (nB > 210) {
-                    queue.push(nx, ny);
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        ctx.putImageData(imgData, 0, 0);
-        setCutoutUrl(canvas.toDataURL("image/webp", 0.95));
-      } catch (err) {
-        console.warn("Portrait cutout fallback:", err);
-      }
-    };
   }, []);
 
   // Motion Scroll Hook: tracks progress through pinned scroll track
@@ -232,29 +132,17 @@ export default function AboutFounder() {
           {/* Luxury Arch Portrait */}
           <div className="relative flex flex-col items-center mb-8">
             <div className="relative w-56 h-72">
-              {/* Soft Photographic Backlight */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-radial from-blue-600/30 via-indigo-950/25 to-transparent blur-2xl -z-10"
+              {/* Transparent cut-out sitting straight on the section background */}
+              <Image
+                src={FOUNDER_IMAGE}
+                alt="Roshna Saffar — Founder of Virtual Captains"
+                fill
+                sizes="280px"
+                priority
+                className="object-contain object-bottom select-none pointer-events-none"
               />
-
-              {/* Jewelry-Grade Precision Glass Rim */}
-              <div className="relative h-full w-full rounded-3xl p-[1.5px] bg-linear-to-b from-white/35 via-white/15 to-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
-                <div className="relative h-full w-full overflow-hidden rounded-3xl bg-linear-to-b from-[#0e2456] via-[#071333] to-[#020819]">
-                  <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-44 h-44 rounded-full bg-blue-500/25 blur-2xl pointer-events-none" />
-                  <Image
-                    src={cutoutUrl || FOUNDER_IMAGE}
-                    alt="Roshna Saffar — Founder of Virtual Captains"
-                    fill
-                    sizes="280px"
-                    priority
-                    unoptimized={Boolean(cutoutUrl)}
-                    className="h-full w-full object-cover object-bottom select-none pointer-events-none transition-opacity duration-300"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-[#020819] via-[#020819]/60 to-transparent pointer-events-none z-10" />
-                  <div className="absolute top-0 inset-x-0 h-20 bg-linear-to-b from-white/15 to-transparent pointer-events-none rounded-t-3xl" />
-                </div>
-              </div>
+              {/* Melt the cropped bottom edge into the page background */}
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-[#020B25] to-transparent pointer-events-none" />
             </div>
 
             {/* Attribution Below Arch */}
@@ -346,37 +234,17 @@ export default function AboutFounder() {
             >
               {/* The Cathedral Arch Frame (260px x 350px) */}
               <div className="relative w-65 h-87.5">
-                {/* Soft Atmospheric Deep Blue Backlight */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -inset-8 rounded-[2rem] bg-radial from-blue-600/30 via-indigo-950/20 to-transparent blur-3xl -z-10"
+                {/* Transparent cut-out sitting straight on the section background */}
+                <Image
+                  src={FOUNDER_IMAGE}
+                  alt="Roshna Saffar — Founder of Virtual Captains"
+                  fill
+                  sizes="320px"
+                  priority
+                  className="object-contain object-bottom select-none pointer-events-none"
                 />
-
-                {/* Precision Jewelry Glass Rim (Clean, elegant, premium) */}
-                <div className="relative h-full w-full rounded-3xl p-[1.5px] bg-linear-to-b from-white/35 via-white/15 to-white/5 shadow-[0_25px_60px_rgba(0,0,0,0.85)]">
-                  {/* Inner Dark Studio Chamber */}
-                  <div className="relative h-full w-full overflow-hidden rounded-3xl bg-linear-to-b from-[#0e2456] via-[#071333] to-[#020819]">
-                    {/* Interior spotlight behind silhouette */}
-                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-blue-500/25 blur-3xl pointer-events-none" />
-
-                    {/* Portrait Image */}
-                    <Image
-                      src={cutoutUrl || FOUNDER_IMAGE}
-                      alt="Roshna Saffar — Founder of Virtual Captains"
-                      fill
-                      sizes="320px"
-                      priority
-                      unoptimized={Boolean(cutoutUrl)}
-                      className="h-full w-full object-cover object-bottom select-none pointer-events-none transition-opacity duration-300"
-                    />
-
-                    {/* Bottom Cinematic Vignette to blend black blazer into arch base */}
-                    <div className="absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-[#020819] via-[#020819]/60 to-transparent pointer-events-none z-10" />
-
-                    {/* Top Specular Glass Reflection */}
-                    <div className="absolute top-0 inset-x-0 h-24 bg-linear-to-b from-white/12 to-transparent pointer-events-none rounded-t-3xl" />
-                  </div>
-                </div>
+                {/* Melt the cropped bottom edge into the page background */}
+                <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-[#020B25] to-transparent pointer-events-none" />
               </div>
 
               {/* Attribution Below Arch */}
