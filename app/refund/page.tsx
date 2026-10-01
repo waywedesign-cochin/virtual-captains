@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
-export const metadata: Metadata = {
-  title: "Refund & Cancellation Policy | Disclaimer | Virtual Captains",
+export const metadata: Metadata = pageMetadata({
+  title: "Refund & Cancellation Policy",
   description:
-    "Review the Refund Policy, Cancellation Guidelines, and Earnings & AI Simulation Disclaimers for Virtual Captains programs and platforms.",
-};
+    "Refund policy, cancellation guidelines and earnings and AI simulation disclaimers for Virtual Captains programmes and the SalesX platform.",
+  path: "/refund",
+});
 
 export default function RefundPage() {
   return (

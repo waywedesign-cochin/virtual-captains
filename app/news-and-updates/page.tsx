@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import DotGridSpotlight from "../components/common/DotGridSpotlight";
@@ -7,11 +8,12 @@ import { NewsHero } from "../components/news/NewsHero";
 import { getAllNews, getNewsCategories } from "@/sanity/queries";
 import { getNewsCategoryDot } from "@/sanity/lib/types";
 
-export const metadata: Metadata = {
-  title: "News & Updates | Virtual Captains",
+export const metadata: Metadata = pageMetadata({
+  title: "News & Updates",
   description:
-    "Latest company announcements, product releases, partnerships, and milestones from Virtual Captains and SalesX.",
-};
+    "Company announcements, product releases, partnerships and milestones from Virtual Captains and SalesX.",
+  path: "/news-and-updates",
+});
 
 const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38bdf8]";

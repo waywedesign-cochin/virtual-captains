@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import Link from "next/link";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
-export const metadata: Metadata = {
-  title: "Resources | Sales Research & Frameworks",
+export const metadata: Metadata = pageMetadata({
+  title: "Sales Resources & Frameworks",
   description:
-    "Explore case studies, sales call teardowns, behavioral playbooks, and conversational intelligence benchmarks.",
-};
+    "Case studies, sales call teardowns, behavioural playbooks and conversational intelligence benchmarks from the Virtual Captains team.",
+  path: "/resources",
+});
 
 export default function ResourcesPage() {
   return (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import SalesXHero from "../components/salesx/SalesXHero";
 import SalesXSimulated from "../components/salesx/SalesXSimulated";
 import SalesXMethod from "../components/salesx/SalesXMethod";
@@ -13,11 +14,12 @@ import SalesXPartnerCloud from "../components/salesx/SalesXPartnerCloud";
 import SalesXCTA from "../components/salesx/SalesXCTA";
 import SalesXFooter from "../components/salesx/SalesXFooter";
 
-export const metadata: Metadata = {
-  title: "SalesX | High-Velocity AI Sales Simulation Engine",
+export const metadata: Metadata = pageMetadata({
+  title: "SalesX — AI Sales Simulation Training",
   description:
-    "Execution training for top-tier revenue teams. Measure, simulate, and scale sales closing rates with hyper-realistic AI buyer personas and real-time conviction telemetry.",
-};
+    "SalesX by Virtual Captains: rehearse real deals with AI buyer simulations, live CRM and sales-call practice evaluated by practitioners, and earn the VC Skill Card.",
+  path: "/salesx",
+});
 
 export default function SalesXPage() {
   return (
