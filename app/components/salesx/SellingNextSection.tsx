@@ -386,6 +386,56 @@ export default function SellingNextSection() {
   const [bookingAudience, setBookingAudience] = useState<"individual" | "organisation">("individual");
   const [spacing, setSpacing] = useState(330);
 
+  /* ---------- Touch swipe (phones & tablets) ----------
+     Only horizontal gestures are ours (touch-action: pan-y keeps vertical
+     page scrolling native). The stack follows the finger, then a swipe past
+     the threshold moves one card, otherwise it springs back. */
+  const swipe = useRef<{ x: number; y: number; dx: number; axis: "x" | "y" | null } | null>(null);
+  const draggedRef = useRef(false);
+  const [showSwipeHint, setShowSwipeHint] = useState(true);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    swipe.current = { x: t.clientX, y: t.clientY, dx: 0, axis: null };
+    draggedRef.current = false;
+    gsap.killTweensOf(stageRef.current, "x,rotationY");
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    const g = swipe.current;
+    if (!g) return;
+    const t = e.touches[0];
+    const dx = t.clientX - g.x;
+    const dy = t.clientY - g.y;
+    if (!g.axis && Math.hypot(dx, dy) > 8) g.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    if (g.axis !== "x") return;
+    draggedRef.current = true;
+    // Rubber-band at the first / last card
+    const atEdge = (dx > 0 && active === 0) || (dx < 0 && active === CARDS.length - 1);
+    g.dx = atEdge ? dx * 0.25 : dx;
+    gsap.set(stageRef.current, { x: g.dx * 0.6, rotationY: gsap.utils.clamp(-12, 12, g.dx * 0.05) });
+  };
+
+  const onTouchEnd = () => {
+    const g = swipe.current;
+    swipe.current = null;
+    if (!g || g.axis !== "x") return;
+    gsap.to(stageRef.current, { x: 0, rotationY: 0, duration: 0.6, ease: "elastic.out(1, 0.75)" });
+    if (Math.abs(g.dx) < 50) return;
+    const next = g.dx < 0 ? active + 1 : active - 1;
+    if (next < 0 || next >= CARDS.length) return;
+    setShowSwipeHint(false);
+    selectCard(next);
+  };
+
+  // A drag that ends over a card must not also count as a tap on it
+  const onStageClickCapture = (e: React.MouseEvent) => {
+    if (!draggedRef.current) return;
+    e.stopPropagation();
+    e.preventDefault();
+    draggedRef.current = false;
+  };
+
   // Responsive 3D fan spacing
   useEffect(() => {
     const update = () => {
@@ -568,6 +618,25 @@ export default function SellingNextSection() {
         0.55,
       );
 
+      // Touch screens: once the cards are revealed, nudge the stack left and
+      // right a single time to show it can be swiped.
+      if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
+        let nudged = false;
+        tl.call(
+          () => {
+            if (nudged) return;
+            nudged = true;
+            gsap
+              .timeline({ delay: 0.3 })
+              .to(stageRef.current, { x: -28, rotationY: -6, duration: 0.45, ease: "power2.out" })
+              .to(stageRef.current, { x: 18, rotationY: 4, duration: 0.4, ease: "power2.inOut" })
+              .to(stageRef.current, { x: 0, rotationY: 0, duration: 0.5, ease: "elastic.out(1, 0.7)" });
+          },
+          undefined,
+          1.05,
+        );
+      }
+
       // ── STEP 3: SCROLL DISTANCE TO CYCLE THROUGH 3D CAROUSEL ──
       tl.to({}, { duration: 3.0 }, 1.0);
 
@@ -627,7 +696,12 @@ export default function SellingNextSection() {
         {/* 3D Coverflow Stage with Center, Left, and Right cards */}
         <div
           ref={stageRef}
-          className="grid h-full w-full place-items-center [perspective:1400px] overflow-hidden"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={onTouchEnd}
+          onClickCapture={onStageClickCapture}
+          className="grid h-full w-full touch-pan-y place-items-center [perspective:1400px] overflow-hidden"
         >
           {CARDS.map((card, i) => {
             const offset = getOffset(i, active);
@@ -646,6 +720,16 @@ export default function SellingNextSection() {
             );
           })}
         </div>
+
+        {/* Touch-only swipe hint (hidden after the first swipe) */}
+        {showSwipeHint && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute bottom-20 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-wide text-white/70 backdrop-blur-md [@media(hover:none)_and_(pointer:coarse)]:flex"
+          >
+            <span className="animate-pulse">←</span> Swipe <span className="animate-pulse">→</span>
+          </div>
+        )}
 
         {/* Interactive Progress indicator dots */}
         <div className="absolute bottom-8 max-lg:bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
