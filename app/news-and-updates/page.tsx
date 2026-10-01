@@ -164,7 +164,7 @@ export default async function NewsAndUpdatesPage({
             aria-label="Filter news by category"
             className="flex overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
           >
-            <div className="flex items-center gap-1.5 p-1 bg-white/4 rounded-full border border-white/10">
+            <div className="flex w-max shrink-0 items-center gap-1.5 p-1 bg-white/4 rounded-full border border-white/10">
               {tabs.map((c) => {
                 const isActive = c.slug === active;
                 return (

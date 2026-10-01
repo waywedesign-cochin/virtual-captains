@@ -62,6 +62,9 @@ const firstRecentId = (list: ChannelVideo[]) => {
 export default function AboutVideoCTA({ initialVideos = [] }: { initialVideos?: YouTubeVideoDoc[] }) {
   const [videos, setVideos] = useState(() => toVideos(initialVideos));
   const [activeId, setActiveId] = useState(() => firstRecentId(toVideos(initialVideos)));
+  // Click-to-play facade: the ~1 MB YouTube player (plus its ad/tracking
+  // requests and cookies) only loads once someone actually presses play.
+  const [playing, setPlaying] = useState(false);
 
   // Live updates: listen for any publish/edit/delete of a YouTube Video in
   // Sanity and refetch, so the section changes within seconds of publishing
@@ -202,13 +205,40 @@ export default function AboutVideoCTA({ initialVideos = [] }: { initialVideos?: 
                 {/* Subtle top rim light */}
                 <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-white/30 to-transparent pointer-events-none z-10" />
                 
-                <iframe
-                  src={`https://www.youtube.com/embed/${activeId}`}
-                  title="Virtual Captains Video Presentation"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full border-0"
-                />
+                {playing ? (
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${activeId}?autoplay=1&rel=0`}
+                    title="Virtual Captains Video Presentation"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full border-0"
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setPlaying(true)}
+                    aria-label="Play Virtual Captains video"
+                    className="group/play absolute inset-0 flex cursor-pointer items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- remote YouTube thumbnail */}
+                    <img
+                      src={`https://i.ytimg.com/vi/${activeId}/hqdefault.jpg`}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 h-full w-full object-cover opacity-90 transition-opacity duration-300 group-hover/play:opacity-100"
+                    />
+                    <span className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-black/20" aria-hidden="true" />
+                    <span
+                      aria-hidden="true"
+                      className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[#ff0033] shadow-[0_8px_30px_rgba(255,0,51,0.45)] transition-transform duration-300 group-hover/play:scale-110 sm:h-20 sm:w-20"
+                    >
+                      <svg viewBox="0 0 24 24" className="ml-1 h-7 w-7 fill-white sm:h-8 sm:w-8">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -273,7 +303,10 @@ export default function AboutVideoCTA({ initialVideos = [] }: { initialVideos?: 
                       {v.kind === "recent" ? (
                         <button
                           type="button"
-                          onClick={() => setActiveId(v.id)}
+                          onClick={() => {
+                            setActiveId(v.id);
+                            setPlaying(true);
+                          }}
                           aria-pressed={isActive}
                           className={`${base} cursor-pointer ${
                             isActive
