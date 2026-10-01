@@ -19,10 +19,10 @@ type Location = {
 };
 
 const LOCATIONS: Location[] = [
-  { name: "Dubai", country: "United Arab Emirates", lon: 55.27, lat: 25.2 },
+  { name: "Dubai", country: "UAE", lon: 55.27, lat: 25.2 },
   {
     name: "Abu Dhabi",
-    country: "United Arab Emirates",
+    country: "UAE",
     lon: 54.37,
     lat: 24.45,
   },
@@ -49,6 +49,12 @@ const JOURNEY: { lon: number; lat: number; zoom: number; label?: string }[] = [
   { lon: 101.69, lat: 3.14, zoom: 2.2, label: "Kuala Lumpur" },
   { lon: 76, lat: 15, zoom: 1.15, label: "Middle East & Asia" },
 ];
+
+/** Journey waypoints that land on a client city — the phone tour's chips. */
+const CITY_STOPS = JOURNEY.flatMap((wp, i) => {
+  const loc = LOCATIONS.find((l) => l.name === wp.label);
+  return loc ? [{ label: loc.name, country: loc.country, i }] : [];
+});
 
 const DEG = Math.PI / 180;
 const HIGHLIGHT = "#e7ff3d";
@@ -79,11 +85,9 @@ function drawCityLabel(
   const leader = width < 520 ? 18 : 24;
   const gap = 14;
 
+  // One line: the country name
   ctx.font = `600 13px ${fontSans}`;
-  const nameWidth = ctx.measureText(location.name).width;
-  ctx.font = `400 11px ${fontSans}`;
-  const countryWidth = ctx.measureText(location.country).width;
-  const plateWidth = Math.max(nameWidth, countryWidth) + 14;
+  const plateWidth = ctx.measureText(location.country).width + 16;
 
   const fitsLeft = point.x - leader - gap - plateWidth + 7 >= 4;
   const fitsRight = point.x + leader + gap + plateWidth - 7 <= width - 4;
@@ -115,19 +119,14 @@ function drawCityLabel(
 
   ctx.fillStyle = "rgba(255,255,255,0.96)";
   ctx.beginPath();
-  ctx.roundRect(plateX, labelY - 17, plateWidth, 34, 4);
+  ctx.roundRect(plateX, labelY - 13, plateWidth, 26, 4);
   ctx.fill();
 
   ctx.textAlign = "left";
   ctx.font = `600 13px ${fontSans}`;
-  ctx.textBaseline = "bottom";
+  ctx.textBaseline = "middle";
   ctx.fillStyle = "#101010";
-  ctx.fillText(location.name, contentX, labelY - 1);
-
-  ctx.font = `400 11px ${fontSans}`;
-  ctx.textBaseline = "top";
-  ctx.fillStyle = "rgba(16,16,16,0.65)";
-  ctx.fillText(location.country, contentX, labelY + 3);
+  ctx.fillText(location.country, contentX + 1, labelY + 1);
 }
 
 /**
@@ -149,6 +148,38 @@ export default function CrossCountry() {
   viewModeRef.current = viewMode;
 
   const progressRef = useRef(0);
+
+  // Phones/tablets: the camera tours the cities on its own (no pin), and the
+  // city chips under the map show / jump to the current stop.
+  const [stop, setStop] = useState<number | null>(null);
+  const tourRef = useRef<gsap.core.Timeline | null>(null);
+  const tourProxy = useRef({ p: 0 });
+  const tourVisible = useRef(false);
+
+  const goToStop = (i: number) => {
+    const last = JOURNEY.length - 1;
+    setStop(i);
+    const tl = tourRef.current;
+    if (!tl) {
+      // Reduced motion: jump straight there
+      progressRef.current = i / last;
+      return;
+    }
+    tl.pause();
+    gsap.to(tourProxy.current, {
+      p: i / last,
+      duration: 0.9,
+      ease: "power2.inOut",
+      overwrite: true,
+      onUpdate: () => {
+        progressRef.current = tourProxy.current.p;
+      },
+      onComplete: () => {
+        tl.seek(`at${i}`);
+        if (tourVisible.current) tl.play();
+      },
+    });
+  };
 
   useGSAP(
     () => {
@@ -472,25 +503,27 @@ export default function CrossCountry() {
             const alpha = Math.min(1, point.depth * 1.6);
 
             // Halo
-            ctx.globalAlpha = alpha * (isFocused ? 0.28 + 0.22 * pulse : 0.2);
+            // Every city stays visible against the white land dots: lime beacon,
+            // gently pulsing; the focused one is larger.
+            ctx.globalAlpha = alpha * (isFocused ? 0.28 + 0.22 * pulse : 0.22 + 0.14 * pulse);
             ctx.beginPath();
             ctx.arc(
               point.x,
               point.y,
-              (isFocused ? 11 + 5 * pulse : 6) *
+              (isFocused ? 11 + 5 * pulse : 8 + 2 * pulse) *
                 Math.min(zoom, 1.6) *
                 markerScale,
               0,
               Math.PI * 2,
             );
-            ctx.fillStyle = isFocused ? HIGHLIGHT : "rgba(255, 255, 255, 0.6)";
+            ctx.fillStyle = HIGHLIGHT;
             ctx.fill();
 
             // Core
             ctx.globalAlpha = alpha;
             ctx.beginPath();
-            ctx.arc(point.x, point.y, isFocused ? 4 : 2.6, 0, Math.PI * 2);
-            ctx.fillStyle = isFocused ? HIGHLIGHT : "#ffffff";
+            ctx.arc(point.x, point.y, isFocused ? 4 : 3.2, 0, Math.PI * 2);
+            ctx.fillStyle = HIGHLIGHT;
             ctx.fill();
 
             if (isFocused) {
@@ -640,16 +673,54 @@ export default function CrossCountry() {
         mm.add(NO_PIN_QUERY, () => {
           gsap.set(sectionRef.current, { clearProps: "transform" });
 
+          // Scroll-scrubbing squeezed the whole tour into one swipe on a
+          // phone, so here it plays by itself: fly to each stop, hold on
+          // cities long enough to read the label, rest on the wide view,
+          // loop. Plays only while the section is on screen.
+          const last = JOURNEY.length - 1;
+          const proxy = tourProxy.current;
+          const sync = () => {
+            progressRef.current = proxy.p;
+          };
+          proxy.p = 0;
+          sync();
+
+          const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.4, paused: true });
+          tl.call(() => setStop(null));
+          JOURNEY.forEach((_, i) => {
+            if (i === 0) return;
+            const isCity = CITY_STOPS.some((c) => c.i === i);
+            // Chip lights as the flight starts, in step with the city label
+            tl.call(() => setStop(isCity ? i : null));
+            tl.to(proxy, { p: i / last, duration: isCity ? 1.1 : 1.3, ease: "power2.inOut", onUpdate: sync });
+            tl.addLabel(`at${i}`);
+            tl.to({}, { duration: isCity ? 1.8 : i === last ? 2.6 : 0.5 });
+          });
+          tl.call(() => {
+            proxy.p = 0;
+            sync();
+          });
+          tourRef.current = tl;
+
           const trigger = ScrollTrigger.create({
             trigger: sectionRef.current,
-            start: "top 85%",
-            end: "bottom 15%",
-            scrub: 0.6,
-            onUpdate: (self) => {
-              progressRef.current = self.progress;
+            start: "top 75%",
+            end: "bottom 25%",
+            // Measure after the pinned sections above add their spacers
+            refreshPriority: -1,
+            onToggle: (self) => {
+              tourVisible.current = self.isActive;
+              if (self.isActive) tl.play();
+              else tl.pause();
             },
           });
-          return () => trigger.kill();
+          return () => {
+            trigger.kill();
+            tl.kill();
+            tourRef.current = null;
+            tourVisible.current = false;
+            setStop(null);
+          };
         });
       }
 
@@ -753,7 +824,7 @@ export default function CrossCountry() {
               height, so a landscape phone still fits heading + map + copy */}
           <div
             ref={canvasBoxRef}
-            className="relative mt-3 h-[clamp(200px,min(62vw,52svh),380px)] w-full pin:mt-0 pin:h-[clamp(260px,38vh,420px)]"
+            className="relative mt-4 h-[clamp(260px,min(88vw,56svh),440px)] w-full pin:mt-0 pin:h-[clamp(260px,38vh,420px)]"
           >
             {/* Ambient luminous atmospheric glow directly behind the map/globe */}
             <div className="pointer-events-none absolute inset-x-8 -inset-y-6 rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(56,189,248,0.28)_0%,rgba(29,99,237,0.14)_50%,transparent_75%)] blur-3xl -z-10" />
@@ -764,6 +835,32 @@ export default function CrossCountry() {
               aria-label={`${viewMode === "map" ? "World map" : "Globe"} highlighting our client cities: ${LOCATIONS.map((l) => l.name).join(", ")}`}
               className="absolute inset-0 h-full w-full"
             />
+          </div>
+
+          {/* Phones/tablets: city chips — follow the auto tour, tap to jump */}
+          <div
+            role="group"
+            aria-label="Client cities"
+            className="mt-4 flex flex-wrap justify-center gap-2 pin:hidden"
+          >
+            {CITY_STOPS.map((c) => {
+              const on = stop === c.i;
+              return (
+                <button
+                  key={c.label}
+                  type="button"
+                  onClick={() => goToStop(c.i)}
+                  aria-pressed={on}
+                  className={`min-h-9 cursor-pointer rounded-full border px-3.5 text-[12.5px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 ${
+                    on
+                      ? "border-[#e7ff3d] bg-[#e7ff3d] text-[#0a0b0d] shadow-[0_0_16px_rgba(231,255,61,0.35)]"
+                      : "border-white/20 bg-white/5 text-white/75"
+                  }`}
+                >
+                  {c.country}
+                </button>
+              );
+            })}
           </div>
         </div>
 
