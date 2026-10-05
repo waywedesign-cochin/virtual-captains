@@ -13,38 +13,47 @@ const STATIC_QUERY = "(max-width: 1023px), (max-height: 559px)";
 interface Pillar {
   id: string;
   title: string;
+  /** Gradient headline shown above the description */
   tag: string;
-  description: string;
+  /** A paragraph, or short "label: text" points rendered as a list */
+  description: string | { label: string; text: string }[];
 }
 
 const PILLARS: Pillar[] = [
   {
     id: "vision",
     title: "Vision",
-    tag: "Demo text",
+    tag: "A World Where Everyone Can Sell with Confidence.",
     description:
-      "At Virtual Captains, we believe great sales are built on more than scripts and techniques. They are built on clarity, strategy, confidence, and the right human approach",
+      "To make sales a core capability, not just a job title, for every professional, founder and organisation we work with.",
   },
   {
     id: "mission",
     title: "Mission",
-    tag: "Demo text",
+    tag: "Turning Sales Uncertainty into Sales Readiness.",
     description:
-      "To equip modern revenue teams and aspiring sales leaders with hyper-realistic AI simulations, real-world execution muscle memory, and high-velocity deal closing capabilities.",
+      "To equip teams and individuals with real-world practice, practitioner insight and execution support that turn potential into predictable revenue.",
   },
   {
     id: "values",
     title: "Values",
-    tag: "Demo text",
-    description:
-      "Relentless execution, authentic communication, behavioral science, and measurable business growth over vanity metrics and theoretical checklists.",
+    tag: "What We Stand For.",
+    description: [
+      { label: "Practice over Theory", text: "we learn by doing." },
+      { label: "Clarity over Complexity", text: "simple methods that work." },
+      {
+        label: "Human at the Core",
+        text: "technology supports judgement; it doesn't replace it.",
+      },
+      { label: "Accountable to Results", text: "we measure what matters." },
+    ],
   },
   {
     id: "approach",
     title: "Approach",
-    tag: "Demo text",
+    tag: "Practise Like It's Real. Perform When It Counts.",
     description:
-      "Transforming complex sales challenges into clear, actionable opportunities through industry-driven frameworks, real-time telemetry, and human coaching.",
+      "Virtual Captains is your end-to-end sales partner. We diagnose the gaps, design the playbooks and stay on the ground to drive revenue alongside your team. Our practitioners have built teams and carried real targets, and they guide every engagement. SalesX adds AI-powered practice, with experienced practitioners evaluating the results. Every engagement is measured by one thing: growth in your pipeline and revenue.",
   },
 ];
 
@@ -158,8 +167,6 @@ export default function AboutInsideWorld() {
     scrollToPillar(nextIdx);
   }, [activeIndex, numItems, scrollToPillar]);
 
-  const activePillar = PILLARS[activeIndex];
-
   // Calculate the continuous fill progress of the active pill [0.0 -> 1.0]
   const segmentProgress = (() => {
     if (isStatic) return 1;
@@ -203,24 +210,24 @@ export default function AboutInsideWorld() {
                 Inside Our World
               </h2>
 
-              {/* Paragraph 1 with Italic Gradient "Demo text" */}
-              <p className="mt-3 sm:mt-5 lg:mt-4 xl:mt-6 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed text-center lg:text-left">
-                <span className="font-medium mr-1.5 select-none bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent italic drop-shadow-[0_0_12px_rgba(243,252,0,0.35)]">
-                  Demo text
-                </span>
-                At Virtual Captains, we believe great sales are built on more than
-                scripts and techniques. They are built on clarity, strategy,
-                confidence, and the right human approach.
+              {/* Tagline */}
+              <p className="mt-3 sm:mt-5 lg:mt-4 xl:mt-6 font-sans font-medium italic text-base sm:text-lg xl:text-xl bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(243,252,0,0.35)] text-center lg:text-left">
+                &ldquo;More Than Scripts. More Than Techniques.&rdquo;
               </p>
 
-              {/* Paragraph 2 - Desktop & Tablet */}
-              <p className="hidden sm:block mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-300/90 font-sans leading-relaxed text-center lg:text-left">
-                We are a team of Sales Strategists and Trainers dedicated to
-                helping businesses build stronger sales teams and create
-                meaningful, measurable growth. Through industry-driven insights,
-                practical strategies, and virtual training validated by real
-                human expertise, we transform complex sales challenges into clear,
-                actionable opportunities.
+              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed text-center lg:text-left">
+                Virtual Captains is a sales execution company headquartered in
+                India with a presence across the Middle East, Europe and Asia. We
+                believe great sales come from clarity, strategy, confidence and
+                the right human approach, not memorised scripts.
+              </p>
+
+              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-300/90 font-sans leading-relaxed text-center lg:text-left">
+                Our team of sales strategists and practitioners works alongside
+                organisations to onboard talent, diagnose sales gaps, build
+                pipeline and sharpen teams. We combine AI-powered practice with
+                evaluation by experienced practitioners, so that complex sales
+                challenges become clear, measurable growth.
               </p>
 
             </div>
@@ -239,22 +246,53 @@ export default function AboutInsideWorld() {
                   />
 
                   <div className="rounded-[22.5px] sm:rounded-[26.5px] bg-[#030d2d]/90 border border-white/10 p-5 sm:p-7 lg:p-6 xl:p-8 2xl:p-9 min-h-52.5 sm:min-h-60 lg:min-h-57.5 xl:min-h-62.5 flex flex-col justify-between backdrop-blur-2xl text-center lg:text-left">
-                    <div ref={cardContentRef} className="will-change-transform">
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-bold tracking-tight text-white font-sans text-center lg:text-left">
-                          {activePillar.title}
-                        </h3>
-                        <span className="font-sans text-[10px] uppercase tracking-wider text-[#8fd0ff] border border-[#8fd0ff]/30 rounded-md px-2 py-0.5">
-                          0{activeIndex + 1}
-                        </span>
-                      </div>
+                    {/* Every pillar is stacked in the same grid cell so the card
+                        always takes the height of the tallest one — switching
+                        pillars never resizes the card or shifts the layout. */}
+                    <div className="grid">
+                      {PILLARS.map((pillar, idx) => {
+                        const isActive = idx === activeIndex;
+                        return (
+                          <div
+                            key={pillar.id}
+                            ref={isActive ? cardContentRef : undefined}
+                            aria-hidden={!isActive}
+                            className={`col-start-1 row-start-1 will-change-transform ${
+                              isActive ? "visible" : "invisible"
+                            }`}
+                          >
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-bold tracking-tight text-white font-sans text-center lg:text-left">
+                              {pillar.title}
+                            </h3>
+                            <span className="font-sans text-[10px] uppercase tracking-wider text-[#8fd0ff] border border-[#8fd0ff]/30 rounded-md px-2 py-0.5">
+                              0{idx + 1}
+                            </span>
+                          </div>
 
-                      <p className="mt-2.5 sm:mt-4 lg:mt-3.5 xl:mt-5 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] text-slate-200 leading-relaxed font-sans text-center lg:text-left">
-                        <span className="font-medium mr-1.5 select-none bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent italic drop-shadow-[0_0_10px_rgba(243,252,0,0.3)]">
-                          {activePillar.tag}
-                        </span>
-                        {activePillar.description}
-                      </p>
+                          <p className="mt-2.5 sm:mt-4 lg:mt-3.5 xl:mt-5 font-sans font-medium italic text-sm sm:text-base xl:text-lg leading-snug bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(243,252,0,0.3)] text-center lg:text-left">
+                            {pillar.tag}
+                          </p>
+                          {typeof pillar.description === "string" ? (
+                            <p className="mt-2 sm:mt-3 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] text-slate-200 leading-relaxed font-sans text-center lg:text-left">
+                              {pillar.description}
+                            </p>
+                          ) : (
+                            <ul className="mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] text-slate-200 leading-relaxed font-sans text-left">
+                              {pillar.description.map((v) => (
+                                <li key={v.label} className="flex gap-2">
+                                  <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-[#F3FC00]" />
+                                  <span>
+                                    <span className="font-semibold text-white">{v.label}:</span>{" "}
+                                    {v.text}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {/* ── Unified Carousel Navigation: Left/Right Arrow Buttons & Progress Pills ── */}

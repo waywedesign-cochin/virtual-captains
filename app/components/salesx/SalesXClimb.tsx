@@ -44,7 +44,7 @@ const LEVELS: Level[] = [
       { no: "04", title: "Discovery" },
       { no: "05", title: "Objection handling" },
       { no: "06", title: "Multi-channel outreach" },
-      { no: "07", title: "[Module 7 title]" },
+      { no: "07", title: "Follow-up styles" },
     ],
   },
   {

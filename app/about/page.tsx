@@ -51,7 +51,7 @@ export default async function AboutPage() {
         {/* 3. Founder Section: Arch Portrait, Constellation & Narrative Creed */}
         <AboutFounder />
 
-        {/* 4. Metrics Orbit Section: Tilted Ellipse & Global Impact Stats */}
+        {/* 4. Global Impact: bento grid of stat cards */}
         <AboutMetrics />
 
         {/* 5. Partner Network Section: 5 Real Partners Cluster & Narrative */}

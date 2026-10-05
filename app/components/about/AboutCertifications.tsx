@@ -162,32 +162,28 @@ export default function AboutCertifications() {
               >
                 {/* 32-Point Serrated Rosette Seal Container */}
                 <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-38 md:h-38 lg:w-44 lg:h-44 xl:w-52 xl:h-52 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-2">
-                  {/* Subtle Vibrant Blue Glow on Hover */}
-                  <div className="absolute inset-0 rounded-full bg-[#344E8F]/0 group-hover:bg-[#344E8F]/35 blur-2xl transition-all duration-300 pointer-events-none" />
-
                   {/* 32-Point Blue Serrated Rosette Star Badge */}
                   {/* Star shape masked from Star.png and filled with the brand blue,
                       so the badge colour lives here rather than in the image */}
                   <div
                     role="img"
-                    aria-label={item.title}
-                    className="w-full h-full drop-shadow-[0_8px_24px_rgba(0,0,0,0.65)] group-hover:drop-shadow-[0_0_35px_rgba(52,78,143,0.85)] transition-all duration-300 pointer-events-none"
+                    aria-label={`${item.title} — ${item.track}`}
+                    className="w-full h-full pointer-events-none"
                   >
                     <div className="w-full h-full bg-[#344E8F]" style={{ maskImage: "url(/salesx/Star.png)", WebkitMaskImage: "url(/salesx/Star.png)", maskSize: "contain", WebkitMaskSize: "contain", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: "center", WebkitMaskPosition: "center" }} />
                   </div>
 
-                  {/* Center "Certification" White Typography */}
-                  <div className="absolute inset-0 flex items-center justify-center p-3 text-center pointer-events-none select-none">
-                    <span className="text-white text-xs sm:text-sm md:text-sm lg:text-base font-medium tracking-wide font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] group-hover:text-cyan-100 transition-colors">
+                  {/* Center "Certification" + track name */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center px-[22%] text-center pointer-events-none select-none">
+                    <span className="text-white/70 text-[9px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.18em] font-medium font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                       {item.title}
+                    </span>
+                    <span className="mt-1 text-white text-[11px] sm:text-sm lg:text-base xl:text-lg font-semibold leading-tight font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] group-hover:text-cyan-100 transition-colors">
+                      {item.track}
                     </span>
                   </div>
                 </div>
 
-                {/* Subtle Accessible Label on Focus / Screen-readers */}
-                <span className="sr-only">
-                  {item.title} — {item.track}
-                </span>
               </div>
             ))}
           </div>

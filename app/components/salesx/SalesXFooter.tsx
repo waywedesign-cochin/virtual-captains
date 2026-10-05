@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// 5 Certification badges (extensible with custom names / partner logos later as requested)
+// 4 Certification badges — same tracks as the About page (extensible with custom names / partner logos later as requested)
 export interface CertificationItem {
   id: string;
   title: string;
@@ -42,12 +42,6 @@ const certifications: CertificationItem[] = [
     id: "cert-4",
     title: "Certification",
     subtitle: "Revenue Intelligence",
-    badgeImage: "/salesx/Star.png",
-  },
-  {
-    id: "cert-5",
-    title: "Certification",
-    subtitle: "Pipeline Velocity",
     badgeImage: "/salesx/Star.png",
   },
 ];
@@ -163,7 +157,7 @@ export default function SalesXFooter() {
         onEnter: () => {
           const tl = gsap.timeline();
 
-          // 1. 5 Certification Badges pop-in
+          // 1. 4 Certification Badges pop-in
           if (badges.length > 0) {
             tl.to(
               badges,
@@ -326,30 +320,33 @@ export default function SalesXFooter() {
       {/* Standardized Max-Width Container Matching All Sections Above */}
       <div className="relative z-10 w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
         {/* ── 1. CERTIFICATION STARS ROW (Matching Reference Screenshots 1 & 2) ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10 xl:gap-12 items-center justify-items-center mb-10 sm:mb-16 lg:mb-20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 xl:gap-12 items-center justify-items-center mb-10 sm:mb-16 lg:mb-20">
           {certifications.map((item, idx) => (
             <div
               key={item.id}
               ref={(el) => {
                 certBadgesRef.current[idx] = el;
               }}
-              className="relative flex flex-col items-center justify-center will-change-transform last:col-span-2 sm:last:col-span-1"
+              className="relative flex flex-col items-center justify-center will-change-transform"
             >
               {/* 32-Point Blue Star Badge */}
               <div className="relative w-28 h-28 sm:w-34 sm:h-34 md:w-38 md:h-38 lg:w-44 lg:h-44 xl:w-48 xl:h-48 flex items-center justify-center">
                 {/* Star Image */}
                 <div
                   role="img"
-                  aria-label={item.title}
-                  className="w-full h-full drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
+                  aria-label={`${item.title} — ${item.subtitle}`}
+                  className="w-full h-full"
                 >
                   <div className="w-full h-full bg-[#344E8F]" style={{ maskImage: `url(${item.badgeImage})`, WebkitMaskImage: `url(${item.badgeImage})`, maskSize: "contain", WebkitMaskSize: "contain", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: "center", WebkitMaskPosition: "center" }} />
                 </div>
 
-                {/* Center "Certification" Label */}
-                <div className="absolute inset-0 flex items-center justify-center p-3 text-center pointer-events-none">
-                  <span className="text-white text-xs sm:text-sm lg:text-base font-semibold tracking-wide font-sans drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                {/* Center "Certification" + track name */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-[22%] text-center pointer-events-none">
+                  <span className="text-white/70 text-[9px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.18em] font-medium font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
                     {item.title}
+                  </span>
+                  <span className="mt-1 text-white text-[11px] sm:text-sm lg:text-base xl:text-lg font-semibold leading-tight font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                    {item.subtitle}
                   </span>
                 </div>
               </div>
