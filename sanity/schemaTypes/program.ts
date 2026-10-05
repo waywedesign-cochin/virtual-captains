@@ -57,12 +57,6 @@ export const program = defineType({
       description: 'e.g. "10 days", "2 weeks"',
     }),
     defineField({
-      name: "format",
-      title: "Format",
-      type: "string",
-      options: { list: ["Intensive", "Extended", "Live cohort", "On-site"] },
-    }),
-    defineField({
       name: "priceInr",
       title: "Price (₹, whole rupees)",
       type: "number",
@@ -72,8 +66,10 @@ export const program = defineType({
     }),
     defineField({
       name: "image",
-      title: "Cover image",
+      title: "Cover image (optional)",
       type: "image",
+      description:
+        "Optional. If empty, the card is shown without a cover image.",
       options: { hotspot: true },
       fields: [defineField({ name: "alt", title: "Alt text", type: "string" })],
     }),
@@ -85,7 +81,6 @@ export const program = defineType({
       description: "Up to 4 are shown on the card.",
       validation: (Rule) => Rule.max(4),
     }),
-    defineField({ name: "outcome", title: "You leave with", type: "string" }),
     defineField({
       name: "featured",
       title: "Featured (highlighted blue card)",

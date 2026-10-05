@@ -254,7 +254,7 @@ export default function CurriculumSection() {
 
           <h2 className="mt-6 font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
             Same Discipline.{" "}
-            <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
+            <span className="block bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
               Your Own Climb.
             </span>
           </h2>

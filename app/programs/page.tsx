@@ -30,11 +30,9 @@ type Program = {
   level?: string;
   hours?: number;
   duration?: string;
-  format?: string;
   price?: string; // display text, built from priceInr in Sanity
   image?: { url: string; alt?: string };
   highlights?: string[];
-  outcome?: string;
   featured?: boolean;
 };
 
@@ -53,6 +51,11 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
     program.level,
   ].filter(Boolean) as string[];
 
+  // Same pill in both layouts: over the cover image, or inside the body when there is no image
+  const audienceBadgeClass = `rounded-full px-3 py-1 text-xs font-semibold backdrop-blur ${
+    featured ? "bg-white/20 text-white" : "bg-[#060b26]/70 text-[#38bdf8]"
+  }`;
+
   return (
     <article
       style={delay(520 + index * 90)}
@@ -62,38 +65,32 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
           : "border-white/10 bg-[#0b0e14] text-white hover:border-white/25"
       }`}
     >
-      {/* Cover */}
-      <div className="relative aspect-16/10 w-full overflow-hidden bg-[#0d1438]">
-        {program.image ? (
+      {/* Cover (only when an image exists) */}
+      {program.image && (
+        <div className="relative aspect-16/10 w-full overflow-hidden bg-[#0d1438]">
           <img
             src={program.image.url}
             alt={program.image.alt || program.title}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-        ) : (
-          <div className="absolute inset-0 bg-linear-to-br from-[#1b2a7a] via-[#111a45] to-[#060b26]" />
-        )}
-        <span
-          className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur ${
-            featured
-              ? "bg-white/20 text-white"
-              : "bg-[#060b26]/70 text-[#38bdf8]"
-          }`}
-        >
-          {AUDIENCE_LABEL[program.audience]}
-        </span>
-        {program.format && (
-          <span className="absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#060b26]">
-            {program.format}
+          <span className={`absolute left-4 top-4 ${audienceBadgeClass}`}>
+            {AUDIENCE_LABEL[program.audience]}
           </span>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Body */}
       <div className="flex flex-1 flex-col p-7">
+        {/* No image: audience badge moves into the body */}
+        {!program.image && (
+          <span className={`self-start ${audienceBadgeClass}`}>
+            {AUDIENCE_LABEL[program.audience]}
+          </span>
+        )}
+
         {meta.length > 0 && (
           <p
-            className={`text-xs font-semibold ${
+            className={`${program.image ? "" : "mt-4"} text-xs font-semibold ${
               featured ? "text-white/70" : "text-white/55"
             }`}
           >
@@ -136,19 +133,6 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
               </li>
             ))}
           </ul>
-        )}
-
-        {program.outcome && (
-          <p
-            className={`mt-5 border-t pt-4 text-sm ${
-              featured ? "border-white/20" : "border-white/10"
-            }`}
-          >
-            <span className={featured ? "opacity-70" : "text-white/55"}>
-              You leave with:{" "}
-            </span>
-            <span className="font-semibold">{program.outcome}</span>
-          </p>
         )}
 
         <div className="mt-auto flex items-center justify-between pt-6">
