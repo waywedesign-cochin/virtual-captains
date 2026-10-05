@@ -9,6 +9,7 @@ export default function AboutHero() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
+  const line3Ref = useRef<HTMLSpanElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
@@ -48,6 +49,11 @@ export default function AboutHero() {
         { yPercent: 0, opacity: 1, duration: 1.25 },
         "-=0.9"
       ).fromTo(
+        line3Ref.current,
+        { yPercent: 120, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 1.25 },
+        "-=1"
+      ).fromTo(
         subRef.current,
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, duration: 1 },
@@ -78,7 +84,7 @@ export default function AboutHero() {
               ref={line1Ref}
               className="block text-white will-change-transform"
             >
-              Built By Sellers.
+              Built By Sellers
             </span>
           </span>
 
@@ -86,12 +92,19 @@ export default function AboutHero() {
           <span className="block overflow-hidden mt-1 sm:mt-2 pb-1.5 sm:pb-2.5">
             <span
               ref={line2Ref}
-              className="block will-change-transform"
+              className="block text-white will-change-transform"
             >
-              <span className="text-white">Designed For</span>{" "}
-              <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
-                Sales Execution.
-              </span>
+              Designed For
+            </span>
+          </span>
+
+          {/* Line 3 with overflow-hidden mask */}
+          <span className="block overflow-hidden mt-1 sm:mt-2 pb-1.5 sm:pb-2.5">
+            <span
+              ref={line3Ref}
+              className="block font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent will-change-transform"
+            >
+              Sales Execution
             </span>
           </span>
         </h1>
