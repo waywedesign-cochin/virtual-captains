@@ -108,7 +108,7 @@ export default function AboutMetrics() {
     <section
       ref={sectionRef}
       aria-labelledby="about-metrics-title"
-      className="relative w-full overflow-hidden px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28"
+      className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-28"
     >
       {/* Soft glow behind the grid */}
       <div
@@ -116,7 +116,7 @@ export default function AboutMetrics() {
         className="pointer-events-none absolute left-1/2 top-1/2 h-[70%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(37,99,235,0.22)_0%,rgba(29,78,216,0.06)_50%,transparent_75%)] blur-2xl"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-6xl">
+      <div className="relative z-10 mx-auto w-full max-w-372 px-4 sm:px-6 md:px-8 lg:px-8 xl:px-12">
         <div className="text-center">
           <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-white/50 sm:text-[11px]">
             By the Numbers

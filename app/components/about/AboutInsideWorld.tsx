@@ -8,7 +8,7 @@ import { useHeadingZoom } from "./useHeadingZoom";
 // Phones/tablets, and screens too short for the sticky stage (rotated
 // phones): the section renders as a normal block — no scroll-locking, even
 // section spacing — and the arrows / pills switch pillars instead.
-const STATIC_QUERY = "(max-width: 1023px), (max-height: 559px)";
+const STATIC_QUERY = "(max-width: 1023px), (max-height: 479px)";
 
 interface Pillar {
   id: string;
@@ -183,12 +183,12 @@ export default function AboutInsideWorld() {
       id="inside-our-world-section"
       role="region"
       aria-label="Inside Our World Pinned Scroll Experience"
-      className="relative w-full h-[280vh] [@media(max-width:1023px)]:h-auto [@media(max-height:559px)]:h-auto"
+      className="relative w-full h-[280vh] [@media(max-width:1023px)]:h-auto [@media(max-height:479px)]:h-auto"
     >
       {/* ── STICKY VIEWPORT STAGE (Locks on screen while scrolling through the 4 pillars) ── */}
       <div
         id="inside-world-sticky-stage"
-        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center select-none [@media(max-width:1023px)]:static [@media(max-width:1023px)]:h-auto [@media(max-width:1023px)]:py-12 sm:[@media(max-width:1023px)]:py-16 [@media(max-height:559px)]:static [@media(max-height:559px)]:h-auto [@media(max-height:559px)]:py-16"
+        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center select-none pt-20 pb-4 [@media(max-width:1023px)]:static [@media(max-width:1023px)]:h-auto [@media(max-width:1023px)]:py-12 sm:[@media(max-width:1023px)]:py-16 [@media(max-height:479px)]:static [@media(max-height:479px)]:h-auto [@media(max-height:479px)]:py-16"
       >
 
 
@@ -199,30 +199,30 @@ export default function AboutInsideWorld() {
             {/* ── LEFT COLUMN: Narrative & Stage Progress ── */}
             <div className="lg:col-span-5 xl:col-span-6 flex flex-col items-center text-center lg:items-start lg:text-left pr-0 lg:pr-4 xl:pr-6 max-w-xl mx-auto lg:mx-0 w-full">
               {/* Section Kicker Pill */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 mb-4 shadow-[0_0_16px_rgba(243,252,0,0.12)]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 mb-4 [@media(max-height:700px)]:mb-2 shadow-[0_0_16px_rgba(243,252,0,0.12)]">
                 <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-[#D08817] to-[#F3FC00] animate-pulse shadow-[0_0_6px_#F3FC00]" />
                 <span className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.2em] bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                   Core Foundations
                 </span>
               </div>
 
-              <h2 ref={headingRef} className="text-3xl sm:text-4xl md:text-[2.6rem] lg:text-[2.5rem] xl:text-[3.25rem] 2xl:text-6xl font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
+              <h2 ref={headingRef} className="text-3xl sm:text-4xl md:text-[2.6rem] lg:text-[2.5rem] xl:text-[3.25rem] 2xl:text-6xl [@media(max-height:700px)]:text-[2.25rem] font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
                 Inside Our World
               </h2>
 
               {/* Tagline */}
-              <p className="mt-3 sm:mt-5 lg:mt-4 xl:mt-6 font-sans font-medium italic text-base sm:text-lg xl:text-xl bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(243,252,0,0.35)] text-center lg:text-left">
+              <p className="mt-3 sm:mt-5 lg:mt-4 xl:mt-6 [@media(max-height:700px)]:mt-2 font-sans font-medium italic text-base sm:text-lg xl:text-xl [@media(max-height:700px)]:text-base bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(243,252,0,0.35)] text-center lg:text-left">
                 &ldquo;More Than Scripts. More Than Techniques.&rdquo;
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed text-center lg:text-left">
+              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 font-sans leading-relaxed text-center lg:text-left">
                 Virtual Captains is a sales execution company headquartered in
                 India with a presence across the Middle East, Europe and Asia. We
                 believe great sales come from clarity, strategy, confidence and
                 the right human approach, not memorised scripts.
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-300/90 font-sans leading-relaxed text-center lg:text-left">
+              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-300/90 font-sans leading-relaxed text-center lg:text-left">
                 Our team of sales strategists and practitioners works alongside
                 organisations to onboard talent, diagnose sales gaps, build
                 pipeline and sharpen teams. We combine AI-powered practice with
@@ -233,11 +233,11 @@ export default function AboutInsideWorld() {
             </div>
 
             {/* ── RIGHT COLUMN: Liquid Glass Card + Scroll-Driven Arc Wheel ── */}
-            <div className="lg:col-span-7 xl:col-span-6 relative flex flex-col items-center lg:items-end xl:items-start justify-center w-full">
-              <div className="relative flex items-center justify-center lg:justify-end xl:justify-start gap-3 sm:gap-4 md:gap-5 lg:gap-4 xl:gap-7 w-full max-w-xl lg:max-w-none">
+            <div className="lg:col-span-7 xl:col-span-6 relative flex flex-col items-center justify-center w-full">
+              <div className="relative flex items-center justify-center gap-3 sm:gap-4 md:gap-5 lg:gap-4 xl:gap-7 w-full max-w-xl lg:max-w-none">
                 
                 {/* ── The Liquid Glass Card ── */}
-                <div className="relative z-10 w-full sm:w-85 md:w-90 lg:w-82.5 xl:w-97.5 2xl:w-107.5 shrink-0 rounded-3xl sm:rounded-[28px] p-[1.5px] bg-linear-to-br from-indigo-500/40 via-blue-500/20 to-purple-500/40 shadow-[0_16px_45px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] overflow-hidden">
+                <div className="relative z-10 w-full sm:w-85 md:w-90 lg:w-100 xl:w-97.5 2xl:w-107.5 shrink-0 rounded-3xl sm:rounded-[28px] p-[1.5px] bg-linear-to-br from-indigo-500/40 via-blue-500/20 to-purple-500/40 shadow-[0_16px_45px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.25)] overflow-hidden">
                   {/* Specular Shimmer Beam */}
                   <div
                     ref={shimmerRef}
@@ -245,7 +245,7 @@ export default function AboutInsideWorld() {
                     className="pointer-events-none absolute -inset-y-full w-28 bg-linear-to-r from-transparent via-white/25 to-transparent skew-x-12 blur-xs -translate-x-full"
                   />
 
-                  <div className="rounded-[22.5px] sm:rounded-[26.5px] bg-[#030d2d]/90 border border-white/10 p-5 sm:p-7 lg:p-6 xl:p-8 2xl:p-9 min-h-52.5 sm:min-h-60 lg:min-h-57.5 xl:min-h-62.5 flex flex-col justify-between backdrop-blur-2xl text-center lg:text-left">
+                  <div className="rounded-[22.5px] sm:rounded-[26.5px] bg-[#030d2d]/90 border border-white/10 p-5 sm:p-7 lg:p-6 xl:p-8 2xl:p-9 [@media(max-height:700px)]:p-5 min-h-52.5 sm:min-h-60 lg:min-h-57.5 xl:min-h-62.5 flex flex-col justify-between backdrop-blur-2xl text-center lg:text-left">
                     {/* Every pillar is stacked in the same grid cell so the card
                         always takes the height of the tallest one — switching
                         pillars never resizes the card or shifts the layout. */}
@@ -274,11 +274,11 @@ export default function AboutInsideWorld() {
                             {pillar.tag}
                           </p>
                           {typeof pillar.description === "string" ? (
-                            <p className="mt-2 sm:mt-3 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] text-slate-200 leading-relaxed font-sans text-center lg:text-left">
+                            <p className="mt-2 sm:mt-3 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 leading-relaxed font-sans text-center lg:text-left">
                               {pillar.description}
                             </p>
                           ) : (
-                            <ul className="mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] text-slate-200 leading-relaxed font-sans text-left">
+                            <ul className="mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] text-slate-200 leading-relaxed font-sans text-left">
                               {pillar.description.map((v) => (
                                 <li key={v.label} className="flex gap-2">
                                   <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-[#F3FC00]" />
