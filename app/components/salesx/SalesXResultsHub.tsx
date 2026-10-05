@@ -148,11 +148,18 @@ export default function SalesXResultsHub() {
     { scope: sectionRef },
   );
 
+  /** Feeds the pointer position to the card's spotlight + border glow. */
+  const trackPointer = (e: React.PointerEvent<HTMLLIElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty("--my", `${e.clientY - rect.top}px`);
+  };
+
   return (
     <section
       ref={sectionRef}
       aria-labelledby="salesx-results-title"
-      className="relative overflow-hidden bg-salesx-bg px-4 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24"
+      className="relative overflow-hidden bg-salesx-bg py-16 sm:py-20 lg:py-24"
     >
       {/* Background: deep blue wash + faint dot grid */}
       <div
@@ -173,7 +180,7 @@ export default function SalesXResultsHub() {
         }}
       />
 
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
+      <div className="mx-auto grid w-full max-w-372 px-4 sm:px-8 lg:px-12 grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
         {/* ── Left: heading ── */}
         <div className="text-center lg:col-span-5 lg:text-left">
           <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
@@ -198,28 +205,35 @@ export default function SalesXResultsHub() {
             <li
               key={r.label}
               data-result-card
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-4 backdrop-blur-sm transition-[scale,border-color,background-color] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-[1.03] hover:border-[#38bdf8]/40 hover:bg-white/7 sm:rounded-3xl sm:p-6 lg:p-7"
+              onPointerMove={trackPointer}
+              className="vc-result-card group relative overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-4 backdrop-blur-sm transition-[scale,border-color,background-color,box-shadow,translate] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:scale-[1.03] hover:border-[#38bdf8]/30 hover:bg-white/6 hover:shadow-[0_24px_60px_-12px_rgba(29,114,254,0.45)] sm:rounded-3xl sm:p-6 lg:p-7"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#38bdf8]/25 bg-[#38bdf8]/10 text-[#38bdf8] sm:h-10 sm:w-10">
+              {/* Cursor spotlight + glowing border that follow the pointer */}
+              <span aria-hidden="true" className="vc-result-spot pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <span aria-hidden="true" className="vc-result-ring pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+              <span className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[#38bdf8]/25 bg-[#38bdf8]/10 text-[#38bdf8] transition-[rotate,scale,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:-rotate-8 group-hover:scale-115 group-hover:bg-[#38bdf8]/20 group-hover:shadow-[0_0_24px_rgba(56,189,248,0.55)] sm:h-10 sm:w-10">
                 {r.icon}
               </span>
               <p
                 data-result-value
-                className="mt-4 font-sans text-[clamp(1.75rem,4.5vw,3rem)] font-bold leading-none tracking-tight text-white tabular-nums sm:mt-6"
+                className="vc-result-value relative mt-4 font-sans text-[clamp(1.75rem,4.5vw,3rem)] font-bold leading-none tracking-tight tabular-nums sm:mt-6"
               >
                 {format(r.target, r.decimals)}
                 {r.suffix}
               </p>
-              <p className="mt-2 font-sans text-[13px] font-medium leading-snug text-white/90 sm:text-[15px]">
+              <p className="relative mt-2 font-sans text-[13px] font-medium leading-snug text-white/90 sm:text-[15px]">
                 {r.label}
               </p>
-              <p className="mt-0.5 hidden font-sans text-xs text-white/50 sm:block">{r.note}</p>
+              <p className="relative mt-0.5 hidden font-sans text-xs text-white/50 transition-colors duration-300 group-hover:text-white/75 sm:block">
+                {r.note}
+              </p>
 
               {/* Meter */}
-              <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-white/10 sm:mt-5">
+              <div className="relative mt-4 h-1 w-full overflow-hidden rounded-full bg-white/10 sm:mt-5">
                 <div
                   data-result-meter
-                  className="h-full origin-left rounded-full bg-linear-to-r from-[#1d72fe] to-[#38bdf8]"
+                  className="vc-result-meter relative h-full origin-left overflow-hidden rounded-full bg-linear-to-r from-[#1d72fe] to-[#38bdf8]"
                   style={{ width: `${r.meter}%` }}
                 />
               </div>
@@ -227,6 +241,50 @@ export default function SalesXResultsHub() {
           ))}
         </ul>
       </div>
+
+      <style>{`
+        .vc-result-spot {
+          background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(56,189,248,0.16), transparent 65%);
+        }
+        /* Border-only glow: a masked gradient so just the 1px edge lights up near the cursor */
+        .vc-result-ring {
+          padding: 1px;
+          background: radial-gradient(180px circle at var(--mx, 50%) var(--my, 50%), rgba(56,189,248,0.9), rgba(29,114,254,0.35) 45%, transparent 75%);
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+        }
+        /* Number: white at rest; a blue light band sweeps through on hover */
+        .vc-result-value {
+          background-image: linear-gradient(100deg, #fff 0%, #fff 38%, #8fd0ff 45%, #38bdf8 50%, #8fd0ff 55%, #fff 62%, #fff 100%);
+          background-size: 300% 100%;
+          background-position: 100% 0;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          transition: background-position 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .vc-result-card:hover .vc-result-value { background-position: 0% 0; }
+        /* Meter: a light glint runs along the bar while hovered */
+        .vc-result-meter::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          width: 40%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent);
+          transform: translateX(-120%);
+          opacity: 0;
+        }
+        .vc-result-card:hover .vc-result-meter::after {
+          opacity: 1;
+          animation: vc-result-glint 1.4s ease-in-out infinite;
+        }
+        @keyframes vc-result-glint { to { transform: translateX(300%); } }
+        @media (prefers-reduced-motion: reduce) {
+          .vc-result-card:hover .vc-result-meter::after { animation: none; opacity: 0; }
+          .vc-result-value { transition: none; }
+        }
+      `}</style>
     </section>
   );
 }
