@@ -37,5 +37,8 @@
     "topojson-client": "^3.1.0",
     "typescript": "^5",
     "world-atlas": "^2.0.2"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
   }
 }
