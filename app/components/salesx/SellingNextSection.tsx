@@ -83,7 +83,7 @@ const CARDS: CardData[] = [
     heading: "Turn Training Into Revenue.",
     body: "Most sales training ends when the workshop does. Ours is measured in the pipeline.",
     items: [
-      { title: "Groom Studio", desc: "Induction that ramps faster" },
+      { title: "Grooming Studio", desc: "Induction that ramps faster" },
       { title: "Sales Audit", desc: "Find the blind spot" },
       { title: "Outbound Lead Gen", desc: "Fill the pipeline" },
       {

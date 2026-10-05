@@ -174,7 +174,7 @@ export default function SkillCardSection() {
     <section
       ref={sectionRef}
       className="relative w-full overflow-hidden bg-transparent px-4 sm:px-8 xl:px-12 py-12 sm:py-20 lg:py-28 text-white"
-      aria-label="The VC Skill Card"
+      aria-label="The SXI Card (Sales Execution Index Card)"
     >
       {/* Background glow matching top-left radiance */}
       <div
@@ -199,12 +199,11 @@ export default function SkillCardSection() {
 
           <div className="sc-intro max-w-md lg:max-w-sm lg:pt-1">
             <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.15em] text-[#1d72fe]">
-              THE VC SKILL CARD
+              The SXI Card (Sales Execution Index Card)
             </p>
             <p className="mt-3 text-sm leading-relaxed text-slate-300">
               Scored 0–100 on the five skills that decide whether a deal
-              happens. Pass with 60+ in four of the five. Not there yet? A resit
-              within 30 days is included.
+              happens. Pass with 60+ in four of the five.
             </p>
           </div>
         </div>
@@ -329,7 +328,7 @@ export default function SkillCardSection() {
           <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
             <div>
               <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-                VC Skill Card
+                The SXI Card
               </h3>
               <p className="mt-1.5 text-sm sm:text-base text-slate-300">{EXAMPLE.name}</p>
             </div>

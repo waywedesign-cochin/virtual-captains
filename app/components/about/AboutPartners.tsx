@@ -209,20 +209,19 @@ export default function AboutPartners() {
             className="lg:col-span-5 flex flex-col items-center text-center lg:items-start lg:text-left max-w-xl mx-auto lg:mx-0 w-full will-change-transform"
           >
             <p className="text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed">
-              <span className="font-medium mr-1.5 select-none bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent italic drop-shadow-[0_0_10px_rgba(243,252,0,0.35)]">
-                Demo text
-              </span>
-              At Virtual Captains, we believe great sales are built on more than
-              scripts and techniques. They are built on clarity, strategy,
-              confidence, and the right human approach.
+              Virtual Captains partners with multinationals and SMEs across
+              Asia, the Middle East, Europe and North America. We act as an
+              extension of their brand, a trusted spoke in their growth model,
+              building partner ecosystems and driving sales execution in every
+              market they enter.
             </p>
             <p className="mt-4 sm:mt-6 lg:mt-4 xl:mt-7 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-300/90 font-sans leading-relaxed">
-              We are a team of Sales Strategists and Trainers dedicated to
-              helping businesses build stronger sales teams and create
-              meaningful, measurable growth. Through industry-driven insights,
-              practical strategies, and virtual training validated by real
-              human expertise, we transform complex sales challenges into clear,
-              actionable opportunities.
+              From identifying and onboarding the right channel partners to
+              enabling their sales teams and managing performance on the
+              ground, we make sure each market grows with the same standard as
+              the brand&apos;s home base. With local market insight and
+              practitioner-led execution, we help organisations expand across
+              borders with confidence and turn new markets into lasting revenue.
             </p>
           </div>
 

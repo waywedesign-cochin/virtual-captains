@@ -30,9 +30,9 @@ const TRACKS: Track[] = [
     eyebrow: "For Individuals",
     headline: ["Prepare Yourself", "for the Deal,", "Not Just the Interview."],
     intro:
-      "Enroll in an execution-backed sales training program built to transition students, freshers, and professionals into top-performing sellers.",
+      "Enroll in an execution-backed sales training program built to transition students, freshers, founders and professionals into top-performing sellers.",
     features: [
-      { title: "Virtual Captains (VC) Certificate", subtitle: "Industry-recognised sales credential" },
+      { title: "VC Certified Sales Professional", subtitle: "Industry-recognised sales credential" },
       { title: "SalesX by Virtual Captains", subtitle: "Execution-backed sales training platform" },
       { title: "Career Placement Support", subtitle: "Direct access to Virtual Captains' hiring network" },
       { title: "Live CRM & Sales-Call Simulations" },

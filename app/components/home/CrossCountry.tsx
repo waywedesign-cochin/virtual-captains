@@ -20,18 +20,13 @@ type Location = {
 
 const LOCATIONS: Location[] = [
   { name: "Dubai", country: "UAE", lon: 55.27, lat: 25.2 },
-  {
-    name: "Abu Dhabi",
-    country: "UAE",
-    lon: 54.37,
-    lat: 24.45,
-  },
-  { name: "Riyadh", country: "Saudi Arabia", lon: 46.72, lat: 24.71 },
-  { name: "Doha", country: "Qatar", lon: 51.53, lat: 25.29 },
-  { name: "Manama", country: "Bahrain", lon: 50.59, lat: 26.23 },
-  { name: "Kuwait City", country: "Kuwait", lon: 47.98, lat: 29.38 },
   { name: "Muscat", country: "Oman", lon: 58.41, lat: 23.59 },
+  { name: "Riyadh", country: "Saudi Arabia", lon: 46.72, lat: 24.71 },
+  { name: "Kochi", country: "India", lon: 76.27, lat: 9.93 },
   { name: "Kuala Lumpur", country: "Malaysia", lon: 101.69, lat: 3.14 },
+  { name: "London", country: "UK", lon: -0.13, lat: 51.51 },
+  { name: "Toronto", country: "Canada", lon: -79.38, lat: 43.65 },
+  { name: "New York", country: "US", lon: -74.01, lat: 40.71 },
 ];
 
 /**
@@ -43,11 +38,14 @@ const JOURNEY: { lon: number; lat: number; zoom: number; label?: string }[] = [
   { lon: 14, lat: 16, zoom: 1 },
   { lon: 44, lat: 24, zoom: 1.35, label: "The Gulf" },
   { lon: 55.27, lat: 25.2, zoom: 2.2, label: "Dubai" },
-  { lon: 46.72, lat: 24.71, zoom: 2.2, label: "Riyadh" },
-  { lon: 51.53, lat: 25.29, zoom: 2.2, label: "Doha" },
   { lon: 58.41, lat: 23.59, zoom: 2.2, label: "Muscat" },
+  { lon: 46.72, lat: 24.71, zoom: 2.2, label: "Riyadh" },
+  { lon: 76.27, lat: 9.93, zoom: 2.2, label: "Kochi" },
   { lon: 101.69, lat: 3.14, zoom: 2.2, label: "Kuala Lumpur" },
-  { lon: 76, lat: 15, zoom: 1.15, label: "Middle East & Asia" },
+  { lon: -0.13, lat: 51.51, zoom: 2.2, label: "London" },
+  { lon: -79.38, lat: 43.65, zoom: 2.2, label: "Toronto" },
+  { lon: -74.01, lat: 40.71, zoom: 2.2, label: "New York" },
+  { lon: 14, lat: 22, zoom: 1, label: "Worldwide" },
 ];
 
 /** Journey waypoints that land on a client city — the phone tour's chips. */

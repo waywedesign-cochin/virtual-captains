@@ -34,8 +34,6 @@ export default function ContactFooter() {
   const wordmarkRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
   const legalRef = useRef<HTMLDivElement>(null);
-  const orb1Ref = useRef<HTMLDivElement>(null);
-  const orb2Ref = useRef<HTMLDivElement>(null);
   const backToTopRef = useRef<HTMLButtonElement>(null);
 
   useGSAP(
@@ -52,27 +50,6 @@ export default function ContactFooter() {
         return;
       }
 
-      // ---------- Floating orbs (idle drift) ----------
-      if (orb1Ref.current) {
-        gsap.to(orb1Ref.current, {
-          x: 60,
-          y: -40,
-          duration: 9,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      }
-      if (orb2Ref.current) {
-        gsap.to(orb2Ref.current, {
-          x: -50,
-          y: 50,
-          duration: 11,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      }
 
       // ---------- Footer pinned reveal with zero opacity clashing ----------
       const mm = gsap.matchMedia();
@@ -382,24 +359,6 @@ export default function ContactFooter() {
               }}
             />
           </div>
-
-          {/* Floating orbs */}
-          <div
-            ref={orb1Ref}
-            className="pointer-events-none absolute -left-24 top-[22%] z-0 h-85 w-85 rounded-full opacity-30 blur-3xl sm:h-105 sm:w-105"
-            style={{
-              background:
-                "radial-gradient(circle, #e7ff3d 0%, transparent 70%)",
-            }}
-          />
-          <div
-            ref={orb2Ref}
-            className="pointer-events-none absolute -bottom-32 -right-16 z-0 h-75 w-75 rounded-full opacity-25 blur-3xl sm:h-95 sm:w-95"
-            style={{
-              background:
-                "radial-gradient(circle, #7fb0ff 0%, transparent 70%)",
-            }}
-          />
 
           {/* Stage: Vertically centered in available viewport space */}
           <div className="relative z-10 mx-auto flex w-full max-w-350 flex-1 flex-col items-center justify-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -11,14 +11,11 @@ import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
-const PROMISE_PARAGRAPH_1 = [
+const PROMISE_PARAGRAPH = [
   "Sales", "success", "is", "built", "on", "more", "than", "individual", "tactics.",
   "It", "takes", "a", "clear", "understanding", "of", "the", "market,", "a", "strong", "sales",
   "development", "strategy,", "disciplined", "outbound", "execution,", "and", "the", "ability",
-  "to", "adapt", "when", "the", "business", "landscape", "changes."
-];
-
-const PROMISE_PARAGRAPH_2 = [
+  "to", "adapt", "when", "the", "business", "landscape", "changes.",
   "Virtual", "Captains", "brings", "these", "elements", "together", "to", "help", "businesses",
   "build", "stronger", "sales", "pipelines,", "engage", "the", "right", "prospects,", "and",
   "turn", "outbound", "opportunities", "into", "sustainable", "growth."
@@ -235,18 +232,17 @@ export default function RoleplayToConversation() {
           ref={rightTextRef} 
           className="relative z-10 max-w-3xl text-center px-4 sm:px-6 space-y-3.5 sm:space-y-4.5"
         >
-          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
-            {PROMISE_PARAGRAPH_1.map((word, i) => (
-              <span key={`p1-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 pin:opacity-15">
-                {word}
-              </span>
-            ))}
-          </p>
-          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium">
-            {PROMISE_PARAGRAPH_2.map((word, i) => (
-              <span key={`p2-${i}`} className="word-reveal inline-block mr-[0.28em] opacity-100 pin:opacity-15">
-                {word}
-              </span>
+          {/* Justified, last line centred under the heading. Words are plain
+              inline spans (the reveal only fades opacity) with real spaces
+              between them, so the browser can hyphenate long words and
+              balance lines instead of opening wide gaps on narrow screens. */}
+          <p className="font-sans text-[clamp(0.92rem,1.15vw,1.15rem)] leading-[1.7] text-white/75 font-normal sm:font-medium text-justify [text-align-last:center] hyphens-auto text-pretty">
+            {PROMISE_PARAGRAPH.map((word, i) => (
+              <Fragment key={`p1-${i}`}>
+                <span className="word-reveal opacity-100 pin:opacity-15">
+                  {word}
+                </span>{" "}
+              </Fragment>
             ))}
           </p>
         </div>

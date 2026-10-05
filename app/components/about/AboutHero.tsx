@@ -9,6 +9,7 @@ export default function AboutHero() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -46,6 +47,11 @@ export default function AboutHero() {
         { yPercent: 120, opacity: 0 },
         { yPercent: 0, opacity: 1, duration: 1.25 },
         "-=0.9"
+      ).fromTo(
+        subRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1 },
+        "-=0.8"
       );
     }, containerRef);
 
@@ -72,7 +78,7 @@ export default function AboutHero() {
               ref={line1Ref}
               className="block text-white will-change-transform"
             >
-              A Smarter Way To Build
+              Built By Sellers.
             </span>
           </span>
 
@@ -82,15 +88,21 @@ export default function AboutHero() {
               ref={line2Ref}
               className="block will-change-transform"
             >
+              <span className="text-white">Designed For</span>{" "}
               <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
-                Sales Capability
-              </span>{" "}
-              <span className="text-white">
-                At Scale
+                Sales Execution.
               </span>
             </span>
           </span>
         </h1>
+
+        <p
+          ref={subRef}
+          className="mt-5 sm:mt-7 max-w-2xl font-sans text-[15px] sm:text-lg md:text-xl leading-relaxed text-white/70"
+        >
+          A smarter way to build sales capability at scale, for teams,
+          professionals and founders.
+        </p>
       </div>
     </section>
   );

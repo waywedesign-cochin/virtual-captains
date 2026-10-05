@@ -5,106 +5,128 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
-import { PIN_QUERY } from "./pinQuery";
+import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
-type CirclePod = {
-  id: string;
+type Slot = {
+  left: number; // percentage from ring left
+  top: number; // percentage from ring top
+  size: number; // percentage width & height of ring
+};
+
+type Partner = {
   name: string;
-  isCenter: boolean;
-  left: number; // percentage from container left
-  top: number; // percentage from container top
-  size: number; // percentage width & height of container
-  bg: string;
-  logoSrc?: string;
+  logoSrc: string;
   invert?: boolean;
-  fallbackText: string;
-  fontSize?: string;
 };
 
 /**
- * 8 Circular Pods matching the exact geometry and layout of the design mockup:
- * - Center: Vibrant yellow circle with Logo
- * - Top-Right: Extra-large grey circle with MoonHive (/partners/MOONHIV.png)
- * - Mid-Left: Large grey circle with AHAD (/partners/AHAD.png)
- * - Top: Medium-large grey circle with Skylark (/partners/SKYLARK.png)
- * - Bottom-Left: Medium-small grey circle with JSR (/partners/JSR.png)
- * - Bottom-Right: Medium grey circle with Unifirm (/partners/UNIFIRM.png)
- * - Mid-Right: Small grey circle with Logo
- * - Upper-Center-Left: Tiny grey circle with Logo
- *
- * All partner logos are sourced exclusively from public/partners/
+ * Fixed bubble positions inside the ring (% of the inner ring). They keep at
+ * least ~4% clear between any two bubbles, enough that the 105% hover zoom
+ * never makes neighbours touch.
  */
-const PODS: CirclePod[] = [
-  // Only real partner logos — placeholder "Logo" bubbles removed. Positions
-  // (% of the inner ring) keep at least ~4% clear between any two bubbles,
-  // enough that the 105% hover zoom never makes neighbours touch.
-  {
-    id: "pod-top-right",
-    name: "MoonHive",
-    isCenter: false,
-    left: 51,
-    top: 24,
-    size: 32,
-    bg: "#d9d9d9",
-    logoSrc: "/partners/MOONHIV.png",
-    fallbackText: "MoonHive",
-  },
-  {
-    id: "pod-mid-left",
-    name: "AHAD",
-    isCenter: false,
-    left: 12,
-    top: 37,
-    size: 26,
-    bg: "#d9d9d9",
-    logoSrc: "/partners/AHAD.png",
-    fallbackText: "AHAD",
-  },
-  {
-    id: "pod-top",
-    name: "Skylark",
-    isCenter: false,
-    left: 27,
-    top: 11,
-    size: 22,
-    bg: "#d9d9d9",
-    logoSrc: "/partners/SKYLARK.png",
-    fallbackText: "Skylark",
-  },
-  {
-    id: "pod-bottom-left",
-    name: "JSR",
-    isCenter: false,
-    left: 27.5,
-    top: 67.5,
-    size: 21,
-    bg: "#d9d9d9",
-    logoSrc: "/partners/JSR.png",
-    invert: true,
-    fallbackText: "JSR",
-  },
-  {
-    id: "pod-bottom-right",
-    name: "Sigma Life Unifirm",
-    isCenter: false,
-    left: 55,
-    top: 63,
-    size: 24,
-    bg: "#d9d9d9",
-    logoSrc: "/partners/UNIFIRM.png",
-    invert: true,
-    fallbackText: "Unifirm",
-  },
+const SLOTS: Slot[] = [
+  { left: 51, top: 24, size: 32 }, // top-right (largest)
+  { left: 12, top: 37, size: 26 }, // mid-left
+  { left: 27, top: 11, size: 22 }, // top
+  { left: 27.5, top: 67.5, size: 21 }, // bottom-left
+  { left: 55, top: 63, size: 24 }, // bottom-right
 ];
+
+/**
+ * Partner logos (all from public/partners/). Add new partners here — when
+ * there are more partners than SLOTS, the circle shows them in "pages": the
+ * section pins on desktop and scrolling swaps the logos in place; on
+ * phones/tablets the pages cycle on their own.
+ */
+const PARTNERS: Partner[] = [
+  { name: "MoonHive", logoSrc: "/partners/MOONHIV.png" },
+  { name: "AHAD", logoSrc: "/partners/AHAD.png" },
+  { name: "Skylark", logoSrc: "/partners/SKYLARK.png" },
+  { name: "JSR", logoSrc: "/partners/JSR.png", invert: true },
+  { name: "Sigma Life Unifirm", logoSrc: "/partners/UNIFIRM.png", invert: true },
+  { name: "Sigma Life Unifirm", logoSrc: "/partners/SIGMA-LIFE-UNIFIRM.png" },
+];
+
+const PAGE_COUNT = Math.ceil(PARTNERS.length / SLOTS.length);
+
+/** Partner shown in `slot` on `page` — the last page wraps round to the start
+ *  so no bubble is ever left empty. */
+const partnerAt = (page: number, slot: number) =>
+  PARTNERS[(page * SLOTS.length + slot) % PARTNERS.length];
 
 export default function HiringPartners() {
   const sectionRef = useRef<HTMLElement>(null);
   const clusterWrapperRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
+
+  /** Logo swap from page `from` to page `to`, staggered across bubbles. */
+  const swap = (tl: gsap.core.Timeline, from: number, to: number, at: string | number) => {
+    const q = gsap.utils.selector(sectionRef);
+    tl.to(
+      q(`[data-page="${from}"]`),
+      {
+        autoAlpha: 0,
+        scale: 0.4,
+        rotate: -20,
+        filter: "blur(6px)",
+        duration: 0.5,
+        ease: "power2.in",
+        stagger: 0.07,
+      },
+      at,
+    ).fromTo(
+      q(`[data-page="${to}"]`),
+      { autoAlpha: 0, scale: 0.4, rotate: 20, filter: "blur(6px)" },
+      {
+        autoAlpha: 1,
+        scale: 1,
+        rotate: 0,
+        filter: "blur(0px)",
+        duration: 0.6,
+        ease: "back.out(1.6)",
+        stagger: 0.07,
+      },
+      "<0.3",
+    );
+  };
+
+  const setupRotation = () => {
+    const mm = gsap.matchMedia();
+    // Desktop: pin the section and let scroll drive the swaps.
+    mm.add(PIN_QUERY, () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: `+=${(PAGE_COUNT - 1) * 90}%`,
+          pin: true,
+          scrub: 0.6,
+        },
+      });
+      for (let p = 0; p < PAGE_COUNT - 1; p++) {
+        // short hold on each page so a logo set is readable before it swaps
+        swap(tl, p, p + 1, p === 0 ? 0.3 : "+=0.4");
+      }
+      tl.to({}, { duration: 0.3 });
+    });
+    // Phones/tablets: no pin — cycle the pages on a loop while on screen.
+    mm.add(NO_PIN_QUERY, () => {
+      const tl = gsap.timeline({ repeat: -1, paused: true });
+      for (let p = 0; p < PAGE_COUNT; p++) {
+        swap(tl, p, (p + 1) % PAGE_COUNT, "+=2.4");
+      }
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => (self.isActive ? tl.play() : tl.pause()),
+      });
+    });
+  };
 
   useGSAP(
     () => {
@@ -139,6 +161,8 @@ export default function HiringPartners() {
           toggleActions: "play none none reverse",
         },
       });
+
+      if (PAGE_COUNT > 1) setupRotation();
 
       tl.to(clusterWrapperRef.current, {
         opacity: 1,
@@ -205,53 +229,42 @@ export default function HiringPartners() {
 
             {/* Inner crisp thin boundary ring containing all pods */}
             <div className="absolute inset-[3.5%] rounded-full border border-white/20 bg-white/5 backdrop-blur-[1px]">
-              {/* 8 Scattered Circular Pods matching mockup */}
-              {PODS.map((pod) => (
+              {SLOTS.map((slot, i) => (
                 <div
-                  key={pod.id}
-                  className={`group absolute rounded-full flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 cursor-pointer select-none ${
-                    pod.isCenter
-                      ? "shadow-[0_1px_3px_rgba(0,0,0,0.12)] z-20 hover:shadow-[0_4px_16px_rgba(226,253,0,0.45)]"
-                      : "shadow-[0_1px_3px_rgba(255,255,255,0.06)] z-10 hover:bg-white/20! hover:shadow-[0_10px_28px_rgba(0,0,0,0.25)] hover:z-30"
-                  }`}
+                  key={i}
+                  className="group absolute rounded-full overflow-hidden transition-[scale,box-shadow] duration-300 ease-out hover:scale-105 select-none shadow-[0_1px_3px_rgba(255,255,255,0.06)] z-10 hover:shadow-[0_10px_28px_rgba(0,0,0,0.25)] hover:z-30"
                   style={{
-                    left: `${pod.left}%`,
-                    top: `${pod.top}%`,
-                    width: `${pod.size}%`,
-                    height: `${pod.size}%`,
-                    backgroundColor: pod.bg,
+                    left: `${slot.left}%`,
+                    top: `${slot.top}%`,
+                    width: `${slot.size}%`,
+                    height: `${slot.size}%`,
+                    backgroundColor: "#d9d9d9",
                   }}
-                  title={pod.name}
                 >
-                  {pod.isCenter ? (
-                    <span
-                      className="font-sans font-normal text-black select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
-                      style={{ fontSize: pod.fontSize }}
-                    >
-                      {pod.fallbackText}
-                    </span>
-                  ) : pod.logoSrc ? (
-                    <div className="flex h-full w-full items-center justify-center p-[16%]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={pod.logoSrc}
-                        alt={pod.name}
-                        className={`max-h-[56%] max-w-[72%] object-contain transition-all duration-300 group-hover:scale-108 ${
-                          pod.invert
-                            ? "invert contrast-125 opacity-80 group-hover:opacity-100"
-                            : "contrast-105 opacity-90 group-hover:opacity-100"
-                        }`}
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (
-                    <span
-                      className="font-sans font-normal text-[#101010] select-none tracking-tight transition-transform duration-200 group-hover:scale-105"
-                      style={{ fontSize: pod.fontSize }}
-                    >
-                      {pod.fallbackText}
-                    </span>
-                  )}
+                  {Array.from({ length: PAGE_COUNT }, (_, page) => {
+                    const partner = partnerAt(page, i);
+                    return (
+                      <div
+                        key={page}
+                        data-page={page}
+                        title={partner.name}
+                        className="absolute inset-0 flex items-center justify-center p-[16%]"
+                        style={page === 0 ? undefined : { opacity: 0, visibility: "hidden" }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={partner.logoSrc}
+                          alt={partner.name}
+                          className={`max-h-[56%] max-w-[78%] object-contain transition-all duration-300 group-hover:scale-108 ${
+                            partner.invert
+                              ? "invert contrast-125 opacity-80 group-hover:opacity-100"
+                              : "contrast-105 opacity-90 group-hover:opacity-100"
+                          }`}
+                          loading="lazy"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>

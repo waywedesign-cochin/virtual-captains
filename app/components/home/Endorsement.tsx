@@ -7,7 +7,10 @@ import { useGSAP } from "@gsap/react";
 import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
-import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
+import {
+  HEADING_REVEAL,
+  HEADING_REVEAL_FROM,
+} from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
 type Testimonial = {
@@ -29,7 +32,7 @@ const PLACEHOLDER_AVATAR = "/home/person.png";
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "Our team is having better conversations and moving deals forward with confidence",
+      "Our team is having better conversations and moving deals forward with confidence.",
     name: "David John",
     role: "Region",
     photo: PLACEHOLDER_AVATAR,
@@ -68,9 +71,18 @@ const AUTOPLAY_MS = 5200;
 
 function Stars() {
   return (
-    <div className="flex items-center gap-1" role="img" aria-label="5 out of 5 stars">
+    <div
+      className="flex items-center gap-1"
+      role="img"
+      aria-label="5 out of 5 stars"
+    >
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 20 20" aria-hidden="true" className="h-3.5 w-3.5 fill-white">
+        <svg
+          key={i}
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+          className="h-3.5 w-3.5 fill-white"
+        >
           <path d="M10 1.6l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.2l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" />
         </svg>
       ))}
@@ -107,7 +119,9 @@ export default function Endorsement() {
       if (diff > 0) {
         setActive((prev) => (prev + 1) % TESTIMONIALS.length);
       } else {
-        setActive((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+        setActive(
+          (prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length,
+        );
       }
     }
     touchStartX.current = null;
@@ -149,7 +163,8 @@ export default function Endorsement() {
 
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
+      if (eyebrowRef.current)
+        gsap.set(eyebrowRef.current, { opacity: 0, y: 15 });
       gsap.set(headingRef.current, {
         ...HEADING_REVEAL_FROM,
         transformOrigin: "center center",
@@ -174,17 +189,19 @@ export default function Endorsement() {
         });
       }
 
-      entranceTl.to(
-        headingRef.current,
-        {
-          ...HEADING_REVEAL,
-        },
-        eyebrowRef.current ? "-=0.25" : undefined,
-      ).to(
-        stackRef.current,
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-        "-=0.3",
-      );
+      entranceTl
+        .to(
+          headingRef.current,
+          {
+            ...HEADING_REVEAL,
+          },
+          eyebrowRef.current ? "-=0.25" : undefined,
+        )
+        .to(
+          stackRef.current,
+          { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+          "-=0.3",
+        );
 
       // Desktop: Pinned testimonial scrub — no curtain exit
       mm.add(PIN_QUERY, () => {
@@ -193,7 +210,9 @@ export default function Endorsement() {
             id: "endorsement-pin",
             trigger: sectionRef.current,
             start: "top top",
-            end: () => "+=" + ((typeof window !== "undefined" ? window.innerHeight : 900) * 2.2),
+            end: () =>
+              "+=" +
+              (typeof window !== "undefined" ? window.innerHeight : 900) * 2.2,
             pin: true,
             anticipatePin: 1,
             scrub: 0.6,
@@ -229,7 +248,8 @@ export default function Endorsement() {
       data-nav-theme="dark"
       className="relative z-10 flex min-h-0 pin:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-4 py-10 sm:py-14 pin:pt-[clamp(68px,12vh,152px)] pin:[@media(max-height:540px)]:pt-14 pin:[@media(max-height:540px)]:pb-3 pin:pb-[clamp(28px,5vh,72px)] text-white sm:px-10 pin:px-16"
       style={{
-        background: "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
+        background:
+          "linear-gradient(180deg, #0c318f 0%, #051d5c 40%, #050b24 75%, #040507 100%)",
       }}
     >
       {/* Background Dot Grid (matching second section) */}
@@ -250,210 +270,211 @@ export default function Endorsement() {
           ref={headingRef}
           className="max-w-2xl text-center font-sans text-[clamp(1.75rem,2.2vw+1.2vh,3rem)] font-normal leading-[1.18] text-white"
         >
-          Our Partners, in Their Own Words.
+          Our Partners & Clients
         </h2>
 
         {/* Stack + controls shrink together on short pinned desktops (the
             section is locked to one screen there, so it must fit 480px+) */}
         <div className="flex w-full flex-col items-center pin:[@media(max-height:640px)]:[zoom:0.85] pin:[@media(max-height:540px)]:[zoom:0.72]">
-        {/* ---------- CARD STACK ---------- */}
-        <div
-          ref={stackRef}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl touch-pan-y items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:40%] sm:[--fan-2:74%]"
-          style={{ height: "clamp(350px, 44vh, 395px)" }}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        >
-          {TESTIMONIALS.map((item, i) => {
-            // signed shortest offset from the active card, so the stack wraps
-            const raw = i - active;
-            const half = TESTIMONIALS.length / 2;
-            const offset =
-              raw > half
-                ? raw - TESTIMONIALS.length
-                : raw < -half
-                  ? raw + TESTIMONIALS.length
-                  : raw;
-            const distance = Math.abs(offset);
-            const isCenter = offset === 0;
-            const isNear = distance === 1;
-            const isFar = distance === 2;
-
-            // Responsive fanning percentages
-            const translateX =
-              offset === 0
-                ? "0%"
-                : offset === 1
-                  ? "var(--fan-1)"
-                  : offset === 2
-                    ? "var(--fan-2)"
-                    : offset === -1
-                      ? "calc(-1 * var(--fan-1))"
-                      : "calc(-1 * var(--fan-2))";
-
-            const scale = isCenter ? 1 : isNear ? 0.88 : isFar ? 0.76 : 0.65;
-            // Keep visible cards solid to eliminate see-through ghosting, and fade only at the outer wings
-            const opacity = isCenter ? 1 : isNear ? 0.95 : isFar ? 0.52 : 0;
-            const zIndex = 30 - distance * 10;
-            // Cinematic depth-of-field blur: active card is razor-sharp, background cards are progressively blurred
-            const filter = isCenter
-              ? "blur(0px) brightness(1)"
-              : isNear
-                ? "blur(3px) brightness(0.68)"
-                : isFar
-                  ? "blur(6px) brightness(0.42)"
-                  : "blur(10px) brightness(0.2)";
-
-            return (
-              <article
-                key={item.name}
-                aria-hidden={!isCenter}
-                onClick={() => setActive(i)}
-                className={`absolute flex h-81.25 w-[min(84vw,280px)] sm:h-88.75 sm:w-76 cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 sm:p-5.5 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
-                style={{
-                  transform: `translateX(${translateX}) scale(${scale})`,
-                  opacity,
-                  filter,
-                  zIndex,
-                  pointerEvents: distance <= 2 ? "auto" : "none",
-                  background: isCenter
-                    ? "linear-gradient(165deg, #1d62f4 0%, #1653dc 50%, #1142b6 100%)"
-                    : isNear
-                      ? "linear-gradient(165deg, #0e2b6c 0%, #07173b 100%)"
-                      : "linear-gradient(165deg, #081738 0%, #040c20 100%)",
-                  boxShadow: isCenter
-                    ? "0 24px 60px -12px rgba(29, 98, 244, 0.55)"
-                    : isNear
-                      ? "0 14px 36px -10px rgba(0, 0, 0, 0.75)"
-                      : "0 10px 24px -8px rgba(0, 0, 0, 0.85)",
-                  border: isCenter
-                    ? "1px solid rgba(255, 255, 255, 0.25)"
-                    : isNear
-                      ? "1px solid rgba(255, 255, 255, 0.08)"
-                      : "1px solid rgba(255, 255, 255, 0.04)",
-                }}
-              >
-                {/* ---------- TOP LEFT: Outline Quote & Copy ---------- */}
-                <div className="relative z-10 flex flex-col">
-                  {/* Outline double-quote symbol */}
-                  <svg
-                    viewBox="0 0 44 36"
-                    fill="none"
-                    className="h-6.5 w-8 shrink-0 text-white/90"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M13 16C16.3137 16 19 18.6863 19 22C19 25.3137 16.3137 28 13 28C9.68629 28 7 25.3137 7 22C7 15 12 7 20 4"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M32 16C35.3137 16 38 18.6863 38 22C38 25.3137 38 28 32 28C28.6863 28 26 25.3137 26 22C26 15 31 7 39 4"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-
-                  <p className={`mt-3 max-w-44 sm:max-w-48 font-sans text-[13px] sm:text-[14px] font-normal leading-[1.35] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}>
-                    {item.quote}
-                  </p>
-                </div>
-
-                {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
-                <div className="relative z-10 mt-auto max-w-40 pt-2">
-                  <h3 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
-                    {item.name}
-                  </h3>
-                  <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
-                    {item.role}
-                  </p>
-                  <div className="mt-1.5">
-                    <Stars />
-                  </div>
-                </div>
-
-                {/* ---------- BOTTOM RIGHT: Cut-out portrait clipped at card bottom ---------- */}
-                {item.photo && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={item.photo}
-                    alt={item.name}
-                    className={`pointer-events-none absolute -bottom-1 -right-2 h-[78%] max-h-75 w-[56%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
-                  />
-                )}
-              </article>
-            );
-          })}
-        </div>
-
-        {/* ---------- CONTROLS ---------- */}
-        <div className="relative z-10 mt-[clamp(18px,3vh,40px)] flex items-center gap-3 sm:gap-5">
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            aria-label="Previous testimonial"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:h-9 sm:w-9"
+          {/* ---------- CARD STACK ---------- */}
+          <div
+            ref={stackRef}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl touch-pan-y items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:40%] sm:[--fan-2:74%]"
+            style={{ height: "clamp(350px, 44vh, 395px)" }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
           >
-            <svg
-              viewBox="0 0 24 24"
-              className="h-4 w-4 fill-none stroke-current stroke-2"
-            >
-              <path
-                d="M15 5l-7 7 7 7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+            {TESTIMONIALS.map((item, i) => {
+              // signed shortest offset from the active card, so the stack wraps
+              const raw = i - active;
+              const half = TESTIMONIALS.length / 2;
+              const offset =
+                raw > half
+                  ? raw - TESTIMONIALS.length
+                  : raw < -half
+                    ? raw + TESTIMONIALS.length
+                    : raw;
+              const distance = Math.abs(offset);
+              const isCenter = offset === 0;
+              const isNear = distance === 1;
+              const isFar = distance === 2;
 
-          {/* The visible pill stays 8px tall; the button around it is a 24×24px
-              hit area (WCAG 2.5.8 minimum) so the dots are tappable */}
-          <div className="flex items-center">
-            {TESTIMONIALS.map((item, i) => (
-              <button
-                key={item.name}
-                type="button"
-                onClick={() => setActive(i)}
-                aria-label={`Show testimonial from ${item.name}`}
-                aria-current={i === active}
-                className="group flex h-6 min-w-6 cursor-pointer items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-              >
-                <span
-                  className={`block h-2 rounded-full transition-all duration-500 ${
-                    i === active
-                      ? "w-6 bg-white"
-                      : "w-2 bg-white/30 group-hover:bg-white/60"
-                  }`}
-                />
-              </button>
-            ))}
+              // Responsive fanning percentages
+              const translateX =
+                offset === 0
+                  ? "0%"
+                  : offset === 1
+                    ? "var(--fan-1)"
+                    : offset === 2
+                      ? "var(--fan-2)"
+                      : offset === -1
+                        ? "calc(-1 * var(--fan-1))"
+                        : "calc(-1 * var(--fan-2))";
+
+              const scale = isCenter ? 1 : isNear ? 0.88 : isFar ? 0.76 : 0.65;
+              // Keep visible cards solid to eliminate see-through ghosting, and fade only at the outer wings
+              const opacity = isCenter ? 1 : isNear ? 0.95 : isFar ? 0.52 : 0;
+              const zIndex = 30 - distance * 10;
+              // Cinematic depth-of-field blur: active card is razor-sharp, background cards are progressively blurred
+              const filter = isCenter
+                ? "blur(0px) brightness(1)"
+                : isNear
+                  ? "blur(3px) brightness(0.68)"
+                  : isFar
+                    ? "blur(6px) brightness(0.42)"
+                    : "blur(10px) brightness(0.2)";
+
+              return (
+                <article
+                  key={item.name}
+                  aria-hidden={!isCenter}
+                  onClick={() => setActive(i)}
+                  className={`absolute flex h-81.25 w-[min(84vw,280px)] sm:h-88.75 sm:w-76 cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 sm:p-5.5 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
+                  style={{
+                    transform: `translateX(${translateX}) scale(${scale})`,
+                    opacity,
+                    filter,
+                    zIndex,
+                    pointerEvents: distance <= 2 ? "auto" : "none",
+                    background: isCenter
+                      ? "linear-gradient(165deg, #1d62f4 0%, #1653dc 50%, #1142b6 100%)"
+                      : isNear
+                        ? "linear-gradient(165deg, #0e2b6c 0%, #07173b 100%)"
+                        : "linear-gradient(165deg, #081738 0%, #040c20 100%)",
+                    boxShadow: isCenter
+                      ? "0 24px 60px -12px rgba(29, 98, 244, 0.55)"
+                      : isNear
+                        ? "0 14px 36px -10px rgba(0, 0, 0, 0.75)"
+                        : "0 10px 24px -8px rgba(0, 0, 0, 0.85)",
+                    border: isCenter
+                      ? "1px solid rgba(255, 255, 255, 0.25)"
+                      : isNear
+                        ? "1px solid rgba(255, 255, 255, 0.08)"
+                        : "1px solid rgba(255, 255, 255, 0.04)",
+                  }}
+                >
+                  {/* ---------- TOP LEFT: Outline Quote & Copy ---------- */}
+                  <div className="relative z-10 flex flex-col">
+                    {/* Outline double-quote symbol */}
+                    <svg
+                      viewBox="0 0 44 36"
+                      fill="none"
+                      className="h-6.5 w-8 shrink-0 text-white/90"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M13 16C16.3137 16 19 18.6863 19 22C19 25.3137 16.3137 28 13 28C9.68629 28 7 25.3137 7 22C7 15 12 7 20 4"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M32 16C35.3137 16 38 18.6863 38 22C38 25.3137 38 28 32 28C28.6863 28 26 25.3137 26 22C26 15 31 7 39 4"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+
+                    <p
+                      className={`mt-3 max-w-44 sm:max-w-48 font-sans text-[13px] sm:text-[14px] font-normal leading-[1.35] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}
+                    >
+                      {item.quote}
+                    </p>
+                  </div>
+
+                  {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
+                  <div className="relative z-10 mt-auto max-w-40 pt-2">
+                    <h3 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
+                      {item.name}
+                    </h3>
+                    <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
+                      {item.role}
+                    </p>
+                    <div className="mt-1.5">
+                      <Stars />
+                    </div>
+                  </div>
+
+                  {/* ---------- BOTTOM RIGHT: Cut-out portrait clipped at card bottom ---------- */}
+                  {item.photo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.photo}
+                      alt={item.name}
+                      className={`pointer-events-none absolute -bottom-1 -right-2 h-[78%] max-h-75 w-[56%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
+                    />
+                  )}
+                </article>
+              );
+            })}
           </div>
 
-          <button
-            type="button"
-            onClick={() => go(1)}
-            aria-label="Next testimonial"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:h-9 sm:w-9"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="h-4 w-4 fill-none stroke-current stroke-2"
+          {/* ---------- CONTROLS ---------- */}
+          <div className="relative z-10 mt-[clamp(18px,3vh,40px)] flex items-center gap-3 sm:gap-5">
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              aria-label="Previous testimonial"
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:h-9 sm:w-9"
             >
-              <path
-                d="M9 5l7 7-7 7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4 fill-none stroke-current stroke-2"
+              >
+                <path
+                  d="M15 5l-7 7 7 7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+
+            {/* The visible pill stays 8px tall; the button around it is a 24×24px
+              hit area (WCAG 2.5.8 minimum) so the dots are tappable */}
+            <div className="flex items-center">
+              {TESTIMONIALS.map((item, i) => (
+                <button
+                  key={item.name}
+                  type="button"
+                  onClick={() => setActive(i)}
+                  aria-label={`Show testimonial from ${item.name}`}
+                  aria-current={i === active}
+                  className="group flex h-6 min-w-6 cursor-pointer items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                >
+                  <span
+                    className={`block h-2 rounded-full transition-all duration-500 ${
+                      i === active
+                        ? "w-6 bg-white"
+                        : "w-2 bg-white/30 group-hover:bg-white/60"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => go(1)}
+              aria-label="Next testimonial"
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:h-9 sm:w-9"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4 fill-none stroke-current stroke-2"
+              >
+                <path
+                  d="M9 5l7 7-7 7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

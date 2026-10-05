@@ -11,7 +11,7 @@ import DottedBackground from "./DottedBackground";
 
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 const ORG_ITEMS = [
-  { title: "Groom Studio", desc: "Induction and onboarding", accent: false },
+  { title: "Grooming Studio", desc: "Induction and onboarding", accent: false },
   { title: "Sales Audit", desc: "Identifying the blind spot", accent: false },
   {
     title: "Outbound Lead Generation",
@@ -335,13 +335,13 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                 <p className="font-sans text-[1.15rem] sm:text-[1.3rem] leading-snug text-white text-center sm:text-left mb-4">
                   {activeAudience === "orgs" ? (
                     <>
-                      Equip your teams with{" "}
-                      <span className="italic text-[#4d82f5]">real-world practice</span>
+                      From onboarding to closing,<br />
+                      <span className="italic text-[#4d82f5]">we execute with you</span>
                     </>
                   ) : (
                     <>
-                      Elevate your own{" "}
-                      <span className="italic text-[#4d82f5]">closing capabilities</span>
+                      Elevate your{" "}
+                      <span className="italic text-[#4d82f5]">selling capabilities</span>
                     </>
                   )}
                 </p>
@@ -427,9 +427,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                     For Organisations
                   </p>
                   <p className="mt-0.5 font-sans text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
-                    Equip your teams with{" "}
+                    From onboarding to closing,<br />
                     <span className="italic text-white/90">
-                      real-world practice
+                      we execute with you
                     </span>
                   </p>
                 </div>
@@ -474,9 +474,9 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
                     For Individuals
                   </p>
                   <p className="mt-0.5 font-sans text-[clamp(1.15rem,1.8vw,1.5rem)] leading-[1.2] text-white">
-                    Elevate your own{" "}
+                    Elevate your{" "}
                     <span className="italic text-white/90">
-                      closing capabilities
+                      selling capabilities
                     </span>
                   </p>
                 </div>
