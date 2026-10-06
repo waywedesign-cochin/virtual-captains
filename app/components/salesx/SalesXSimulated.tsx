@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useHeadingZoom } from "@/components/about/useHeadingZoom";
+import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -60,7 +60,6 @@ export default function SalesXSimulated() {
   const sectionRef = useRef<HTMLElement>(null);
   const artRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  useHeadingZoom(headingRef);
   const progressRef = useRef<SVGCircleElement>(null);
   const cometRef = useRef<SVGCircleElement>(null);
   const dialRef = useRef<HTMLDivElement>(null);
@@ -117,6 +116,23 @@ export default function SalesXSimulated() {
       fitDial();
       window.addEventListener("resize", fitDial);
       const mm = gsap.matchMedia();
+
+      // Headline reveal, keyed to the section's own top. (A trigger on the
+      // heading itself sits inside the pinned stage, so its start lands after
+      // the whole pin — the headline would only appear once everything else
+      // had finished.) It plays as the section arrives, before the pin's
+      // scroll-driven steps begin.
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.set(headingRef.current, { ...HEADING_REVEAL_FROM, transformOrigin: "center center" });
+        gsap.to(headingRef.current, {
+          ...HEADING_REVEAL,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+        });
+      });
 
       mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 560px)", () => {
         const q = gsap.utils.selector(sectionRef);
