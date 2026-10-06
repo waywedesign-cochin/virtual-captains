@@ -300,7 +300,7 @@ function Card({
             <h3 className="text-xl font-medium leading-tight sm:text-2xl text-white">
               {data.heading}
             </h3>
-            <p className="mt-3 max-w-[16rem] text-xs leading-relaxed text-white/70">
+            <p className="mt-3 max-w-[16rem] text-xs leading-relaxed text-white/70 text-justify hyphens-auto [text-align-last:center]">
               {data.body}
             </p>
 

@@ -212,7 +212,7 @@ export default function SalesXHero() {
         </h2>
         <p
           data-hero-line
-          className="mt-4 max-w-2xl text-[15px] leading-relaxed text-white/75 sm:mt-5 sm:text-base [@media(max-height:500px)]:mt-2 [@media(max-height:500px)]:text-[13px]"
+          className="mt-4 max-w-2xl text-[15px] leading-relaxed text-white/75 sm:mt-5 sm:text-base [@media(max-height:500px)]:mt-2 [@media(max-height:500px)]:text-[13px] text-justify hyphens-auto [text-align-last:center]"
         >
           The interview. The appraisal. The investor meeting. The client who is
           about to walk. Every turning point in a career is a conversation, and

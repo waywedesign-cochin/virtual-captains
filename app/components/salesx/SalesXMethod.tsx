@@ -461,7 +461,7 @@ export default function SalesXMethod() {
           <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-[#3b82f6] drop-shadow-[0_0_35px_rgba(59,130,246,0.7)]">
             The SalesX Method
           </h2>
-          <p className="mt-3 sm:mt-5 text-xs sm:text-base md:text-lg text-slate-300/80 max-w-lg tracking-wide font-sans">
+          <p className="mt-3 sm:mt-5 text-xs sm:text-base md:text-lg text-slate-300/80 max-w-lg tracking-wide font-sans text-center text-balance">
             Precision Simulation Engine. Practice Real Deals Before Going Live.
           </p>
           <div className="mt-6 sm:mt-8 flex items-center gap-2 text-xs font-medium text-slate-400 max-lg:hidden">
@@ -554,7 +554,7 @@ export default function SalesXMethod() {
                         </span>
                       </h3>
 
-                      <p className="mt-2 sm:mt-3 lg:mt-4 text-xs sm:text-sm lg:text-[15px] text-slate-300 leading-relaxed font-sans max-w-lg mx-auto lg:mx-0">
+                      <p className="mt-2 sm:mt-3 lg:mt-4 text-xs sm:text-sm lg:text-[15px] text-slate-300 leading-relaxed font-sans max-w-lg mx-auto lg:mx-0 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                         {slide.description}
                       </p>
 

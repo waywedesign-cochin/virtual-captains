@@ -33,7 +33,7 @@ export function PartnerNetwork() {
           <h3 className="type-h3 font-medium text-white mb-2">
             {partner.sideHeading}
           </h3>
-          <p className="type-body text-white/70">
+          <p className="type-body text-white/70 text-justify hyphens-auto">
             {partner.sideBody}
           </p>
         </div>

@@ -135,7 +135,7 @@ export default function SalesXCTA() {
             ref={textRef}
             className="lg:col-span-6 xl:col-span-7 text-center lg:text-left will-change-transform"
           >
-            <p className="text-base sm:text-lg lg:text-xl text-slate-200 font-light leading-relaxed max-w-xl mx-auto lg:mx-0 font-sans">
+            <p className="text-base sm:text-lg lg:text-xl text-slate-200 font-light leading-relaxed max-w-xl mx-auto lg:mx-0 font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               Whether you&apos;re preparing for your first sale or hiring for your
               next quarter, SalesX is built for the execution that follows
             </p>

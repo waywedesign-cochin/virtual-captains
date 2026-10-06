@@ -249,7 +249,7 @@ export function WhoThisIsFor() {
                     {slide.title}
                   </h3>
                   <p
-                    className="max-w-[25em] mt-4 md:mt-6 type-body text-(--ink-soft) [@media(max-width:1023px)_and_(min-height:501px)]:mx-auto [@media(max-width:1023px)_and_(min-height:501px)]:max-w-[46ch] [@media(max-height:500px)]:mt-2"
+                    className="max-w-[25em] mt-4 md:mt-6 type-body text-(--ink-soft) [@media(max-width:1023px)_and_(min-height:501px)]:mx-auto [@media(max-width:1023px)_and_(min-height:501px)]:max-w-[46ch] [@media(max-height:500px)]:mt-2 text-justify hyphens-auto [@media(max-width:1023px)_and_(min-height:501px)]:[text-align-last:center]"
                     data-who-body=""
                   >
                     {slide.body}

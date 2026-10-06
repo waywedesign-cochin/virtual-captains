@@ -388,7 +388,7 @@ export default function SalesXFooter() {
               <h3 className="mt-2 text-2xl sm:text-3xl font-medium tracking-tight text-white">
                 Your Next Deal Deserves A Rehearsal.
               </h3>
-              <p className="mt-2 max-w-lg mx-auto md:mx-0 text-sm sm:text-[15px] leading-relaxed text-slate-300/85">
+              <p className="mt-2 max-w-lg mx-auto md:mx-0 text-sm sm:text-[15px] leading-relaxed text-slate-300/85 text-justify hyphens-auto [text-align-last:center] md:[text-align-last:left]">
                 Talk to a Captain about the SalesX programme for yourself or your team.
               </p>
             </div>
@@ -427,7 +427,7 @@ export default function SalesXFooter() {
                 className="h-9 sm:h-10 w-auto object-contain"
               />
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-300/80">
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-300/80 text-justify hyphens-auto">
               Execution-backed sales training. SalesX is where every seller rehearses
               the conversation before it counts.
             </p>
