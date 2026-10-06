@@ -554,7 +554,7 @@ export default function SalesXMethod() {
                         </span>
                       </h3>
 
-                      <p className="mt-2 sm:mt-3 lg:mt-4 text-xs sm:text-sm lg:text-[15px] text-slate-300 leading-relaxed font-sans max-w-lg mx-auto lg:mx-0 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+                      <p className="text-sm sm:text-[15px] xl:text-base mt-2 sm:mt-3 lg:mt-4 text-slate-300 leading-relaxed font-sans max-w-lg mx-auto lg:mx-0 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                         {slide.description}
                       </p>
 
@@ -568,7 +568,7 @@ export default function SalesXMethod() {
                       </div>
                     </div>
 
-                    {/* Right Column: Concentric Orbit Rings, Floating Badges, and dashbord-01.webp */}
+                    {/* Right Column: Concentric Orbit Rings, Floating Badges, and dashboard.webp */}
                     <div className="lg:col-span-7 relative z-10 flex items-center justify-center py-2 sm:py-4 lg:py-6">
                       {/* Concentric Circular Rings */}
                       <div className="absolute w-[95%] sm:w-[90%] aspect-square rounded-full border border-blue-500/15 pointer-events-none" />
@@ -599,13 +599,13 @@ export default function SalesXMethod() {
                         {slide.orbitLabels.bottom}
                       </div>
 
-                      {/* Single Dashboard Preview: /salesx/dashbord-01.webp */}
+                      {/* Single Dashboard Preview: /salesx/dashboard.webp */}
                       <div className="relative z-10 w-full max-w-70 sm:max-w-md lg:max-w-xl transition-all duration-500 transform hover:scale-[1.01]">
                         <Image
-                          src="/salesx/dashbord-01.webp"
+                          src="/salesx/dashboard.webp"
                           alt="SalesX Method Dashboard"
-                          width={1400}
-                          height={850}
+                          width={1930}
+                          height={1181}
                           unoptimized
                           priority
                           className="w-full h-auto object-contain select-none pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.85)]"

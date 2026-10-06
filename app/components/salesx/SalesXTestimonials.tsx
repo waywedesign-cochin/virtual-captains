@@ -168,7 +168,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
             transition: "background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
           }}
         >
-          <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed text-justify hyphens-auto">
+          <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
             {t.quote}
           </p>
         </div>

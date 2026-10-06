@@ -177,10 +177,10 @@ export default function SalesXHero() {
         >
           <div className="absolute inset-[8%] -z-10 rounded-full bg-radial from-[#1e40af]/45 via-[#312e81]/20 to-transparent blur-[90px]" />
           <Image
-            src="/salesx/groupdashbords.webp"
+            src="/salesx/grpdashboad.webp"
             alt="SalesX dashboards — practice sessions, scores and coaching views"
-            width={2400}
-            height={1440}
+            width={1930}
+            height={1181}
             priority
             unoptimized
             className="h-auto w-full object-contain drop-shadow-[0_25px_80px_rgba(0,0,0,0.9)]"
@@ -212,7 +212,7 @@ export default function SalesXHero() {
         </h2>
         <p
           data-hero-line
-          className="mt-4 max-w-2xl text-[15px] leading-relaxed text-white/75 sm:mt-5 sm:text-base [@media(max-height:500px)]:mt-2 [@media(max-height:500px)]:text-[13px] text-justify hyphens-auto [text-align-last:center]"
+          className="text-sm sm:text-[15px] xl:text-base mt-4 max-w-2xl leading-relaxed text-white/75 sm:mt-5 [@media(max-height:500px)]:mt-2 [@media(max-height:500px)]:text-[13px] text-justify hyphens-auto [text-align-last:center]"
         >
           The interview. The appraisal. The investor meeting. The client who is
           about to walk. Every turning point in a career is a conversation, and
