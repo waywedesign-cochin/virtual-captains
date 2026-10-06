@@ -25,8 +25,13 @@ type Testimonial = {
   photo?: string;
 };
 
-// Default avatar image for testimonials
-const PLACEHOLDER_AVATAR = "/home/person.png";
+/** "Aisha Rahman" → "AR" for the avatar circle. */
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
 
 /** Testimonials dataset — 5 cards for the 5-card perspective stack */
 const TESTIMONIALS: Testimonial[] = [
@@ -35,35 +40,30 @@ const TESTIMONIALS: Testimonial[] = [
       "Our team is having better conversations and moving deals forward with confidence.",
     name: "David John",
     role: "Region",
-    photo: PLACEHOLDER_AVATAR,
   },
   {
     quote:
       "The roleplay sessions exposed gaps our old training never touched. Objection handling improved within weeks.",
     name: "Aisha Rahman",
     role: "Head of Revenue, SaaS",
-    photo: PLACEHOLDER_AVATAR,
   },
   {
     quote:
       "We finally have a way to audit what good selling actually looks like, instead of guessing at it.",
     name: "Marcus Silva",
     role: "VP Sales Enablement",
-    photo: PLACEHOLDER_AVATAR,
   },
   {
     quote:
       "New hires are productive in a third of the time. The rehearsal-first model is the difference.",
     name: "Priya Nair",
     role: "Talent Development Lead",
-    photo: PLACEHOLDER_AVATAR,
   },
   {
     quote:
       "Consistent pitch execution across distributed teams has been our biggest win this quarter.",
     name: "Elena Rostova",
     role: "Global VP of Sales",
-    photo: PLACEHOLDER_AVATAR,
   },
 ];
 
@@ -379,34 +379,49 @@ export default function Endorsement() {
                     </svg>
 
                     <p
-                      className={`mt-3 max-w-44 sm:max-w-48 font-sans text-[13px] sm:text-[14px] font-normal leading-[1.35] transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}
+                      className={`mt-3 font-sans text-[13px] sm:text-[14px] font-normal leading-[1.45] text-justify hyphens-auto transition-colors duration-500 ${isCenter ? "text-white" : "text-white/70"}`}
                     >
                       {item.quote}
                     </p>
                   </div>
 
                   {/* ---------- BOTTOM LEFT: Name, Role & 5 White Stars ---------- */}
-                  <div className="relative z-10 mt-auto max-w-40 pt-2">
-                    <h3 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
-                      {item.name}
-                    </h3>
-                    <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
-                      {item.role}
-                    </p>
-                    <div className="mt-1.5">
-                      <Stars />
+                  <div className="relative z-10 mt-auto flex items-center gap-3 pt-2">
+                    {/* Avatar: headshot if one is set, otherwise an initials circle */}
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full p-[1.5px] sm:h-13 sm:w-13 ${
+                        isCenter
+                          ? "bg-linear-to-br from-[#F3FC00] to-[#D08817]"
+                          : "bg-white/25"
+                      }`}
+                    >
+                      {item.photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.photo}
+                          alt=""
+                          className="h-full w-full rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center rounded-full bg-[#0b2a73] font-sans text-[15px] font-semibold tracking-wide text-white">
+                          {initials(item.name)}
+                        </span>
+                      )}
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
+                        {item.name}
+                      </h3>
+                      <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
+                        {item.role}
+                      </p>
+                      <div className="mt-1.5">
+                        <Stars />
+                      </div>
                     </div>
                   </div>
 
-                  {/* ---------- BOTTOM RIGHT: Cut-out portrait clipped at card bottom ---------- */}
-                  {item.photo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.photo}
-                      alt={item.name}
-                      className={`pointer-events-none absolute -bottom-1 -right-2 h-[78%] max-h-75 w-[56%] select-none object-contain object-bottom z-0 transition-opacity duration-500 ${isCenter ? "opacity-100" : "opacity-70"}`}
-                    />
-                  )}
                 </article>
               );
             })}

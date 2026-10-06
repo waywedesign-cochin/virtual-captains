@@ -32,12 +32,12 @@ const METRICS: Metric[] = [
     label: "Industries",
     note: "SaaS, real estate, finance and more.",
   },
-  { value: "3", label: "Continents", note: "One execution standard." },
   {
     value: "8+",
     label: "Countries Served",
     note: "Across the Middle East, Europe and Asia.",
   },
+  { value: "3", label: "Continents", note: "One execution standard." },
 ];
 
 /** Splits "15,000+" into its number and suffix so it can count up. */
