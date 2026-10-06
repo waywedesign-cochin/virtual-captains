@@ -17,11 +17,11 @@ type Testimonial = {
   quote: string;
   name: string;
   role: string;
-  /**
-   * Drop a headshot in public/home/ and put its path here (e.g.
-   * "/home/testimonial-david.jpg"). Without one the card falls back to an
-   * initials plate, so the layout is identical either way.
-   */
+  /** Company logo (public/partners/) shown in the avatar circle */
+  logo?: string;
+  /** "cover" for logos on a solid square background, else "contain" */
+  logoFit?: "contain" | "cover";
+  /** Optional headshot (public/home/) — takes the circle over the logo */
   photo?: string;
 };
 
@@ -33,37 +33,36 @@ const initials = (name: string) =>
     .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
 
-/** Testimonials dataset — 5 cards for the 5-card perspective stack */
+/** Client testimonials for the perspective card stack */
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "Our team is having better conversations and moving deals forward with confidence.",
-    name: "David John",
-    role: "Region",
+      "We had an excellent experience working with Virtual Captains for our lead generation initiatives. Their team quickly understood our goals, refined our targeting strategy, and helped us build a consistent flow of qualified leads.",
+    name: "MoonHive",
+    role: "Lead Generation Client",
+    logo: "/partners/MOONHIV.png",
   },
   {
     quote:
-      "The roleplay sessions exposed gaps our old training never touched. Objection handling improved within weeks.",
-    name: "Aisha Rahman",
-    role: "Head of Revenue, SaaS",
+      "I have had the distinct pleasure of working closely with Roshna since 2021 till 2024 at ThoughtBox. Reporting directly to me as Founder & Managing Director, Roshna was a central pillar of our leadership, managing both Operations and Finance while serving as a key architect of our organizational strategy.",
+    name: "Rijaz Sulaiman",
+    role: "Founder & Managing Director @ ThoughtBox Online Services Pvt Ltd",
+    logo: "/partners/thoughtbox.jpeg",
   },
   {
     quote:
-      "We finally have a way to audit what good selling actually looks like, instead of guessing at it.",
-    name: "Marcus Silva",
-    role: "VP Sales Enablement",
+      "Roshna Saffar provided helpful guidance during our sales training. Her practical approach and focus on key strategies contributed to improving our sales skills. I appreciate the insights she shared, which were beneficial in refining our approach to sales. All the best to her and her company in their future endeavors.",
+    name: "Anil P",
+    role: "Co-Founder & Civil Engineer at KLBUILD Contractors LLP",
+    logo: "/partners/klbuild.jpeg",
+    logoFit: "cover",
   },
   {
     quote:
-      "New hires are productive in a third of the time. The rehearsal-first model is the difference.",
-    name: "Priya Nair",
-    role: "Talent Development Lead",
-  },
-  {
-    quote:
-      "Consistent pitch execution across distributed teams has been our biggest win this quarter.",
-    name: "Elena Rostova",
-    role: "Global VP of Sales",
+      "I highly recommend Roshna Saffar for the position of Sales Strategist. Her innovative strategies and proven track record in driving sales growth make recommended for this role.",
+    name: "Vismaya Biju",
+    role: "Director & Co-Founder @ Southern Sages Pvt Ltd",
+    logo: "/partners/southern-sages.jpeg",
   },
 ];
 
@@ -282,7 +281,7 @@ export default function Endorsement() {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             className="relative mt-[clamp(24px,4vh,48px)] flex w-full max-w-5xl touch-pan-y items-center justify-center [--fan-1:20%] [--fan-2:38%] sm:[--fan-1:40%] sm:[--fan-2:74%]"
-            style={{ height: "clamp(350px, 44vh, 395px)" }}
+            style={{ height: "clamp(400px, 50vh, 440px)" }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
@@ -331,8 +330,12 @@ export default function Endorsement() {
                   key={item.name}
                   aria-hidden={!isCenter}
                   onClick={() => setActive(i)}
-                  className={`absolute flex h-81.25 w-[min(84vw,280px)] sm:h-88.75 sm:w-76 cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 sm:p-5.5 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
+                  className={`absolute flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-5 sm:p-5.5 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[transform,opacity,filter]`}
                   style={{
+                    // Fixed card size set inline so it can never fall back to
+                    // stretching across the stack
+                    width: "min(84vw, 320px)",
+                    height: "400px",
                     transform: `translateX(${translateX}) scale(${scale})`,
                     opacity,
                     filter,
@@ -403,6 +406,19 @@ export default function Endorsement() {
                           alt=""
                           className="h-full w-full rounded-full object-cover"
                         />
+                      ) : item.logo ? (
+                        <span className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-white">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.logo}
+                            alt=""
+                            className={
+                              item.logoFit === "cover"
+                                ? "h-full w-full object-cover"
+                                : "h-[72%] w-[72%] object-contain"
+                            }
+                          />
+                        </span>
                       ) : (
                         <span className="flex h-full w-full items-center justify-center rounded-full bg-[#0b2a73] font-sans text-[15px] font-semibold tracking-wide text-white">
                           {initials(item.name)}
@@ -413,7 +429,7 @@ export default function Endorsement() {
                       <h3 className="font-sans text-[15.5px] sm:text-[17px] font-medium text-white tracking-wide">
                         {item.name}
                       </h3>
-                      <p className="mt-0.5 text-[11px] sm:text-[12px] text-white/75 font-sans tracking-wide">
+                      <p className="mt-0.5 text-[11px] sm:text-[12px] leading-snug text-white/75 font-sans tracking-wide">
                         {item.role}
                       </p>
                       <div className="mt-1.5">
