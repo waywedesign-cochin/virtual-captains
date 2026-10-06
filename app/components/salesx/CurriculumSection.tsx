@@ -26,6 +26,37 @@ type Track = {
 
 const TRACKS: Track[] = [
   {
+    key: "founders",
+    tab: "Founders",
+    blurb: "Product to first sale",
+    heading: "From Builder",
+    accent: "to First Seller.",
+    meta: "Founders & entrepreneurs",
+    outcome: "A pipeline, not just a product.",
+    stages: [
+      {
+        title: "Foundations",
+        tagline: "Your sales story",
+        body: "Who buys, why they buy and what it's worth to them. Startup sales maths: pipeline, conversion and the deals you need.",
+      },
+      {
+        title: "Rehearse",
+        tagline: "Sell your own product",
+        body: "Outreach that gets replies, discovery with real buyer personas and pricing conversations, all rehearsed on your actual offer.",
+      },
+      {
+        title: "Evaluate",
+        tagline: "Pitch it end to end",
+        body: "The Full-Cycle Closer on your own product: first contact to signed deal, scored and reviewed by a practitioner.",
+      },
+      {
+        title: "Launch",
+        tagline: "Make it repeatable",
+        body: "Leave with your Skill Card and a sales playbook you can run tomorrow, and hand to your first sales hire.",
+      },
+    ],
+  },
+  {
     key: "students",
     tab: "Students",
     blurb: "Campus to offer",
@@ -87,37 +118,6 @@ const TRACKS: Track[] = [
       },
     ],
   },
-  {
-    key: "founders",
-    tab: "Founders",
-    blurb: "Product to first sale",
-    heading: "From Builder",
-    accent: "to First Seller.",
-    meta: "Founders & entrepreneurs",
-    outcome: "A pipeline, not just a product.",
-    stages: [
-      {
-        title: "Foundations",
-        tagline: "Your sales story",
-        body: "Who buys, why they buy and what it's worth to them. Startup sales maths: pipeline, conversion and the deals you need.",
-      },
-      {
-        title: "Rehearse",
-        tagline: "Sell your own product",
-        body: "Outreach that gets replies, discovery with real buyer personas and pricing conversations, all rehearsed on your actual offer.",
-      },
-      {
-        title: "Evaluate",
-        tagline: "Pitch it end to end",
-        body: "The Full-Cycle Closer on your own product: first contact to signed deal, scored and reviewed by a practitioner.",
-      },
-      {
-        title: "Launch",
-        tagline: "Make it repeatable",
-        body: "Leave with your Skill Card and a sales playbook you can run tomorrow, and hand to your first sales hire.",
-      },
-    ],
-  },
 ];
 
 const STATS = [
@@ -130,13 +130,22 @@ const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export default function CurriculumSection() {
-  const [activeKey, setActiveKey] = useState<Track["key"]>("students");
+export default function CurriculumSection({
+  defaultTrack = "students",
+  comingSoon = [],
+}: {
+  /** Which track is selected on first load. */
+  defaultTrack?: Track["key"];
+  /** Tracks that aren't open yet: tagged "Coming soon", CTA disabled. */
+  comingSoon?: Track["key"][];
+}) {
+  const [activeKey, setActiveKey] = useState<Track["key"]>(defaultTrack);
   const [openStage, setOpenStage] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const prevStage = useRef(0);
-  const lastKey = useRef<Track["key"]>("students");
+  const lastKey = useRef<Track["key"]>(defaultTrack);
   const track = TRACKS.find((t) => t.key === activeKey) ?? TRACKS[0];
+  const trackComingSoon = comingSoon.includes(track.key);
 
   const selectTrack = (key: Track["key"]) => {
     if (key === activeKey) return;
@@ -286,6 +295,7 @@ export default function CurriculumSection() {
           >
             {TRACKS.map((t) => {
               const active = t.key === activeKey;
+              const soon = comingSoon.includes(t.key);
               return (
                 <button
                   key={t.key}
@@ -306,6 +316,11 @@ export default function CurriculumSection() {
                   <span>
                     <span className="block text-base font-semibold text-white">
                       {t.tab}
+                      {soon && (
+                        <span className="ml-2 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wider text-white/60">
+                          Coming soon
+                        </span>
+                      )}
                     </span>
                     <span className="block text-sm text-white/55">
                       {t.blurb}
@@ -474,14 +489,20 @@ export default function CurriculumSection() {
               >
                 Full SalesX curriculum →
               </Link>
-              <Link
-                href={
-                  track.key === "founders" ? "/organisations" : "/individuals"
-                }
-                className="whitespace-nowrap rounded-full bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-[#1d4ed8]"
-              >
-                Start this path
-              </Link>
+              {trackComingSoon ? (
+                <span className="cursor-not-allowed whitespace-nowrap rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white/50">
+                  Coming soon
+                </span>
+              ) : (
+                <Link
+                  href={
+                    track.key === "founders" ? "/organisations" : "/individuals"
+                  }
+                  className="whitespace-nowrap rounded-full bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-[#1d4ed8]"
+                >
+                  Start this path
+                </Link>
+              )}
             </div>
           </div>
         </div>
