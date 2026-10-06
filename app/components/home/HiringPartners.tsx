@@ -64,35 +64,38 @@ export default function HiringPartners() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
 
-  /** Logo swap from page `from` to page `to`, staggered across bubbles. */
+  /**
+   * Logo swap from page `from` to page `to`. Each bubble cross-fades — its
+   * new logo comes in while the old one leaves — so no bubble is ever empty,
+   * even when a scrubbed scroll stops halfway. `immediateRender: false`
+   * stops the incoming state from hiding logos before the swap plays.
+   */
   const swap = (tl: gsap.core.Timeline, from: number, to: number, at: string | number) => {
     const q = gsap.utils.selector(sectionRef);
-    tl.to(
-      q(`[data-page="${from}"]`),
-      {
-        autoAlpha: 0,
-        scale: 0.4,
-        rotate: -20,
-        filter: "blur(6px)",
-        duration: 0.5,
-        ease: "power2.in",
-        stagger: 0.07,
-      },
-      at,
-    ).fromTo(
-      q(`[data-page="${to}"]`),
-      { autoAlpha: 0, scale: 0.4, rotate: 20, filter: "blur(6px)" },
-      {
-        autoAlpha: 1,
-        scale: 1,
-        rotate: 0,
-        filter: "blur(0px)",
-        duration: 0.6,
-        ease: "back.out(1.6)",
-        stagger: 0.07,
-      },
-      "<0.3",
-    );
+    const outgoing = q(`[data-page="${from}"]`);
+    const incoming = q(`[data-page="${to}"]`);
+    tl.addLabel(`swap-${from}-${to}`, at);
+    SLOTS.forEach((_, i) => {
+      const slotAt = `swap-${from}-${to}+=${i * 0.07}`;
+      tl.to(
+        outgoing[i],
+        { autoAlpha: 0, scale: 0.6, rotate: -15, filter: "blur(4px)", duration: 0.55, ease: "power2.inOut" },
+        slotAt,
+      ).fromTo(
+        incoming[i],
+        { autoAlpha: 0, scale: 0.6, rotate: 15, filter: "blur(4px)" },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          rotate: 0,
+          filter: "blur(0px)",
+          duration: 0.6,
+          ease: "back.out(1.4)",
+          immediateRender: false,
+        },
+        slotAt,
+      );
+    });
   };
 
   const setupRotation = () => {
