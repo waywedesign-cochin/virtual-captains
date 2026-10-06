@@ -210,8 +210,8 @@ function OfflinePanel() {
               className="cursor-pointer rounded-full bg-[#e7ff3d] px-7 py-3.5 text-sm font-bold text-[#0b0e14] shadow-[0_10px_30px_-10px_#e7ff3d] transition hover:bg-white"
             />
             <p className="max-w-xs text-xs leading-relaxed text-white/50">
-              We review every application and send a payment link only to
-              selected founders.
+              We review every application and share next steps with selected
+              founders.
             </p>
           </div>
         </div>
