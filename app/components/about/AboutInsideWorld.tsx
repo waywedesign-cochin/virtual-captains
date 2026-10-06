@@ -210,7 +210,7 @@ export default function AboutInsideWorld() {
                 </span>
               </div>
 
-              <h2 ref={headingRef} className="text-3xl sm:text-4xl md:text-[2.6rem] lg:text-[2.5rem] xl:text-[3.25rem] 2xl:text-6xl [@media(max-height:700px)]:text-[2.25rem] font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
+              <h2 ref={headingRef} className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl [@media(max-height:700px)]:text-[2.25rem] font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
                 Inside Our World
               </h2>
 
@@ -219,14 +219,14 @@ export default function AboutInsideWorld() {
                 &ldquo;More Than Scripts. More Than Techniques.&rdquo;
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+              <p className="text-sm sm:text-[15px] xl:text-base mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                 Virtual Captains is a sales execution company headquartered in
                 India with a presence across the Middle East, Europe and Asia. We
                 believe great sales come from clarity, strategy, confidence and
                 the right human approach, not memorised scripts.
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-300/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+              <p className="text-sm sm:text-[15px] xl:text-base mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-300/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                 Our team of sales strategists and practitioners works alongside
                 organisations to onboard talent, diagnose sales gaps, build
                 pipeline and sharpen teams. We combine AI-powered practice with
@@ -278,11 +278,11 @@ export default function AboutInsideWorld() {
                             {pillar.tag}
                           </p>
                           {typeof pillar.description === "string" ? (
-                            <p className="mt-2 sm:mt-3 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+                            <p className="text-sm sm:text-[15px] xl:text-base mt-2 sm:mt-3 [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                               {pillar.description}
                             </p>
                           ) : (
-                            <ul className="mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] text-slate-200 leading-relaxed font-sans text-left">
+                            <ul className="mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-sm sm:text-[15px] xl:text-base [@media(max-height:700px)]:text-[13px] text-slate-200 leading-relaxed font-sans text-left">
                               {pillar.description.map((v) => (
                                 <li key={v.label} className="flex gap-2">
                                   <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-[#F3FC00]" />

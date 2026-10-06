@@ -156,14 +156,14 @@ export default function AboutFounder() {
 
           {/* Founder's Story & Credo Card */}
           <div className="w-full text-center p-6 sm:p-7 rounded-2xl border border-white/15 bg-linear-to-br from-white/6 via-white/2 to-transparent backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] space-y-4">
-            <h3 ref={mobileHeadingRef} className="text-xl sm:text-2xl font-normal tracking-tight text-white font-sans">
+            <h3 ref={mobileHeadingRef} className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-normal tracking-tight text-white font-sans">
               Built on 16+ Years of{" "}
               <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent">
                 Enterprise Execution
               </span>
             </h3>
 
-            <p className="text-sm text-slate-200/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+            <p className="text-sm sm:text-[15px] xl:text-base text-slate-200/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               With 16+ years of leadership in enterprise sales across the Middle
               East, South Asia, and Southeast Asia, Roshna built Virtual
               Captains around a fundamental belief:
@@ -182,7 +182,7 @@ export default function AboutFounder() {
               </p>
             </div>
 
-            <p className="text-sm text-slate-300 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+            <p className="text-sm sm:text-[15px] xl:text-base text-slate-300 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               Today, she leads Virtual Captains across sales strategy, sales
               enablement, and execution, while spearheading SalesX to empower
               the next generation of sales professionals.
@@ -288,7 +288,7 @@ export default function AboutFounder() {
                 </div>
 
                 {/* Section Headline */}
-                <h2 className="text-2xl sm:text-[1.85rem] lg:text-[2.1rem] font-normal tracking-tight text-white font-sans leading-[1.22]">
+                <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-normal tracking-tight text-white font-sans leading-[1.22]">
                   Built on 16+ Years of{" "}
                   <span className="font-bold bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(243,252,0,0.25)]">
                     Enterprise Execution
@@ -296,7 +296,7 @@ export default function AboutFounder() {
                 </h2>
 
                 {/* Bio Paragraph */}
-                <p className="mt-3 text-[13.5px] lg:text-[14.5px] text-slate-200/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+                <p className="text-sm sm:text-[15px] xl:text-base mt-3 text-slate-200/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                   With 16+ years of leadership in enterprise sales across the
                   Middle East, South Asia, and Southeast Asia, Roshna built
                   Virtual Captains around a fundamental belief:
@@ -325,7 +325,7 @@ export default function AboutFounder() {
                 </div>
 
                 {/* Role Description */}
-                <p className="text-[13px] lg:text-[14px] text-slate-300 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+                <p className="text-sm sm:text-[15px] xl:text-base text-slate-300 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                   Today, she leads Virtual Captains across sales strategy, sales
                   enablement, and execution, while spearheading SalesX to train
                   and develop the next generation of high-performing sales
