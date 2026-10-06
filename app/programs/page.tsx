@@ -62,7 +62,7 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
       className={`vc-in group flex flex-col overflow-hidden rounded-3xl border transition-transform duration-300 hover:-translate-y-1 ${
         featured
           ? "border-[#38bdf8]/40 bg-linear-to-br from-[#2563eb] to-[#1e3a8a] text-white shadow-[0_20px_60px_-20px_#2563eb]"
-          : "border-white/10 bg-[#0b0e14] text-white hover:border-white/25"
+          : "border-[#38bdf8]/25 bg-[#0b0e14] text-white hover:border-[#38bdf8]/60"
       }`}
     >
       {/* Cover (only when an image exists) */}
@@ -143,8 +143,8 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
             price={program.price}
             className={`cursor-pointer rounded-full px-5 py-2.5 text-sm font-bold transition ${
               featured
-                ? "bg-white text-[#1e3a8a] hover:bg-white/90"
-                : "bg-[#2563eb] text-white hover:bg-[#1d4ed8]"
+                ? "bg-white text-[#1e3a8a] hover:bg-[#e7ff3d] hover:text-[#0b0e14]"
+                : "bg-[#2563eb] text-white hover:bg-[#e7ff3d] hover:text-[#0b0e14]"
             }`}
           >
             Enroll now
@@ -463,7 +463,7 @@ export default async function ProgramsPage() {
             className="vc-in mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg"
           >
             From new-hire induction to enterprise deal desk coaching, our
-            tailored curricula combine human mentorship with generative
+            tailored curriculum combine human mentorship with generative
             simulations to build resilient, quota-crushing sellers.
           </p>
 
@@ -475,7 +475,7 @@ export default async function ProgramsPage() {
               href="/organisations"
               className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#1d4ed8]"
             >
-              Organisation Curricula
+              Organisation Curriculum
             </Link>
             <Link
               href="/individuals"
