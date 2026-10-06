@@ -48,6 +48,7 @@ const PARTNERS: Partner[] = [
   { name: "JSR", logoSrc: "/partners/JSR.png", invert: true },
   { name: "Sigma Life Unifirm", logoSrc: "/partners/UNIFIRM.png", invert: true },
   { name: "Sigma Life Unifirm", logoSrc: "/partners/SIGMA-LIFE-UNIFIRM.png" },
+  { name: "Bangalore Bioinnovation Centre", logoSrc: "/partners/bbc-logo.png" },
 ];
 
 const PAGE_COUNT = Math.ceil(PARTNERS.length / SLOTS.length);
@@ -248,14 +249,14 @@ export default function HiringPartners() {
                         key={page}
                         data-page={page}
                         title={partner.name}
-                        className="absolute inset-0 flex items-center justify-center p-[16%]"
+                        className="absolute inset-0 flex items-center justify-center p-[9%]"
                         style={page === 0 ? undefined : { opacity: 0, visibility: "hidden" }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={partner.logoSrc}
                           alt={partner.name}
-                          className={`max-h-[56%] max-w-[78%] object-contain transition-all duration-300 group-hover:scale-108 ${
+                          className={`max-h-[72%] max-w-[92%] object-contain transition-all duration-300 group-hover:scale-108 ${
                             partner.invert
                               ? "invert contrast-125 opacity-80 group-hover:opacity-100"
                               : "contrast-105 opacity-90 group-hover:opacity-100"

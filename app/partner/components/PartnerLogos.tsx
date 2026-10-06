@@ -47,6 +47,12 @@ const PARTNER_LOGOS: PartnerItem[] = [
     logoSrc: "/partners/UNIFIRM.png",
     width: 135,
     height: 38,
+  },  {
+    id: "bbc",
+    name: "Bangalore Bioinnovation Centre",
+    logoSrc: "/partners/bbc-logo.png",
+    width: 120,
+    height: 48,
   },
 ];
 

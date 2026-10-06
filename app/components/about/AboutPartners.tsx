@@ -53,6 +53,12 @@ const PARTNERS: Partner[] = [
     logoSrc: "/partners/UNIFIRM.png",
     width: 135,
     height: 38,
+  },  {
+    id: "bbc",
+    name: "Bangalore Bioinnovation Centre",
+    logoSrc: "/partners/bbc-logo.png",
+    width: 120,
+    height: 48,
   },
 ];
 
@@ -119,13 +125,13 @@ function TickerRow({
               className="relative shrink-0 h-20 w-40 rounded-xl
                 bg-linear-to-b from-white/10 via-white/5 to-white/2 backdrop-blur-xl
                 border border-white/12
-                flex items-center justify-center px-5 overflow-hidden
+                flex items-center justify-center px-4 overflow-hidden
                 shadow-[0_6px_24px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.15)]"
             >
               <Image
                 src={p.logoSrc} alt={p.name}
                 width={p.width} height={p.height}
-                className="max-h-6 w-auto object-contain brightness-0 invert opacity-90 pointer-events-none"
+                className="max-h-11 max-w-full w-auto object-contain brightness-0 invert opacity-90 pointer-events-none"
                 draggable={false}
               />
             </div>

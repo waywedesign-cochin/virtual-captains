@@ -128,7 +128,7 @@ const homeLogos = [
   "/partners/JSR.png",
   "/partners/SKYLARK.png",
   "/partners/UNIFIRM.png",
-  "/partners/AHAD.png",
+  "/partners/bbc-logo.png",
   "/partners/MOONHIV.png",
   "/partners/SKYLARK.png",
 ];
