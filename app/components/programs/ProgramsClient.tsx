@@ -30,7 +30,7 @@ export function ProgramsTabs({
     `cursor-pointer rounded-full px-6 py-3 text-sm font-semibold text-white transition-all ${
       active
         ? "bg-[#2563eb] shadow-lg hover:bg-[#1d4ed8]"
-        : "border border-white/20 bg-white/5 hover:bg-white/10"
+        : "border border-white/20 bg-white/5 hover:bg-white/10 hover:text-[#38bdf8]"
     }`;
 
   return (

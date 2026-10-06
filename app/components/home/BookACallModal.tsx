@@ -488,7 +488,7 @@ type ProgramButtonProps = {
 /** "Check eligibility" CTA: opens the application form. */
 export function CheckEligibilityButton(props: ProgramButtonProps) {
   return (
-    <ModalButton mode="eligibility" label="Check eligibility" {...props} />
+    <ModalButton mode="eligibility" label="Check Eligibility" {...props} />
   );
 }
 
