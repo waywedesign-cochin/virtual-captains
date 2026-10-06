@@ -31,8 +31,14 @@ export function FormatTabs({
     }`;
 
   const subClass = (active: boolean) =>
-    `text-[11px] font-medium transition-colors duration-300 ${
+    `inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors duration-300 ${
       active ? "text-[#0b0e14]/70" : "text-white/40"
+    }`;
+
+  // Dot: uses its own colour when inactive, dark when sitting on the active highlight
+  const dotClass = (active: boolean, color: string) =>
+    `h-2 w-2 rounded-full transition-colors duration-300 ${
+      active ? "bg-[#0b0e14]" : color
     }`;
 
   return (
@@ -60,10 +66,13 @@ export function FormatTabs({
           onClick={() => select("offline")}
           className={optionClass(isOffline)}
         >
-          <span className="whitespace-nowrap text-xs font-bold sm:text-sm">
+          <span className="whitespace-nowrap text-sm font-bold sm:text-base">
             AI + Human Coaching
           </span>
-          <span className={subClass(isOffline)}>Offline</span>
+          <span className={subClass(isOffline)}>
+            <span aria-hidden className={dotClass(isOffline, "bg-[#e7ff3d]")} />
+            Offline
+          </span>
         </button>
 
         <button
@@ -73,10 +82,16 @@ export function FormatTabs({
           onClick={() => select("online")}
           className={optionClass(!isOffline)}
         >
-          <span className="whitespace-nowrap text-xs font-bold sm:text-sm">
+          <span className="whitespace-nowrap text-sm font-bold sm:text-base">
             AI Simulation
           </span>
-          <span className={subClass(!isOffline)}>Online</span>
+          <span className={subClass(!isOffline)}>
+            <span
+              aria-hidden
+              className={dotClass(!isOffline, "bg-[#38bdf8]")}
+            />
+            Online
+          </span>
         </button>
       </div>
 
