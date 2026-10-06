@@ -17,6 +17,8 @@ interface Pillar {
   tag: string;
   /** A paragraph, or short "label: text" points rendered as a list */
   description: string | { label: string; text: string }[];
+  /** Optional smaller supporting line under the description */
+  footnote?: string;
 }
 
 const PILLARS: Pillar[] = [
@@ -26,6 +28,8 @@ const PILLARS: Pillar[] = [
     tag: "A World Where Everyone Can Sell with Confidence.",
     description:
       "To make sales a core capability, not just a job title, for every professional, founder and organisation we work with.",
+    footnote:
+      "A future where every pitch is practised, every conversation is prepared for and every deal is earned.",
   },
   {
     id: "mission",
@@ -215,14 +219,14 @@ export default function AboutInsideWorld() {
                 &ldquo;More Than Scripts. More Than Techniques.&rdquo;
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 font-sans leading-relaxed text-center lg:text-left">
+              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                 Virtual Captains is a sales execution company headquartered in
                 India with a presence across the Middle East, Europe and Asia. We
                 believe great sales come from clarity, strategy, confidence and
                 the right human approach, not memorised scripts.
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-300/90 font-sans leading-relaxed text-center lg:text-left">
+              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-300/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                 Our team of sales strategists and practitioners works alongside
                 organisations to onboard talent, diagnose sales gaps, build
                 pipeline and sharpen teams. We combine AI-powered practice with
@@ -274,7 +278,7 @@ export default function AboutInsideWorld() {
                             {pillar.tag}
                           </p>
                           {typeof pillar.description === "string" ? (
-                            <p className="mt-2 sm:mt-3 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 leading-relaxed font-sans text-center lg:text-left">
+                            <p className="mt-2 sm:mt-3 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                               {pillar.description}
                             </p>
                           ) : (
@@ -289,6 +293,11 @@ export default function AboutInsideWorld() {
                                 </li>
                               ))}
                             </ul>
+                          )}
+                          {pillar.footnote && (
+                            <p className="mt-3 sm:mt-4 border-l-2 border-[#F3FC00]/40 pl-3 text-[11px] sm:text-xs italic leading-relaxed text-slate-400 font-sans text-left">
+                              {pillar.footnote}
+                            </p>
                           )}
                           </div>
                         );

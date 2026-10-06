@@ -100,7 +100,7 @@ export function Curriculum() {
                           {module.title}
                         </h3>
 
-                        <p className="relative z-10 type-body text-white/70 font-light max-w-lg">
+                        <p className="relative z-10 type-body text-white/70 font-light max-w-lg text-justify hyphens-auto">
                           {module.body}
                         </p>
                       </article>
@@ -173,7 +173,7 @@ export function Curriculum() {
                         {module.title}
                       </h3>
 
-                      <p className="relative z-10 type-body text-white/70 font-light">
+                      <p className="relative z-10 type-body text-white/70 font-light text-justify hyphens-auto">
                         {module.body}
                       </p>
                     </article>

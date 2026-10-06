@@ -244,7 +244,7 @@ export default function SalesXSimulated() {
           <h3 data-sim-foot className="text-[clamp(1.1rem,min(0.9rem+0.8vw,3.6svh),1.5rem)] font-medium leading-snug tracking-tight">
             The Approach Is Built on Repetition and Evaluation
           </h3>
-          <p data-sim-foot className="mt-2.5 text-[14px] leading-relaxed text-white/70 sm:text-[15px]">
+          <p data-sim-foot className="mt-2.5 text-[14px] leading-relaxed text-white/70 sm:text-[15px] text-justify hyphens-auto [text-align-last:center]">
             AI powers the repetition through real-time rehearsal systems,
             generating infinite scenarios with instant feedback. Human coaches
             provide the evaluation, applied to how each rehearsal holds up in

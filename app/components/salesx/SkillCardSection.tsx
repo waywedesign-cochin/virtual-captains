@@ -201,7 +201,7 @@ export default function SkillCardSection() {
             <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.15em] text-[#1d72fe]">
               The SXI Card (Sales Execution Index Card)
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 text-sm leading-relaxed text-slate-300 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               Scored 0–100 on the five skills that decide whether a deal
               happens. Pass with 60+ in four of the five.
             </p>

@@ -163,7 +163,7 @@ export default function AboutFounder() {
               </span>
             </h3>
 
-            <p className="text-sm text-slate-200/90 font-sans leading-relaxed">
+            <p className="text-sm text-slate-200/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               With 16+ years of leadership in enterprise sales across the Middle
               East, South Asia, and Southeast Asia, Roshna built Virtual
               Captains around a fundamental belief:
@@ -182,7 +182,7 @@ export default function AboutFounder() {
               </p>
             </div>
 
-            <p className="text-sm text-slate-300 font-sans leading-relaxed">
+            <p className="text-sm text-slate-300 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               Today, she leads Virtual Captains across sales strategy, sales
               enablement, and execution, while spearheading SalesX to empower
               the next generation of sales professionals.
@@ -296,7 +296,7 @@ export default function AboutFounder() {
                 </h2>
 
                 {/* Bio Paragraph */}
-                <p className="mt-3 text-[13.5px] lg:text-[14.5px] text-slate-200/90 font-sans leading-relaxed">
+                <p className="mt-3 text-[13.5px] lg:text-[14.5px] text-slate-200/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                   With 16+ years of leadership in enterprise sales across the
                   Middle East, South Asia, and Southeast Asia, Roshna built
                   Virtual Captains around a fundamental belief:
@@ -325,7 +325,7 @@ export default function AboutFounder() {
                 </div>
 
                 {/* Role Description */}
-                <p className="text-[13px] lg:text-[14px] text-slate-300 leading-relaxed font-sans">
+                <p className="text-[13px] lg:text-[14px] text-slate-300 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                   Today, she leads Virtual Captains across sales strategy, sales
                   enablement, and execution, while spearheading SalesX to train
                   and develop the next generation of high-performing sales

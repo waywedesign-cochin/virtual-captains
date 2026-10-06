@@ -55,7 +55,7 @@ export function PartnerNetworkCompact() {
       <h3 className="mx-auto mt-5 max-w-xl type-h3 font-medium text-white">
         {partner.sideHeading}
       </h3>
-      <p className="mx-auto mt-3 max-w-xl type-body text-white/70">
+      <p className="mx-auto mt-3 max-w-xl type-body text-white/70 text-justify hyphens-auto [text-align-last:center]">
         {partner.sideBody}
       </p>
 

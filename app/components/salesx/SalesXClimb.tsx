@@ -291,7 +291,7 @@ export default function SalesXClimb() {
           </div>
         </div>
 
-        <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-white/60 sm:text-base">
+        <p className="mx-auto mt-8 max-w-2xl text-sm text-white/60 sm:text-base text-justify hyphens-auto [text-align-last:center]">
           Every level ends in a live simulation. You don&apos;t move up until you&apos;ve proved it.
         </p>
       </div>

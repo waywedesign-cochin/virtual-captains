@@ -77,7 +77,7 @@ export const PartnershipIndex: React.FC<PartnershipIndexProps> = ({ models, onSe
                   aria-controls={`partner-panel-${m.id}`}
                   className="group flex w-full cursor-pointer items-center gap-4 py-5 text-left sm:gap-8 sm:py-7"
                 >
-                  <span className="w-7 shrink-0 font-mono text-[11px] sm:w-28 sm:text-xs uppercase tracking-[0.2em] text-white/45">
+                  <span className="w-7 shrink-0 font-sans tabular-nums text-[11px] sm:w-28 sm:text-xs uppercase tracking-[0.2em] text-white/45">
                     {m.number}
                     <span className="hidden sm:inline"> — {m.verb}</span>
                   </span>

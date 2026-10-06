@@ -44,7 +44,7 @@ export function Hero() {
 
           {/* Phones & tablets only: a supporting line so the headline has
               context before the CTAs (desktop has the orbit composition) */}
-          <p className="hero__sub lg:hidden">
+          <p className="hero__sub lg:hidden text-justify hyphens-auto [text-align-last:center]">
             A 12-week cohort programme that turns graduates, career switchers and
             working reps into high-performing B2B sellers.
           </p>

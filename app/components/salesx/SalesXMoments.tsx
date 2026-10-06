@@ -322,7 +322,7 @@ export default function SalesXMoments() {
                 ))}
               </h2>
 
-              <p className="mt-6 sm:mt-8 lg:mt-14 font-sans text-base sm:text-lg lg:text-[0.95rem] leading-relaxed text-slate-300 max-w-[340px] sm:max-w-[440px] lg:max-w-[380px]">
+              <p className="mt-6 sm:mt-8 lg:mt-14 font-sans text-base sm:text-lg lg:text-[0.95rem] leading-relaxed text-slate-300 max-w-[340px] sm:max-w-[440px] lg:max-w-[380px] text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                 Look closely at the moments that decide a career. Almost none of
                 them happen in a sales department. All of them are sales.
               </p>
