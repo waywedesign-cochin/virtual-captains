@@ -8,7 +8,9 @@ import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import CurriculumSection from "../components/salesx/CurriculumSection";
-import EnrollNowButton from "../components/programs/EnrollModal";
+import { ProgramsTabs } from "../components/programs/ProgramsClient";
+import FoundersBatch from "../components/programs/FoundersBatch";
+import { CheckEligibilityButton } from "../components/home/BookACallModal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Sales Training Programs",
@@ -30,7 +32,7 @@ type Program = {
   level?: string;
   hours?: number;
   duration?: string;
-  price?: string; // display text, built from priceInr in Sanity
+  price?: string; // display text, built from priceInr in Sanity (not shown for now)
   image?: { url: string; alt?: string };
   highlights?: string[];
   featured?: boolean;
@@ -43,8 +45,26 @@ const AUDIENCE_LABEL: Record<Program["audience"], string> = {
   organisations: "Organisations",
 };
 
+// Organisation tab: Sanity programs listed under the static Founders Batch
+const ORGANISATION_AUDIENCES: Program["audience"][] = [
+  "founders",
+  "organisations",
+];
+
+// Individual tab: Sanity programs for these audiences
+const INDIVIDUAL_AUDIENCES: Program["audience"][] = [
+  "students",
+  "professionals",
+];
+
+// No Sanity program is open for enrolment yet, so every card shows "Coming soon".
+// (The static SalesX Founders Batch is the only live course.)
+// When a Sanity program goes live, add its audience here.
+const LIVE_AUDIENCES: Program["audience"][] = [];
+
 function ProgramCard({ program, index }: { program: Program; index: number }) {
   const featured = !!program.featured;
+  const live = LIVE_AUDIENCES.includes(program.audience);
   const meta = [
     program.hours ? `${program.hours} hrs` : null,
     program.duration,
@@ -135,23 +155,51 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
           </ul>
         )}
 
-        <div className="mt-auto flex items-center justify-between pt-6">
-          <span className="font-serif text-2xl">{program.price ?? ""}</span>
-          <EnrollNowButton
-            programTitle={program.title}
-            programSlug={program.slug}
-            price={program.price}
-            className={`cursor-pointer rounded-full px-5 py-2.5 text-sm font-bold transition ${
-              featured
-                ? "bg-white text-[#1e3a8a] hover:bg-[#e7ff3d] hover:text-[#0b0e14]"
-                : "bg-[#2563eb] text-white hover:bg-[#e7ff3d] hover:text-[#0b0e14]"
-            }`}
-          >
-            Enroll now
-          </EnrollNowButton>
+        <div className="mt-auto pt-6">
+          {live ? (
+            <CheckEligibilityButton
+              programTitle={program.title}
+              programSlug={program.slug}
+              className={`cursor-pointer rounded-full px-5 py-2.5 text-sm font-bold transition ${
+                featured
+                  ? "bg-white text-[#1e3a8a] hover:bg-[#e7ff3d] hover:text-[#0b0e14]"
+                  : "bg-[#2563eb] text-white hover:bg-[#e7ff3d] hover:text-[#0b0e14]"
+              }`}
+            />
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="cursor-not-allowed rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-sm font-bold text-white/50"
+            >
+              Coming soon
+            </button>
+          )}
         </div>
       </div>
     </article>
+  );
+}
+
+function ProgramGrid({ programs }: { programs: Program[] }) {
+  if (programs.length === 0) {
+    return (
+      <p className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-white/70">
+        New programs are being added. Check back soon or{" "}
+        <Link href="/contact" className="text-[#38bdf8] underline">
+          talk to us
+        </Link>
+        .
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {programs.map((p, i) => (
+        <ProgramCard key={p._id} program={p} index={i} />
+      ))}
+    </div>
   );
 }
 
@@ -416,12 +464,20 @@ export default async function ProgramsPage() {
     price: priceInr ? `₹${priceInr.toLocaleString("en-IN")}` : "Contact us",
   }));
 
+  const organisationPrograms = programs.filter((p) =>
+    ORGANISATION_AUDIENCES.includes(p.audience),
+  );
+  const individualPrograms = programs.filter((p) =>
+    INDIVIDUAL_AUDIENCES.includes(p.audience),
+  );
+
   return (
     <main className="relative min-h-screen bg-[#040507] text-white selection:bg-[#38bdf8] selection:text-black antialiased overflow-x-clip">
       {/* Page-load entrance: CSS only (transform + opacity), no JS, no flash */}
       <style>{`
         @keyframes vc-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
         .vc-in { animation: vc-in .9s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: var(--d, 0ms); }
+        .vc-switched .vc-in { animation-delay: 0ms; }
         @media (prefers-reduced-motion: reduce) { .vc-in { animation: none; } }
       `}</style>
 
@@ -441,73 +497,70 @@ export default async function ProgramsPage() {
 
       {/* relative keeps all content above the glow layer */}
       <div className="relative">
-        {/* Hero */}
-        <section className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-16 pt-36 text-center sm:px-10 lg:px-16">
-          <div
-            style={delay(0)}
-            className="vc-in mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1 text-xs font-medium text-[#8b9cff] backdrop-blur-md"
-          >
-            <span>Virtual Captains Programs</span>
-          </div>
+        {/* Hero + Organisation/Individual tabs + program content */}
+        <ProgramsTabs
+          hero={
+            <>
+              <div
+                style={delay(0)}
+                className="vc-in mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1 text-xs font-medium text-[#8b9cff] backdrop-blur-md"
+              >
+                <span>Virtual Captains Programs</span>
+              </div>
 
-          <h1
-            style={delay(120)}
-            className="vc-in max-w-4xl font-serif text-4xl font-normal leading-[1.15] text-white sm:text-5xl lg:text-6xl"
-          >
-            Structured Enablement from{" "}
-            <span className="italic text-[#8b9cff]">Induction</span> to Quota
-          </h1>
+              <h1
+                style={delay(120)}
+                className="vc-in max-w-4xl font-serif text-4xl font-normal leading-[1.15] text-white sm:text-5xl lg:text-6xl"
+              >
+                Structured Enablement from{" "}
+                <span className="italic text-[#8b9cff]">Induction</span> to
+                Quota
+              </h1>
 
-          <p
-            style={delay(260)}
-            className="vc-in mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg"
-          >
-            From new-hire induction to enterprise deal desk coaching, our
-            tailored curriculum combine human mentorship with generative
-            simulations to build resilient, quota-crushing sellers.
-          </p>
+              <p
+                style={delay(260)}
+                className="vc-in mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg"
+              >
+                From new-hire induction to enterprise deal desk coaching, our
+                tailored curriculum combine human mentorship with generative
+                simulations to build resilient, quota-crushing sellers.
+              </p>
+            </>
+          }
+          organisation={
+            <>
+              <FoundersBatch />
+              {organisationPrograms.length > 0 && (
+                <section className="mt-24 border-t border-white/10 pt-16">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#38bdf8]">
+                    More programs
+                  </p>
+                  <h3 className="mt-3 font-serif text-3xl leading-tight text-white sm:text-4xl">
+                    Programs for{" "}
+                    <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
+                      founders & teams
+                    </span>
+                  </h3>
+                  <p className="mt-3 max-w-xl text-sm text-white/60 sm:text-base">
+                    Beyond the Founders Batch, explore programs built for your
+                    organisation and sales team.
+                  </p>
 
-          <div
-            style={delay(380)}
-            className="vc-in mt-10 flex flex-wrap items-center justify-center gap-4"
-          >
-            <Link
-              href="/organisations"
-              className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#1d4ed8]"
-            >
-              Organisation Curriculum
-            </Link>
-            <Link
-              href="/individuals"
-              className="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
-            >
-              Individual Coaching
-            </Link>
-          </div>
-        </section>
-
-        {/* Program cards (from Sanity) */}
-        <section className="mx-auto max-w-350 px-6 pb-24 sm:px-10 lg:px-16">
-          {programs.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {programs.map((p, i) => (
-                <ProgramCard key={p._id} program={p} index={i} />
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-white/70">
-              New programs are being added. Check back soon or{" "}
-              <Link href="/contact" className="text-[#38bdf8] underline">
-                talk to us
-              </Link>
-              .
-            </p>
-          )}
-        </section>
+                  <div className="mt-8">
+                    <ProgramGrid programs={organisationPrograms} />
+                  </div>
+                </section>
+              )}
+            </>
+          }
+          individual={<ProgramGrid programs={individualPrograms} />}
+        />
 
         {/* Curriculum with Students / Professionals / Founders toggle */}
-        <CurriculumSection />
-
+        <CurriculumSection
+          defaultTrack="founders"
+          comingSoon={["students", "professionals"]}
+        />
         <TestimonialsSection />
         <PartnersMarquee />
       </div>
