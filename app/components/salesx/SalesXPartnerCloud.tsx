@@ -21,7 +21,7 @@ interface PartnerItem {
   offsetY: number;
 }
 
-// 5 Authentic Partner Cards arranged symmetrically around the center title with high visibility
+// 6 Authentic Partner Cards arranged symmetrically around the center title with high visibility
 const partners: PartnerItem[] = [
   // ── TOP TRIO (Y = -165px to -195px) ──
   {
@@ -52,14 +52,14 @@ const partners: PartnerItem[] = [
     offsetY: -165,
   },
 
-  // ── BOTTOM PAIR (Y = +175px) ──
+  // ── BOTTOM TRIO (Y = +175px to +205px) ──
   {
     id: "p-moonhive",
     name: "MoonHive",
     logoSrc: "/partners/MOONHIV.png",
     filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
     imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-2",
-    offsetX: -22,
+    offsetX: -34,
     offsetY: 175,
   },
   {
@@ -68,8 +68,17 @@ const partners: PartnerItem[] = [
     logoSrc: "/partners/UNIFIRM.png",
     filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
     imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[180px] py-2",
-    offsetX: 22,
+    offsetX: 34,
     offsetY: 175,
+  },
+  {
+    id: "p-bbc",
+    name: "Bangalore Bioinnovation Centre",
+    logoSrc: "/partners/bbc-logo.png",
+    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
+    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-1",
+    offsetX: 0,
+    offsetY: 205,
   },
 ];
 
