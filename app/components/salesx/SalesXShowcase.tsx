@@ -26,7 +26,7 @@ export default function SalesXShowcase() {
           {/* Main Grouped Dashboards Preview */}
           <div className="relative w-full transition-transform duration-700 ease-out hover:scale-[1.01]">
             <Image
-              src="/salesx/groupdashbords.webp"
+              src="/salesx/grpdashboad.webp"
               alt="SalesX Multi-Perspective Dashboard Preview"
               width={2400}
               height={1440}

@@ -28,8 +28,8 @@ const partners: PartnerItem[] = [
     id: "p-ahad",
     name: "AHAD",
     logoSrc: "/partners/AHAD.png",
-    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-8 xl:h-10 w-auto max-w-[130px] xl:max-w-[170px]",
+    filterClass: "brightness-0 invert opacity-100",
+    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
     offsetX: -34,
     offsetY: -165,
   },
@@ -37,8 +37,8 @@ const partners: PartnerItem[] = [
     id: "p-jsr",
     name: "JSR",
     logoSrc: "/partners/JSR.png",
-    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-2",
+    filterClass: "brightness-0 invert opacity-100",
+    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
     offsetX: 0,
     offsetY: -195,
   },
@@ -46,8 +46,8 @@ const partners: PartnerItem[] = [
     id: "p-skylark",
     name: "Skylark",
     logoSrc: "/partners/SKYLARK.png",
-    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-2",
+    filterClass: "brightness-0 invert opacity-100",
+    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
     offsetX: 34,
     offsetY: -165,
   },
@@ -57,8 +57,8 @@ const partners: PartnerItem[] = [
     id: "p-moonhive",
     name: "MoonHive",
     logoSrc: "/partners/MOONHIV.png",
-    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-2",
+    filterClass: "brightness-0 invert opacity-100",
+    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
     offsetX: -34,
     offsetY: 175,
   },
@@ -66,8 +66,8 @@ const partners: PartnerItem[] = [
     id: "p-unifirm",
     name: "Unifirm",
     logoSrc: "/partners/UNIFIRM.png",
-    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[180px] py-2",
+    filterClass: "brightness-0 invert opacity-100",
+    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
     offsetX: 34,
     offsetY: 175,
   },
@@ -75,8 +75,8 @@ const partners: PartnerItem[] = [
     id: "p-bbc",
     name: "Bangalore Bioinnovation Centre",
     logoSrc: "/partners/bbc-logo.png",
-    filterClass: "brightness-0 invert opacity-95 group-hover:opacity-100",
-    imgClass: "h-12 xl:h-14 w-auto max-w-[130px] xl:max-w-[170px] py-1",
+    filterClass: "brightness-0 invert opacity-100",
+    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
     offsetX: 0,
     offsetY: 205,
   },
@@ -85,12 +85,12 @@ const partners: PartnerItem[] = [
 // Helper to render crisp, authentic brand logos with high luminescence
 function PartnerBadgeContent({ p }: { p: PartnerItem }) {
   return (
-    <div className="flex items-center justify-center w-full h-full px-3 py-2">
+    <div className="flex items-center justify-center w-full h-full px-1 py-1.5">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={p.logoSrc}
         alt={p.name}
-        className={`${p.imgClass || "h-16 sm:h-24 w-auto"} ${p.filterClass || "brightness-0 invert opacity-95"} object-cover transition-all duration-300 group-hover:scale-105 group-hover:opacity-100 group-hover:drop-shadow-[0_0_14px_rgba(56,189,248,0.85)]`}
+        className={`${p.imgClass || "h-16 sm:h-24 w-auto"} ${p.filterClass || "brightness-0 invert opacity-95"} object-contain transition-all duration-300 group-hover:scale-105 group-hover:opacity-100 group-hover:drop-shadow-[0_0_14px_rgba(56,189,248,0.85)]`}
         loading="lazy"
       />
     </div>
@@ -244,7 +244,7 @@ export default function SalesXPartnerCloud() {
       ref={sectionRef}
       role="region"
       aria-label="SalesX Partner Network and Ecosystem"
-      className="relative bg-salesx-bg overflow-hidden py-14 sm:py-32 select-none"
+      className="relative bg-salesx-bg overflow-hidden py-14 sm:py-20 lg:py-24 select-none"
     >
       {/* Central Blue Ambient Radial Glow matching reference image */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[950px] h-[350px] sm:h-[450px] lg:h-[550px] bg-radial from-[#1e40af]/25 via-[#0a1740]/15 to-transparent blur-[140px] pointer-events-none -z-10" />
@@ -263,7 +263,7 @@ export default function SalesXPartnerCloud() {
         {/* ── DESKTOP & TABLET: MATHEMATICALLY BALANCED 2-3-2-3-2 CONSTELLATION ── */}
         <div
           ref={stageRef}
-          className="hidden md:block relative w-full max-w-5xl xl:max-w-6xl mx-auto h-[620px] lg:h-[680px] xl:h-[720px]"
+          className="hidden md:block relative w-full max-w-5xl xl:max-w-6xl mx-auto h-[540px] lg:h-[580px] xl:h-[600px]"
         >
           {/* Central Title & Subtitle (Absolute Dead Center) */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center select-none pointer-events-none px-4 w-full max-w-2xl">
@@ -296,7 +296,7 @@ export default function SalesXPartnerCloud() {
                     transform: "translate(-50%, -50%)",
                   }}
                 >
-                  <div className="relative w-44 xl:w-56 h-14 xl:h-17 px-4 xl:px-6 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/25 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-108 hover:-translate-y-1 overflow-hidden">
+                  <div className="relative w-48 lg:w-52 xl:w-60 h-16 lg:h-18 xl:h-20 px-4 xl:px-5 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/25 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-108 hover:-translate-y-1 overflow-hidden">
                     {/* Ambient subtle backlight behind logo */}
                     <div className="absolute inset-0 bg-radial from-sky-400/15 via-transparent to-transparent opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500 pointer-events-none" />
 

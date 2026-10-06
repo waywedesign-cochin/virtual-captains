@@ -329,7 +329,7 @@ export default function SalesXAudience() {
                       </React.Fragment>
                     ))}
                   </h3>
-                  <p className="mt-3 lg:mt-4 xl:mt-5 text-xs lg:text-sm xl:text-base text-slate-300 leading-relaxed max-w-104 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">{t.intro}</p>
+                  <p className="text-sm sm:text-[15px] xl:text-base mt-3 lg:mt-4 xl:mt-5 text-slate-300 leading-relaxed max-w-104 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">{t.intro}</p>
                   <Ctas track={t} className="mt-4 lg:mt-6 xl:mt-8" />
                 </div>
               ))}
@@ -439,7 +439,7 @@ export default function SalesXAudience() {
             <h3 data-sx-reveal className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-[1.2] text-balance">
               {t.headline.join(" ")}
             </h3>
-            <p className="mt-4 sm:mt-5 text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">{t.intro}</p>
+            <p className="text-sm sm:text-[15px] xl:text-base mt-4 sm:mt-5 text-slate-300 leading-relaxed max-w-xl text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">{t.intro}</p>
             <ul data-sx-list className="mt-8 grid w-full gap-3 sm:grid-cols-2 text-left">
               {t.features.map((f) => (
                 <li

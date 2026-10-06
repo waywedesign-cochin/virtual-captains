@@ -193,7 +193,7 @@ export default function SalesXResultsHub() {
           >
             Results That <span className="italic text-[#4d82f5]">Speak For Themselves</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-md font-sans text-sm leading-relaxed text-slate-300/85 sm:text-base lg:mx-0 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+          <p className="text-sm sm:text-[15px] xl:text-base mx-auto mt-4 max-w-md font-sans leading-relaxed text-slate-300/85 lg:mx-0 text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
             Practice that mirrors real deals shows up where it matters: in
             careers, in pipelines and in revenue.
           </p>
