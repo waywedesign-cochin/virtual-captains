@@ -2,29 +2,27 @@
 
 import { useState, type CSSProperties, type ReactNode } from "react";
 
-export type ProgramTab = "organisation" | "individual";
+export type ProgramTab = "organisation" | "individual" | "upcoming";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
-/**
- * Renders the hero (passed in from the server page), the Organisation /
- * Individual tabs, and the matching content.
- */
 export function ProgramsTabs({
   hero,
   organisation,
   individual,
+  upcoming,
 }: {
   hero: ReactNode;
   organisation: ReactNode;
   individual: ReactNode;
+  upcoming: ReactNode;
 }) {
   const [tab, setTab] = useState<ProgramTab>("organisation");
   const [switched, setSwitched] = useState(false);
 
   const select = (t: ProgramTab) => {
     if (t === tab) return;
-    setSwitched(true); // after the first switch, skip the long entrance delay
+    setSwitched(true);
     setTab(t);
   };
 
@@ -65,16 +63,30 @@ export function ProgramsTabs({
           >
             Individual Coaching
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "upcoming"}
+            onClick={() => select("upcoming")}
+            className={tabClass(tab === "upcoming")}
+          >
+            Upcoming Programs
+          </button>
         </div>
       </section>
 
       {/* Program content */}
       <section
+        role="tabpanel"
         className={`mx-auto max-w-350 px-6 pb-24 sm:px-10 lg:px-16 ${
           switched ? "vc-switched" : ""
         }`}
       >
-        {tab === "organisation" ? organisation : individual}
+        {tab === "organisation"
+          ? organisation
+          : tab === "individual"
+            ? individual
+            : upcoming}
       </section>
     </>
   );

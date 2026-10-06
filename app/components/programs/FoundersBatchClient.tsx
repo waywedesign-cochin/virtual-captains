@@ -23,15 +23,17 @@ export function FormatTabs({
     setTab(t);
   };
 
-  const tabClass = (active: boolean) =>
-    `flex cursor-pointer items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold transition-all sm:px-5 sm:text-sm ${
-      active
-        ? "bg-white text-[#0b0e14] shadow-lg"
-        : "text-white/70 hover:text-white"
+  const isOffline = tab === "offline";
+
+  const optionClass = (active: boolean) =>
+    `relative z-10 flex cursor-pointer flex-col items-start rounded-full px-6 py-2.5 text-left transition-colors duration-300 ${
+      active ? "text-[#0b0e14]" : "text-white/65 hover:text-white"
     }`;
 
-  const dot = (active: boolean) =>
-    `h-1.5 w-1.5 rounded-full ${active ? "bg-[#2563eb]" : "bg-white/40"}`;
+  const subClass = (active: boolean) =>
+    `text-[11px] font-medium transition-colors duration-300 ${
+      active ? "text-[#0b0e14]/70" : "text-white/40"
+    }`;
 
   return (
     // Entrance animation on first load only; panel swaps below fade separately
@@ -39,27 +41,42 @@ export function FormatTabs({
       <div
         role="tablist"
         aria-label="Learning format"
-        className="mb-6 flex w-fit max-w-full flex-wrap gap-1 rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-md"
+        className="relative mb-6 grid w-fit max-w-full grid-cols-2 rounded-full border border-white/15 bg-white/5 p-1 backdrop-blur-md"
       >
+        {/* sliding highlight */}
+        <span
+          aria-hidden
+          className={`absolute bottom-1 left-1 top-1 w-[calc(50%-0.25rem)] rounded-full shadow-md transition-all duration-300 ease-out motion-reduce:transition-none ${
+            isOffline
+              ? "translate-x-0 bg-[#e7ff3d]"
+              : "translate-x-full bg-[#38bdf8]"
+          }`}
+        />
+
         <button
           type="button"
           role="tab"
-          aria-selected={tab === "offline"}
+          aria-selected={isOffline}
           onClick={() => select("offline")}
-          className={tabClass(tab === "offline")}
+          className={optionClass(isOffline)}
         >
-          <span aria-hidden className={dot(tab === "offline")} />
-          AI + Human Coaching · Offline
+          <span className="whitespace-nowrap text-xs font-bold sm:text-sm">
+            AI + Human Coaching
+          </span>
+          <span className={subClass(isOffline)}>Offline</span>
         </button>
+
         <button
           type="button"
           role="tab"
-          aria-selected={tab === "online"}
+          aria-selected={!isOffline}
           onClick={() => select("online")}
-          className={tabClass(tab === "online")}
+          className={optionClass(!isOffline)}
         >
-          <span aria-hidden className={dot(tab === "online")} />
-          AI Simulation · Online
+          <span className="whitespace-nowrap text-xs font-bold sm:text-sm">
+            AI Simulation
+          </span>
+          <span className={subClass(!isOffline)}>Online</span>
         </button>
       </div>
 
@@ -69,7 +86,7 @@ export function FormatTabs({
         className={switched ? "vc-in" : undefined}
         style={switched ? delay(0) : undefined}
       >
-        {tab === "offline" ? offline : online}
+        {isOffline ? offline : online}
       </div>
     </div>
   );
