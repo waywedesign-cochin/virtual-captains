@@ -124,7 +124,7 @@ export const HeroSection: React.FC = () => {
 
             <h1 className="mt-5 sm:mt-6 font-sans font-medium text-[clamp(2.5rem,6.2vw,5rem)] leading-[1.02] tracking-[-0.03em] text-white drop-shadow-[0_12px_40px_rgba(2,11,37,0.8)]">
               Grow Together
-              <span className="block bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8] bg-clip-text pb-[0.08em] text-transparent">
+              <span className="block bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8] bg-clip-text pb-[0.08em] pr-[0.1em] italic text-transparent">
                 With SalesX
               </span>
             </h1>
