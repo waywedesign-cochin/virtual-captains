@@ -124,7 +124,7 @@ export default function AboutMetrics() {
           <h2
             ref={headingRef}
             id="about-metrics-title"
-            className="mt-2 text-[clamp(1.75rem,4vw,3.25rem)] font-medium leading-[1.1] tracking-tight text-white"
+            className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl mt-2 font-medium leading-[1.1] tracking-tight text-white"
           >
             Our{" "}
             <span className="bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text italic text-transparent">

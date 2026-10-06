@@ -251,7 +251,7 @@ export default function AboutVideoCTA({ initialVideos = [] }: { initialVideos?: 
                 <p className="font-sans text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/50">
                   On YouTube
                 </p>
-                <ZoomHeading className="mt-2 text-2xl sm:text-3xl font-medium tracking-tight text-white">
+                <ZoomHeading className="mt-2 text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-medium tracking-tight text-white">
                   Recent &amp;{" "}
                   <span className="bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text italic text-transparent">
                     Upcoming

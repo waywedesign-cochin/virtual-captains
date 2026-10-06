@@ -210,23 +210,23 @@ export default function AboutInsideWorld() {
                 </span>
               </div>
 
-              <h2 ref={headingRef} className="text-3xl sm:text-4xl md:text-[2.6rem] lg:text-[2.5rem] xl:text-[3.25rem] 2xl:text-6xl [@media(max-height:700px)]:text-[2.25rem] font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
+              <h2 ref={headingRef} className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-normal tracking-tight text-white font-sans leading-[1.14] text-center lg:text-left">
                 Inside Our World
               </h2>
 
               {/* Tagline */}
-              <p className="mt-3 sm:mt-5 lg:mt-4 xl:mt-6 [@media(max-height:700px)]:mt-2 font-sans font-medium italic text-base sm:text-lg xl:text-xl [@media(max-height:700px)]:text-base bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(243,252,0,0.35)] text-center lg:text-left">
+              <p className="mt-3 sm:mt-5 lg:mt-4 xl:mt-6 [@media(max-height:700px)]:mt-2 font-sans font-medium italic text-base sm:text-lg xl:text-xl bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(243,252,0,0.35)] text-center lg:text-left">
                 &ldquo;More Than Scripts. More Than Techniques.&rdquo;
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+              <p className="text-sm sm:text-[15px] xl:text-base mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:leading-normal text-slate-200 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                 Virtual Captains is a sales execution company headquartered in
                 India with a presence across the Middle East, Europe and Asia. We
                 believe great sales come from clarity, strategy, confidence and
                 the right human approach, not memorised scripts.
               </p>
 
-              <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 text-xs sm:text-sm lg:text-[13.5px] xl:text-base [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-300/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+              <p className="text-sm sm:text-[15px] xl:text-base mt-2.5 sm:mt-4 lg:mt-3 xl:mt-5 [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:leading-normal text-slate-300/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                 Our team of sales strategists and practitioners works alongside
                 organisations to onboard talent, diagnose sales gaps, build
                 pipeline and sharpen teams. We combine AI-powered practice with
@@ -266,7 +266,7 @@ export default function AboutInsideWorld() {
                             }`}
                           >
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-3xl font-bold tracking-tight text-white font-sans text-center lg:text-left">
+                            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans text-center lg:text-left">
                               {pillar.title}
                             </h3>
                             <span className="font-sans text-[10px] uppercase tracking-wider text-[#8fd0ff] border border-[#8fd0ff]/30 rounded-md px-2 py-0.5">
@@ -274,15 +274,15 @@ export default function AboutInsideWorld() {
                             </span>
                           </div>
 
-                          <p className="mt-2.5 sm:mt-4 lg:mt-3.5 xl:mt-5 font-sans font-medium italic text-sm sm:text-base xl:text-lg leading-snug bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(243,252,0,0.3)] text-center lg:text-left">
+                          <p className="mt-2.5 sm:mt-4 lg:mt-3 xl:mt-4 font-sans font-medium italic text-sm sm:text-base leading-snug bg-linear-to-r from-[#D08817] to-[#F3FC00] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(243,252,0,0.3)] text-center lg:text-left">
                             {pillar.tag}
                           </p>
                           {typeof pillar.description === "string" ? (
-                            <p className="mt-2 sm:mt-3 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] [@media(max-height:700px)]:leading-normal text-slate-200 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+                            <p className="text-[13px] sm:text-sm mt-2 sm:mt-3 [@media(max-height:700px)]:leading-normal text-slate-200 leading-relaxed font-sans text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
                               {pillar.description}
                             </p>
                           ) : (
-                            <ul className="mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] lg:text-[13px] xl:text-[14.5px] [@media(max-height:700px)]:text-[13px] text-slate-200 leading-relaxed font-sans text-left">
+                            <ul className="mt-2 sm:mt-3 space-y-1.5 sm:space-y-2 text-[13px] sm:text-sm text-slate-200 leading-relaxed font-sans text-left">
                               {pillar.description.map((v) => (
                                 <li key={v.label} className="flex gap-2">
                                   <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-[#F3FC00]" />

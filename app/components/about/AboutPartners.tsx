@@ -194,7 +194,7 @@ export default function AboutPartners() {
         <div className="text-center mb-8 sm:mb-12 lg:mb-14 xl:mb-16">
           <h2
             ref={headingRef}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-normal tracking-tight text-white font-sans will-change-transform"
+            className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-normal tracking-tight text-white font-sans will-change-transform"
           >
             Partner Network
           </h2>
@@ -208,14 +208,14 @@ export default function AboutPartners() {
             ref={textRef}
             className="lg:col-span-5 flex flex-col items-center text-center lg:items-start lg:text-left max-w-xl mx-auto lg:mx-0 w-full will-change-transform"
           >
-            <p className="text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-200 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+            <p className="text-sm sm:text-[15px] xl:text-base text-slate-200 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               Virtual Captains partners with multinationals and SMEs across
               Asia, the Middle East, Europe and North America. We act as an
               extension of their brand, a trusted spoke in their growth model,
               building partner ecosystems and driving sales execution in every
               market they enter.
             </p>
-            <p className="mt-4 sm:mt-6 lg:mt-4 xl:mt-7 text-xs sm:text-sm lg:text-[13.5px] xl:text-base text-slate-300/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
+            <p className="text-sm sm:text-[15px] xl:text-base mt-4 sm:mt-6 lg:mt-4 xl:mt-7 text-slate-300/90 font-sans leading-relaxed text-justify hyphens-auto [text-align-last:center] lg:[text-align-last:left]">
               From identifying and onboarding the right channel partners to
               enabling their sales teams and managing performance on the
               ground, we make sure each market grows with the same standard as
