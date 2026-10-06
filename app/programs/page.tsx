@@ -45,12 +45,6 @@ const AUDIENCE_LABEL: Record<Program["audience"], string> = {
   organisations: "Organisations",
 };
 
-// Organisation tab: Sanity programs listed under the static Founders Batch
-const ORGANISATION_AUDIENCES: Program["audience"][] = [
-  "founders",
-  "organisations",
-];
-
 // Individual tab: Sanity programs for these audiences
 const INDIVIDUAL_AUDIENCES: Program["audience"][] = [
   "students",
@@ -464,9 +458,6 @@ export default async function ProgramsPage() {
     price: priceInr ? `₹${priceInr.toLocaleString("en-IN")}` : "Contact us",
   }));
 
-  const organisationPrograms = programs.filter((p) =>
-    ORGANISATION_AUDIENCES.includes(p.audience),
-  );
   const individualPrograms = programs.filter((p) =>
     INDIVIDUAL_AUDIENCES.includes(p.audience),
   );
@@ -527,33 +518,29 @@ export default async function ProgramsPage() {
               </p>
             </>
           }
-          organisation={
-            <>
-              <FoundersBatch />
-              {organisationPrograms.length > 0 && (
-                <section className="mt-24 border-t border-white/10 pt-16">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#38bdf8]">
-                    More programs
-                  </p>
-                  <h3 className="mt-3 font-serif text-3xl leading-tight text-white sm:text-4xl">
-                    Programs for{" "}
-                    <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
-                      founders & teams
-                    </span>
-                  </h3>
-                  <p className="mt-3 max-w-xl text-sm text-white/60 sm:text-base">
-                    Beyond the Founders Batch, explore programs built for your
-                    organisation and sales team.
-                  </p>
-
-                  <div className="mt-8">
-                    <ProgramGrid programs={organisationPrograms} />
-                  </div>
-                </section>
-              )}
-            </>
-          }
+          organisation={<FoundersBatch />}
           individual={<ProgramGrid programs={individualPrograms} />}
+          upcoming={
+            <section>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#38bdf8]">
+                Upcoming programs
+              </p>
+              <h3 className="mt-3 font-serif text-3xl leading-tight text-white sm:text-4xl">
+                What&apos;s{" "}
+                <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
+                  coming next
+                </span>
+              </h3>
+              <p className="mt-3 max-w-xl text-sm text-white/60 sm:text-base">
+                New programs for founders, teams, students and working
+                professionals. Open enrolment will be announced here.
+              </p>
+
+              <div className="mt-8">
+                <ProgramGrid programs={programs} />
+              </div>
+            </section>
+          }
         />
 
         {/* Curriculum with Students / Professionals / Founders toggle */}
