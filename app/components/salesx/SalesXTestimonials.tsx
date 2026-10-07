@@ -110,7 +110,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
 
         {/* ── Quote card ── */}
         <div
-          className="rounded-2xl px-4 py-3.5 cursor-pointer select-none"
+          className="rounded-2xl px-4 py-3.5 select-none"
           style={{
             background: hovered
               ? "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(12,20,56,0.7) 50%, rgba(7,11,32,0.82) 100%)"
@@ -150,6 +150,84 @@ export default function SalesXTestimonials() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subtextRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // ── Draggable marquee: auto-scrolls upward, pauses on mouse hover, and can
+  // be grabbed and flicked (mouse or touch) with momentum, looping endlessly.
+  const trackRef = useRef<HTMLDivElement>(null);
+  const offset = useRef(0); // px scrolled; wraps at half the track height
+  const velocity = useRef(0); // px/s momentum after a flick
+  const pausedRef = useRef(false);
+  const drag = useRef<{ id: number; y: number; t: number; moved: boolean } | null>(null);
+  const suppressClick = useRef(false);
+
+  useEffect(() => {
+    pausedRef.current = isPaused;
+  }, [isPaused]);
+
+  useEffect(() => {
+    const AUTO_SPEED = 28; // px/s
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const track = trackRef.current;
+      if (track && !drag.current) {
+        if (Math.abs(velocity.current) > 5) {
+          offset.current += velocity.current * dt;
+          velocity.current *= Math.pow(0.04, dt); // friction
+        } else {
+          velocity.current = 0;
+          if (!pausedRef.current && !reduce) offset.current += AUTO_SPEED * dt;
+        }
+      }
+      if (track) {
+        const half = track.scrollHeight / 2;
+        if (half > 0) offset.current = ((offset.current % half) + half) % half;
+        track.style.transform = `translate3d(0, ${-offset.current}px, 0)`;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const onDragStart = (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    drag.current = { id: e.pointerId, y: e.clientY, t: performance.now(), moved: false };
+    velocity.current = 0;
+  };
+  const onDragMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    const dy = e.clientY - d.y;
+    if (!d.moved && Math.abs(dy) < 6) return;
+    if (!d.moved) {
+      d.moved = true;
+      setIsDragging(true);
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    }
+    const now = performance.now();
+    const dt = Math.max((now - d.t) / 1000, 0.001);
+    offset.current -= dy;
+    // smoothed release velocity (content follows the finger)
+    velocity.current = velocity.current * 0.6 + (-dy / dt) * 0.4;
+    d.y = e.clientY;
+    d.t = now;
+  };
+  const onDragEnd = (e: React.PointerEvent) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    if (d.moved) {
+      suppressClick.current = true; // a drag isn't a tap on a card
+      if (performance.now() - d.t > 80) velocity.current = 0; // held still
+      velocity.current = Math.max(-2500, Math.min(2500, velocity.current));
+    }
+    drag.current = null;
+    setIsDragging(false);
+  };
 
   // GSAP entrance for left heading
   useEffect(() => {
@@ -251,16 +329,26 @@ export default function SalesXTestimonials() {
                 overflow: "hidden",
               }}
             >
-              {/* Scrolling track */}
+              {/* Scrolling track — driven by the rAF loop above */}
               <div
+                ref={trackRef}
+                onPointerDown={onDragStart}
+                onPointerMove={onDragMove}
+                onPointerUp={onDragEnd}
+                onPointerCancel={onDragEnd}
+                onClickCapture={(e) => {
+                  if (suppressClick.current) {
+                    suppressClick.current = false;
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }
+                }}
+                className={isDragging ? "cursor-grabbing" : "cursor-grab"}
                 style={{
-                  animationName: "marquee-up",
-                  animationDuration: "60s",
-                  animationTimingFunction: "linear",
-                  animationIterationCount: "infinite",
-                  animationPlayState: isPaused ? "paused" : "running",
                   willChange: "transform",
                   paddingTop: "60px", // room for top tooltip
+                  touchAction: "pan-x", // vertical finger drags move the list
+                  userSelect: "none",
                 }}
               >
                 {marqueeItems.map((t, idx) => (
@@ -270,7 +358,7 @@ export default function SalesXTestimonials() {
             </div>
 
             {/* Paused badge */}
-            {isPaused && (
+            {isPaused && !isDragging && (
               <div className="absolute top-4 right-3 z-30 px-2.5 py-1 rounded-full bg-white/8 backdrop-blur-sm border border-white/12 text-[10px] text-white/60 font-sans tracking-wide pointer-events-none">
                 ⏸ paused
               </div>
@@ -279,12 +367,6 @@ export default function SalesXTestimonials() {
         </div>
       </div>
 
-      <style>{`
-        @keyframes marquee-up {
-          0%   { transform: translateY(0); }
-          100% { transform: translateY(-50%); }
-        }
-      `}</style>
     </section>
   );
 }
