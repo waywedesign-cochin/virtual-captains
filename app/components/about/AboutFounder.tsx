@@ -208,10 +208,10 @@ export default function AboutFounder() {
             style={{
               position: "sticky",
               top: 0,
-              height: "100vh",
+              height: "100svh",
               width: "100%",
             }}
-            className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center"
+            className="sticky top-0 h-svh w-full overflow-hidden flex items-center justify-center"
           >
 
 

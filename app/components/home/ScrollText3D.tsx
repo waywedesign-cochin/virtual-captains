@@ -370,7 +370,7 @@ export default function ScrollText3D() {
       className="relative z-10 w-full bg-[#040507]"
     >
       <section
-        className="relative h-screen w-full overflow-hidden motion-reduce:h-auto motion-reduce:py-24 sm:motion-reduce:py-32"
+        className="relative h-svh w-full overflow-hidden motion-reduce:h-auto motion-reduce:py-24 sm:motion-reduce:py-32"
         style={{ perspective: "1200px" }}
       >
         <DottedBackground theme="dark" />

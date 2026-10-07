@@ -49,12 +49,6 @@ export const TESTIMONIALS: Testimonial[] = [
   },
   {
     quote:
-      "I am pleased to write this letter to express my appreciation for Roshna's exceptional sales capabilities. Roshna consistently demonstrates remarkable skills in sales and marketing that have helped her to incubate Virtual Captains successfully.",
-    name: "Deepak Nair",
-    role: "25+ years of international experience in IT, Telecom, Oil & Gas, Retail, Media and Education",
-  },
-  {
-    quote:
       "I highly recommend Roshna Saffar for the position of Sales Strategist. Her innovative strategies and proven track record in driving sales growth make her recommended for this role.",
     name: "Vismaya Biju",
     role: "Director & Co-Founder, Southern Sages Pvt Ltd",

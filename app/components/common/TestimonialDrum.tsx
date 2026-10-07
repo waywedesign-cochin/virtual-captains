@@ -190,8 +190,8 @@ export default function TestimonialDrum({
   return (
     <div
       className={`flex w-full flex-col items-center ${className}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
     >
       {/* ---------- QUOTE CYLINDER ---------- */}
       <div
