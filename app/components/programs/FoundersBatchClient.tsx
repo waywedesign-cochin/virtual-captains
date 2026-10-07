@@ -195,7 +195,7 @@ const LOCATIONS: Location[] = [
     ],
   },
   { id: "malaysia", name: "Malaysia", flag: "🇲🇾", cities: [] },
-  { id: "uae", name: "UAE", flag: "🇦🇪", cities: [] },
+  { id: "oman", name: "Oman", flag: "🇴🇲", cities: [] },
   { id: "other", name: "Other locations", flag: "🌍", cities: [] },
 ];
 
