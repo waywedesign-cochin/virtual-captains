@@ -1,97 +1,93 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
+import { PARTNERS, logoHeight, type Partner } from "@/app/content/partners";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface PartnerItem {
-  id: string;
-  name: string;
-  logoSrc: string;
-  filterClass?: string;
-  imgClass?: string;
-  // Horizontal offset from centre as a % of the stage width (so the side
-  // cards always stay inside it), vertical offset in px (scaled with the stage)
-  offsetX: number;
-  offsetY: number;
+/**
+ * Network layout (xl+): the title sits at the hub, partners sit on two
+ * elliptical orbits around it, joined by faint connection lines. Positions are
+ * % of the stage so it scales with the container. The inner ring is offset by
+ * half a step so its nodes fall between the outer ring's.
+ */
+const INNER_COUNT = 10;
+const RINGS = {
+  inner: { rx: 29, ry: 26 }, // % of stage width / height
+  outer: { rx: 45.5, ry: 44 },
+};
+/** How far the rings turn over the pinned scroll (radians). Both rings turn
+ *  by the same angle so they keep their interleaved spacing and never collide. */
+const SPIN = { inner: 0.55, outer: 0.55 };
+const NETWORK_QUERY = "(min-width: 1280px)";
+
+type Node = { p: Partner; angle: number; ring: "inner" | "outer" };
+
+const NODES: Node[] = PARTNERS.map((p, i) => {
+  const inner = i < INNER_COUNT;
+  const count = inner ? INNER_COUNT : PARTNERS.length - INNER_COUNT;
+  const idx = inner ? i : i - INNER_COUNT;
+  // start at the top, go clockwise; inner ring offset by half a step
+  const angle = -Math.PI / 2 + ((idx + (inner ? 0.5 : 0)) / count) * Math.PI * 2;
+  return { p, angle, ring: inner ? "inner" : "outer" };
+});
+
+// Rounded so server and browser render identical values — Math.cos/sin can
+// differ in the last digits between engines and break hydration
+const round = (v: number) => Math.round(v * 1000) / 1000;
+
+/** Node position (% of stage) after the rings have turned by `t` (0…1). */
+function posAt(i: number, t = 0) {
+  const n = NODES[i];
+  const { rx, ry } = RINGS[n.ring];
+  const a = n.angle + SPIN[n.ring] * t;
+  return { x: round(50 + rx * Math.cos(a)), y: round(50 + ry * Math.sin(a)) };
 }
 
-// 6 Authentic Partner Cards arranged symmetrically around the center title with high visibility
-const partners: PartnerItem[] = [
-  // ── TOP TRIO (Y = -165px to -195px) ──
-  {
-    id: "p-ahad",
-    name: "AHAD",
-    logoSrc: "/partners/AHAD.png",
-    filterClass: "brightness-0 invert opacity-100",
-    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
-    offsetX: -34,
-    offsetY: -165,
-  },
-  {
-    id: "p-jsr",
-    name: "JSR",
-    logoSrc: "/partners/JSR.png",
-    filterClass: "brightness-0 invert opacity-100",
-    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
-    offsetX: 0,
-    offsetY: -195,
-  },
-  {
-    id: "p-skylark",
-    name: "Skylark",
-    logoSrc: "/partners/SKYLARK.png",
-    filterClass: "brightness-0 invert opacity-100",
-    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
-    offsetX: 34,
-    offsetY: -165,
-  },
+/** Connection lines as node indices: hub (-1) → each inner node, and each
+ *  outer node → its nearest inner node. */
+const LINKS: { from: number; to: number }[] = (() => {
+  const innerIdx = NODES.map((_, i) => i).filter((i) => NODES[i].ring === "inner");
+  const links = innerIdx.map((i) => ({ from: -1, to: i }));
+  NODES.forEach((n, o) => {
+    if (n.ring !== "outer") return;
+    const po = posAt(o);
+    const near = innerIdx.reduce((best, i) => {
+      const a = posAt(i);
+      const b = posAt(best);
+      return Math.hypot(a.x - po.x, a.y - po.y) < Math.hypot(b.x - po.x, b.y - po.y) ? i : best;
+    });
+    links.push({ from: near, to: o });
+  });
+  return links;
+})();
 
-  // ── BOTTOM TRIO (Y = +175px to +205px) ──
-  {
-    id: "p-moonhive",
-    name: "MoonHive",
-    logoSrc: "/partners/MOONHIV.png",
-    filterClass: "brightness-0 invert opacity-100",
-    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
-    offsetX: -34,
-    offsetY: 175,
-  },
-  {
-    id: "p-unifirm",
-    name: "Unifirm",
-    logoSrc: "/partners/UNIFIRM.png",
-    filterClass: "brightness-0 invert opacity-100",
-    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
-    offsetX: 34,
-    offsetY: 175,
-  },
-  {
-    id: "p-bbc",
-    name: "Bangalore Bioinnovation Centre",
-    logoSrc: "/partners/bbc-logo.png",
-    filterClass: "brightness-0 invert opacity-100",
-    imgClass: "h-9 lg:h-11 xl:h-12 w-auto max-w-[160px] lg:max-w-[180px] xl:max-w-[210px]",
-    offsetX: 0,
-    offsetY: 205,
-  },
-];
+const linkCoords = (l: { from: number; to: number }, t = 0) => {
+  const a = l.from === -1 ? { x: 50, y: 50 } : posAt(l.from, t);
+  const b = posAt(l.to, t);
+  return { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
+};
 
-// Helper to render crisp, authentic brand logos with high luminescence
-function PartnerBadgeContent({ p }: { p: PartnerItem }) {
+function LogoGlass({ p, className = "" }: { p: Partner; className?: string }) {
   return (
-    <div className="flex items-center justify-center w-full h-full px-1 py-1.5">
+    <div
+      title={p.name}
+      className={`group relative flex items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-linear-to-b from-white/10 via-white/5 to-white/2 shadow-[0_10px_28px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-sky-400/80 hover:shadow-[0_0_30px_rgba(56,189,248,0.4),inset_0_1px_0_rgba(255,255,255,0.4)] ${className}`}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-radial from-sky-400/12 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-100" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={p.logoSrc}
         alt={p.name}
-        className={`${p.imgClass || "h-16 sm:h-24 w-auto"} ${p.filterClass || "brightness-0 invert opacity-95"} object-contain transition-all duration-300 group-hover:scale-105 group-hover:opacity-100 group-hover:drop-shadow-[0_0_14px_rgba(56,189,248,0.85)]`}
         loading="lazy"
+        draggable={false}
+        style={{ height: `${logoHeight(p.ratio)}%` }}
+        className="relative w-auto max-w-full object-contain opacity-80 brightness-0 invert transition-all duration-300 group-hover:scale-105 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(56,189,248,0.8)]"
       />
     </div>
   );
@@ -99,140 +95,145 @@ function PartnerBadgeContent({ p }: { p: PartnerItem }) {
 
 export default function SalesXPartnerCloud() {
   const sectionRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const desktopHeadingRef = useRef<HTMLHeadingElement>(null);
-  const mobileHeadingRef = useRef<HTMLHeadingElement>(null);
-  const desktopCardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const mobileCardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [stageScale, setStageScale] = useState(1);
-
-  // Dynamically calculate responsive scale so systematic geometry stays intact
-  useEffect(() => {
-    const handleResize = () => {
-      if (!stageRef.current) return;
-      const w = stageRef.current.offsetWidth;
-      if (w < 1140 && w >= 768) {
-        setStageScale(Math.max(0.72, w / 1140));
-      } else {
-        setStageScale(1);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const headingRefs = useRef<(HTMLHeadingElement | null)[]>([]);
+  const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const lineRefs = useRef<(SVGLineElement | null)[]>([]);
+  const linesRef = useRef<SVGSVGElement>(null);
+  const cameraRef = useRef<HTMLDivElement>(null);
+  const rigRef = useRef<HTMLDivElement>(null);
+  const hubRef = useRef<HTMLDivElement>(null);
+  const gridRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (prefersReducedMotion || !sectionRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    const desktopCards = desktopCardsRef.current.filter(
-      Boolean,
-    ) as HTMLDivElement[];
-    const mobileCards = mobileCardsRef.current.filter(
-      Boolean,
-    ) as HTMLDivElement[];
-
-    // 0. Initial Headings State: Signature spring reveal
-    if (desktopHeadingRef.current) {
-      gsap.set(desktopHeadingRef.current, {
-        ...HEADING_REVEAL_FROM,
-        transformOrigin: "center center",
-        force3D: true,
-      });
-    }
-    if (mobileHeadingRef.current) {
-      gsap.set(mobileHeadingRef.current, {
-        ...HEADING_REVEAL_FROM,
-        transformOrigin: "center center",
-        force3D: true,
-      });
-    }
-
-    // 1. Initial Hidden State: Center text is visible; cards start hidden behind center
-    desktopCards.forEach((card, idx) => {
-      const p = partners[idx];
-      // Offset originating from near center behind the title
-      const stageW = stageRef.current?.offsetWidth ?? 1024;
-      const startX = -((p.offsetX / 100) * stageW) * 0.8;
-      const startY = -p.offsetY * 0.8;
-
-      gsap.set(card, {
-        opacity: 0,
-        scale: 0.15,
-        x: startX,
-        y: startY,
-        force3D: true,
-      });
-    });
-
-    if (mobileCards.length > 0) {
-      gsap.set(mobileCards, {
-        opacity: 0,
-        y: 20,
-        scale: 0.92,
-      });
-    }
-
-    // 2. Viewport Entrance Trigger
     const ctx = gsap.context(() => {
+      const headings = headingRefs.current.filter(Boolean);
+      gsap.set(headings, { ...HEADING_REVEAL_FROM, transformOrigin: "center center", force3D: true });
       ScrollTrigger.create({
-        trigger: sectionRef.current,
+        trigger: section,
         start: "top 72%",
         once: true,
         onEnter: () => {
-          // Headings signature jumping zoom-in reveal
-          const headings = [desktopHeadingRef.current, mobileHeadingRef.current].filter(Boolean);
-          if (headings.length > 0) {
-            gsap.to(headings, {
-              force3D: true,
-              ...HEADING_REVEAL,
-            });
-          }
-
-          // Desktop: Radial bloom outward to exact symmetrical coordinates
-          if (desktopCards.length > 0) {
-            gsap.to(desktopCards, {
-              opacity: 1,
-              scale: 1,
-              x: 0,
-              y: 0,
-              duration: 1.05,
-              ease: "back.out(1.4)",
-              stagger: {
-                each: 0.045,
-                from: "center", // Symmetrical explosion outward!
-              },
-              onComplete: () => {
-                // Symmetrical zero-gravity floating oscillation
-                desktopCards.forEach((card, i) => {
-                  gsap.to(card, {
-                    y: "+=5",
-                    duration: 2.4 + (i % 3) * 0.5,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "sine.inOut",
-                    delay: (i % 4) * 0.15,
-                  });
-                });
-              },
-            });
-          }
-
-          // Mobile: Elegant slide up stagger
-          if (mobileCards.length > 0) {
-            gsap.to(mobileCards, {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.75,
-              ease: "power2.out",
-              stagger: 0.04,
-            });
-          }
+          gsap.to(headings, { force3D: true, ...HEADING_REVEAL });
         },
+      });
+
+      const mm = gsap.matchMedia();
+
+      // ── XL+: pinned cinematic camera ──────────────────────────────────
+      mm.add(NETWORK_QUERY, () => {
+        const nodes = nodeRefs.current.filter(Boolean) as HTMLDivElement[];
+        const lines = lineRefs.current;
+
+        // Depth: inner ring nearer the lens than the outer ring, so the rings
+        // parallax against each other whenever the camera tilts.
+        nodes.forEach((el, i) => gsap.set(el, { z: NODES[i].ring === "inner" ? 30 : -30 }));
+
+        // Ring rotation, driven by a proxy so nodes + lines move together
+        const orbit = { t: 0 };
+        const placeOrbit = () => {
+          nodes.forEach((el, i) => {
+            const { x, y } = posAt(i, orbit.t);
+            el.style.left = `${x}%`;
+            el.style.top = `${y}%`;
+          });
+          LINKS.forEach((l, i) => {
+            const line = lines[i];
+            if (!line) return;
+            const c = linkCoords(l, orbit.t);
+            line.setAttribute("x1", `${c.x1}`);
+            line.setAttribute("y1", `${c.y1}`);
+            line.setAttribute("x2", `${c.x2}`);
+            line.setAttribute("y2", `${c.y2}`);
+          });
+        };
+
+        const tl = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=220%",
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // 1. Open tight on the title, low and tilted; logos fade in from depth
+        tl.fromTo(
+          cameraRef.current,
+          { scale: 2.4, rotateX: 58, rotateZ: -8, y: 240 },
+          { scale: 1, rotateX: 0, rotateZ: 0, y: 0, duration: 1.2, ease: "power2.inOut" },
+          0,
+        )
+          .fromTo(
+            nodes,
+            { opacity: 0, scale: 0.4 },
+            { opacity: 1, scale: 1, duration: 0.7, stagger: 0.02, ease: "power2.out" },
+            0.25,
+          )
+          .fromTo(linesRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.6)
+          // 2. Rings turn together while the camera settles
+          .to(orbit, { t: 1, duration: 2.2, ease: "sine.inOut", onUpdate: placeOrbit }, 0.4)
+          // 3. Slow push-in with a gentle roll to close the shot
+          .to(
+            cameraRef.current,
+            { scale: 1.08, rotateX: -8, rotateZ: 2, duration: 1.2, ease: "power1.inOut" },
+            1.4,
+          )
+          .to(hubRef.current, { scale: 1.06, duration: 1.2, ease: "power1.inOut" }, 1.4);
+
+        // Mouse parallax on the rig, a few degrees toward the cursor
+        const tiltX = gsap.quickTo(rigRef.current, "rotateX", { duration: 0.9, ease: "power3.out" });
+        const tiltY = gsap.quickTo(rigRef.current, "rotateY", { duration: 0.9, ease: "power3.out" });
+        const onMove = (e: PointerEvent) => {
+          if (e.pointerType !== "mouse") return;
+          const r = section.getBoundingClientRect();
+          tiltY(((e.clientX - r.left) / r.width - 0.5) * 12);
+          tiltX(-((e.clientY - r.top) / r.height - 0.5) * 8);
+        };
+        const onLeave = () => {
+          tiltX(0);
+          tiltY(0);
+        };
+        section.addEventListener("pointermove", onMove);
+        section.addEventListener("pointerleave", onLeave);
+
+        // Sections above (e.g. the pinned hero) change the page height after
+        // load — re-measure so the pin starts in the right place.
+        const refresh = () => ScrollTrigger.refresh();
+        window.addEventListener("load", refresh);
+
+        return () => {
+          section.removeEventListener("pointermove", onMove);
+          section.removeEventListener("pointerleave", onLeave);
+          window.removeEventListener("load", refresh);
+          orbit.t = 0;
+          placeOrbit();
+        };
+      });
+
+      // ── Below XL: grid cards slide up ─────────────────────────────────
+      mm.add(`not all and ${NETWORK_QUERY}`, () => {
+        const grid = gridRefs.current.filter(Boolean) as HTMLDivElement[];
+        gsap.fromTo(
+          grid,
+          { opacity: 0, y: 18, scale: 0.94 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.7,
+            ease: "power2.out",
+            stagger: 0.03,
+            scrollTrigger: { trigger: section, start: "top 72%", once: true },
+          },
+        );
       });
     }, sectionRef);
 
@@ -246,10 +247,10 @@ export default function SalesXPartnerCloud() {
       aria-label="SalesX Partner Network and Ecosystem"
       className="relative bg-salesx-bg overflow-hidden py-14 sm:py-20 lg:py-24 select-none"
     >
-      {/* Central Blue Ambient Radial Glow matching reference image */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[950px] h-[350px] sm:h-[450px] lg:h-[550px] bg-radial from-[#1e40af]/25 via-[#0a1740]/15 to-transparent blur-[140px] pointer-events-none -z-10" />
+      {/* Central ambient glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[1100px] h-[350px] sm:h-[450px] lg:h-[600px] bg-radial from-[#1e40af]/25 via-[#0a1740]/15 to-transparent blur-[140px] pointer-events-none -z-10" />
 
-      {/* Subtle Starfield Dot Grid - Standardized Cosmic Grid Token */}
+      {/* Starfield dot grid */}
       <div
         className="absolute inset-0 opacity-15 pointer-events-none -z-10"
         style={{
@@ -260,59 +261,101 @@ export default function SalesXPartnerCloud() {
       />
 
       <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
-        {/* ── DESKTOP & TABLET: MATHEMATICALLY BALANCED 2-3-2-3-2 CONSTELLATION ── */}
+        {/* ── XL+: NETWORK — hub title, two orbits, connection lines ── */}
+        <div className="hidden xl:block perspective-[1800px]">
+        {/* camera = scroll dolly, rig = mouse tilt; both keep 3D for depth */}
+        <div ref={cameraRef} className="transform-3d will-change-transform">
         <div
-          ref={stageRef}
-          className="hidden md:block relative w-full max-w-5xl xl:max-w-6xl mx-auto h-[540px] lg:h-[580px] xl:h-[600px]"
+          ref={rigRef}
+          className="relative w-full h-[min(760px,calc(100svh-140px))] 2xl:h-[min(800px,calc(100svh-140px))] transform-3d"
         >
-          {/* Central Title & Subtitle (Absolute Dead Center) */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center select-none pointer-events-none px-4 w-full max-w-2xl">
+          <svg
+            ref={linesRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            {/* orbit guides */}
+            {(["inner", "outer"] as const).map((r) => (
+              <ellipse
+                key={r}
+                cx="50"
+                cy="50"
+                rx={RINGS[r].rx}
+                ry={RINGS[r].ry}
+                fill="none"
+                stroke="rgba(147,197,253,0.10)"
+                strokeDasharray="2 6"
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+            {LINKS.map((l, i) => (
+              <line
+                key={i}
+                ref={(el) => {
+                  lineRefs.current[i] = el;
+                }}
+                {...linkCoords(l)}
+                stroke={l.from === -1 ? "rgba(56,189,248,0.22)" : "rgba(147,197,253,0.14)"}
+                strokeWidth="1"
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+          </svg>
+
+          {/* Hub */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center pointer-events-none">
+            <div ref={hubRef}>
             <h2
-              ref={desktopHeadingRef}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-white font-sans drop-shadow-[0_0_35px_rgba(255,255,255,0.18)] whitespace-nowrap will-change-transform"
+              ref={(el) => {
+                headingRefs.current[0] = el;
+              }}
+              className="text-5xl 2xl:text-6xl font-bold tracking-tight text-white font-sans drop-shadow-[0_0_35px_rgba(255,255,255,0.18)] whitespace-nowrap will-change-transform"
             >
               Partner Network
             </h2>
-            <p className="mt-4 sm:mt-5 text-xs sm:text-sm lg:text-base text-slate-200 font-light tracking-[0.28em] uppercase font-sans">
+            <p className="mt-3 text-xs 2xl:text-sm text-slate-200 font-light tracking-[0.28em] uppercase font-sans">
               Grow Alongside SalesX
             </p>
+            </div>
           </div>
 
-          {/* 12 Floating Partner Cards (Bilateral & Vertical Reflection Symmetry) */}
-          <div className="absolute inset-0 pointer-events-none">
-            {partners.map((p, idx) => {
-              const yPos = p.offsetY * stageScale;
-
-              return (
-                <div
-                  key={p.id}
-                  ref={(el) => {
-                    desktopCardsRef.current[idx] = el;
-                  }}
-                  className="absolute pointer-events-auto cursor-pointer group will-change-transform"
-                  style={{
-                    left: `${50 + p.offsetX}%`,
-                    top: `calc(50% + ${yPos}px)`,
-                    transform: "translate(-50%, -50%)",
-                  }}
-                >
-                  <div className="relative w-48 lg:w-52 xl:w-60 h-16 lg:h-18 xl:h-20 px-4 xl:px-5 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/25 hover:border-sky-400/90 shadow-[0_12px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-108 hover:-translate-y-1 overflow-hidden">
-                    {/* Ambient subtle backlight behind logo */}
-                    <div className="absolute inset-0 bg-radial from-sky-400/15 via-transparent to-transparent opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500 pointer-events-none" />
-
-                    <PartnerBadgeContent p={p} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {/* Nodes */}
+          {NODES.map((n, i) => (
+            <div
+              key={n.p.name}
+              ref={(el) => {
+                nodeRefs.current[i] = el;
+              }}
+              className="absolute z-10 will-change-transform"
+              style={{
+                left: `${posAt(i).x}%`,
+                top: `${posAt(i).y}%`,
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <LogoGlass
+                p={n.p}
+                className={
+                  n.ring === "inner"
+                    ? "h-14 w-34 px-4 py-3 2xl:h-15 2xl:w-38"
+                    : "h-12 w-30 px-3.5 py-2.5 2xl:h-13 2xl:w-34"
+                }
+              />
+            </div>
+          ))}
+        </div>
+        </div>
         </div>
 
-        {/* ── MOBILE VIEW (Clean responsive systematically spaced grid) ── */}
-        <div className="md:hidden flex flex-col items-center text-center">
+        {/* ── BELOW XL: title + responsive glass grid ── */}
+        <div className="xl:hidden flex flex-col items-center text-center">
           <h2
-            ref={mobileHeadingRef}
-            className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-sans will-change-transform"
+            ref={(el) => {
+              headingRefs.current[1] = el;
+            }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white font-sans will-change-transform"
           >
             Partner Network
           </h2>
@@ -320,21 +363,18 @@ export default function SalesXPartnerCloud() {
             Grow Alongside SalesX
           </p>
 
-          <div className="grid grid-cols-2 gap-3.5 mt-10 w-full max-w-sm sm:max-w-md">
-            {partners.map((p, idx) => (
+          {/* flex-wrap + centred so a short last row sits in the middle
+              instead of hanging off the left */}
+          <div className="mt-10 flex w-full flex-wrap justify-center gap-3 sm:gap-4">
+            {PARTNERS.map((p, i) => (
               <div
-                key={`m-${p.id}`}
+                className="basis-[calc((100%-0.75rem)/2)] sm:basis-[calc((100%-2rem)/3)] md:basis-[calc((100%-3rem)/4)] lg:basis-[calc((100%-4rem)/5)]"
+                key={`g-${p.name}`}
                 ref={(el) => {
-                  mobileCardsRef.current[idx] = el;
+                  gridRefs.current[i] = el;
                 }}
-                className={`relative h-15 px-4 py-2 rounded-2xl bg-linear-to-b from-white/[0.12] via-white/[0.06] to-white/[0.02] border border-white/20 flex items-center justify-center shadow-lg overflow-hidden ${
-                  idx === partners.length - 1 && partners.length % 2 === 1
-                    ? "col-span-2 max-w-[220px] mx-auto w-full"
-                    : ""
-                }`}
               >
-                <div className="absolute inset-0 bg-radial from-sky-400/10 via-transparent to-transparent pointer-events-none" />
-                <PartnerBadgeContent p={p} />
+                <LogoGlass p={p} className="h-16 w-full px-4 py-3 sm:h-18" />
               </div>
             ))}
           </div>

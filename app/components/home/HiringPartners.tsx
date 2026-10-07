@@ -9,41 +9,7 @@ import DottedBackground from "./DottedBackground";
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
-type Partner = { name: string; logoSrc: string };
-
-/**
- * Client & partner logos, one entry per company. Files in public/network/ are
- * cleaned copies of public/clientlogos/ + public/partners/ (background removed,
- * margins trimmed, transparent WebP) so they sit on glass cards. Add new logos
- * here — they're split across the two rows automatically.
- */
-const PARTNERS: Partner[] = [
-  { name: "ThoughtBox", logoSrc: "/network/thoughtbox.webp" },
-  { name: "Cyncly", logoSrc: "/network/cyncly.webp" },
-  { name: "MoonHive", logoSrc: "/network/moonhive.webp" },
-  { name: "Skylark", logoSrc: "/network/skylark.webp" },
-  { name: "AHAD", logoSrc: "/network/ahad.webp" },
-  { name: "GMap", logoSrc: "/network/gmap.webp" },
-  { name: "KIED", logoSrc: "/network/kied.webp" },
-  { name: "Southern Sages", logoSrc: "/network/southern_sages.webp" },
-  { name: "Sigma Life Unifirm", logoSrc: "/network/unifirm.webp" },
-  { name: "Bangalore Bioinnovation Centre", logoSrc: "/network/bbc.webp" },
-  { name: "JSR", logoSrc: "/network/jsr.webp" },
-  { name: "Expeed Software", logoSrc: "/network/expeed.webp" },
-  { name: "Saaslogic", logoSrc: "/network/saaslogic.webp" },
-  { name: "Skybertech", logoSrc: "/network/skybertech.webp" },
-  { name: "CleverBrain", logoSrc: "/network/cleverbrain.webp" },
-  { name: "Kaniverse", logoSrc: "/network/kaniverse.webp" },
-  { name: "GPower", logoSrc: "/network/gpower.webp" },
-  { name: "Gulf Genuine Power Projects", logoSrc: "/network/ggpl.webp" },
-  { name: "GEO Engineering", logoSrc: "/network/geo.webp" },
-  { name: "Riyada SME", logoSrc: "/network/riyada.webp" },
-  { name: "Startup Park", logoSrc: "/network/startup_park.webp" },
-  { name: "WOI India", logoSrc: "/network/woi.webp" },
-  { name: "iQue", logoSrc: "/network/ique.webp" },
-  { name: "KLBuild", logoSrc: "/network/klbuild.webp" },
-  { name: "KMEA", logoSrc: "/network/kmea.webp" },
-];
+import { PARTNERS, logoHeight, type Partner } from "@/app/content/partners";
 
 const HALF = Math.ceil(PARTNERS.length / 2);
 const ROWS = [PARTNERS.slice(0, HALF), PARTNERS.slice(HALF)];
@@ -66,7 +32,8 @@ function LogoCard({ partner }: { partner: Partner }) {
         alt={partner.name}
         loading="lazy"
         draggable={false}
-        className="max-h-full max-w-full object-contain opacity-70 brightness-0 invert transition-all duration-300 group-hover:scale-105 group-hover:opacity-100"
+        style={{ height: `${logoHeight(partner.ratio)}%` }}
+        className="w-auto max-w-full object-contain opacity-70 brightness-0 invert transition-all duration-300 group-hover:scale-105 group-hover:opacity-100"
       />
     </li>
   );
