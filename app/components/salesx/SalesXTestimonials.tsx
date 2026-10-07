@@ -34,111 +34,70 @@ const testimonials: Testimonial[] = TESTIMONIALS.map((t, i) => ({
 // Duplicated for seamless infinite loop
 const marqueeItems = [...testimonials, ...testimonials];
 
+/** "Aisha Rahman" → "AR" for avatars without a logo. */
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter((w) => /^[A-Za-z]/.test(w))
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
+
+/**
+ * Chat-message testimonial: the client's logo sits beside the card like a
+ * chat avatar, with a sender line (name · role · stars) above the quote —
+ * always visible, no hover needed. Cards alternate sides like a conversation.
+ */
 function TestimonialCard({ t }: { t: Testimonial }) {
-  const [hovered, setHovered] = useState(false);
-
+  const right = t.align === "right";
   return (
-    <div
-      style={{ position: "relative", zIndex: hovered ? 40 : 1 }}
-      className={`flex w-full mb-3.5 ${t.align === "right" ? "justify-end pr-2" : "justify-start pl-2"}`}
-    >
-      {/* Card wrapper — relative so the tooltip anchors to it */}
-      {/* Raise the hovered/tapped card above its neighbours — Safari otherwise
-          paints the bubble under the card above (backdrop-filter layers) */}
+    <div className={`mb-5 flex w-full ${right ? "justify-end" : "justify-start"}`}>
       <div
-        className="relative max-w-[88%] sm:max-w-[82%]"
-        style={{ zIndex: hovered ? 40 : 1, transform: "translateZ(0)" }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        className={`flex max-w-[94%] items-end gap-2.5 sm:max-w-[86%] sm:gap-3 ${right ? "flex-row-reverse" : ""}`}
       >
-        {/* ── Author speech bubble tooltip (appears above on hover) ── */}
-        <div
-          className="absolute z-50 pointer-events-none"
-          style={{
-            bottom: "calc(100% + 10px)",
-            ...(t.align === "right" ? { right: 0 } : { left: 0 }),
-            opacity: hovered ? 1 : 0,
-            transform: hovered ? "translateY(0) scale(1)" : "translateY(6px) scale(0.96)",
-            transition: "opacity 0.2s ease, transform 0.2s ease",
-            transformOrigin: t.align === "right" ? "bottom right" : "bottom left",
-          }}
-        >
-          {/* Blue bubble */}
-          <div
-            className="inline-flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,82,204,0.45)]"
-            style={{ background: "#0052cc", minWidth: "160px", maxWidth: "min(80vw, 340px)" }}
-          >
-            {/* Avatar circle */}
-            <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 border-2 border-white/40 overflow-hidden text-slate-800 font-bold text-xs font-sans"
-            >
-              {t.logo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={encodeURI(t.logo)} alt="" className="h-full w-full bg-white object-contain p-1" />
-              ) : (
-                <svg className="w-6 h-6 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-              )}
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-bold text-white font-sans leading-tight">{t.author}</p>
-              <p className="text-[11px] text-white/75 font-sans leading-snug">{t.role}</p>
-              <div className="flex gap-0.5 mt-0.5">
-                {Array.from({ length: t.rating }).map((_, i) => (
-                  <span key={i} className="text-white" style={{ fontSize: "12px" }}>
-                    ★
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Downward tail — aligned to match card side */}
-          <div
-            className="absolute -bottom-2"
-            style={{
-              ...(t.align === "right" ? { right: "18px" } : { left: "18px" }),
-              width: 0,
-              height: 0,
-              borderLeft: "8px solid transparent",
-              borderRight: "8px solid transparent",
-              borderTop: "8px solid #0052cc",
-            }}
-          />
+        {/* Avatar */}
+        <div className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white/25 bg-white shadow-[0_4px_14px_rgba(0,0,0,0.35)] sm:h-10 sm:w-10">
+          {t.logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={encodeURI(t.logo)}
+              alt=""
+              draggable={false}
+              className="h-[78%] w-[78%] object-contain"
+            />
+          ) : (
+            <span className="font-sans text-[11px] font-bold text-[#0a1236]">
+              {initials(t.author)}
+            </span>
+          )}
         </div>
 
-        {/* ── Quote card ── */}
-        <div
-          className="rounded-2xl px-4 py-3.5 select-none"
-          style={{
-            background: hovered
-              ? "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(12,20,56,0.7) 50%, rgba(7,11,32,0.82) 100%)"
-              : "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(8,13,38,0.55) 50%, rgba(6,9,26,0.68) 100%)",
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderTopColor: hovered
-              ? "rgba(56,189,248,0.5)"
-              : "rgba(255,255,255,0.15)",
-            borderRightColor: hovered
-              ? "rgba(56,189,248,0.4)"
-              : "rgba(255,255,255,0.09)",
-            borderBottomColor: hovered
-              ? "rgba(56,189,248,0.4)"
-              : "rgba(255,255,255,0.09)",
-            borderLeftColor: hovered
-              ? "rgba(56,189,248,0.4)"
-              : "rgba(255,255,255,0.09)",
-            backdropFilter: "blur(16px)",
-            boxShadow: hovered
-              ? "0 0 20px rgba(56,189,248,0.12), inset 0 1px 0 rgba(255,255,255,0.12)"
-              : "inset 0 1px 0 rgba(255,255,255,0.07)",
-            transition: "background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
-          }}
-        >
-          <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
-            {t.quote}
-          </p>
+        <div className={`flex min-w-0 flex-col ${right ? "items-end" : "items-start"}`}>
+          {/* Sender line */}
+          <div
+            className={`mb-1.5 flex max-w-full flex-wrap items-center gap-x-2 gap-y-0.5 px-1 ${right ? "justify-end text-right" : ""}`}
+          >
+            <span className="font-sans text-[13px] font-semibold text-white sm:text-sm">
+              {t.author}
+            </span>
+            <span className="font-sans text-[11px] text-slate-400 sm:text-xs">{t.role}</span>
+            <span
+              role="img"
+              aria-label={`${t.rating} out of 5 stars`}
+              className="text-[11px] tracking-[1px] text-[#F3FC00]"
+            >
+              {"★".repeat(t.rating)}
+            </span>
+          </div>
+
+          {/* Quote bubble — the corner nearest the avatar is squared off */}
+          <div
+            className={`rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06)_0%,rgba(8,13,38,0.6)_50%,rgba(6,9,26,0.72)_100%)] px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl transition-colors duration-300 hover:border-[#38bdf8]/40 ${right ? "rounded-br-md" : "rounded-bl-md"}`}
+          >
+            <p className="select-none font-sans text-xs leading-relaxed text-slate-200 sm:text-sm">
+              {t.quote}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -284,7 +243,7 @@ export default function SalesXTestimonials() {
         }}
       />
 
-      <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-32">
+      <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-32">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
 
           {/* ── LEFT COLUMN ── */}
@@ -317,7 +276,7 @@ export default function SalesXTestimonials() {
             onPointerEnter={(e) => e.pointerType === "mouse" && setIsPaused(true)}
             onPointerLeave={(e) => e.pointerType === "mouse" && setIsPaused(false)}
           >
-            {/* Mask fade top + bottom — no overflow:hidden so tooltips aren't clipped */}
+            {/* Mask fade top + bottom */}
             <div
               className="relative"
               style={{
@@ -346,7 +305,6 @@ export default function SalesXTestimonials() {
                 className={isDragging ? "cursor-grabbing" : "cursor-grab"}
                 style={{
                   willChange: "transform",
-                  paddingTop: "60px", // room for top tooltip
                   touchAction: "pan-x", // vertical finger drags move the list
                   userSelect: "none",
                 }}

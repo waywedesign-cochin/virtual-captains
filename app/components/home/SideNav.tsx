@@ -11,7 +11,7 @@ export const NAV_SECTIONS = [
   "Choose Your Path",
   "The Model",
   "Cross Country",
-  "Endorsement",
+  // "Endorsement", — section removed from the home page for now
   "The Impact",
   "Partner",
 ] as const;
@@ -115,17 +115,18 @@ export default function SideNav() {
         return;
       }
 
-      // 6. Endorsement
-      const endEnd = endPin ? endPin.end : ccEnd + vh * 2.2;
-      if (scrollY < endEnd) {
-        setNavState(4, "dark");
-        return;
-      }
+      // 6. Endorsement — section commented out on the home page
+      // const endEnd = endPin ? endPin.end : ccEnd + vh * 2.2;
+      // if (scrollY < endEnd) {
+      //   setNavState(4, "dark");
+      //   return;
+      // }
+      const endEnd = endPin ? endPin.end : ccEnd;
 
       // 7. The Impact
       const impactEnd = impactPin ? impactPin.end : endEnd + vh * 2.2;
       if (scrollY < impactEnd) {
-        setNavState(5, "dark");
+        setNavState(4, "dark");
         return;
       }
 
@@ -149,7 +150,7 @@ export default function SideNav() {
         return;
       }
 
-      setNavState(6, "dark");
+      setNavState(5, "dark");
     };
 
     update();
@@ -268,23 +269,23 @@ export default function SideNav() {
         }
         break;
 
-      case 4: { // Endorsement
-        if (endPin) {
-          targetY = endPin.start + 5;
-        } else {
-          const el = document.querySelector<HTMLElement>(
-            '[data-nav-section="Endorsement"]',
-          );
-          if (el) {
-            targetY = el.getBoundingClientRect().top + currentScroll;
-          } else if (ccPin) {
-            targetY = ccPin.end + vh;
-          }
-        }
-        break;
-      }
+      // case 4: { // Endorsement
+      //   if (endPin) {
+      //     targetY = endPin.start + 5;
+      //   } else {
+      //     const el = document.querySelector<HTMLElement>(
+      //       '[data-nav-section="Endorsement"]',
+      //     );
+      //     if (el) {
+      //       targetY = el.getBoundingClientRect().top + currentScroll;
+      //     } else if (ccPin) {
+      //       targetY = ccPin.end + vh;
+      //     }
+      //   }
+      //   break;
+      // }
 
-      case 5: { // The Impact
+      case 4: { // The Impact
         if (impactPin) {
           targetY = impactPin.start + 5;
         } else {
@@ -298,7 +299,7 @@ export default function SideNav() {
         break;
       }
 
-      case 6: { // Partner
+      case 5: { // Partner
         const el = document.querySelector<HTMLElement>(
           '[data-nav-section="Partner"]',
         );
