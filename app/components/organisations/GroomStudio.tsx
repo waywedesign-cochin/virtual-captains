@@ -341,8 +341,8 @@ export default function GroomStudio() {
             // Slides share one grid cell: pinned, the row fills the stage;
             // unpinned, it takes the height of the tallest slide.
             className="relative flex-1 grid grid-rows-[minmax(0,1fr)] min-h-0"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setIsPaused(true)}
+            onPointerLeave={(e) => e.pointerType === "mouse" && setIsPaused(false)}
           >
             {allProgrammes.map((prog, pIdx) => {
               const currentCardIdx = cardIndices[pIdx] || 0;

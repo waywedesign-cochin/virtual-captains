@@ -39,11 +39,15 @@ function TestimonialCard({ t }: { t: Testimonial }) {
 
   return (
     <div
+      style={{ position: "relative", zIndex: hovered ? 40 : 1 }}
       className={`flex w-full mb-3.5 ${t.align === "right" ? "justify-end pr-2" : "justify-start pl-2"}`}
     >
       {/* Card wrapper — relative so the tooltip anchors to it */}
+      {/* Raise the hovered/tapped card above its neighbours — Safari otherwise
+          paints the bubble under the card above (backdrop-filter layers) */}
       <div
         className="relative max-w-[88%] sm:max-w-[82%]"
+        style={{ zIndex: hovered ? 40 : 1, transform: "translateZ(0)" }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
@@ -232,8 +236,8 @@ export default function SalesXTestimonials() {
           {/* ── RIGHT COLUMN: Vertical marquee ── */}
           <div
             className="lg:col-span-6 order-2 lg:order-2 relative"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setIsPaused(true)}
+            onPointerLeave={(e) => e.pointerType === "mouse" && setIsPaused(false)}
           >
             {/* Mask fade top + bottom — no overflow:hidden so tooltips aren't clipped */}
             <div

@@ -110,8 +110,8 @@ export default function AboutFounderStory() {
       >
         <div
           ref={stageRef}
-          style={{ position: "sticky", top: 0, height: "100vh", width: "100%" }}
-          className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center px-6 sm:px-10 lg:px-16"
+          style={{ position: "sticky", top: 0, height: "100svh", width: "100%" }}
+          className="sticky top-0 h-svh w-full overflow-hidden flex items-center justify-center px-6 sm:px-10 lg:px-16"
         >
 
           {/* Watermark Credo */}

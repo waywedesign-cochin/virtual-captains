@@ -281,8 +281,8 @@ export default function OurApproach() {
         ============================================================ */}
         <div
           className="flex flex-wrap items-center justify-center gap-2 mt-2 pin:hidden pb-1 shrink-0 max-w-md"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
+          onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
+          onPointerLeave={(e) => e.pointerType === "mouse" && setPaused(false)}
           onFocus={() => setPaused(true)}
           onBlur={() => setPaused(false)}
         >

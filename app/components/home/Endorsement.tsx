@@ -15,9 +15,6 @@ import {
 } from "@/lib/animations/headingReveal";
 gsap.registerPlugin(ScrollTrigger);
 
-/** Home shows every client quote except Deepak Nair's (SalesX keeps it). */
-const HOME_TESTIMONIALS = TESTIMONIALS.filter((t) => t.name !== "Deepak Nair");
-
 /**
  * "Our Partners & Clients" — client quotes on a horizontal cylinder. On
  * pinned desktops scrolling turns the drum; elsewhere it autoplays.
@@ -29,7 +26,7 @@ export default function Endorsement() {
   const stackRef = useRef<HTMLDivElement>(null);
   /** Drum position while pinned (scroll-driven); null = drum runs itself. */
   const [scrollPos, setScrollPos] = useState<number | null>(null);
-  const N = HOME_TESTIMONIALS.length;
+  const N = TESTIMONIALS.length;
 
   // Arrows/dots while pinned: scroll (through Lenis) to that quote's spot.
   const scrollToQuote = useCallback(
@@ -144,7 +141,7 @@ export default function Endorsement() {
           className="mt-[clamp(28px,5vh,60px)] w-full pin:[@media(max-height:640px)]:[zoom:0.85] pin:[@media(max-height:540px)]:[zoom:0.72]"
         >
           <TestimonialDrum
-            items={HOME_TESTIMONIALS}
+            items={TESTIMONIALS}
             scrollPos={scrollPos}
             onSelect={scrollToQuote}
           />

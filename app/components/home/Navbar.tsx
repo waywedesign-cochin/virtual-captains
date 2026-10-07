@@ -674,8 +674,8 @@ export default function Navbar() {
                       key={item.label}
                       href={targetHref}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      onMouseEnter={() => setHoveredIndex(index)}
-                      onMouseLeave={() => setHoveredIndex(null)}
+                      onPointerEnter={(e) => e.pointerType === "mouse" && setHoveredIndex(index)}
+                      onPointerLeave={(e) => e.pointerType === "mouse" && setHoveredIndex(null)}
                       className="relative h-8 min-w-6 sm:min-w-7 flex items-center justify-center select-none cursor-pointer group"
                       aria-label={item.label}
                     >
