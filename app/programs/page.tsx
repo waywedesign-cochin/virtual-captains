@@ -298,7 +298,7 @@ function TestimonialsSection() {
 
               <blockquote
                 className={`relative mt-6 flex-1 font-serif leading-snug text-white ${
-                  t.span ? "text-2xl sm:text-3xl" : "text-xl"
+                  t.span ? "text-xl sm:text-3xl" : "text-xl"
                 }`}
               >
                 {t.quote}
@@ -518,8 +518,35 @@ export default async function ProgramsPage() {
               </p>
             </>
           }
-          organisation={<FoundersBatch />}
-          individual={<ProgramGrid programs={individualPrograms} />}
+          curriculum={
+            <>
+              <FoundersBatch />
+
+              <section className="mt-20 border-t border-white/10 pt-16">
+                <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+                  More programs
+                  <span
+                    aria-hidden
+                    className="h-px w-10 bg-linear-to-r from-[#38bdf8] to-transparent"
+                  />
+                </p>
+                <h3 className="mt-4 max-w-2xl text-balance font-serif text-3xl leading-[1.1] text-white sm:text-4xl lg:text-5xl">
+                  Your next move,{" "}
+                  <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
+                    one level up
+                  </span>
+                </h3>
+                <p className="mt-4 max-w-xl text-sm text-white/60 sm:text-base">
+                  Whether you're starting out or already closing deals, pick the
+                  program that fits where you are today.
+                </p>
+
+                <div className="mt-10">
+                  <ProgramGrid programs={individualPrograms} />
+                </div>
+              </section>
+            </>
+          }
           upcoming={
             <section>
               <p className="text-xs font-semibold uppercase tracking-wider text-[#38bdf8]">

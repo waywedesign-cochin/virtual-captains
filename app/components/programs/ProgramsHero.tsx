@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { SeeCurriculumLink } from "./FoundersBatchClient";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
@@ -9,6 +10,9 @@ const HERO_LEVELS = [
   { name: "Intermediate", bars: 2 },
   { name: "Expert", bars: 3 },
 ];
+
+// Batch announcement shown under the level chips. Edit here when details change.
+const BATCH_FACTS = ["Kochi", "50 founder seats"];
 
 function OrbitGraphic() {
   return (
@@ -110,6 +114,40 @@ export function ProgramsHero() {
               {l.name}
             </span>
           ))}
+        </div>
+
+        {/* batch announcement strip */}
+        <div className="mt-6 inline-flex max-w-full flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-[#e7ff3d]/30 bg-[#e7ff3d]/6 px-3 py-2.5 text-xs shadow-[0_0_30px_-12px_#e7ff3d]">
+          <span className="inline-flex items-center gap-2 rounded-md bg-[#e7ff3d] px-2.5 py-1 font-bold uppercase tracking-wider text-[#0b0e14]">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[#0b0e14] opacity-60 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#0b0e14]" />
+            </span>
+            First batch
+          </span>
+
+          <span className="font-semibold text-white">
+            Founders Batch starts{" "}
+            <span className="text-[#e7ff3d]">1 November 2026</span>
+          </span>
+
+          {BATCH_FACTS.map((f) => (
+            <span key={f} className="flex items-center gap-3 text-white/70">
+              <span aria-hidden className="h-3 w-px bg-white/25" />
+              {f}
+            </span>
+          ))}
+
+          <span aria-hidden className="h-3 w-px bg-white/25" />
+          <SeeCurriculumLink className="group inline-flex items-center gap-1.5 rounded-md border border-[#e7ff3d]/40 px-2.5 py-1 font-semibold text-[#e7ff3d] transition hover:bg-[#e7ff3d] hover:text-[#0b0e14]">
+            See curriculum
+            <span
+              aria-hidden
+              className="transition-transform group-hover:translate-y-0.5"
+            >
+              ↓
+            </span>
+          </SeeCurriculumLink>
         </div>
       </div>
 
