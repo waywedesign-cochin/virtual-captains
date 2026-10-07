@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring } from "motion/react";
+import Image from "next/image";
 import { ChevronDown } from "./Icons";
 
 /**
@@ -124,14 +125,25 @@ export const HeroSection: React.FC = () => {
 
             <h1 className="mt-5 sm:mt-6 font-sans font-medium text-[clamp(2.5rem,6.2vw,5rem)] leading-[1.02] tracking-[-0.03em] text-white drop-shadow-[0_12px_40px_rgba(2,11,37,0.8)]">
               Grow Together
-              <span className="block bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8] bg-clip-text pb-[0.08em] pr-[0.1em] italic text-transparent">
-                With SalesX
+              {/* "With" + the SalesX logo (it carries its own "By Virtual
+                  Captains" line, so there's no separate byline below) */}
+              {/* The logo's SALES letters fill ~45% of the image height
+                  (byline underneath), so 1.3em keeps them a touch under the text's
+                  cap height; the image sits on the baseline and is nudged
+                  down so the letters' bottoms line up with "With". */}
+              <span className="block">
+                With{" "}
+                <Image
+                  src="/salesx/salesx-logo.png"
+                  alt="SalesX by Virtual Captains"
+                  width={846}
+                  height={232}
+                  priority
+                  sizes="(max-width: 640px) 80vw, 560px"
+                  className="inline-block h-[1.3em] w-auto align-baseline translate-y-[0.35em] -mt-[0.35em]"
+                />
               </span>
             </h1>
-
-            <p className="mt-3 text-lg sm:text-xl font-normal tracking-tight text-slate-300">
-              by Virtual Captains
-            </p>
 
             <p className="mt-6 sm:mt-7 max-w-xl text-base sm:text-lg leading-relaxed text-slate-300/90">
               Whether you&apos;re an institution, a brand, or an enterprise, there&apos;s a partnership
