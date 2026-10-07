@@ -2,22 +2,20 @@
 
 import { useState, type CSSProperties, type ReactNode } from "react";
 
-export type ProgramTab = "organisation" | "individual" | "upcoming";
+export type ProgramTab = "curriculum" | "upcoming";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
 export function ProgramsTabs({
   hero,
-  organisation,
-  individual,
+  curriculum,
   upcoming,
 }: {
   hero: ReactNode;
-  organisation: ReactNode;
-  individual: ReactNode;
+  curriculum: ReactNode;
   upcoming: ReactNode;
 }) {
-  const [tab, setTab] = useState<ProgramTab>("organisation");
+  const [tab, setTab] = useState<ProgramTab>("curriculum");
   const [switched, setSwitched] = useState(false);
 
   const select = (t: ProgramTab) => {
@@ -36,7 +34,7 @@ export function ProgramsTabs({
   return (
     <>
       {/* Hero */}
-      <section className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-16 pt-36 text-center sm:px-10 lg:px-16">
+      <section className="mx-auto flex max-w-6xl flex-col items-center px-6 pb-16 pt-30 text-center sm:px-10 lg:px-16">
         {hero}
 
         <div
@@ -48,20 +46,11 @@ export function ProgramsTabs({
           <button
             type="button"
             role="tab"
-            aria-selected={tab === "organisation"}
-            onClick={() => select("organisation")}
-            className={tabClass(tab === "organisation")}
+            aria-selected={tab === "curriculum"}
+            onClick={() => select("curriculum")}
+            className={tabClass(tab === "curriculum")}
           >
-            Organisation Curriculum
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === "individual"}
-            onClick={() => select("individual")}
-            className={tabClass(tab === "individual")}
-          >
-            Individual Coaching
+            Curriculum
           </button>
           <button
             type="button"
@@ -82,11 +71,7 @@ export function ProgramsTabs({
           switched ? "vc-switched" : ""
         }`}
       >
-        {tab === "organisation"
-          ? organisation
-          : tab === "individual"
-            ? individual
-            : upcoming}
+        {tab === "curriculum" ? curriculum : upcoming}
       </section>
     </>
   );

@@ -1,5 +1,9 @@
 import { CheckEligibilityButton, WaitlistButton } from "../home/BookACallModal";
-import { FormatTabs, RolePlayDemo } from "./FoundersBatchClient";
+import {
+  FormatTabs,
+  RolePlayDemo,
+  OfflineLocations,
+} from "./FoundersBatchClient";
 import { ProgramsHero } from "./ProgramsHero";
 
 // Static content (not from Sanity). Edit here when the client changes details.
@@ -150,21 +154,13 @@ function CoverJourney({ modules }: { modules: string[] }) {
 // ---------- Offline: AI + Human Coaching (the Founders Batch) ----------
 function OfflinePanel() {
   return (
-    <article className={panelClass}>
+    <article id="founders-batch-card" className={`${panelClass} scroll-mt-24`}>
+      {" "}
       <Glows />
-
       <div className="relative grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
         {/* Left: pitch, key facts, CTA */}
         <div className="flex flex-col">
-          <span className="inline-flex items-center gap-2 self-start rounded-full border border-[#e7ff3d]/30 bg-[#e7ff3d]/10 px-3.5 py-1 text-xs font-semibold text-[#e7ff3d]">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-[#e7ff3d] opacity-70 motion-safe:animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e7ff3d]" />
-            </span>
-            First batch · Offline · Kochi
-          </span>
-
-          <h3 className="mt-6 font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
+          <h3 className="font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
             SalesX{" "}
             <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
               Founders
@@ -376,7 +372,20 @@ export default function FoundersBatch() {
   return (
     <>
       <ProgramsHero />
-      <FormatTabs offline={<OfflinePanel />} online={<OnlinePanel />} />
+      <div id="founders-batch" className="scroll-mt-24">
+        <FormatTabs
+          offline={
+            <>
+              <OfflineLocations
+                programTitle={FOUNDERS_BATCH.title}
+                programSlug={FOUNDERS_BATCH.slug}
+              />
+              <OfflinePanel />
+            </>
+          }
+          online={<OnlinePanel />}
+        />
+      </div>
       <LevelsSection />
     </>
   );

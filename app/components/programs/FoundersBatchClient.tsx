@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
+import Link from "next/link";
+import { CheckEligibilityButton } from "../home/BookACallModal";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
@@ -22,6 +30,17 @@ export function FormatTabs({
     setSwitched(true);
     setTab(t);
   };
+
+  // "See curriculum" in the hero asks for the Offline tab
+  useEffect(() => {
+    const show = () => {
+      if (tab === "offline") return;
+      setSwitched(true);
+      setTab("offline");
+    };
+    window.addEventListener("vc:show-offline", show);
+    return () => window.removeEventListener("vc:show-offline", show);
+  }, [tab]);
 
   const isOffline = tab === "offline";
 
@@ -104,6 +123,212 @@ export function FormatTabs({
         {isOffline ? offline : online}
       </div>
     </div>
+  );
+}
+
+// ---------- Smooth-scroll link to the Founders Batch section ----------
+export function SeeCurriculumLink({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    // Make sure the Offline tab is showing
+    window.dispatchEvent(new CustomEvent("vc:show-offline"));
+
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // If the Online tab was open, wait a few frames for the Offline card to mount
+    let tries = 0;
+    const go = () => {
+      const el = document.getElementById("founders-batch-card");
+      if (el) {
+        el.scrollIntoView({
+          behavior: reduce ? "auto" : "smooth",
+          block: "start",
+        });
+        return;
+      }
+      if (tries++ < 20) requestAnimationFrame(go);
+    };
+    go();
+  };
+
+  return (
+    <a href="#founders-batch" onClick={onClick} className={className}>
+      {children}
+    </a>
+  );
+}
+
+// ---------- Offline locations: pick a country, see its cities ----------
+type City = {
+  name: string;
+  status: "open" | "soon";
+  date?: string;
+  note?: string;
+};
+
+type Location = { id: string; name: string; flag: string; cities: City[] };
+
+// Edit here when the client confirms countries and cities.
+const LOCATIONS: Location[] = [
+  {
+    id: "india",
+    name: "India",
+    flag: "🇮🇳",
+    cities: [
+      {
+        name: "Kochi",
+        status: "open",
+        date: "1 Nov 2026",
+        note: "50 founders only",
+      },
+      { name: "Bangalore", status: "soon", note: "Dates to be announced" },
+      { name: "Hyderabad", status: "soon", note: "Dates to be announced" },
+    ],
+  },
+  { id: "malaysia", name: "Malaysia", flag: "🇲🇾", cities: [] },
+  { id: "uae", name: "UAE", flag: "🇦🇪", cities: [] },
+  { id: "other", name: "Other locations", flag: "🌍", cities: [] },
+];
+
+export function OfflineLocations({
+  programTitle,
+  programSlug,
+}: {
+  programTitle: string;
+  programSlug: string;
+}) {
+  const [active, setActive] = useState(LOCATIONS[0].id);
+  const loc = LOCATIONS.find((l) => l.id === active) ?? LOCATIONS[0];
+
+  return (
+    <section className="mb-12 border-b border-white/10 pb-12">
+      {" "}
+      <p className="text-xs font-semibold uppercase tracking-wider text-[#38bdf8]">
+        Where we train
+      </p>
+      <h3 className="mt-3 font-serif text-3xl leading-tight text-white sm:text-4xl">
+        Find a batch{" "}
+        <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
+          near you
+        </span>
+      </h3>
+      {/* Country chips */}
+      <div
+        role="tablist"
+        aria-label="Location"
+        className="mt-6 flex flex-wrap gap-2"
+      >
+        {LOCATIONS.map((l) => {
+          const on = l.id === active;
+          return (
+            <button
+              key={l.id}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              onClick={() => setActive(l.id)}
+              className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                on
+                  ? "border-[#e7ff3d]/60 bg-[#e7ff3d]/10 text-white"
+                  : "border-white/10 bg-white/5 text-white/60 hover:text-white"
+              }`}
+            >
+              <span aria-hidden className="text-base leading-none">
+                {l.flag}
+              </span>
+              {l.name}
+            </button>
+          );
+        })}
+      </div>
+      {/* Cities for the selected country */}
+      <div
+        key={loc.id}
+        role="tabpanel"
+        className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
+      >
+        {loc.cities.length === 0 ? (
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-dashed border-white/20 bg-white/3 px-6 py-5">
+            <p className="text-sm text-white/65">
+              {loc.id === "other"
+                ? "Not on the list? Tell us where you are and we'll look at bringing SalesX closer."
+                : `No ${loc.name} batch announced yet. We'll share dates here first.`}
+            </p>
+            <Link
+              href="/contact"
+              className="text-xs font-semibold text-[#38bdf8] transition hover:text-white"
+            >
+              Notify me →
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {loc.cities.map((c) => {
+              const open = c.status === "open";
+              return (
+                <article
+                  key={c.name}
+                  className={`flex flex-col rounded-2xl border p-5 transition duration-300 hover:-translate-y-1 ${
+                    open
+                      ? "border-[#e7ff3d]/40 bg-[#e7ff3d]/5"
+                      : "border-white/10 bg-[#0b0e14]"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h4 className="text-lg font-bold text-white">{c.name}</h4>
+                    <span
+                      className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                        open
+                          ? "bg-[#e7ff3d] text-[#0b0e14]"
+                          : "border border-white/15 text-white/45"
+                      }`}
+                    >
+                      {open ? "Open" : "Coming soon"}
+                    </span>
+                  </div>
+
+                  {c.date && (
+                    <p className="mt-3 text-sm text-white/70">
+                      Batch starts{" "}
+                      <span className="font-semibold text-white">{c.date}</span>
+                    </p>
+                  )}
+                  {c.note && (
+                    <p className="mt-1 text-xs text-white/50">{c.note}</p>
+                  )}
+
+                  <div className="mt-auto pt-5">
+                    {open ? (
+                      <CheckEligibilityButton
+                        programTitle={programTitle}
+                        programSlug={programSlug}
+                        className="cursor-pointer rounded-full bg-[#e7ff3d] px-5 py-2.5 text-sm font-bold text-[#0b0e14] transition hover:bg-white"
+                      />
+                    ) : (
+                      <Link
+                        href="/contact"
+                        className="text-xs font-semibold text-[#38bdf8] transition hover:text-white"
+                      >
+                        Notify me →
+                      </Link>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
