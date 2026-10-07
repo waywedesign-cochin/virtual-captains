@@ -12,7 +12,7 @@ const HERO_LEVELS = [
 ];
 
 // Batch announcement shown under the level chips. Edit here when details change.
-const BATCH_FACTS = ["Kochi", "50 founder seats"];
+const BATCH_FACTS = ["Kochi", "50 seats"];
 
 function OrbitGraphic() {
   return (
@@ -127,7 +127,7 @@ export function ProgramsHero() {
           </span>
 
           <span className="font-semibold text-white">
-            Founders Batch starts{" "}
+            Founders batch starts{" "}
             <span className="text-[#e7ff3d]">1 November 2026</span>
           </span>
 
