@@ -6,6 +6,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import BackToTop from "../common/BackToTop";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SocialLinks from "../common/SocialLinks";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -466,7 +467,8 @@ export default function SalesXFooter() {
           <p className="text-center sm:text-left">
             © {new Date().getFullYear()} Virtual Captains. All Rights Reserved.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-4 sm:flex-row">
+            <SocialLinks size="sm" />
             <a
               href="https://www.waywedesign.com"
               target="_blank"

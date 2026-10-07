@@ -58,3 +58,10 @@ export function pageMetadata({ title, description, path, absoluteTitle, keywords
     robots: noIndex ? { index: false, follow: true } : undefined,
   };
 }
+
+/** Official social profiles — single source for footer icons and JSON-LD `sameAs`. */
+export const SOCIAL_PROFILES = [
+  { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/virtual-captains/" },
+  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/virtualcaptains/" },
+  { id: "youtube", label: "YouTube", href: "https://www.youtube.com/@VirtualCaptains" },
+] as const;

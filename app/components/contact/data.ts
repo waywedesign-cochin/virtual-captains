@@ -93,11 +93,7 @@ export const quickContacts = [
   },
 ] as const;
 
-export const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/virtual-captains/" },
-  { label: "Instagram", href: "https://www.instagram.com/virtualcaptains/" },
-  { label: "YouTube", href: "https://www.youtube.com/@VirtualCaptains" },
-] as const;
+export { SOCIAL_PROFILES as socialLinks } from "@/app/lib/seo";
 
 export const trustStats = [
   { value: "15,000+", label: "Professionals trained" },
