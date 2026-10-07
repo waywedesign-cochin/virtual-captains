@@ -3,7 +3,7 @@ import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import "./styles/index.css";
 import SmoothScroll from "./components/SmoothScroll";
-import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from "./lib/seo";
+import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL, SOCIAL_PROFILES } from "./lib/seo";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -74,11 +74,7 @@ const ORG_JSON_LD = {
   name: SITE_NAME,
   url: SITE_URL,
   logo: `${SITE_URL}/wlogo.png`,
-  sameAs: [
-    "https://www.linkedin.com/company/virtual-captains/",
-    "https://www.instagram.com/virtualcaptains/",
-    "https://www.youtube.com/@VirtualCaptains",
-  ],
+  sameAs: SOCIAL_PROFILES.map((p) => p.href),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

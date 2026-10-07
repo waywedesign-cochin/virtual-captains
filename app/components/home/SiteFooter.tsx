@@ -12,6 +12,7 @@ import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
+import SocialLinks from "../common/SocialLinks";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
@@ -722,6 +723,9 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
                     </div>
                   ))}
                 </div>
+
+                {/* Social profiles */}
+                <SocialLinks className="pt-2 sm:pt-3" />
               </div>
             </div>
           </div>

@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { motion } from "framer-motion";
-import { socialLinks } from "./data";
+import SocialLinks from "../common/SocialLinks";
 import { NAV_ITEMS } from "../home/Navbar";
 
 if (typeof window !== "undefined") {
@@ -113,19 +113,7 @@ export default function SiteFooter() {
                 Turn sales uncertainty into sales readiness. High-impact live
                 and AI-simulated rehearsals for high-growth revenue teams.
               </p>
-              <div className="flex gap-2.5 mt-2">
-                {socialLinks.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 transition-colors hover:border-[#38bdf8] hover:text-white hover:bg-white/10"
-                  >
-                    {s.label}
-                  </a>
-                ))}
-              </div>
+              <SocialLinks className="mt-2" />
             </div>
 
             {/* 2. Navigation column 1 */}

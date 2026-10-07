@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
+import { TESTIMONIALS } from "@/app/content/testimonials";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -15,63 +16,20 @@ interface Testimonial {
   author: string;
   role: string;
   rating: number;
-  initials: string;
-  accentColor: string;
+  logo?: string;
   align: "left" | "right";
 }
 
-const testimonials: Testimonial[] = [
-  {
-    id: 0,
-    quote: "\u201cBoosted my confidence and helped me close more deals.\u201d",
-    author: "Arjun M",
-    role: "Business Development Rep",
-    rating: 5,
-    initials: "AM",
-    accentColor: "#0052cc",
-    align: "left",
-  },
-  {
-    id: 1,
-    quote: "\u201cPractical training that actually works in real conversations.\u201d",
-    author: "Priya S",
-    role: "Inside Sales Lead",
-    rating: 5,
-    initials: "PS",
-    accentColor: "#0052cc",
-    align: "right",
-  },
-  {
-    id: 2,
-    quote: "\u201cOur team improved significantly in handling objections.\u201d",
-    author: "Rahul K",
-    role: "VP Sales, FinTech Startup",
-    rating: 5,
-    initials: "RK",
-    accentColor: "#0052cc",
-    align: "left",
-  },
-  {
-    id: 3,
-    quote: "\u201cThe live CRM simulations were a game-changer. Felt real, not rehearsed.\u201d",
-    author: "Sneha T",
-    role: "Account Executive",
-    rating: 5,
-    initials: "ST",
-    accentColor: "#0052cc",
-    align: "right",
-  },
-  {
-    id: 4,
-    quote: "\u201cGot placed within 3 weeks of completing the programme.\u201d",
-    author: "Dev R",
-    role: "SDR, SaaS Enterprise",
-    rating: 5,
-    initials: "DR",
-    accentColor: "#0052cc",
-    align: "left",
-  },
-];
+// Same client quotes as the home page Endorsement section
+const testimonials: Testimonial[] = TESTIMONIALS.map((t, i) => ({
+  id: i,
+  quote: `“${t.quote}”`,
+  author: t.name,
+  role: t.role,
+  rating: 5,
+  logo: t.logo,
+  align: i % 2 === 0 ? "left" : "right",
+}));
 
 // Duplicated for seamless infinite loop
 const marqueeItems = [...testimonials, ...testimonials];
@@ -104,18 +62,24 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           {/* Blue bubble */}
           <div
             className="inline-flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,82,204,0.45)]"
-            style={{ background: "#0052cc", minWidth: "160px" }}
+            style={{ background: "#0052cc", minWidth: "160px", maxWidth: "min(80vw, 340px)" }}
           >
             {/* Avatar circle */}
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 border-2 border-white/40 overflow-hidden text-slate-800 font-bold text-xs font-sans"
             >
-              <svg className="w-6 h-6 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
+              {t.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={encodeURI(t.logo)} alt="" className="h-full w-full bg-white object-contain p-1" />
+              ) : (
+                <svg className="w-6 h-6 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+              )}
             </div>
             <div className="text-left">
               <p className="text-sm font-bold text-white font-sans leading-tight">{t.author}</p>
+              <p className="text-[11px] text-white/75 font-sans leading-snug">{t.role}</p>
               <div className="flex gap-0.5 mt-0.5">
                 {Array.from({ length: t.rating }).map((_, i) => (
                   <span key={i} className="text-white" style={{ fontSize: "12px" }}>
@@ -287,7 +251,7 @@ export default function SalesXTestimonials() {
               <div
                 style={{
                   animationName: "marquee-up",
-                  animationDuration: "24s",
+                  animationDuration: "60s",
                   animationTimingFunction: "linear",
                   animationIterationCount: "infinite",
                   animationPlayState: isPaused ? "paused" : "running",

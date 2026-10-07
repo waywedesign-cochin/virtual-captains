@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import BookACallModal from "../home/BookACallModal";
+import SocialLinks from "../common/SocialLinks";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -419,6 +420,9 @@ export default function ContactFooter() {
                     </div>
                   ))}
                 </div>
+
+                {/* Social profiles */}
+                <SocialLinks className="pt-2 sm:pt-3" />
               </div>
             </div>
           </div>
