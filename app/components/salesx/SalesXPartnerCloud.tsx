@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
 }
 
 /**
- * Network layout (xl+): the title sits at the hub, partners sit on two
+ * Network layout (laptops+, see NETWORK_QUERY): the title sits at the hub, partners sit on two
  * elliptical orbits around it, joined by faint connection lines. Positions are
  * % of the stage so it scales with the container. The inner ring is offset by
  * half a step so its nodes fall between the outer ring's.
@@ -24,7 +24,9 @@ const RINGS = {
 /** How far the rings turn over the pinned scroll (radians). Both rings turn
  *  by the same angle so they keep their interleaved spacing and never collide. */
 const SPIN = { inner: 0.55, outer: 0.55 };
-const NETWORK_QUERY = "(min-width: 1280px)";
+// Laptops from 1024px wide (incl. 125% / 150% zoom on common screens) get the
+// network; it needs ~620px of height so the rings clear the title.
+const NETWORK_QUERY = "(min-width: 1024px) and (min-height: 620px)";
 
 type Node = { p: Partner; angle: number; ring: "inner" | "outer" };
 
@@ -102,7 +104,7 @@ export default function SalesXPartnerCloud() {
   const cameraRef = useRef<HTMLDivElement>(null);
   const rigRef = useRef<HTMLDivElement>(null);
   const hubRef = useRef<HTMLDivElement>(null);
-  const gridRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const gridRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -123,7 +125,7 @@ export default function SalesXPartnerCloud() {
 
       const mm = gsap.matchMedia();
 
-      // ── XL+: pinned cinematic camera ──────────────────────────────────
+      // ── Laptops+: pinned cinematic camera ──────────────────────────────────
       mm.add(NETWORK_QUERY, () => {
         const nodes = nodeRefs.current.filter(Boolean) as HTMLDivElement[];
         const lines = lineRefs.current;
@@ -218,9 +220,9 @@ export default function SalesXPartnerCloud() {
         };
       });
 
-      // ── Below XL: grid cards slide up ─────────────────────────────────
+      // ── Smaller screens: grid cards slide up ─────────────────────────────────
       mm.add(`not all and ${NETWORK_QUERY}`, () => {
-        const grid = gridRefs.current.filter(Boolean) as HTMLDivElement[];
+        const grid = gridRefs.current.filter(Boolean) as HTMLElement[];
         gsap.fromTo(
           grid,
           { opacity: 0, y: 18, scale: 0.94 },
@@ -261,8 +263,8 @@ export default function SalesXPartnerCloud() {
       />
 
       <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
-        {/* ── XL+: NETWORK — hub title, two orbits, connection lines ── */}
-        <div className="hidden xl:block perspective-[1800px]">
+        {/* ── LAPTOPS+: NETWORK — hub title, two orbits, connection lines ── */}
+        <div className="hidden perspective-[1800px] [@media(min-width:1024px)_and_(min-height:620px)]:block">
         {/* camera = scroll dolly, rig = mouse tilt; both keep 3D for depth */}
         <div ref={cameraRef} className="transform-3d will-change-transform">
         <div
@@ -311,11 +313,11 @@ export default function SalesXPartnerCloud() {
               ref={(el) => {
                 headingRefs.current[0] = el;
               }}
-              className="text-5xl 2xl:text-6xl font-bold tracking-tight text-white font-sans drop-shadow-[0_0_35px_rgba(255,255,255,0.18)] whitespace-nowrap will-change-transform"
+              className="text-4xl xl:text-5xl 2xl:text-6xl font-bold tracking-tight text-white font-sans drop-shadow-[0_0_35px_rgba(255,255,255,0.18)] whitespace-nowrap will-change-transform"
             >
               Partner Network
             </h2>
-            <p className="mt-3 text-xs 2xl:text-sm text-slate-200 font-light tracking-[0.28em] uppercase font-sans">
+            <p className="mt-3 text-[10px] xl:text-xs 2xl:text-sm text-slate-200 font-light tracking-[0.28em] uppercase font-sans">
               Grow Alongside SalesX
             </p>
             </div>
@@ -339,8 +341,8 @@ export default function SalesXPartnerCloud() {
                 p={n.p}
                 className={
                   n.ring === "inner"
-                    ? "h-14 w-34 px-4 py-3 2xl:h-15 2xl:w-38"
-                    : "h-12 w-30 px-3.5 py-2.5 2xl:h-13 2xl:w-34"
+                    ? "h-11.5 w-28 px-3 py-2 xl:h-14 xl:w-34 xl:px-4 xl:py-3 2xl:h-15 2xl:w-38"
+                    : "h-10 w-25 px-2.5 py-2 xl:h-12 xl:w-30 xl:px-3.5 xl:py-2.5 2xl:h-13 2xl:w-34"
                 }
               />
             </div>
@@ -349,8 +351,8 @@ export default function SalesXPartnerCloud() {
         </div>
         </div>
 
-        {/* ── BELOW XL: title + responsive glass grid ── */}
-        <div className="xl:hidden flex flex-col items-center text-center">
+        {/* ── SMALLER SCREENS: title + responsive glass grid ── */}
+        <div className="flex flex-col items-center text-center [@media(min-width:1024px)_and_(min-height:620px)]:hidden">
           <h2
             ref={(el) => {
               headingRefs.current[1] = el;
@@ -363,20 +365,49 @@ export default function SalesXPartnerCloud() {
             Grow Alongside SalesX
           </p>
 
-          {/* flex-wrap + centred so a short last row sits in the middle
-              instead of hanging off the left */}
-          <div className="mt-10 flex w-full flex-wrap justify-center gap-3 sm:gap-4">
-            {PARTNERS.map((p, i) => (
-              <div
-                className="basis-[calc((100%-0.75rem)/2)] sm:basis-[calc((100%-2rem)/3)] md:basis-[calc((100%-3rem)/4)] lg:basis-[calc((100%-4rem)/5)]"
-                key={`g-${p.name}`}
-                ref={(el) => {
-                  gridRefs.current[i] = el;
-                }}
-              >
-                <LogoGlass p={p} className="h-16 w-full px-4 py-3 sm:h-18" />
+          {/* Framed logo panel: one glass panel with a glowing gradient
+              rim and soft blue glows behind it (no per-logo cards) */}
+          <div className="relative mt-10 w-full max-w-3xl">
+            {/* side glows */}
+            <div aria-hidden className="pointer-events-none absolute -left-6 top-1/4 h-1/2 w-24 rounded-full bg-[#1d4ed8]/45 blur-[60px]" />
+            <div aria-hidden className="pointer-events-none absolute -right-6 bottom-1/5 h-1/2 w-24 rounded-full bg-[#38bdf8]/35 blur-[60px]" />
+            {/* sparkles */}
+            <svg aria-hidden viewBox="0 0 24 24" className="pointer-events-none absolute -right-1 top-6 h-5 w-5 text-[#93c5fd]">
+              <path fill="currentColor" d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z" />
+            </svg>
+            <svg aria-hidden viewBox="0 0 24 24" className="pointer-events-none absolute -left-2 bottom-10 h-3 w-3 text-[#F3FC00]">
+              <path fill="currentColor" d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z" />
+            </svg>
+
+            {/* gradient rim */}
+            <div className="relative rounded-[28px] bg-linear-to-br from-[#1d4ed8]/55 via-white/8 to-[#38bdf8]/45 p-[1.5px] shadow-[0_30px_80px_-30px_rgba(29,78,216,0.55)]">
+              <div className="rounded-[26.5px] bg-[#071233]/90 p-2 backdrop-blur-xl sm:p-3">
+                <div className="rounded-[22px] border border-white/6 bg-linear-to-b from-white/4 to-transparent px-3 py-6 sm:px-6 sm:py-8">
+                  <ul className="flex flex-wrap justify-center gap-y-6 sm:gap-y-8">
+                    {PARTNERS.map((p, i) => (
+                      <li
+                        key={`g-${p.name}`}
+                        ref={(el) => {
+                          gridRefs.current[i] = el;
+                        }}
+                        title={p.name}
+                        className="flex h-11 basis-1/2 items-center justify-center px-3 sm:h-12 sm:basis-1/3 md:basis-1/4"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={p.logoSrc}
+                          alt={p.name}
+                          loading="lazy"
+                          draggable={false}
+                          style={{ height: `${logoHeight(p.ratio)}%` }}
+                          className="w-auto max-w-[85%] object-contain opacity-85 brightness-0 invert"
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

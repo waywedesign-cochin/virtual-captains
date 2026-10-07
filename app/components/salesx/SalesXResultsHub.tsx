@@ -159,7 +159,7 @@ export default function SalesXResultsHub() {
     <section
       ref={sectionRef}
       aria-labelledby="salesx-results-title"
-      className="relative overflow-hidden bg-salesx-bg py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-salesx-bg py-14 sm:py-20 lg:py-24"
     >
       {/* Background: deep blue wash + faint dot grid */}
       <div

@@ -98,7 +98,7 @@ export default function SalesXCTA() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-salesx-bg overflow-hidden py-14 sm:py-36 lg:py-44 select-none"
+      className="relative bg-salesx-bg overflow-hidden py-14 sm:py-20 lg:py-24 select-none"
     >
       {/* Ambient Blue-Purple Deep Space Radial Glow */}
       <div

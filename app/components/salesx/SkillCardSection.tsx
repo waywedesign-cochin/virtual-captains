@@ -173,7 +173,7 @@ export default function SkillCardSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-transparent px-4 sm:px-8 xl:px-12 py-12 sm:py-20 lg:py-28 text-white"
+      className="relative w-full overflow-hidden bg-transparent px-4 sm:px-8 lg:px-12 py-14 sm:py-20 lg:py-24 text-white"
       aria-label="The SXI Card (Sales Execution Index Card)"
     >
       {/* Background glow matching top-left radiance */}
