@@ -265,8 +265,11 @@ export default function TheImpact() {
       data-nav-theme="dark"
       className="relative z-10 flex min-h-0 pin:min-h-screen w-full flex-col items-center justify-center overflow-hidden px-5 py-10 sm:py-14 sm:px-10 pin:pl-36 pin:pr-16 pin:py-0 text-white"
       style={{
+        // Starts blue to continue Cross Country's blue bottom edge (the
+        // Endorsement section used to bridge them), dips dark, and ends blue
+        // to meet Hiring Partners.
         background:
-          "linear-gradient(180deg, #040507 0%, #050b24 25%, #051d5c 60%, #0c318f 100%)",
+          "linear-gradient(180deg, #0c318f 0%, #051d5c 18%, #050b24 36%, #040507 50%, #050b24 64%, #051d5c 82%, #0c318f 100%)",
       }}
     >
       {/* Background Dot Grid (matching second section) */}
