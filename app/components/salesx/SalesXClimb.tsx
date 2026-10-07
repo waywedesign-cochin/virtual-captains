@@ -163,7 +163,7 @@ export default function SalesXClimb() {
     <section
       ref={sectionRef}
       aria-labelledby="salesx-climb-heading"
-      className="relative w-full overflow-hidden bg-salesx-bg px-4 py-14 text-white sm:px-8 sm:py-24 lg:py-28"
+      className="relative w-full overflow-hidden bg-salesx-bg px-4 py-14 text-white sm:px-8 sm:py-20 lg:py-24"
     >
       <div className="mx-auto w-full max-w-5xl">
         {/* Heading */}

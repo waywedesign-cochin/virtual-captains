@@ -291,7 +291,7 @@ export default function SalesXAudience() {
       {/* ── Pinned stage (desktop & laptop, motion allowed) ── */}
       <div
         ref={stageRef}
-        className="hidden lg:motion-safe:flex h-screen min-h-screen w-full flex-col items-center justify-center relative overflow-hidden px-6 lg:px-8 xl:px-12 py-3 lg:py-4 xl:py-6"
+        className="hidden lg:motion-safe:flex h-screen min-h-screen w-full flex-col items-center justify-center relative overflow-hidden px-4 sm:px-8 lg:px-12 py-3 lg:py-4 xl:py-6"
       >
         <div
           ref={auraRef}

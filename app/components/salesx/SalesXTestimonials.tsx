@@ -243,7 +243,7 @@ export default function SalesXTestimonials() {
         }}
       />
 
-      <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-32">
+      <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12 py-14 sm:py-20 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
 
           {/* ── LEFT COLUMN ── */}

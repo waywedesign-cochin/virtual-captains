@@ -435,7 +435,7 @@ export default function SalesXMethod() {
       {/* Pinned Stage Container: fits 100% within dynamic viewport height */}
       <div
         ref={stageRef}
-        className="min-h-screen h-dvh w-full flex flex-col items-center justify-center relative overflow-hidden px-3 sm:px-6 lg:px-12 py-4 sm:py-6 max-lg:h-auto max-lg:min-h-0 max-lg:py-14 sm:max-lg:py-20"
+        className="min-h-screen h-dvh w-full flex flex-col items-center justify-center relative overflow-hidden px-4 sm:px-8 lg:px-12 py-4 sm:py-6 max-lg:h-auto max-lg:min-h-0 max-lg:py-14 sm:max-lg:py-20"
       >
         <style>{`
           @keyframes sxm-twinkle {
