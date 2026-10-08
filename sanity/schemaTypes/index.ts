@@ -7,6 +7,7 @@ import { newsCategory } from "./newsCategory";
 import { youtubeVideo } from "./youtubeVideo";
 import { program } from "./program";
 import { career } from "./career";
+import { careerDepartment } from "./careerDepartment";
 
 export const schema = {
   types: [
@@ -19,5 +20,6 @@ export const schema = {
     youtubeVideo,
     program,
     career,
+    careerDepartment,
   ],
 };

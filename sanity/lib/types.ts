@@ -105,6 +105,8 @@ export type CareerSummary = {
   title: string;
   slug: string;
   department: string;
+  /** Display Order set on the department in the Studio, if any */
+  departmentOrder?: number | null;
   employmentType: EmploymentType;
   workplaceType: WorkplaceType;
   location: string;

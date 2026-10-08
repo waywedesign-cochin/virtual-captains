@@ -98,7 +98,11 @@ export default async function CareersPage({
   const params = (await searchParams) ?? {};
   const jobs = await getAllCareers();
 
-  const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort();
+  // One tab per department with open roles, in the Studio's Display Order, then A–Z
+  const orderOf = new Map(jobs.map((j) => [j.department, j.departmentOrder ?? Infinity]));
+  const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort(
+    (a, b) => orderOf.get(a)! - orderOf.get(b)! || a.localeCompare(b),
+  );
   const tabs = [
     { label: "All Roles", slug: "all" },
     ...departments.map((d) => ({ label: d, slug: toSlug(d) })),
