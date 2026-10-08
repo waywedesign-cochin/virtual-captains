@@ -5,14 +5,20 @@ import { createPortal } from "react-dom";
 import { isValidPhoneNumber, type Value } from "react-phone-number-input";
 import PhoneField from "../common/PhoneField";
 
-type ModalMode = "call" | "eligibility" | "waitlist";
+type ModalMode = "call" | "eligibility" | "waitlist" | "notify";
 
 /**
- * Dialog with three modes:
- *  - "call" (default): dummy "Book a Call" form, nothing is sent anywhere.
+ * Dialog with four modes:
+ *  - "call" (default): general "Book a Call" enquiry. Submits to
+ *    /api/applications with type "call"; the team follows up to schedule.
  *  - "eligibility": program application. Submits to /api/applications; the
  *    team reviews applications and sends a payment link only to selected ones.
  *  - "waitlist": same fields, for programs that haven't opened yet.
+ *  - "notify": email-only signup. Submits to /api/notify, which saves the
+ *    email to a Resend Audience so the client can send a broadcast later.
+ *
+ * call / eligibility / waitlist are email-verified: after the form is filled,
+ * a 6-digit code is emailed and must be entered before the submission is sent.
  *
  * Closes on backdrop click, Escape, or the X button.
  */
@@ -23,6 +29,7 @@ export default function BookACallModal({
   mode = "call",
   programTitle,
   programSlug,
+  location,
 }: {
   open: boolean;
   onClose: () => void;
@@ -32,10 +39,13 @@ export default function BookACallModal({
   /** Program being applied for (eligibility / waitlist modes). */
   programTitle?: string;
   programSlug?: string;
+  /** Where the batch would run (notify mode), e.g. "Bangalore, India". */
+  location?: string;
 }) {
   const isEligibility = mode === "eligibility";
   const isWaitlist = mode === "waitlist";
-  const isApplication = isEligibility || isWaitlist; // anything that submits to the API
+  const isNotify = mode === "notify";
+  const isApplication = isEligibility || isWaitlist; // program forms (not general call)
 
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -46,6 +56,14 @@ export default function BookACallModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   const [phone, setPhone] = useState<Value | undefined>();
   const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  // Email verification
+  const [step, setStep] = useState<"form" | "verify">("form");
+  const [pending, setPending] = useState<Record<string, unknown> | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  const [resent, setResent] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -81,6 +99,12 @@ export default function BookACallModal({
       setAudience(defaultAudience);
       setPhone(undefined);
       setPhoneError(null);
+      setStep("form");
+      setPending(null);
+      setToken(null);
+      setCode("");
+      setVerifyError(null);
+      setResent(false);
     }
   }, [open, defaultAudience]);
 
@@ -96,7 +120,7 @@ export default function BookACallModal({
     ? `Apply for ${programTitle ?? "this program"}. We review every application and get back to you with the next steps.`
     : isWaitlist
       ? `Be the first to know when ${programTitle ?? "this program"} opens. Leave your details and we'll reach out.`
-      : "Dummy form — no submissions are sent anywhere yet.";
+      : "Leave your details and our team will get back to you shortly.";
 
   const messagePlaceholder = isEligibility
     ? "Tell us a bit about yourself and your startup"
@@ -109,6 +133,22 @@ export default function BookACallModal({
     : isWaitlist
       ? "Join waitlist"
       : "Submit";
+
+  const RATE_LIMIT_MSG =
+    "Too many attempts. Please wait a few minutes and try again.";
+
+  /** Emails a 6-digit code and stores the signed token returned by the API. */
+  const sendCode = async (email: string) => {
+    const res = await fetch("/api/applications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "send-code", email }),
+    });
+    if (res.status === 429) throw new Error("rate-limited");
+    if (!res.ok) throw new Error("Could not send code");
+    const json = await res.json();
+    setToken(json.token);
+  };
 
   // Portal to <body> so a transformed/animated ancestor can't trap the
   // fixed overlay inside itself.
@@ -165,7 +205,17 @@ export default function BookACallModal({
                 />
               </svg>
             </span>
-            {isEligibility ? (
+            {isNotify ? (
+              <>
+                <h3 className="mt-5 font-sans text-2xl text-[#101010]">
+                  You&apos;re on the list
+                </h3>
+                <p className="mt-2 max-w-80 font-sans text-[13px] leading-relaxed text-black/55">
+                  We&apos;ll email you when{" "}
+                  {location ?? programTitle ?? "this batch"} opens.
+                </p>
+              </>
+            ) : isEligibility ? (
               <>
                 <h3 className="mt-5 font-sans text-2xl text-[#101010]">
                   Application received
@@ -188,15 +238,144 @@ export default function BookACallModal({
             ) : (
               <>
                 <h3 className="mt-5 font-sans text-2xl text-[#101010]">
-                  Thanks — we&apos;ll be in touch
+                  Thanks, we&apos;ll be in touch
                 </h3>
                 <p className="mt-2 max-w-80 font-sans text-[13px] leading-relaxed text-black/55">
-                  This is a placeholder confirmation — no call has actually been
-                  booked yet.
+                  We&apos;ve received your request and will contact you shortly
+                  to schedule your call.
                 </p>
               </>
             )}
           </div>
+        ) : isNotify ? (
+          <NotifyForm
+            programSlug={programSlug}
+            location={location}
+            onDone={() => setSubmitted(true)}
+          />
+        ) : step === "verify" && pending ? (
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!/^\d{6}$/.test(code)) {
+                setVerifyError("Please enter the 6-digit code.");
+                return;
+              }
+              setSubmitting(true);
+              setVerifyError(null);
+              try {
+                const res = await fetch("/api/applications", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ ...pending, code, token }),
+                });
+                if (res.status === 429) {
+                  setVerifyError(RATE_LIMIT_MSG);
+                  return;
+                }
+                if (res.status === 400) {
+                  setVerifyError(
+                    "That code is incorrect or has expired. Please try again or resend a new code.",
+                  );
+                  return;
+                }
+                if (!res.ok) throw new Error("Request failed");
+                setSubmitted(true);
+              } catch {
+                setVerifyError("Something went wrong. Please try again.");
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+          >
+            <h3
+              id="book-a-call-title"
+              className="pr-8 font-sans text-2xl text-[#101010]"
+            >
+              Verify your email
+            </h3>
+            <p className="mt-1.5 font-sans text-[13px] leading-relaxed text-black/55">
+              We sent a 6-digit code to{" "}
+              <span className="font-medium text-black/80">
+                {String(pending.email)}
+              </span>
+              . Enter it below to complete your submission.
+            </p>
+
+            <div className="mt-6 flex w-full flex-col gap-1.5">
+              <span className="text-[12px] font-medium text-black/70">
+                Verification code
+                <Req />
+              </span>
+              <OtpInput
+                value={code}
+                length={6}
+                onChange={(v) => {
+                  setCode(v);
+                  if (verifyError) setVerifyError(null);
+                }}
+              />
+            </div>
+
+            {verifyError && (
+              <p className="mt-4 text-[12px] text-red-600" role="alert">
+                {verifyError}
+              </p>
+            )}
+            {resent && !verifyError && (
+              <p className="mt-4 text-[12px] text-black/55">
+                A new code has been sent.
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="mt-6 w-full cursor-pointer rounded-full bg-[#3478e5] py-3 text-[13.5px] font-medium text-white shadow-[0_8px_20px_-8px_rgba(52,120,229,0.6)] transition-colors hover:bg-[#2563eb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3478e5]/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {submitting ? "Verifying…" : "Verify & submit"}
+            </button>
+
+            <div className="mt-4 flex items-center justify-between text-[12px]">
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={async () => {
+                  setVerifyError(null);
+                  setResent(false);
+                  setSubmitting(true);
+                  try {
+                    await sendCode(String(pending.email));
+                    setCode("");
+                    setResent(true);
+                  } catch (err) {
+                    setVerifyError(
+                      err instanceof Error && err.message === "rate-limited"
+                        ? RATE_LIMIT_MSG
+                        : "Couldn't resend the code. Try again.",
+                    );
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
+                className="cursor-pointer text-[#3478e5] hover:underline disabled:opacity-60"
+              >
+                Resend code
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("form");
+                  setCode("");
+                  setVerifyError(null);
+                  setResent(false);
+                }}
+                className="cursor-pointer text-black/55 hover:text-black hover:underline"
+              >
+                Edit details
+              </button>
+            </div>
+          </form>
         ) : (
           <form
             onSubmit={async (e) => {
@@ -208,36 +387,38 @@ export default function BookACallModal({
                   "That number doesn't look valid for the selected country.",
                 );
 
-              // Book a Call stays a placeholder
-              if (!isApplication) {
-                setSubmitted(true);
-                return;
-              }
-
-              // Eligibility / waitlist: send to the API
+              // Capture the form now; it's sent after the email is verified
               const data = new FormData(e.currentTarget);
+              const payload = {
+                type: isApplication ? mode : "call", // "eligibility" | "waitlist" | "call"
+                programTitle,
+                programSlug,
+                firstName: data.get("firstName"),
+                lastName: data.get("lastName"),
+                email: data.get("email"),
+                phone,
+                startup: data.get("startup"),
+                message: data.get("message"),
+                audience: isApplication ? undefined : audience,
+                role: data.get("role"),
+                employees: data.get("employees"),
+              };
+
               setSubmitting(true);
               setSubmitError(null);
               try {
-                const res = await fetch("/api/applications", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    type: mode, // "eligibility" | "waitlist"
-                    programTitle,
-                    programSlug,
-                    firstName: data.get("firstName"),
-                    lastName: data.get("lastName"),
-                    email: data.get("email"),
-                    phone,
-                    startup: data.get("startup"),
-                    message: data.get("message"),
-                  }),
-                });
-                if (!res.ok) throw new Error("Request failed");
-                setSubmitted(true);
-              } catch {
-                setSubmitError("Something went wrong. Please try again.");
+                await sendCode(String(payload.email));
+                setPending(payload);
+                setCode("");
+                setVerifyError(null);
+                setResent(false);
+                setStep("verify");
+              } catch (err) {
+                setSubmitError(
+                  err instanceof Error && err.message === "rate-limited"
+                    ? RATE_LIMIT_MSG
+                    : "Couldn't send the verification code. Check your email address and try again.",
+                );
               } finally {
                 setSubmitting(false);
               }
@@ -297,6 +478,7 @@ export default function BookACallModal({
                     type="text"
                     name="firstName"
                     required
+                    defaultValue={String(pending?.firstName ?? "")}
                     placeholder="Jane"
                     className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                   />
@@ -310,6 +492,7 @@ export default function BookACallModal({
                     type="text"
                     name="lastName"
                     required
+                    defaultValue={String(pending?.lastName ?? "")}
                     placeholder="Doe"
                     className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                   />
@@ -318,13 +501,14 @@ export default function BookACallModal({
 
               <label className="flex flex-col gap-1.5 w-full">
                 <span className="text-[12px] font-medium text-black/70">
-                  Work Email
+                  Email
                   <Req />
                 </span>
                 <input
                   type="email"
                   name="email"
                   required
+                  defaultValue={String(pending?.email ?? "")}
                   placeholder="jane@company.com"
                   className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                 />
@@ -368,6 +552,7 @@ export default function BookACallModal({
                   <input
                     type="text"
                     name="startup"
+                    defaultValue={String(pending?.startup ?? "")}
                     placeholder="e.g. Acme Labs"
                     className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                   />
@@ -384,7 +569,9 @@ export default function BookACallModal({
                     </span>
                     <input
                       type="text"
+                      name="role"
                       required
+                      defaultValue={String(pending?.role ?? "")}
                       placeholder="e.g. Sales Manager"
                       className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                     />
@@ -396,8 +583,9 @@ export default function BookACallModal({
                       <Req />
                     </span>
                     <select
+                      name="employees"
                       required
-                      defaultValue=""
+                      defaultValue={String(pending?.employees ?? "")}
                       className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
                     >
                       <option value="" disabled>
@@ -421,6 +609,7 @@ export default function BookACallModal({
                 <textarea
                   name="message"
                   rows={2}
+                  defaultValue={String(pending?.message ?? "")}
                   placeholder={messagePlaceholder}
                   className="w-full min-w-0 resize-none rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                 />
@@ -438,7 +627,7 @@ export default function BookACallModal({
               disabled={submitting}
               className="mt-6 w-full cursor-pointer rounded-full bg-[#3478e5] py-3 text-[13.5px] font-medium text-white shadow-[0_8px_20px_-8px_rgba(52,120,229,0.6)] transition-colors hover:bg-[#2563eb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3478e5]/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {submitting ? "Submitting…" : submitLabel}
+              {submitting ? "Sending code…" : submitLabel}
             </button>
           </form>
         )}
@@ -448,18 +637,112 @@ export default function BookACallModal({
   );
 }
 
+/** Email-only "notify me" form. Posts to /api/notify. */
+function NotifyForm({
+  programSlug,
+  location,
+  onDone,
+}: {
+  programSlug?: string;
+  location?: string;
+  onDone: () => void;
+}) {
+  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+
+  return (
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        setStatus("loading");
+        try {
+          const res = await fetch("/api/notify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: data.get("email"),
+              website: data.get("website"), // honeypot
+              programSlug,
+              location,
+            }),
+          });
+          if (!res.ok) throw new Error("Request failed");
+          onDone();
+        } catch {
+          setStatus("error");
+        }
+      }}
+    >
+      <h3
+        id="book-a-call-title"
+        className="pr-8 font-sans text-2xl text-[#101010]"
+      >
+        Notify me
+      </h3>
+      <p className="mt-1.5 font-sans text-[13px] leading-relaxed text-black/55">
+        {location
+          ? `Get an email when the ${location} batch opens.`
+          : "Get an email when new batches open."}
+      </p>
+
+      <label className="mt-6 flex w-full flex-col gap-1.5">
+        <span className="text-[12px] font-medium text-black/70">
+          Email
+          <Req />
+        </span>
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder="jane@company.com"
+          className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
+        />
+      </label>
+
+      {/* Honeypot: hidden from people, bots fill it in */}
+      <input
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="hidden"
+      />
+
+      {status === "error" && (
+        <p className="mt-4 text-[12px] text-red-600" role="alert">
+          Something went wrong. Please try again.
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={status === "loading"}
+        className="mt-6 w-full cursor-pointer rounded-full bg-[#3478e5] py-3 text-[13.5px] font-medium text-white shadow-[0_8px_20px_-8px_rgba(52,120,229,0.6)] transition-colors hover:bg-[#2563eb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3478e5]/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {status === "loading" ? "Saving…" : "Notify me"}
+      </button>
+
+      <p className="mt-3 text-center text-[11px] text-black/45">
+        We&apos;ll only email you about batch openings. Unsubscribe anytime.
+      </p>
+    </form>
+  );
+}
+
 /** Button that opens the dialog in a given mode; each instance owns its open state. */
 function ModalButton({
   mode,
   label,
   programTitle,
   programSlug,
+  location,
   className,
 }: {
   mode: ModalMode;
   label: ReactNode;
   programTitle?: string;
   programSlug?: string;
+  location?: string;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -474,6 +757,7 @@ function ModalButton({
         mode={mode}
         programTitle={programTitle}
         programSlug={programSlug}
+        location={location}
       />
     </>
   );
@@ -482,6 +766,7 @@ function ModalButton({
 type ProgramButtonProps = {
   programTitle?: string;
   programSlug?: string;
+  location?: string;
   className?: string;
 };
 
@@ -496,6 +781,80 @@ export function CheckEligibilityButton(props: ProgramButtonProps) {
 export function WaitlistButton(props: ProgramButtonProps) {
   return (
     <ModalButton mode="waitlist" label="Join the online waitlist" {...props} />
+  );
+}
+
+/** "Notify me" CTA: email-only signup for batches that aren't open yet. */
+export function NotifyButton(props: ProgramButtonProps) {
+  return <ModalButton mode="notify" label="Notify me →" {...props} />;
+}
+
+/** 6-box one-time-code input. Keeps a single string value. */
+function OtpInput({
+  value,
+  onChange,
+  length = 6,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  length?: number;
+}) {
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const digits = Array.from({ length }, (_, i) => value[i] ?? "");
+
+  const focus = (i: number) =>
+    refs.current[Math.max(0, Math.min(length - 1, i))]?.focus();
+
+  return (
+    <div className="flex w-full justify-between gap-2">
+      {digits.map((d, i) => (
+        <input
+          key={i}
+          ref={(el) => {
+            refs.current[i] = el;
+          }}
+          type="text"
+          inputMode="numeric"
+          autoComplete={i === 0 ? "one-time-code" : "off"}
+          maxLength={1}
+          value={d}
+          aria-label={`Digit ${i + 1}`}
+          onFocus={(e) => e.target.select()}
+          onChange={(e) => {
+            const v = e.target.value.replace(/\D/g, "").slice(-1);
+            if (!v) return;
+            const idx = Math.min(i, value.length);
+            const arr = value.split("");
+            arr[idx] = v;
+            onChange(arr.join("").slice(0, length));
+            focus(idx + 1);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Backspace") {
+              e.preventDefault();
+              const idx = digits[i] ? i : i - 1;
+              if (idx < 0) return;
+              onChange(value.slice(0, idx) + value.slice(idx + 1));
+              focus(idx);
+            } else if (e.key === "ArrowLeft") {
+              focus(i - 1);
+            } else if (e.key === "ArrowRight") {
+              focus(i + 1);
+            }
+          }}
+          onPaste={(e) => {
+            e.preventDefault();
+            const p = e.clipboardData
+              .getData("text")
+              .replace(/\D/g, "")
+              .slice(0, length);
+            onChange(p);
+            focus(p.length >= length ? length - 1 : p.length);
+          }}
+          className="h-12 w-full min-w-0 rounded-lg border border-black/15 text-center text-[20px] font-medium outline-none transition-colors focus:border-[#3478e5]"
+        />
+      ))}
+    </div>
   );
 }
 

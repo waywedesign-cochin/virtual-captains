@@ -7,8 +7,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import Link from "next/link";
-import { CheckEligibilityButton } from "../home/BookACallModal";
+import { CheckEligibilityButton, NotifyButton } from "../home/BookACallModal";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
@@ -199,6 +198,9 @@ const LOCATIONS: Location[] = [
   { id: "other", name: "Other locations", flag: "🌍", cities: [] },
 ];
 
+const notifyBtnClass =
+  "cursor-pointer text-xs font-semibold text-[#38bdf8] transition hover:text-white";
+
 export function OfflineLocations({
   programTitle,
   programSlug,
@@ -263,12 +265,12 @@ export function OfflineLocations({
                 ? "Not on the list? Tell us where you are and we'll look at bringing SalesX closer."
                 : `No ${loc.name} batch announced yet. We'll share dates here first.`}
             </p>
-            <Link
-              href="/contact"
-              className="text-xs font-semibold text-[#38bdf8] transition hover:text-white"
-            >
-              Notify me →
-            </Link>
+            <NotifyButton
+              programTitle={programTitle}
+              programSlug={programSlug}
+              location={loc.name}
+              className={notifyBtnClass}
+            />
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -314,12 +316,12 @@ export function OfflineLocations({
                         className="cursor-pointer rounded-full bg-[#e7ff3d] px-5 py-2.5 text-sm font-bold text-[#0b0e14] transition hover:bg-white"
                       />
                     ) : (
-                      <Link
-                        href="/contact"
-                        className="text-xs font-semibold text-[#38bdf8] transition hover:text-white"
-                      >
-                        Notify me →
-                      </Link>
+                      <NotifyButton
+                        programTitle={programTitle}
+                        programSlug={programSlug}
+                        location={`${c.name}, ${loc.name}`}
+                        className={notifyBtnClass}
+                      />
                     )}
                   </div>
                 </article>
