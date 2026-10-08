@@ -1,6 +1,12 @@
 import { getProgramPrice } from "@/app/lib/getProgramPrices";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
+import { badCode, checkCode } from "@/app/lib/otp";
+import { MIN, getIp, isLimited, makeLimiter, tooMany } from "@/app/lib/email";
+
+// Caps wrong-code guesses as well as order spam
+const byIp = makeLimiter("order:ip", 10, 10 * MIN);
+const byEmail = makeLimiter("order:email", 5, 10 * MIN);
 
 export const runtime = "nodejs";
 
@@ -25,8 +31,22 @@ export async function POST(req: Request) {
     const role = clean(body?.role, 60);
     const employees = clean(body?.employees, 10);
     const message = clean(body?.message, 200);
+    // Display-only (used in the receipt email); the price never comes from it
+    const programTitle = clean(body?.programTitle, 120);
 
     if (!name || !email || !phone) return bad("Missing details.");
+
+    if (
+      await isLimited([
+        [byIp, getIp(req)],
+        [byEmail, email.toLowerCase()],
+      ])
+    ) {
+      return tooMany();
+    }
+
+    // Must prove they own the email (code from /api/verify-email)
+    if (!checkCode(email, body?.code, body?.token)) return badCode();
 
     // Price comes from the server, never from the client
     const rupees =
@@ -51,6 +71,7 @@ export async function POST(req: Request) {
       if (employees) notes.employees = employees;
     }
     if (message) notes.message = message;
+    if (programTitle) notes.programTitle = programTitle;
 
     const order = await razorpay.orders.create({
       amount: rupees * 100, // paise

@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,6 +14,11 @@ import { quickContacts, socialLinks } from "./data";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import PhoneField from "../common/PhoneField";
 import ZoomHeading from "@/components/common/ZoomHeading";
+import {
+  VerifyEmailStep,
+  requestCode,
+  toVerifyResult,
+} from "../common/EmailVerification";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,7 +51,14 @@ const initialState: FormState = {
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-const EMPLOYEE_RANGES = ["1-10", "11-50", "51-100", "101-200", "201-500", "500+"];
+const EMPLOYEE_RANGES = [
+  "1-10",
+  "11-50",
+  "51-100",
+  "101-200",
+  "201-500",
+  "500+",
+];
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -64,10 +82,15 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
+  // Set while the "Verify your email" step is showing
+  const [verify, setVerify] = useState<{ email: string; token: string } | null>(
+    null,
+  );
+  const [sendError, setSendError] = useState<string | null>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
+      "(prefers-reduced-motion: reduce)",
     ).matches;
 
     const ctx = gsap.context(() => {
@@ -109,7 +132,7 @@ export default function ContactForm() {
             duration: 0.6,
             ease: "power2.out",
           },
-          "-=0.5"
+          "-=0.5",
         )
         .to(
           rightCardRef.current,
@@ -119,7 +142,7 @@ export default function ContactForm() {
             duration: 0.9,
             ease: "power3.out",
           },
-          "-=0.7"
+          "-=0.7",
         )
         .to(
           ".form-field-anim",
@@ -130,7 +153,7 @@ export default function ContactForm() {
             duration: 0.5,
             ease: "power2.out",
           },
-          "-=0.6"
+          "-=0.6",
         );
     }, sectionRef);
 
@@ -139,7 +162,11 @@ export default function ContactForm() {
 
   const handleChange =
     (field: FieldName) =>
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    (
+      e: ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
       setValues((prev) => ({ ...prev, [field]: e.target.value }));
       if (errors[field]) {
         setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -150,48 +177,68 @@ export default function ContactForm() {
 
   const validate = (): boolean => {
     const next: Partial<Record<FieldName, string>> = {};
-    if (!values.firstName.trim()) next.firstName = "Please enter your first name.";
+    if (!values.firstName.trim())
+      next.firstName = "Please enter your first name.";
     if (!values.lastName.trim()) next.lastName = "Please enter your last name.";
     if (!values.email.trim()) next.email = "Please enter your email address.";
-    else if (!emailPattern.test(values.email)) next.email = "Please enter a valid email address.";
+    else if (!emailPattern.test(values.email))
+      next.email = "Please enter a valid email address.";
     if (!values.phone) next.phone = "A phone number helps us follow up faster.";
     else if (!isValidPhoneNumber(values.phone))
       next.phone = "That number doesn't look valid for the selected country.";
     if (isOrg && !values.role.trim()) next.role = "Please enter your role.";
-    if (isOrg && !values.employees) next.employees = "Please select your team size.";
+    if (isOrg && !values.employees)
+      next.employees = "Please select your team size.";
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
+  // Step 1: validate, then email a code. The submission is sent from the
+  // verify step once the code is entered.
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
 
     setStatus("submitting");
+    setSendError(null);
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // `name` / `phone` keep the API's existing required fields; the rest
-        // are the popup-format extras.
-        body: JSON.stringify({
-          audience,
-          name: `${values.firstName.trim()} ${values.lastName.trim()}`,
-          firstName: values.firstName.trim(),
-          lastName: values.lastName.trim(),
-          email: values.email.trim(),
-          phone: values.phone, // E.164, e.g. +919876543210
-          role: isOrg ? values.role.trim() : undefined,
-          employees: isOrg ? values.employees : undefined,
-          message: values.message.trim(),
-        }),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      setStatus("success");
-      setValues(initialState);
-    } catch {
+      const email = values.email.trim();
+      setVerify({ email, token: await requestCode(email) });
+      setStatus("idle");
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : null);
       setStatus("error");
     }
+  };
+
+  // Step 2: the real submission, with the code + token
+  const submitVerified = async (code: string, token: string) => {
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      // `name` / `phone` keep the API's existing required fields; the rest
+      // are the popup-format extras.
+      body: JSON.stringify({
+        audience,
+        name: `${values.firstName.trim()} ${values.lastName.trim()}`,
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim(),
+        phone: values.phone, // E.164, e.g. +919876543210
+        role: isOrg ? values.role.trim() : undefined,
+        employees: isOrg ? values.employees : undefined,
+        message: values.message.trim(),
+        code,
+        token,
+      }),
+    });
+    const result = await toVerifyResult(res);
+    if (result === "ok") {
+      setStatus("success");
+      setValues(initialState);
+      setVerify(null);
+    }
+    return result;
   };
 
   const errorText = (field: FieldName) =>
@@ -251,9 +298,9 @@ export default function ContactForm() {
               <span className="mt-3 block h-1 w-12 rounded-full bg-[#e7ff3d] shadow-[0_0_12px_rgba(231,255,61,0.7)]" />
 
               <p className="mt-5 text-sm sm:text-[15px] leading-relaxed text-white/70">
-                Share a few details about your team size, pipeline velocity,
-                or sales enablement challenges — onboarding, outbound, or
-                execution — and we&apos;ll connect you to the right Captain.
+                Share a few details about your team size, pipeline velocity, or
+                sales enablement challenges — onboarding, outbound, or execution
+                — and we&apos;ll connect you to the right Captain.
               </p>
 
               {/* Quick Links for Individuals & Organisations */}
@@ -280,11 +327,16 @@ export default function ContactForm() {
               {/* Direct Quick Contact Links */}
               <ul className="mt-8 flex flex-col gap-3">
                 {quickContacts.map((c) => (
-                  <li key={c.id} className="contact-item-anim will-change-transform">
+                  <li
+                    key={c.id}
+                    className="contact-item-anim will-change-transform"
+                  >
                     <a
                       href={c.href}
                       target={c.id === "whatsapp" ? "_blank" : undefined}
-                      rel={c.id === "whatsapp" ? "noopener noreferrer" : undefined}
+                      rel={
+                        c.id === "whatsapp" ? "noopener noreferrer" : undefined
+                      }
                       className="group flex items-center justify-between rounded-xl border border-white/10 bg-white/4 p-3.5 sm:p-4 text-xs sm:text-sm font-medium text-white/90 backdrop-blur-md transition-all duration-300 hover:border-white/25 hover:bg-white/8 hover:text-white"
                     >
                       <div className="flex items-center gap-3">
@@ -315,11 +367,15 @@ export default function ContactForm() {
             <div className="relative z-10 mt-8 pt-6 border-t border-white/10">
               <div className="flex items-center gap-2 text-xs text-white/70">
                 <span className="h-2 w-2 rounded-full bg-[#e7ff3d] animate-pulse shadow-[0_0_8px_#e7ff3d]" />
-                <span className="font-medium text-white/80">Average response time: under 1 business day</span>
+                <span className="font-medium text-white/80">
+                  Average response time: under 1 business day
+                </span>
               </div>
 
               <div className="mt-5 flex flex-wrap items-center gap-2">
-                <span className="text-[11px] text-white/40 uppercase tracking-wider mr-1">Follow:</span>
+                <span className="text-[11px] text-white/40 uppercase tracking-wider mr-1">
+                  Follow:
+                </span>
                 {socialLinks.map((s) => (
                   <a
                     key={s.label}
@@ -345,11 +401,24 @@ export default function ContactForm() {
                 Send Us a Message
               </h3>
               <p className="mt-1 text-xs sm:text-sm text-white/60">
-                Fill in the details below and we&apos;ll schedule your consultation.
+                Fill in the details below and we&apos;ll schedule your
+                consultation.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} noValidate>
+            {verify && (
+              <VerifyEmailStep
+                email={verify.email}
+                token={verify.token}
+                onTokenChange={(token) => setVerify({ ...verify, token })}
+                onVerify={submitVerified}
+                onEdit={() => setVerify(null)}
+              />
+            )}
+
+            {/* Kept mounted (just hidden) during verification so "Edit
+                details" returns to the filled-in form */}
+            <form onSubmit={handleSubmit} noValidate hidden={Boolean(verify)}>
               <div className="grid gap-5 sm:grid-cols-2">
                 {/* I am: Individual / Organisation (segmented, like the popup) */}
                 <fieldset className="sm:col-span-2 form-field-anim will-change-transform">
@@ -383,18 +452,34 @@ export default function ContactForm() {
                   <label htmlFor="firstName" className={labelClass}>
                     First Name<span className="text-[#ffd60a]"> *</span>
                   </label>
-                  <input id="firstName" name="firstName" type="text" autoComplete="given-name" placeholder="Jane"
-                    value={values.firstName} onChange={handleChange("firstName")} {...a11y("firstName")}
-                    className={controlClass(Boolean(errors.firstName))} />
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    autoComplete="given-name"
+                    placeholder="Jane"
+                    value={values.firstName}
+                    onChange={handleChange("firstName")}
+                    {...a11y("firstName")}
+                    className={controlClass(Boolean(errors.firstName))}
+                  />
                   {errorText("firstName")}
                 </div>
                 <div className="form-field-anim will-change-transform">
                   <label htmlFor="lastName" className={labelClass}>
                     Last Name<span className="text-[#ffd60a]"> *</span>
                   </label>
-                  <input id="lastName" name="lastName" type="text" autoComplete="family-name" placeholder="Doe"
-                    value={values.lastName} onChange={handleChange("lastName")} {...a11y("lastName")}
-                    className={controlClass(Boolean(errors.lastName))} />
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    autoComplete="family-name"
+                    placeholder="Doe"
+                    value={values.lastName}
+                    onChange={handleChange("lastName")}
+                    {...a11y("lastName")}
+                    className={controlClass(Boolean(errors.lastName))}
+                  />
                   {errorText("lastName")}
                 </div>
 
@@ -403,9 +488,17 @@ export default function ContactForm() {
                   <label htmlFor="email" className={labelClass}>
                     Work Email<span className="text-[#ffd60a]"> *</span>
                   </label>
-                  <input id="email" name="email" type="email" autoComplete="email" placeholder="jane@company.com"
-                    value={values.email} onChange={handleChange("email")} {...a11y("email")}
-                    className={controlClass(Boolean(errors.email))} />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="jane@company.com"
+                    value={values.email}
+                    onChange={handleChange("email")}
+                    {...a11y("email")}
+                    className={controlClass(Boolean(errors.email))}
+                  />
                   {errorText("email")}
                 </div>
 
@@ -420,7 +513,8 @@ export default function ContactForm() {
                     value={values.phone || undefined}
                     onChange={(v) => {
                       setValues((prev) => ({ ...prev, phone: v ?? "" }));
-                      if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+                      if (errors.phone)
+                        setErrors((prev) => ({ ...prev, phone: undefined }));
                     }}
                     invalid={Boolean(errors.phone)}
                     describedBy={errors.phone ? "phone-error" : undefined}
@@ -433,23 +527,42 @@ export default function ContactForm() {
                   <>
                     <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                       <label htmlFor="role" className={labelClass}>
-                        Your Role / Designation<span className="text-[#ffd60a]"> *</span>
+                        Your Role / Designation
+                        <span className="text-[#ffd60a]"> *</span>
                       </label>
-                      <input id="role" name="role" type="text" autoComplete="organization-title" placeholder="e.g. Sales Manager"
-                        value={values.role} onChange={handleChange("role")} {...a11y("role")}
-                        className={controlClass(Boolean(errors.role))} />
+                      <input
+                        id="role"
+                        name="role"
+                        type="text"
+                        autoComplete="organization-title"
+                        placeholder="e.g. Sales Manager"
+                        value={values.role}
+                        onChange={handleChange("role")}
+                        {...a11y("role")}
+                        className={controlClass(Boolean(errors.role))}
+                      />
                       {errorText("role")}
                     </div>
                     <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                       <label htmlFor="employees" className={labelClass}>
-                        Number of Employees<span className="text-[#ffd60a]"> *</span>
+                        Number of Employees
+                        <span className="text-[#ffd60a]"> *</span>
                       </label>
-                      <select id="employees" name="employees" value={values.employees} onChange={handleChange("employees")}
+                      <select
+                        id="employees"
+                        name="employees"
+                        value={values.employees}
+                        onChange={handleChange("employees")}
                         {...a11y("employees")}
-                        className={`${controlClass(Boolean(errors.employees))} cursor-pointer [&>option]:bg-[#0a0d16]`}>
-                        <option value="" disabled>Select an option</option>
+                        className={`${controlClass(Boolean(errors.employees))} cursor-pointer [&>option]:bg-[#0a0d16]`}
+                      >
+                        <option value="" disabled>
+                          Select an option
+                        </option>
                         {EMPLOYEE_RANGES.map((r) => (
-                          <option key={r} value={r}>{r}</option>
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
                         ))}
                       </select>
                       {errorText("employees")}
@@ -460,7 +573,10 @@ export default function ContactForm() {
                 {/* Message */}
                 <div className="sm:col-span-2 form-field-anim will-change-transform">
                   <label htmlFor="message" className={labelClass}>
-                    Message <span className="font-normal normal-case tracking-normal text-white/40">(optional)</span>
+                    Message{" "}
+                    <span className="font-normal normal-case tracking-normal text-white/40">
+                      (optional)
+                    </span>
                   </label>
                   <textarea
                     id="message"
@@ -489,20 +605,27 @@ export default function ContactForm() {
                       className="h-4 w-4 animate-spin rounded-full border-2 border-black/40 border-t-black"
                     />
                   )}
-                  {status === "submitting" ? "Sending Request..." : "Submit Message →"}
+                  {status === "submitting"
+                    ? "Sending Code..."
+                    : "Submit Message →"}
                 </button>
 
                 <div role="status" aria-live="polite" className="text-sm">
                   {status === "success" && (
                     <div className="flex items-center gap-2 rounded-lg border border-[#22c55e]/30 bg-[#22c55e]/10 px-3.5 py-2 text-xs sm:text-sm font-medium text-[#4ade80] animate-in fade-in duration-300">
                       <span>✓</span>
-                      <span>Thanks — a Captain will reach out within 1 business day.</span>
+                      <span>
+                        Thanks — a Captain will reach out within 1 business day.
+                      </span>
                     </div>
                   )}
                   {status === "error" && (
                     <div className="flex items-center gap-2 rounded-lg border border-[#ef4444]/30 bg-[#ef4444]/10 px-3.5 py-2 text-xs sm:text-sm font-medium text-[#f87171] animate-in fade-in duration-300">
                       <span>⚠</span>
-                      <span>Something went wrong — please try WhatsApp directly.</span>
+                      <span>
+                        {sendError ??
+                          "Something went wrong — please try WhatsApp directly."}
+                      </span>
                     </div>
                   )}
                 </div>

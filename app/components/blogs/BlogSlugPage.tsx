@@ -13,6 +13,11 @@ import Link from "next/link";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { BlogPost } from "@/sanity/lib/types";
 import { CTASection } from "./CTASection";
+import {
+  VerifyEmailStep,
+  requestCode,
+  toVerifyResult,
+} from "../common/EmailVerification";
 
 const TwitterIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -121,6 +126,14 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
   onBookCall,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [newsletter, setNewsletter] = useState<
+    "idle" | "loading" | "done" | "error"
+  >("idle");
+  const [verify, setVerify] = useState<{
+    email: string;
+    token: string;
+    website: string;
+  } | null>(null);
 
   // Scroll to top when post changes
   useEffect(() => {
@@ -467,26 +480,99 @@ export const BlogSlugPage: React.FC<BlogSlugPageProps> = ({
             </div>
 
             <div className="w-full md:w-auto shrink-0">
-              <form
-                className="flex flex-col sm:flex-row gap-3"
-                onSubmit={(e) => e.preventDefault()}
-              >
-                <div className="relative flex-1 sm:w-72">
-                  <Mail className="w-4 h-4 text-white/45 absolute left-4 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    placeholder="Enter your email address"
-                    required
-                    className="w-full bg-white/5 border border-white/10 rounded-full py-3.5 pl-11 pr-4 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#1d4ed8] focus:bg-white/10 transition-colors"
+              {newsletter === "done" ? (
+                <p className="text-sm font-medium text-[#8fd0ff]" role="status">
+                  You&apos;re subscribed. Watch your inbox for new insights.
+                </p>
+              ) : verify ? (
+                <div className="w-full md:w-96">
+                  <VerifyEmailStep
+                    email={verify.email}
+                    token={verify.token}
+                    onTokenChange={(token) => setVerify({ ...verify, token })}
+                    onEdit={() => setVerify(null)}
+                    submitLabel="Verify & subscribe"
+                    onVerify={async (code, token) => {
+                      const result = await toVerifyResult(
+                        await fetch("/api/newsletter", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            email: verify.email,
+                            website: verify.website,
+                            code,
+                            token,
+                          }),
+                        }),
+                      );
+                      if (result === "ok") {
+                        setVerify(null);
+                        setNewsletter("done");
+                      }
+                      return result;
+                    }}
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="px-7 py-3.5 bg-linear-to-r from-[#1d4ed8] to-[#0369a1] hover:from-[#2563eb] hover:to-[#0284c7] text-white text-sm font-semibold rounded-full shadow-[0_4px_14px_rgba(29,78,216,0.2)] hover:shadow-[0_6px_20px_rgba(29,78,216,0.3)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
+              ) : (
+                <form
+                  className="flex flex-col sm:flex-row sm:flex-wrap gap-3"
+                  onSubmit={async (e) => {
+                    // Step 1: email a code (double opt-in)
+                    e.preventDefault();
+                    const data = new FormData(e.currentTarget);
+                    const email = String(data.get("email") ?? "").trim();
+                    setNewsletter("loading");
+                    try {
+                      setVerify({
+                        email,
+                        token: await requestCode(
+                          email,
+                          String(data.get("website") ?? ""),
+                        ),
+                        website: String(data.get("website") ?? ""), // honeypot
+                      });
+                      setNewsletter("idle");
+                    } catch {
+                      setNewsletter("error");
+                    }
+                  }}
                 >
-                  Subscribe
-                </button>
-              </form>
+                  <div className="relative flex-1 sm:w-72">
+                    <Mail className="w-4 h-4 text-white/45 absolute left-4 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="email"
+                      name="email"
+                      aria-label="Email address"
+                      placeholder="Enter your email address"
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-full py-3.5 pl-11 pr-4 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#1d4ed8] focus:bg-white/10 transition-colors"
+                    />
+                  </div>
+                  {/* Honeypot: hidden from people, bots fill it in */}
+                  <input
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
+                  />
+                  <button
+                    type="submit"
+                    disabled={newsletter === "loading"}
+                    className="px-7 py-3.5 bg-linear-to-r from-[#1d4ed8] to-[#0369a1] hover:from-[#2563eb] hover:to-[#0284c7] text-white text-sm font-semibold rounded-full shadow-[0_4px_14px_rgba(29,78,216,0.2)] hover:shadow-[0_6px_20px_rgba(29,78,216,0.3)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {newsletter === "loading" ? "Sending code…" : "Subscribe"}
+                  </button>
+                  {newsletter === "error" && (
+                    <p
+                      className="text-xs text-[#ff6b6b] sm:basis-full"
+                      role="alert"
+                    >
+                      Something went wrong. Please try again.
+                    </p>
+                  )}
+                </form>
+              )}
             </div>
           </div>
         </div>

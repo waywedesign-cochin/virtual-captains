@@ -43,14 +43,13 @@ export const offices: Office[] = [
     tag: "Headquarters",
     city: "Kochi, Kerala",
     addressLines: [
-      "Kairali Apartments, Shihab Thangal Road,",
-      "Panampilly Nagar, Ernakulam,",
-      "Kerala 682015, India",
+      "Covspace Coworking, G K Tower,",
+      "Chakkaraparambu Junction, Thammanam,",
+      "Kochi, Kerala 682032, India",
     ],
-    // Coordinates as published on Virtual Captains' own embedded map.
-    mapsHref: "https://www.google.com/maps/search/?api=1&query=9.9552795,76.2960201",
+    mapsHref: "https://www.google.com/maps/search/?api=1&query=Covspace+Coworking%2C+Kochi",
     mapEmbed:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.743581568841!2d76.29602009999999!3d9.955279499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b0873ac762360cd%3A0xee3e874df53632f8!2sVirtual%20Captains!5e0!3m2!1sen!2sin!4v1789549983677!5m2!1sen!2sin",
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3064.6726778701895!2d76.31464137503104!3d9.989583190115306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d2ee9c18baf%3A0xec3c610ff9ed0ee!2sCovspace%20Coworking!5e1!3m2!1sen!2sin!4v1791458194525!5m2!1sen!2sin",
     pin: { top: "58%", left: "68%" },
   },
   {

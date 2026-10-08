@@ -2,23 +2,49 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Check, Handshake, Sparkles, School, Building, Megaphone } from "./Icons";
+import {
+  X,
+  Check,
+  Handshake,
+  Sparkles,
+  School,
+  Building,
+  Megaphone,
+} from "./Icons";
 import { PartnershipModel } from "../types";
 import { PARTNERSHIP_MODELS } from "../data/partnerships";
+import {
+  VerifyEmailStep,
+  requestCode,
+  toVerifyResult,
+} from "@/app/components/common/EmailVerification";
 
 interface PartnerModalProps {
   model: PartnershipModel | null;
   onClose: () => void;
 }
 
-export const PartnerModal: React.FC<PartnerModalProps> = ({ model, onClose }) => {
-  const [selectedId, setSelectedId] = useState<string>(model?.id || "corporate");
+export const PartnerModal: React.FC<PartnerModalProps> = ({
+  model,
+  onClose,
+}) => {
+  const [selectedId, setSelectedId] = useState<string>(
+    model?.id || "corporate",
+  );
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [organization, setOrganization] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  // Set while the "Verify your email" step is showing
+  const [verify, setVerify] = useState<{
+    email: string;
+    token: string;
+    website: string;
+  } | null>(null);
 
   useEffect(() => {
     if (model) {
@@ -31,16 +57,63 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ model, onClose }) =>
   const currentModel =
     PARTNERSHIP_MODELS.find((m) => m.id === selectedId) || model;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Step 1: email a code; the enquiry is sent from the verify step
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
+    if (sending) return;
+    setSending(true);
+    setError(null);
+    try {
+      const website = String(
+        new FormData(e.currentTarget).get("website") ?? "",
+      ); // honeypot
+      const to = email.trim();
+      setVerify({ email: to, token: await requestCode(to, website), website });
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Step 2: the real submission, with the code + token
+  const submitVerified = async (code: string, token: string) => {
+    const result = await toVerifyResult(
+      await fetch("/api/partner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          track: selectedId,
+          fullName,
+          email: verify?.email,
+          organization,
+          phone,
+          message,
+          website: verify?.website,
+          code,
+          token,
+        }),
+      }),
+    );
+    if (result === "ok") {
+      setVerify(null);
+      setSubmitted(true);
+      setFullName("");
+      setEmail("");
+      setOrganization("");
+      setPhone("");
+      setMessage("");
       // Auto-close after showing success
       setTimeout(() => {
         onClose();
         setSubmitted(false);
-      }, 2000);
-    }, 500);
+      }, 2500);
+    }
+    return result;
   };
 
   const getModelIcon = (type: string) => {
@@ -111,9 +184,19 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ model, onClose }) =>
                   Inquiry Received!
                 </h4>
                 <p className="text-zinc-300 text-xs sm:text-sm max-w-xs leading-relaxed">
-                  Thank you for your interest in partnering with SalesX. Our ecosystem director will reach out to you within 24 hours.
+                  Thank you for your interest in partnering with SalesX. Our
+                  ecosystem director will reach out to you within 24 hours.
                 </p>
               </div>
+            ) : verify ? (
+              <VerifyEmailStep
+                email={verify.email}
+                token={verify.token}
+                onTokenChange={(token) => setVerify({ ...verify, token })}
+                onVerify={submitVerified}
+                onEdit={() => setVerify(null)}
+                submitLabel="Verify & submit"
+              />
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Model Selector Pills */}
@@ -210,15 +293,35 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ model, onClose }) =>
                   />
                 </div>
 
+                {/* Honeypot: hidden from people, bots fill it in */}
+                <input
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
+
+                {error && (
+                  <p className="text-xs text-[#ff6b6b]" role="alert">
+                    {error}
+                  </p>
+                )}
+
                 {/* Submit Button */}
                 <motion.button
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full py-3.5 mt-2 rounded-xl font-black uppercase text-xs tracking-wider shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer bg-linear-to-r from-[#2563eb] to-[#0284c7] hover:brightness-110 text-white shadow-blue-500/25"
+                  disabled={sending}
+                  className="w-full py-3.5 mt-2 rounded-xl font-black uppercase text-xs tracking-wider shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer bg-linear-to-r from-[#2563eb] to-[#0284c7] hover:brightness-110 text-white shadow-blue-500/25 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Sparkles className="w-4 h-4 text-[#e7ff3d]" />
-                  <span>SUBMIT PARTNERSHIP APPLICATION</span>
+                  <span>
+                    {sending
+                      ? "SENDING CODE…"
+                      : "SUBMIT PARTNERSHIP APPLICATION"}
+                  </span>
                 </motion.button>
               </form>
             )}

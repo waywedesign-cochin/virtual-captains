@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import { PARTNERSHIP_MODELS } from "@/app/partner/data/partnerships";
 import {
+  C,
   MIN,
   badge,
   button,
-  cap,
   esc,
   escMultiline,
   footnote,
@@ -25,15 +26,15 @@ import {
 } from "@/app/lib/email";
 import { badCode, checkCode } from "@/app/lib/otp";
 
-const byIp = makeLimiter("contact:ip", 5, 10 * MIN);
-const byEmail = makeLimiter("contact:email", 5, 10 * MIN);
+const byIp = makeLimiter("partner:ip", 5, 10 * MIN);
+const byEmail = makeLimiter("partner:email", 5, 10 * MIN);
 
 const clean = (v: unknown, max: number) =>
   String(v ?? "")
     .trim()
     .slice(0, max);
 
-/** Contact page form: emails the team and confirms to the sender. */
+/** Partner page enquiry: emails the team and confirms to the sender. */
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body) {
@@ -43,20 +44,17 @@ export async function POST(request: Request) {
   // Honeypot: bots fill the hidden field. Pretend it worked.
   if (body.website) return NextResponse.json({ success: true });
 
-  const name = clean(body.name, 120);
-  const firstName = clean(body.firstName, 60) || name.split(" ")[0];
+  const fullName = clean(body.fullName, 120);
   const email = clean(body.email, 254);
-  const phone = clean(body.phone, 20);
+  const organization = clean(body.organization, 160);
+  const phone = clean(body.phone, 30);
   const message = clean(body.message, 3000);
-  const audience =
-    body.audience === "organisation" ? "organisation" : "individual";
-  const role = clean(body.role, 80);
-  const employees = clean(body.employees, 10);
+  // Track title comes from our own data, never from the client
+  const track = PARTNERSHIP_MODELS.find((m) => m.id === body.track);
 
-  // Message is optional (matches the Book a Call popup)
-  if (!name || !isEmail(email) || !phone) {
+  if (!fullName || !isEmail(email) || !organization || !track) {
     return NextResponse.json(
-      { error: "Name, email, and phone are required." },
+      { error: "Please fill in all required fields." },
       { status: 400 },
     );
   }
@@ -73,30 +71,29 @@ export async function POST(request: Request) {
   // Must prove they own the email (code from /api/verify-email)
   if (!checkCode(email, body.code, body.token)) return badCode();
 
-  const mail = getMailConfig("CONTACT_TO_EMAIL");
+  const mail = getMailConfig("PARTNER_TO_EMAIL");
   if (!mail) return misconfigured();
 
-  const isOrg = audience === "organisation";
+  const firstName = fullName.split(" ")[0];
 
   const ok = await sendLeadEmails({
     ...mail,
     team: {
       replyTo: email,
-      subject: `New Contact Enquiry: ${name}`,
+      subject: `New Partnership Enquiry: ${track.title} – ${organization}`,
       html: layout(
-        `New contact enquiry from ${name}`,
-        "New Contact Enquiry",
+        `${fullName} from ${organization} is interested in ${track.title}`,
+        "New Partnership Enquiry",
         `
-        ${badge("Contact Enquiry")}
-        ${heading(esc(name), "16px 0 4px 0")}
-        ${para(`Sent from the contact page.`, "#8b97b5")}
+        ${badge("Partnership Enquiry")}
+        ${heading(esc(track.title), "16px 0 4px 0")}
+        ${para(`${esc(fullName)} from ${esc(organization)} wants to partner with SalesX.`, C.muted)}
         ${rows(`
-          ${row("Name", esc(name))}
+          ${row("Name", esc(fullName))}
           ${row("Email", mailtoLink(email))}
-          ${row("Phone", telLink(phone))}
-          ${row("Type", esc(cap(audience)))}
-          ${isOrg && role ? row("Role", esc(role)) : ""}
-          ${isOrg && employees ? row("Employees", esc(employees)) : ""}
+          ${phone ? row("Phone", telLink(phone)) : ""}
+          ${row("Organisation", esc(organization))}
+          ${row("Track", esc(track.title))}
           ${row("Message", escMultiline(message) || "—")}
         `)}
         ${button(`mailto:${email}`, `Reply to ${firstName}`)}
@@ -105,14 +102,14 @@ export async function POST(request: Request) {
     },
     confirmation: {
       to: email,
-      subject: "We've received your message",
+      subject: "We've received your partnership enquiry",
       html: layout(
-        "Thanks for getting in touch. A Captain will reach out within 1 business day.",
-        "Message received",
+        "Thanks for your interest in partnering with SalesX.",
+        "Enquiry received",
         `
-        ${badge("Message received")}
+        ${badge("Enquiry received")}
         ${heading(`Hi ${esc(firstName)},`)}
-        ${para("Thanks for getting in touch. A Captain will reach out within 1 business day.")}
+        ${para(`Thanks for your interest in the <strong>${esc(track.title)}</strong> with SalesX. Our partnerships team will reach out within 24 hours.`)}
         ${footnote("Questions in the meantime? Just reply to this email.")}
         `,
       ),
@@ -121,14 +118,10 @@ export async function POST(request: Request) {
 
   if (!ok) {
     return NextResponse.json(
-      { error: "Failed to process contact submission." },
+      { error: "We couldn't send your enquiry. Please try again." },
       { status: 500 },
     );
   }
 
-  return NextResponse.json({
-    success: true,
-    message:
-      "Message received successfully. A Captain will reach out within 1 business day.",
-  });
+  return NextResponse.json({ success: true });
 }

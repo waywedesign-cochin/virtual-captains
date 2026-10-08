@@ -1,82 +1,26 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { createHmac, randomInt, timingSafeEqual } from "crypto";
+import {
+  BRAND,
+  C,
+  FONT,
+  badge,
+  cap,
+  esc,
+  getIp,
+  isLimited,
+  layout,
+  makeLimiter,
+  MIN,
+  resend,
+  row,
+  tooMany,
+} from "@/app/lib/email";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const esc = (s: unknown) =>
-  String(s ?? "").replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        c
-      ]!,
-  );
-
-// Capitalize the first letter of a string
-const cap = (s: unknown) => {
-  const v = String(s ?? "");
-  return v.charAt(0).toUpperCase() + v.slice(1);
-};
-
-// ---- Rate limiting (in-memory, per server instance) ----
-type Limiter = { prefix: string; count: number; windowMs: number };
-
-const makeLimiter = (
-  prefix: string,
-  count: number,
-  windowMs: number,
-): Limiter => ({
-  prefix,
-  count,
-  windowMs,
-});
-
-const MIN = 60 * 1000;
 const sendCodeByIp = makeLimiter("send:ip", 5, 10 * MIN);
 const sendCodeByEmail = makeLimiter("send:email", 3, 10 * MIN);
 const submitByIp = makeLimiter("submit:ip", 10, 10 * MIN);
 const submitByEmail = makeLimiter("submit:email", 5, 10 * MIN);
-
-// key -> timestamps of recent hits
-const hits = new Map<string, number[]>();
-
-const getIp = (req: Request) =>
-  req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-  req.headers.get("x-real-ip") ||
-  "unknown";
-
-/** Returns true if ANY of the checks is over its limit. */
-const isLimited = async (checks: [Limiter, string][]) => {
-  const now = Date.now();
-
-  // Keep the map from growing forever
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) {
-      if (!v.length || now - v[v.length - 1] > 10 * MIN) hits.delete(k);
-    }
-  }
-
-  for (const [limiter, id] of checks) {
-    const key = `${limiter.prefix}:${id}`;
-    const recent = (hits.get(key) ?? []).filter(
-      (t) => now - t < limiter.windowMs,
-    );
-    if (recent.length >= limiter.count) {
-      hits.set(key, recent);
-      return true;
-    }
-    recent.push(now);
-    hits.set(key, recent);
-  }
-  return false;
-};
-
-const tooMany = () =>
-  NextResponse.json(
-    { error: "Too many requests. Please try again later." },
-    { status: 429 },
-  );
 
 // ---- Email verification (stateless signed code) ----
 const CODE_TTL_MS = 10 * 60 * 1000; // 10 minutes
@@ -98,92 +42,6 @@ const verifyCode = (email: string, code: unknown, token: unknown) => {
   const b = Buffer.from(expected);
   return a.length === b.length && timingSafeEqual(a, b);
 };
-
-// ---- Email theme (blue + black) ----
-const BRAND = "Virtual Captains";
-const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://your-domain.com"
-).replace(/\/$/, "");
-const LOGO_URL = `${SITE_URL}/home/logo.png`;
-const C = {
-  pageBg: "#05070d",
-  cardBg: "#0b1020",
-  rowBg: "#111a33",
-  border: "#1e2a4a",
-  blue: "#3b82f6",
-  blueDark: "#1d4ed8",
-  text: "#e6ebf5",
-  muted: "#8b97b5",
-};
-const FONT =
-  "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
-
-const layout = (preheader: string, title: string, content: string) => `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
-  <meta name="supported-color-schemes" content="dark" />
-  <title>${esc(title)}</title>
-</head>
-<body style="margin:0;padding:0;background:${C.pageBg};" bgcolor="${C.pageBg}">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${C.pageBg};">
-    ${esc(preheader)}
-  </div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.pageBg}" style="background:${C.pageBg};">
-    <tr>
-      <td align="center" style="padding:32px 16px;">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
-          <!-- Header -->
-          <tr>
-            <td align="center" style="padding:0 0 20px 0;text-align:center;font-family:${FONT};font-size:13px;font-weight:700;color:${C.blue};">
-              <img src="${LOGO_URL}" alt="${esc(BRAND)}" width="140" style="display:block;margin:0 auto;width:140px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;" />
-            </td>
-          </tr>
-          <!-- Card -->
-          <tr>
-            <td bgcolor="${C.cardBg}" style="background:${C.cardBg};border:1px solid ${C.border};border-radius:16px;overflow:hidden;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td height="4" bgcolor="${C.blue}" style="height:4px;line-height:4px;font-size:0;background:linear-gradient(90deg,${C.blueDark},${C.blue});">&nbsp;</td>
-                </tr>
-                <tr>
-                  <td style="padding:32px 32px 28px 32px;font-family:${FONT};color:${C.text};">
-                    ${content}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <!-- Footer -->
-          <tr>
-            <td align="center" style="padding:20px 8px 0 8px;font-family:${FONT};font-size:12px;line-height:18px;color:${C.muted};">
-              &copy; ${new Date().getFullYear()} ${esc(BRAND)}. All rights reserved.
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-
-const row = (label: string, value: string) => `
-  <tr>
-    <td style="padding:12px 16px;border-top:1px solid ${C.border};font-family:${FONT};font-size:12px;letter-spacing:1px;text-transform:uppercase;color:${C.muted};width:120px;vertical-align:top;">
-      ${label}
-    </td>
-    <td style="padding:12px 16px;border-top:1px solid ${C.border};font-family:${FONT};font-size:15px;line-height:22px;color:${C.text};vertical-align:top;">
-      ${value}
-    </td>
-  </tr>`;
-
-const badge = (text: string) => `
-  <span style="display:inline-block;padding:5px 12px;border-radius:999px;background:${C.rowBg};border:1px solid ${C.blue};font-family:${FONT};font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${C.blue};">
-    ${esc(text)}
-  </span>`;
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);

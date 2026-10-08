@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PARTNERS, logoHeight, type Partner } from "@/app/content/partners";
 import { pageMetadata } from "@/lib/seo";
 import type { CSSProperties } from "react";
 import Image from "next/image";
@@ -337,60 +338,35 @@ function TestimonialsSection() {
   );
 }
 
-// ---------- Partner logos: two-way marquee (add real logos under /public/partners) ----------
-type Partner = { name: string; logo?: string };
-
-const PARTNERS_A: Partner[] = [
-  { name: "Orbitly", logo: "/programs/orbitly.svg" },
-  { name: "Finvara", logo: "/programs/finvara.svg" },
-  { name: "Cargonix", logo: "/programs/cargonix.svg" },
-  { name: "Steelwave", logo: "/programs/steelwave.svg" },
-  { name: "Shopiq", logo: "/programs/shopiq.svg" },
-  { name: "Nexora", logo: "/programs/nexora.svg" },
-];
-const PARTNERS_B: Partner[] = [
-  { name: "Ledgerly", logo: "/programs/ledgerly.svg" },
-  { name: "Voltaic", logo: "/programs/voltaic.svg" },
-  { name: "Brightcart", logo: "/programs/brightcart.svg" },
-  { name: "Kestrel", logo: "/programs/kestrel.svg" },
-  { name: "Zenora", logo: "/programs/zenora.svg" },
-  { name: "Trueline", logo: "/programs/trueline.svg" },
-];
+// ---------- Partner logos: two-way marquee (same list as the home page) ----------
+const HALF = Math.ceil(PARTNERS.length / 2);
+const PARTNERS_A = PARTNERS.slice(0, HALF);
+const PARTNERS_B = PARTNERS.slice(HALF);
 
 const SECTORS = [
-  "Enterprise SaaS",
-  "Financial services",
-  "Logistics",
-  "Manufacturing",
-  "Consumer tech",
+  "Software & SaaS",
+  "Startup Ecosystems",
+  "Engineering & Construction",
+  "Energy & Power",
+  "Life Sciences",
+  "Education",
 ];
 
-function PartnerPill({ name, logo }: Partner) {
-  // JPGs have no transparency, so the white-silhouette filter would turn the
-  // whole image into a solid white block. Show them on a light tile instead.
-  const isJpg = !!logo && /\.jpe?g$/i.test(logo);
-
+function PartnerPill({ name, logoSrc, ratio }: Partner) {
   return (
     <div
-      className={`mr-4 flex h-16 w-44 shrink-0 items-center justify-center rounded-2xl border border-white/10 px-5 ${
-        isJpg ? "bg-white/90" : "bg-white/4"
-      }`}
+      title={name}
+      className="mr-4 flex h-16 w-44 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/4 px-5 py-3"
     >
-      {logo ? (
-        <Image
-          src={logo}
-          alt={name}
-          width={130}
-          height={36}
-          className={
-            isJpg
-              ? "h-9 w-auto max-w-full object-contain mix-blend-multiply grayscale opacity-70 transition hover:opacity-100 hover:grayscale-0"
-              : "h-8 w-auto object-contain opacity-60 brightness-0 invert transition hover:opacity-100"
-          }
-        />
-      ) : (
-        <span className="text-sm text-white/35">[Partner logo]</span>
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={logoSrc}
+        alt={name}
+        loading="lazy"
+        draggable={false}
+        style={{ height: `${logoHeight(ratio)}%` }}
+        className="w-auto max-w-full object-contain opacity-60 brightness-0 invert transition hover:opacity-100"
+      />
     </div>
   );
 }
