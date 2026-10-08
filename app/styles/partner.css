@@ -12,16 +12,17 @@
    ========================================================================== */
 
 .partner {
-  height: min(60.78vw, 919px);
+  height: min(74vw, 1120px);
 }
 
 .partner__title {
   position: absolute;
   top: 8.7%;
-  left: 8.47%;
+  left: 0;
   z-index: 3;
-  /* size / line-height come from the shared `type-h2` utility */
-  font-weight: 300;
+  /* size / line-height come from the shared `type-h2` utility; weight
+     matches the other section headings */
+  font-weight: 500;
   color: var(--white);
 }
 
@@ -116,29 +117,83 @@
   transform: rotate(8deg);
 }
 
+/* --- Core: the glow the logo halo circles before the release --------- */
+.partner__core {
+  position: absolute;
+  will-change: transform, opacity;
+  left: 39.48%;
+  top: 10.34%;
+  z-index: 1;
+  width: 8.99%;
+  height: 13.82%;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.partner__core::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(232, 246, 255, 0.95) 0%,
+    rgba(92, 192, 245, 0.55) 14%,
+    rgba(29, 99, 237, 0.28) 34%,
+    transparent 68%
+  );
+  animation: partner-core-breathe 3.2s ease-in-out infinite;
+}
+
+.partner__core-ring {
+  position: absolute;
+  width: 144%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px dashed rgba(120, 200, 255, 0.35);
+  animation: partner-core-spin 24s linear infinite;
+}
+
+@keyframes partner-core-breathe {
+  0%, 100% { transform: scale(0.92); opacity: 0.85; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+@keyframes partner-core-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner__core::before,
+  .partner__core-ring { animation: none; }
+}
+
 /* --- Destination frames -------------------------------------------------- */
 .partner__slots {
   position: absolute;
-  left: 11.9%;
-  top: 42.87%;
+  left: 3.5%;
+  top: 42%;
   z-index: 2;
   display: grid;
-  width: 73.08%;
-  grid-template-columns: repeat(4, 1fr);
-  column-gap: 8.235%;
-  row-gap: min(4.16vw, 63px);
+  width: 96.5%;
+  grid-template-columns: repeat(6, 1fr);
+  column-gap: min(1.3vw, 20px);
+  row-gap: min(1.4vw, 20px);
 }
 
 .partner__slot {
+  position: relative;
   display: grid;
   place-items: center;
-  height: min(7.28vw, 110px);
-  border: 1px solid rgba(12, 140, 245, 0.78);
-  border-radius: var(--radius-box);
-  background: rgba(255, 255, 255, 0.012);
+  height: min(5.6vw, 84px);
+  /* no frame here — the card inside draws the only border */
 }
 
 .partner__logo {
+  /* GSAP moves these on every scroll frame — keep each on its own layer */
+  will-change: transform;
+  backface-visibility: hidden;
   font-size: var(--fs-hub);
   font-weight: 400;
   color: rgba(150, 175, 235, 0.45);

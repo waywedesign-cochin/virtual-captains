@@ -5,6 +5,7 @@ import type {
   OrbitLabel,
   PartnerSlot,
 } from "@/types";
+import { PARTNERS } from "@/app/content/partners";
 
 export const site = {
   name: "Virtual Captains",
@@ -122,24 +123,13 @@ export const partner = {
   sideBody: "Our hiring network connects top-performing sellers directly to enterprise SaaS, financial services, logistics, industrial manufacturing, and consumer tech leaders across India, the Middle East, and Southeast Asia."
 } as const;
 
-const homeLogos = [
-  "/partners/AHAD.png",
-  "/partners/MOONHIV.png",
-  "/partners/JSR.png",
-  "/partners/SKYLARK.png",
-  "/partners/UNIFIRM.png",
-  "/partners/bbc-logo.png",
-  "/partners/MOONHIV.png",
-  "/partners/SKYLARK.png",
-];
-
-/** Eight placeholder slots in a 4 x 2 grid, matching the reference. */
-export const partnerSlots: ReadonlyArray<PartnerSlot> = Array.from(
-  { length: 8 },
-  (_, index): PartnerSlot => ({
+/** Same client/partner logos as the home page "Our Network" section. */
+export const partnerSlots: ReadonlyArray<PartnerSlot> = PARTNERS.map(
+  (p, index): PartnerSlot => ({
     id: `partner-${index + 1}`,
-    name: "Logos",
-    image: homeLogos[index]
+    name: p.name,
+    image: p.logoSrc,
+    ratio: p.ratio,
   }),
 );
 

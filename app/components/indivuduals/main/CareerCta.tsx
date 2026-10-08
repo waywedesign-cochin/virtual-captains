@@ -159,7 +159,7 @@ export function CareerCta() {
   return (
     <section
       id="career"
-      className="relative w-full bg-white text-center text-slate-900 py-16 sm:py-20 lg:py-0 lg:min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative w-full bg-white text-center text-slate-900 py-12 sm:py-16 lg:py-0 lg:min-h-screen flex items-center justify-center overflow-hidden"
       aria-labelledby="career-heading"
       ref={scope}
     >
