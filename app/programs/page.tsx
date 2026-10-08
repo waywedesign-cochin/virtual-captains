@@ -10,7 +10,10 @@ import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import CurriculumSection from "../components/salesx/CurriculumSection";
 import { ProgramsTabs } from "../components/programs/ProgramsClient";
 import FoundersBatch from "../components/programs/FoundersBatch";
-import { CheckEligibilityButton } from "../components/home/BookACallModal";
+import {
+  CheckEligibilityButton,
+  NotifyButton,
+} from "../components/home/BookACallModal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Sales Training Programs",
@@ -51,9 +54,9 @@ const INDIVIDUAL_AUDIENCES: Program["audience"][] = [
   "professionals",
 ];
 
-// No Sanity program is open for enrolment yet, so every card shows "Coming soon".
-// (The static SalesX Founders Batch is the only live course.)
-// When a Sanity program goes live, add its audience here.
+// No Sanity program is open for enrolment yet, so every card shows "Coming soon"
+// with a "Notify me" button. (The static SalesX Founders Batch is the only live
+// course.) When a Sanity program goes live, add its audience here.
 const LIVE_AUDIENCES: Program["audience"][] = [];
 
 function ProgramCard({ program, index }: { program: Program; index: number }) {
@@ -69,6 +72,10 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
   const audienceBadgeClass = `rounded-full px-3 py-1 text-xs font-semibold backdrop-blur ${
     featured ? "bg-white/20 text-white" : "bg-[#060b26]/70 text-[#38bdf8]"
   }`;
+
+  // Status pill, shown top-right of the card for programs that aren't open yet
+  const comingSoonBadgeClass =
+    "rounded-full border border-white/20 bg-[#060b26]/70 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur";
 
   return (
     <article
@@ -90,16 +97,24 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
           <span className={`absolute left-4 top-4 ${audienceBadgeClass}`}>
             {AUDIENCE_LABEL[program.audience]}
           </span>
+          {!live && (
+            <span className={`absolute right-4 top-4 ${comingSoonBadgeClass}`}>
+              Coming soon
+            </span>
+          )}
         </div>
       )}
 
       {/* Body */}
       <div className="flex flex-1 flex-col p-7">
-        {/* No image: audience badge moves into the body */}
+        {/* No image: audience badge (left) and status (right) move into the body */}
         {!program.image && (
-          <span className={`self-start ${audienceBadgeClass}`}>
-            {AUDIENCE_LABEL[program.audience]}
-          </span>
+          <div className="flex items-center justify-between gap-3">
+            <span className={audienceBadgeClass}>
+              {AUDIENCE_LABEL[program.audience]}
+            </span>
+            {!live && <span className={comingSoonBadgeClass}>Coming soon</span>}
+          </div>
         )}
 
         {meta.length > 0 && (
@@ -149,6 +164,7 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
           </ul>
         )}
 
+        {/* Bottom: one CTA, left-aligned */}
         <div className="mt-auto pt-6">
           {live ? (
             <CheckEligibilityButton
@@ -161,13 +177,11 @@ function ProgramCard({ program, index }: { program: Program; index: number }) {
               }`}
             />
           ) : (
-            <button
-              type="button"
-              disabled
-              className="cursor-not-allowed rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-sm font-bold text-white/50"
-            >
-              Coming soon
-            </button>
+            <NotifyButton
+              programTitle={program.title}
+              programSlug={program.slug}
+              className="cursor-pointer rounded-full border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-bold text-white transition hover:border-transparent hover:bg-[#e7ff3d] hover:text-[#0b0e14]"
+            />
           )}
         </div>
       </div>
