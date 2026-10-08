@@ -98,7 +98,11 @@ export default async function CareersPage({
   const params = (await searchParams) ?? {};
   const jobs = await getAllCareers();
 
-  const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort();
+  // One tab per department with open roles, in the Studio's Display Order, then A–Z
+  const orderOf = new Map(jobs.map((j) => [j.department, j.departmentOrder ?? Infinity]));
+  const departments = [...new Set(jobs.map((j) => j.department).filter(Boolean))].sort(
+    (a, b) => orderOf.get(a)! - orderOf.get(b)! || a.localeCompare(b),
+  );
   const tabs = [
     { label: "All Roles", slug: "all" },
     ...departments.map((d) => ({ label: d, slug: toSlug(d) })),
@@ -130,9 +134,9 @@ export default async function CareersPage({
           <section className={`${CONTAINER} mb-12`}>
             <nav
               aria-label="Filter roles by department"
-              className="flex justify-center overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden sm:justify-start"
+              className="-mx-4 flex overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0"
             >
-              <div className="flex w-max shrink-0 items-center gap-1.5 p-1 bg-white/4 rounded-full border border-white/10">
+              <div className="mx-auto flex w-max shrink-0 items-center gap-1.5 p-1 bg-white/4 rounded-full border border-white/10 sm:mx-0">
                 {tabs.map((t) => {
                   const isActive = t.slug === active;
                   return (

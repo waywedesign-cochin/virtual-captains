@@ -268,7 +268,9 @@ const careerCardFields = /* groq */ `
   _id,
   title,
   "slug": slug.current,
-  department,
+  // name from the department document; old plain-text values still work
+  "department": coalesce(department->title, department),
+  "departmentOrder": department->order,
   employmentType,
   workplaceType,
   location,

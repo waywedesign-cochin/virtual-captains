@@ -64,20 +64,12 @@ export const career = defineType({
     defineField({
       name: "department",
       title: "Department",
-      type: "string",
+      type: "reference",
+      to: [{ type: "careerDepartment" }],
       group: "overview",
-      options: {
-        list: [
-          "Sales",
-          "Training & Coaching",
-          "Marketing",
-          "Operations",
-          "Technology",
-          "Customer Success",
-          "Finance & Admin",
-          "People & HR",
-        ],
-      },
+      description:
+        'Pick a department, or click "Create new" to add one. Each department with open roles gets its own tab on the Careers page.',
+      options: { disableNew: false },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -262,7 +254,7 @@ export const career = defineType({
   preview: {
     select: {
       title: "title",
-      department: "department",
+      department: "department.title",
       location: "location",
       isOpen: "isOpen",
     },
