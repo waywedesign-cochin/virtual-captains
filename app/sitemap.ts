@@ -16,7 +16,6 @@ const PAGES: { path: string; priority: number; changeFrequency: "weekly" | "mont
   { path: "/blogs", priority: 0.7, changeFrequency: "weekly" },
   { path: "/news-and-updates", priority: 0.6, changeFrequency: "weekly" },
   { path: "/careers", priority: 0.6, changeFrequency: "weekly" },
-  { path: "/resources", priority: 0.5, changeFrequency: "monthly" },
   { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },
   { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
   { path: "/refund", priority: 0.2, changeFrequency: "yearly" },

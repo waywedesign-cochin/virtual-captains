@@ -320,3 +320,48 @@ export async function getAllCareers(): Promise<CareerSummary[]> {
 export async function getCareerBySlug(slug: string): Promise<Career | null> {
   return client.fetch<Career | null>(careerBySlugQuery, { slug }, CAREER_FETCH);
 }
+
+// ── Gallery photos (News & Updates page, "Gallery" view) ──
+export const GALLERY_PAGE_SIZE = 6;
+
+export type GalleryPhoto = {
+  _id: string;
+  url: string;
+  alt: string;
+  caption?: string;
+  date: string;
+  width: number;
+  height: number;
+  lqip?: string;
+};
+
+export const GALLERY_PAGE_QUERY = groq`{
+  "total": count(*[_type == "galleryPhoto" && defined(image.asset)]),
+  "photos": *[_type == "galleryPhoto" && defined(image.asset)]
+    | order(date desc, _createdAt desc) [$start...$end] {
+      _id,
+      "url": image.asset->url,
+      "alt": coalesce(image.alt, caption, "Virtual Captains photo"),
+      caption,
+      date,
+      "width": image.asset->metadata.dimensions.width,
+      "height": image.asset->metadata.dimensions.height,
+      "lqip": image.asset->metadata.lqip
+    }
+}`;
+
+// One page of photos, newest first. `page` is 1-based.
+export async function getGalleryPage(
+  page: number,
+): Promise<{ total: number; photos: GalleryPhoto[] }> {
+  const start = (page - 1) * GALLERY_PAGE_SIZE;
+  try {
+    return await client.fetch(
+      GALLERY_PAGE_QUERY,
+      { start, end: start + GALLERY_PAGE_SIZE },
+      { next: { revalidate: 60, tags: ["galleryPhoto"] } },
+    );
+  } catch {
+    return { total: 0, photos: [] };
+  }
+}
