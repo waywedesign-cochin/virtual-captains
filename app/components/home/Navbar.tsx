@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import BookACallModal from "./BookACallModal";
-import { ChevronDown, ArrowRight, ChevronRight, Newspaper, BookOpen } from "lucide-react";
+import { ChevronDown, ArrowRight, ChevronRight, Newspaper, BookOpen, Briefcase } from "lucide-react";
 
 export interface NavDropdownChild {
   label: string;
@@ -13,7 +13,7 @@ export interface NavDropdownChild {
   description?: string;
   badge?: string;
   badgeColor?: "cyan" | "lime";
-  iconType?: "news" | "blog";
+  iconType?: "news" | "blog" | "careers";
 }
 
 export interface NavItem {
@@ -48,6 +48,14 @@ export const NAV_ITEMS: NavItem[] = [
         badge: "LATEST",
         badgeColor: "cyan",
         iconType: "news",
+      },
+      {
+        label: "Careers",
+        href: "/careers",
+        description: "Open roles on the Virtual Captains team",
+        badge: "HIRING",
+        badgeColor: "lime",
+        iconType: "careers",
       },
     ],
   },
@@ -375,7 +383,9 @@ export default function Navbar() {
                                             : "bg-linear-to-br from-[#1d4ed8]/35 via-[#0f67d6]/25 to-[#38bdf8]/20 border border-[#38bdf8]/40 text-[#38bdf8] shadow-[0_0_12px_rgba(56,189,248,0.25)] group-hover/child:shadow-[0_0_18px_rgba(56,189,248,0.45)]"
                                         }`}
                                       >
-                                        {child.iconType === "blog" ? (
+                                        {child.iconType === "careers" ? (
+                                          <Briefcase className={`w-5 h-5 transition-colors ${isLightPage ? "text-[#555] group-hover/child:text-[#1d4ed8]" : "text-[#e7ff3d]"}`} />
+                                        ) : child.iconType === "blog" ? (
                                           <BookOpen className={`w-5 h-5 transition-colors ${isLightPage ? "text-[#555] group-hover/child:text-[#1d4ed8]" : "text-[#e7ff3d]"}`} />
                                         ) : (
                                           <Newspaper className={`w-5 h-5 transition-colors ${isLightPage ? "text-[#555] group-hover/child:text-[#1d4ed8]" : "text-[#38bdf8]"}`} />
@@ -604,7 +614,9 @@ export default function Navbar() {
                                             : "bg-linear-to-br from-[#1d4ed8]/35 via-[#0f67d6]/25 to-[#38bdf8]/20 border border-[#38bdf8]/40 text-[#38bdf8] shadow-[0_0_12px_rgba(56,189,248,0.25)] group-hover/child:shadow-[0_0_18px_rgba(56,189,248,0.45)]"
                                         }`}
                                       >
-                                        {child.iconType === "blog" ? (
+                                        {child.iconType === "careers" ? (
+                                          <Briefcase className={`w-4.5 h-4.5 transition-colors ${isLightPage ? "text-[#555] group-hover/child:text-[#1d4ed8]" : "text-[#e7ff3d]"}`} />
+                                        ) : child.iconType === "blog" ? (
                                           <BookOpen className={`w-4.5 h-4.5 transition-colors ${isLightPage ? "text-[#555] group-hover/child:text-[#1d4ed8]" : "text-[#e7ff3d]"}`} />
                                         ) : (
                                           <Newspaper className={`w-4.5 h-4.5 transition-colors ${isLightPage ? "text-[#555] group-hover/child:text-[#1d4ed8]" : "text-[#38bdf8]"}`} />
@@ -905,7 +917,9 @@ export default function Navbar() {
                                       : "bg-linear-to-br from-[#1d4ed8]/35 to-[#38bdf8]/20 border border-[#38bdf8]/40"
                                   }`}
                                 >
-                                  {child.iconType === "blog" ? (
+                                  {child.iconType === "careers" ? (
+                                    <Briefcase className="w-4.5 h-4.5 text-[#e7ff3d]" />
+                                  ) : child.iconType === "blog" ? (
                                     <BookOpen className="w-4.5 h-4.5 text-[#e7ff3d]" />
                                   ) : (
                                     <Newspaper className="w-4.5 h-4.5 text-[#38bdf8]" />

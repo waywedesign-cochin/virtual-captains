@@ -79,3 +79,66 @@ export const NEWS_CATEGORY_DOT: Record<string, string> = {
 export function getNewsCategoryDot(categorySlug: string): string {
   return NEWS_CATEGORY_DOT[categorySlug] ?? "bg-[#38bdf8]";
 }
+
+// CAREER TYPES
+
+export type EmploymentType =
+  | "FULL_TIME"
+  | "PART_TIME"
+  | "CONTRACTOR"
+  | "INTERN"
+  | "TEMPORARY";
+
+export type WorkplaceType = "onsite" | "hybrid" | "remote";
+
+export type CareerSalary = {
+  showOnSite?: boolean;
+  currency?: string;
+  min?: number;
+  max?: number;
+  unit?: "YEAR" | "MONTH" | "HOUR";
+};
+
+/** Card fields — what the Careers listing needs. */
+export type CareerSummary = {
+  _id: string;
+  title: string;
+  slug: string;
+  department: string;
+  employmentType: EmploymentType;
+  workplaceType: WorkplaceType;
+  location: string;
+  experience?: string;
+  summary: string;
+  postedDate: string;
+  validThrough?: string;
+  featured?: boolean;
+};
+
+/** Full job page. Rich-text sections are Portable Text blocks. */
+export type Career = CareerSummary & {
+  openings?: number;
+  aboutRole?: PortableTextBlock[];
+  responsibilities?: PortableTextBlock[];
+  requirements?: PortableTextBlock[];
+  niceToHave?: PortableTextBlock[];
+  benefits?: PortableTextBlock[];
+  hiringProcess?: string[];
+  salary?: CareerSalary;
+  seo?: { metaTitle?: string; metaDescription?: string };
+  updatedAt: string;
+};
+
+export const EMPLOYMENT_TYPE_LABEL: Record<EmploymentType, string> = {
+  FULL_TIME: "Full-time",
+  PART_TIME: "Part-time",
+  CONTRACTOR: "Contract",
+  INTERN: "Internship",
+  TEMPORARY: "Temporary",
+};
+
+export const WORKPLACE_TYPE_LABEL: Record<WorkplaceType, string> = {
+  onsite: "On-site",
+  hybrid: "Hybrid",
+  remote: "Remote",
+};

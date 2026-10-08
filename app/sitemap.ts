@@ -15,6 +15,7 @@ const PAGES: { path: string; priority: number; changeFrequency: "weekly" | "mont
   { path: "/contact", priority: 0.7, changeFrequency: "yearly" },
   { path: "/blogs", priority: 0.7, changeFrequency: "weekly" },
   { path: "/news-and-updates", priority: 0.6, changeFrequency: "weekly" },
+  { path: "/careers", priority: 0.6, changeFrequency: "weekly" },
   { path: "/resources", priority: 0.5, changeFrequency: "monthly" },
   { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },
   { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
@@ -22,6 +23,8 @@ const PAGES: { path: string; priority: number; changeFrequency: "weekly" | "mont
 ];
 
 export const revalidate = 3600;
+
+const SECTION: Record<string, string> = { post: "blogs", newsPost: "news-and-updates", career: "careers" };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
@@ -32,15 +35,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: p.priority,
   }));
 
-  // Blog posts and news articles from Sanity, so new ones are picked up
+  // Blog posts, news articles and open job roles from Sanity, so new ones are picked up
   // automatically (their page metadata itself is managed in Sanity).
   let content: MetadataRoute.Sitemap = [];
   try {
     const docs = await client.fetch<{ type: string; slug: string; updated: string }[]>(
-      `*[_type in ["post", "newsPost"] && defined(slug.current)]{ "type": _type, "slug": slug.current, "updated": _updatedAt }`,
+      `*[(_type in ["post", "newsPost"] || (_type == "career" && isOpen != false && (!defined(validThrough) || validThrough > now()))) && defined(slug.current)]{ "type": _type, "slug": slug.current, "updated": _updatedAt }`,
     );
     content = docs.map((d) => ({
-      url: `${SITE_URL}/${d.type === "post" ? "blogs" : "news-and-updates"}/${d.slug}`,
+      url: `${SITE_URL}/${SECTION[d.type] ?? "news-and-updates"}/${d.slug}`,
       lastModified: new Date(d.updated),
       changeFrequency: "monthly" as const,
       priority: 0.6,
