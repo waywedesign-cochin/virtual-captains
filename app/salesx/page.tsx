@@ -12,7 +12,8 @@ import SalesXResultsHub from "../components/salesx/SalesXResultsHub";
 import SalesXTestimonials from "../components/salesx/SalesXTestimonials";
 import SalesXPartnerCloud from "../components/salesx/SalesXPartnerCloud";
 import SalesXCTA from "../components/salesx/SalesXCTA";
-import SalesXFooter from "../components/salesx/SalesXFooter";
+import SiteFooter from "../components/home/SiteFooter";
+import SalesXScrollTop from "../components/salesx/SalesXScrollTop";
 
 export const metadata: Metadata = pageMetadata({
   title: "SalesX — AI Sales Simulation Training",
@@ -82,9 +83,12 @@ export default function SalesXPage() {
         {/* 8. Ready to Redefine: High-Impact CTA with 5 Glowing Circular Metric Badges */}
         <SalesXCTA />
 
-        {/* 9. Dedicated SalesX Illuminated Footer */}
-        <SalesXFooter />
+        {/* 9. Common site footer (no Book a Call band) */}
+        <SiteFooter showCTA={false} theme="light-blue" />
       </div>
+
+      {/* Floating back-to-top arrow */}
+      <SalesXScrollTop />
     </main>
   );
 }
