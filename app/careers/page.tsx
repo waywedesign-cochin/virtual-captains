@@ -130,9 +130,9 @@ export default async function CareersPage({
           <section className={`${CONTAINER} mb-12`}>
             <nav
               aria-label="Filter roles by department"
-              className="flex justify-center overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden sm:justify-start"
+              className="-mx-4 flex overflow-x-auto px-4 scrollbar-none [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0"
             >
-              <div className="flex w-max shrink-0 items-center gap-1.5 p-1 bg-white/4 rounded-full border border-white/10">
+              <div className="mx-auto flex w-max shrink-0 items-center gap-1.5 p-1 bg-white/4 rounded-full border border-white/10 sm:mx-0">
                 {tabs.map((t) => {
                   const isActive = t.slug === active;
                   return (
