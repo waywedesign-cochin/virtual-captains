@@ -185,7 +185,7 @@ export default function SalesXPartnerCloud() {
           // 3. Slow push-in with a gentle roll to close the shot
           .to(
             cameraRef.current,
-            { scale: 1.08, rotateX: -8, rotateZ: 2, duration: 1.2, ease: "power1.inOut" },
+            { scale: 1.08, rotateX: 0, rotateZ: 0, duration: 1.2, ease: "power1.inOut" },
             1.4,
           )
           .to(hubRef.current, { scale: 1.06, duration: 1.2, ease: "power1.inOut" }, 1.4);
