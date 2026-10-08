@@ -37,14 +37,13 @@ export const PARTNERS: Partner[] = [
   { name: "Skybertech", logoSrc: "/network/skybertech.webp", ratio: 3.58 },
   { name: "CleverBrain", logoSrc: "/network/cleverbrain.webp", ratio: 1.88 },
   { name: "Kaniverse", logoSrc: "/network/kaniverse.webp", ratio: 1.47 },
-  { name: "GPower", logoSrc: "/network/gpower.webp", ratio: 3.2 },
   { name: "Gulf Genuine Power Projects", logoSrc: "/network/ggpl.webp", ratio: 4.32 },
   { name: "GEO Engineering", logoSrc: "/network/geo.webp", ratio: 1.28 },
   { name: "Riyada SME", logoSrc: "/network/riyada.webp", ratio: 1.55 },
   { name: "Startup Park", logoSrc: "/network/startup_park.webp", ratio: 3.8 },
   { name: "WOI India", logoSrc: "/network/woi.webp", ratio: 2.51 },
-  { name: "iQue", logoSrc: "/network/ique.webp", ratio: 2.15 },
   { name: "KLBuild", logoSrc: "/network/klbuild.webp", ratio: 1.04 },
   { name: "KMEA", logoSrc: "/network/kmea.webp", ratio: 1.88 },
+  { name: "SAFI Institute of Advanced Study", logoSrc: "/network/safi.webp", ratio: 5.85 },
 ];
 
