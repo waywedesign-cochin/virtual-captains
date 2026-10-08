@@ -1,5 +1,5 @@
 import { groq } from "next-sanity";
-import { NewsCategory, NewsPost } from "./lib/types";
+import type { Career, CareerSummary, NewsCategory, NewsPost } from "./lib/types";
 import { client } from "./lib/client";
 
 // Fragment for consistent post shape across queries
@@ -257,4 +257,64 @@ export async function getProgramPrice(slug: string): Promise<number | null> {
   return Number.isInteger(price) && (price as number) > 0
     ? (price as number)
     : null;
+}
+
+// ── Careers (Careers page + job detail pages) ──
+
+// Live roles only: switched on in the Studio and not past their deadline.
+const OPEN_CAREER_FILTER = /* groq */ `_type == "career" && isOpen != false && defined(slug.current) && (!defined(validThrough) || validThrough > now())`;
+
+const careerCardFields = /* groq */ `
+  _id,
+  title,
+  "slug": slug.current,
+  department,
+  employmentType,
+  workplaceType,
+  location,
+  experience,
+  summary,
+  postedDate,
+  validThrough,
+  featured
+`;
+
+const careerBody = /* groq */ `[]{
+  ...,
+  _type == "image" => { ..., "url": asset->url }
+}`;
+
+export const allCareersQuery = groq`
+  *[${OPEN_CAREER_FILTER}] | order(featured desc, postedDate desc) { ${careerCardFields} }
+`;
+
+export const careerBySlugQuery = groq`
+  *[${OPEN_CAREER_FILTER} && slug.current == $slug][0] {
+    ${careerCardFields},
+    openings,
+    "aboutRole": aboutRole${careerBody},
+    "responsibilities": responsibilities${careerBody},
+    "requirements": requirements${careerBody},
+    "niceToHave": niceToHave${careerBody},
+    "benefits": benefits${careerBody},
+    hiringProcess,
+    salary,
+    seo { metaTitle, metaDescription },
+    "updatedAt": _updatedAt
+  }
+`;
+
+// Short cache so a publish (or a role being closed) shows up within a minute.
+const CAREER_FETCH = { next: { revalidate: 60, tags: ["career"] } };
+
+export async function getAllCareers(): Promise<CareerSummary[]> {
+  try {
+    return await client.fetch<CareerSummary[]>(allCareersQuery, {}, CAREER_FETCH);
+  } catch {
+    return [];
+  }
+}
+
+export async function getCareerBySlug(slug: string): Promise<Career | null> {
+  return client.fetch<Career | null>(careerBySlugQuery, { slug }, CAREER_FETCH);
 }

@@ -8,6 +8,7 @@ const groupedTypes = [
   "newsCategory",
   "youtubeVideo",
   "program",
+  "career",
 ];
 
 export const structure: StructureResolver = (S) =>
@@ -44,6 +45,15 @@ export const structure: StructureResolver = (S) =>
           S.documentTypeList("program")
             .title("Programs")
             .defaultOrdering([{ field: "order", direction: "asc" }]),
+        ),
+
+      S.listItem()
+        .title("Careers")
+        .schemaType("career")
+        .child(
+          S.documentTypeList("career")
+            .title("Job Openings")
+            .defaultOrdering([{ field: "postedDate", direction: "desc" }]),
         ),
 
       S.listItem()
