@@ -334,12 +334,13 @@ export function OfflineLocations({
   );
 }
 
-// ---------- Sample drill demo (auto-plays, scenario chips, replay) ----------
+// ---------- Live AI voice simulation demo (auto-plays, scenario chips, replay) ----------
 type Scenario = {
   id: string;
   label: string;
   track: string; // which level track this drill belongs to
   module: string; // which module it practises
+  persona: string; // who the AI buyer is on this call
   buyer: string;
   you: string;
   feedback: string;
@@ -352,6 +353,7 @@ const SCENARIOS: Scenario[] = [
     label: "Vendor switch",
     track: "Intermediate",
     module: "Objection handling",
+    persona: "Procurement Head · Skeptical",
     buyer: "We already work with another vendor. Why switch?",
     you: "Fair question. What's one thing you'd change about them today?",
     feedback: "Objection handling: strong. Discovery question asked ✓",
@@ -366,6 +368,7 @@ const SCENARIOS: Scenario[] = [
     label: "Price pushback",
     track: "Expert",
     module: "Negotiation & closing",
+    persona: "Finance Director · Price-sensitive",
     buyer: "Your price is 30% higher than the other quote.",
     you: "Understood. Beyond price, what would make this a clear win for you?",
     feedback: "Moved the talk from price to value. Discovery question asked ✓",
@@ -380,6 +383,7 @@ const SCENARIOS: Scenario[] = [
     label: "Brush-off",
     track: "Beginner",
     module: "Pre-sales",
+    persona: "Operations Lead · Always busy",
     buyer: "Just send me an email. I'm swamped this quarter.",
     you: "Happy to. So I send the right thing, what's your top priority this quarter?",
     feedback: "Brush-off handled. Conversation kept alive ✓",
@@ -405,44 +409,139 @@ function Typing() {
   );
 }
 
-const DRILL_STEPS = ["Buyer speaks", "You respond", "Scored"];
+/** Animated voice waveform. Bars move only while `active`. */
+function Wave({ active, color }: { active: boolean; color: string }) {
+  return (
+    <div className="flex h-8 items-center gap-0.75" aria-hidden>
+      {Array.from({ length: 18 }).map((_, i) => (
+        <span
+          key={i}
+          className="vc-wave-bar h-full w-0.75 origin-center rounded-full"
+          style={{
+            background: color,
+            animationDelay: `${(i % 6) * 90}ms`,
+            animationDuration: `${700 + (i % 5) * 120}ms`,
+            animationPlayState: active ? "running" : "paused",
+            opacity: active ? 1 : 0.3,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Call participant: avatar with a pulsing ring while speaking. */
+function Participant({
+  label,
+  sub,
+  initials,
+  speaking,
+  gradient,
+  ring,
+}: {
+  label: string;
+  sub: string;
+  initials: string;
+  speaking: boolean;
+  gradient: string;
+  ring: string;
+}) {
+  return (
+    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+      <div className="relative">
+        {speaking && (
+          <span
+            aria-hidden
+            className="absolute inset-0 rounded-full motion-safe:animate-ping"
+            style={{ background: ring, opacity: 0.35 }}
+          />
+        )}
+        <span
+          className={`relative flex h-14 w-14 items-center justify-center rounded-full text-sm font-bold text-white ring-2 transition-all duration-300 sm:h-16 sm:w-16 ${gradient}`}
+          style={{
+            boxShadow: speaking ? `0 0 0 3px ${ring}` : "none",
+            opacity: speaking ? 1 : 0.7,
+          }}
+        >
+          {initials}
+        </span>
+      </div>
+      <p className="mt-2 text-sm font-semibold text-white">{label}</p>
+      <p className="max-w-full truncate text-[11px] text-white/50">{sub}</p>
+    </div>
+  );
+}
+
+const fmtTime = (s: number) =>
+  `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
 export function RolePlayDemo() {
   const [index, setIndex] = useState(0);
   const [run, setRun] = useState(0); // bump to replay
-  // 0 buyer typing · 1 buyer msg · 2 you typing · 3 your msg · 4 feedback + scores
+  // 0 buyer picking up · 1 buyer speaking · 2 you picking up · 3 you speaking · 4 call ended + scores
   const [stage, setStage] = useState(0);
+  const [secs, setSecs] = useState(0); // call timer
   const s = SCENARIOS[index];
 
-  // Which drill step we're on (for the progress tracker)
-  const currentStep = stage <= 1 ? 0 : stage <= 3 ? 1 : 2;
+  const buyerSpeaking = stage <= 1;
+  const youSpeaking = stage === 2 || stage === 3;
+  const ended = stage >= 4;
 
   useEffect(() => {
     setStage(0);
+    setSecs(0);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setStage(4);
+      setSecs(5);
       return;
     }
+    const tick = window.setInterval(() => setSecs((x) => x + 1), 1000);
+    const stopTick = window.setTimeout(() => window.clearInterval(tick), 4300);
     const timers = [900, 2100, 3300, 4300].map((t, i) =>
       window.setTimeout(() => setStage(i + 1), t),
     );
-    return () => timers.forEach((id) => window.clearTimeout(id));
+    return () => {
+      window.clearInterval(tick);
+      window.clearTimeout(stopTick);
+      timers.forEach((id) => window.clearTimeout(id));
+    };
   }, [index, run]);
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/4 p-5 backdrop-blur sm:p-6">
-      {/* Header: this is ONE drill from the program */}
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-white/50">
-          Sample drill
-        </p>
-        <span className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-white/60">
+      <style>{`
+        @keyframes vc-wave { 0%, 100% { transform: scaleY(0.25); } 50% { transform: scaleY(1); } }
+        .vc-wave-bar { animation: vc-wave 0.9s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .vc-wave-bar { animation: none; transform: scaleY(0.5); } }
+      `}</style>
+
+      {/* Header: live voice simulation */}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white">
+            <span className="relative flex h-2 w-2">
+              {!ended && (
+                <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-70 motion-safe:animate-ping" />
+              )}
+              <span
+                className={`relative inline-flex h-2 w-2 rounded-full ${
+                  ended ? "bg-white/30" : "bg-red-500"
+                }`}
+              />
+            </span>
+            Live AI Voice Simulation
+          </p>
+          <p className="mt-1.5 text-sm text-white/60">
+            Start a real-time sales conversation
+          </p>
+        </div>
+        <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-white/60">
           Demo
         </span>
       </div>
 
       {/* Where this drill sits in the program */}
-      <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
+      <div className="mt-4 flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
         <span className="rounded-full bg-[#8b9cff]/15 px-2.5 py-1 text-[#8b9cff]">
           {s.track} track
         </span>
@@ -481,78 +580,108 @@ export function RolePlayDemo() {
         ))}
       </div>
 
-      {/* Drill progress: start, respond, scored */}
-      <ol className="mt-4 flex items-center gap-2" aria-label="Drill progress">
-        {DRILL_STEPS.map((label, i) => (
-          <li key={label} className="flex flex-1 flex-col gap-1.5">
-            <span
-              className={`h-1 rounded-full transition-colors duration-500 ${
-                i <= currentStep ? "bg-[#38bdf8]" : "bg-white/10"
-              }`}
-            />
-            <span
-              className={`text-[10px] font-semibold uppercase tracking-wider transition-colors ${
-                i === currentStep ? "text-white/80" : "text-white/35"
-              }`}
-            >
-              {label}
-            </span>
-          </li>
-        ))}
-      </ol>
-
-      {/* Conversation */}
-      <div
-        className="mt-4 space-y-3"
-        style={{ minHeight: "11.5rem" }}
-        aria-live="polite"
-      >
-        <div className="max-w-sm animate-in fade-in slide-in-from-bottom-2 rounded-2xl rounded-tl-sm bg-white/10 px-4 py-3 text-sm leading-relaxed text-white/85 duration-300">
-          <span className="font-bold text-white">AI Buyer: </span>
-          {stage >= 1 ? s.buyer : <Typing />}
+      {/* Call card */}
+      <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-[#070b1c]/80">
+        {/* Call status bar */}
+        <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5 text-[11px] font-semibold">
+          <span className={ended ? "text-white/45" : "text-emerald-300"}>
+            {ended
+              ? "Call ended · Scored"
+              : stage === 0
+                ? "Connecting…"
+                : "On call"}
+          </span>
+          <span className="tabular-nums text-white/60">{fmtTime(secs)}</span>
         </div>
 
-        {stage >= 2 && (
-          <div className="flex justify-end">
-            <div className="max-w-sm animate-in fade-in slide-in-from-bottom-2 rounded-2xl rounded-tr-sm border border-[#38bdf8]/20 bg-[#2563eb]/25 px-4 py-3 text-sm leading-relaxed text-white/90 duration-300">
-              <span className="font-bold text-[#38bdf8]">You: </span>
-              {stage >= 3 ? s.you : <Typing />}
-            </div>
-          </div>
-        )}
+        {/* Participants */}
+        <div className="flex items-start justify-between gap-4 px-4 pt-5 sm:px-8">
+          <Participant
+            label="AI Buyer"
+            sub={s.persona}
+            initials="AI"
+            speaking={buyerSpeaking && !ended}
+            gradient="bg-linear-to-br from-[#8b9cff] to-[#2563eb] ring-[#8b9cff]/40"
+            ring="rgba(139,156,255,0.6)"
+          />
+          <Participant
+            label="You"
+            sub="Sales rep"
+            initials="YOU"
+            speaking={youSpeaking}
+            gradient="bg-linear-to-br from-[#38bdf8] to-[#0ea5e9] ring-[#38bdf8]/40"
+            ring="rgba(56,189,248,0.6)"
+          />
+        </div>
 
-        {stage >= 4 && (
-          <div className="animate-in fade-in slide-in-from-bottom-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2.5 text-xs font-medium text-emerald-300 duration-300">
-            {s.feedback}
+        {/* Live captions */}
+        <div
+          className="mt-5 space-y-4 border-t border-white/10 px-4 py-4 sm:px-6"
+          style={{ minHeight: "11rem" }}
+          aria-live="polite"
+        >
+          <div className="animate-in fade-in border-l-2 border-[#8b9cff] pl-3 duration-300">
+            <div className="flex items-center gap-3">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#8b9cff]">
+                AI Buyer {buyerSpeaking && !ended ? "· speaking" : ""}
+              </p>
+              <Wave active={buyerSpeaking && !ended} color="#8b9cff" />
+            </div>
+            <p className="mt-1 text-[15px] leading-relaxed text-white/90">
+              {stage >= 1 ? s.buyer : <Typing />}
+            </p>
           </div>
-        )}
+
+          {stage >= 2 && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 border-l-2 border-[#38bdf8] pl-3 duration-300">
+              <div className="flex items-center gap-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#38bdf8]">
+                  You {youSpeaking ? "· speaking" : ""}
+                </p>
+                <Wave active={youSpeaking} color="#38bdf8" />
+              </div>
+              <p className="mt-1 text-[15px] leading-relaxed text-white/90">
+                {stage >= 3 ? s.you : <Typing />}
+              </p>
+            </div>
+          )}
+
+          {ended && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2.5 text-xs font-medium text-emerald-300 duration-300">
+              {s.feedback}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Skill scores */}
-      <div className="mt-4 grid gap-3 border-t border-white/10 pt-4 sm:grid-cols-3">
+      <p className="mt-5 text-[10px] font-bold uppercase tracking-wider text-white/40">
+        Live scoring
+      </p>
+      <div className="mt-3 grid gap-3 sm:grid-cols-3">
         {s.scores.map((sc) => (
           <div key={sc.label}>
             <div className="flex items-center justify-between text-[11px] text-white/55">
               <span>{sc.label}</span>
               <span className="font-semibold text-white/80">
-                {stage >= 4 ? sc.value : "–"}
+                {ended ? sc.value : "–"}
               </span>
             </div>
             <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
               <div
                 className="h-full rounded-full bg-linear-to-r from-[#38bdf8] to-[#8b9cff] transition-[width] duration-1000 ease-out"
-                style={{ width: stage >= 4 ? `${sc.value}%` : "0%" }}
+                style={{ width: ended ? `${sc.value}%` : "0%" }}
               />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Context: one drill, not the whole program */}
+      {/* Context: one call, not the whole program */}
       <div className="mt-4 flex items-start justify-between gap-4 rounded-xl bg-white/5 px-4 py-3">
         <p className="text-[11px] leading-relaxed text-white/55">
           <span className="font-semibold text-white/80">
-            One drill from the program.
+            One call from the program.
           </span>{" "}
           The full program adds structured tracks, scored practice and
           level-by-level progress. Illustrative demo, not a live session.
