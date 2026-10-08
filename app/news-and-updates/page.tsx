@@ -4,6 +4,7 @@ import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import Link from "next/link";
+import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { NewsHero } from "../components/news/NewsHero";
 import { GalleryGrid } from "../components/news/GalleryGrid";
 import {
@@ -72,7 +73,25 @@ function ViewToggle({ view }: { view: View }) {
   );
 }
 
-/** Numbered pages for the gallery: ← 1 2 3 → */
+/**
+ * Page numbers to show: always the first, last and current ±1, with `null`
+ * marking a gap (…). 1 … 4 5 6 … 12
+ */
+function pageList(page: number, totalPages: number): (number | null)[] {
+  const keep = new Set([1, totalPages, page - 1, page, page + 1]);
+  const out: (number | null)[] = [];
+  for (let n = 1; n <= totalPages; n++) {
+    if (!keep.has(n)) continue;
+    const prev = out[out.length - 1];
+    // a single hidden page is shown rather than replaced by "…"
+    if (typeof prev === "number" && n - prev === 2) out.push(n - 1);
+    else if (typeof prev === "number" && n - prev > 2) out.push(null);
+    out.push(n);
+  }
+  return out;
+}
+
+/** Numbered pages for the gallery: ← 1 … 4 5 6 … 12 → */
 function GalleryPagination({
   page,
   totalPages,
@@ -94,17 +113,26 @@ function GalleryPagination({
           scroll={false}
           className={`${arrow} text-white/80 hover:border-white/25 hover:text-white`}
         >
-          <span aria-hidden="true">&larr;</span>
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           <span className="sr-only">Previous page</span>
         </Link>
       ) : (
         <span aria-hidden="true" className={`${arrow} text-white/20`}>
-          &larr;
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </span>
       )}
 
       <ol className="flex items-center gap-1.5">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+        {pageList(page, totalPages).map((n, i) =>
+          n === null ? (
+            <li
+              key={`gap-${i}`}
+              aria-hidden="true"
+              className="inline-flex h-11 min-w-6 items-center justify-center text-sm text-white/35"
+            >
+              …
+            </li>
+          ) : (
           <li key={n}>
             <Link
               href={href(n)}
@@ -120,7 +148,8 @@ function GalleryPagination({
               {n}
             </Link>
           </li>
-        ))}
+          ),
+        )}
       </ol>
 
       {page < totalPages ? (
@@ -129,12 +158,12 @@ function GalleryPagination({
           scroll={false}
           className={`${arrow} text-white/80 hover:border-white/25 hover:text-white`}
         >
-          <span aria-hidden="true">&rarr;</span>
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
           <span className="sr-only">Next page</span>
         </Link>
       ) : (
         <span aria-hidden="true" className={`${arrow} text-white/20`}>
-          &rarr;
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </span>
       )}
     </nav>
@@ -198,7 +227,8 @@ export default async function NewsAndUpdatesPage({
         <section className={`${CONTAINER} mb-24`} aria-label="Photo gallery">
           <SectionLabel>Gallery</SectionLabel>
           {photos.length === 0 ? (
-            <div className="text-center py-16 bg-white/4 rounded-3xl border border-white/10 space-y-2">
+            <div className="flex flex-col items-center text-center py-16 bg-white/4 rounded-3xl border border-white/10 space-y-2">
+              <ImageOff className="mb-2 h-8 w-8 text-white/30" aria-hidden="true" />
               <p className="text-white/60 text-sm">
                 {page > 1
                   ? "There are no photos on this page."
@@ -300,7 +330,7 @@ export default async function NewsAndUpdatesPage({
               <div className="flex items-center justify-between pt-6 border-t border-white/10">
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#e7ff3d] px-5 py-2 text-xs font-bold text-black transition-transform group-hover:translate-x-0.5">
                   Read announcement
-                  <span aria-hidden="true">&rarr;</span>
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <span className="text-xs font-mono text-white/50 uppercase tracking-wider">
                   {featured.readTime}

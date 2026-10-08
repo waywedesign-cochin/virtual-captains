@@ -1,6 +1,11 @@
 "use client";
 
-import { useState, type DragEvent, type FormEvent, type ReactNode } from "react";
+import {
+  useState,
+  type DragEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import {
   Briefcase,
@@ -22,9 +27,17 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { BlueFrame } from "./BlueFrame";
+import { isValidPhoneNumber, type Value } from "react-phone-number-input";
+import PhoneField from "../common/PhoneField";
+import {
+  VerifyEmailStep,
+  requestCode,
+  toVerifyResult,
+} from "../common/EmailVerification";
 
 /** Kept in sync with the checks in app/api/careers/apply/route.ts */
-const RESUME_MAX_BYTES = 5 * 1024 * 1024;
+// Vercel caps request bodies at 4.5 MB, so the resume stays under 4 MB
+const RESUME_MAX_BYTES = 4 * 1024 * 1024;
 const RESUME_ACCEPT = ".pdf,.doc,.docx";
 const RESUME_TYPES = [
   "application/pdf",
@@ -32,7 +45,13 @@ const RESUME_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-const NOTICE_PERIODS = ["Immediate", "15 days", "30 days", "60 days", "90 days"];
+const NOTICE_PERIODS = [
+  "Immediate",
+  "15 days",
+  "30 days",
+  "60 days",
+  "90 days",
+];
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -49,7 +68,8 @@ type FieldName =
 type Status = "idle" | "submitting" | "success" | "error";
 
 // Same field styling as the Contact form, with room for a leading icon
-const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/80";
+const labelClass =
+  "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/80";
 
 function controlClass(hasError: boolean, withIcon = true) {
   return `peer w-full min-w-0 rounded-xl border bg-white/4 ${withIcon ? "pl-11" : "pl-4"} pr-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-all duration-200 hover:border-white/20 focus:bg-white/[0.07] focus:ring-2 ${
@@ -60,7 +80,13 @@ function controlClass(hasError: boolean, withIcon = true) {
 }
 
 /** Input with a leading icon that lights up blue on focus. */
-function IconField({ icon: Icon, children }: { icon: LucideIcon; children: ReactNode }) {
+function IconField({
+  icon: Icon,
+  children,
+}: {
+  icon: LucideIcon;
+  children: ReactNode;
+}) {
   return (
     <div className="relative">
       {children}
@@ -72,7 +98,15 @@ function IconField({ icon: Icon, children }: { icon: LucideIcon; children: React
   );
 }
 
-function FormSection({ step, title, children }: { step: number; title: string; children: ReactNode }) {
+function FormSection({
+  step,
+  title,
+  children,
+}: {
+  step: number;
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <fieldset className="space-y-5">
       <legend className="mb-5 flex w-full items-center gap-3">
@@ -87,13 +121,27 @@ function FormSection({ step, title, children }: { step: number; title: string; c
   );
 }
 
-export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTitle: string }) {
+export function CareerApplyForm({
+  jobSlug,
+  jobTitle,
+}: {
+  jobSlug: string;
+  jobTitle: string;
+}) {
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
   const [resume, setResume] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [consent, setConsent] = useState(false);
+  // Phone in E.164 (e.g. +919876543210), same picker as the other site forms
+  const [phone, setPhone] = useState<Value | undefined>();
+  // Filled form waiting on email verification (holds the resume file too)
+  const [pending, setPending] = useState<{
+    data: FormData;
+    email: string;
+    token: string;
+  } | null>(null);
 
   function pickResume(file: File | null | undefined) {
     setResume(file ?? null);
@@ -111,17 +159,24 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
     const get = (k: string) => String(data.get(k) ?? "").trim();
 
     if (!get("fullName")) next.fullName = "Please enter your full name.";
-    if (!emailPattern.test(get("email"))) next.email = "Please enter a valid email address.";
-    if (get("phone").replace(/\D/g, "").length < 7) next.phone = "Please enter a valid phone number.";
+    if (!emailPattern.test(get("email")))
+      next.email = "Please enter a valid email address.";
+    if (!phone) next.phone = "Please enter your phone number.";
+    else if (!isValidPhoneNumber(phone))
+      next.phone = "That number doesn't look valid for the selected country.";
     if (!get("location")) next.location = "Please enter your current city.";
-    if (!get("experience")) next.experience = "Please add your years of experience.";
+    if (!get("experience"))
+      next.experience = "Please add your years of experience.";
     const linkedin = get("linkedin");
     if (linkedin && !/^https?:\/\/.+\..+/.test(linkedin))
       next.linkedin = "Please paste the full link, starting with https://";
     if (!resume) next.resume = "Please attach your resume.";
-    else if (!RESUME_TYPES.includes(resume.type)) next.resume = "Resume must be a PDF or Word file.";
-    else if (resume.size > RESUME_MAX_BYTES) next.resume = "Resume must be 5 MB or smaller.";
-    if (!data.get("consent")) next.consent = "Please confirm so we can process your application.";
+    else if (!RESUME_TYPES.includes(resume.type))
+      next.resume = "Resume must be a PDF or Word file.";
+    else if (resume.size > RESUME_MAX_BYTES)
+      next.resume = "Resume must be 4 MB or smaller.";
+    if (!data.get("consent"))
+      next.consent = "Please confirm so we can process your application.";
     return next;
   }
 
@@ -144,17 +199,42 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
     setStatus("submitting");
     setServerError("");
     try {
-      const res = await fetch("/api/careers/apply", { method: "POST", body: data });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || "Something went wrong.");
-      setStatus("success");
-      form.reset();
-      setResume(null);
-      setConsent(false);
+      // Step 1: email a code; the application is sent from the verify step
+      const email = String(data.get("email") ?? "").trim();
+      setPending({
+        data,
+        email,
+        token: await requestCode(
+          email,
+          String(data.get("company_website") ?? ""),
+        ),
+      });
+      setStatus("idle");
     } catch (err) {
       setStatus("error");
-      setServerError(err instanceof Error ? err.message : "Something went wrong.");
+      setServerError(
+        err instanceof Error ? err.message : "Something went wrong.",
+      );
     }
+  }
+
+  // Step 2: the real submission, with the code + token
+  async function submitVerified(code: string, token: string) {
+    if (!pending) return { error: "Something went wrong." };
+    const data = pending.data;
+    data.set("code", code);
+    data.set("token", token);
+    const result = await toVerifyResult(
+      await fetch("/api/careers/apply", { method: "POST", body: data }),
+    );
+    if (result === "ok") {
+      setStatus("success");
+      setPending(null);
+      setResume(null);
+      setPhone(undefined);
+      setConsent(false);
+    }
+    return result;
   }
 
   const fieldError = (field: FieldName) =>
@@ -175,13 +255,19 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
         <div className="flex flex-col items-center gap-4 rounded-[26.5px] bg-[#0a0d16]/95 px-6 py-12 text-center backdrop-blur-2xl sm:p-14">
           <span className="relative flex h-16 w-16 items-center justify-center">
             <span className="absolute inset-0 animate-ping rounded-full bg-[#e7ff3d]/20" />
-            <CheckCircle2 className="relative h-14 w-14 text-[#e7ff3d]" aria-hidden="true" />
+            <CheckCircle2
+              className="relative h-14 w-14 text-[#e7ff3d]"
+              aria-hidden="true"
+            />
           </span>
-          <h3 className="font-sans text-2xl font-medium text-white">Application Received</h3>
+          <h3 className="font-sans text-2xl font-medium text-white">
+            Application Received
+          </h3>
           <p className="max-w-md text-sm sm:text-base text-white/65 leading-relaxed">
-            Thanks for applying for <span className="text-white">{jobTitle}</span>. Our team reviews
-            every application and will get back to you within 5 business days if your profile is a
-            match.
+            Thanks for applying for{" "}
+            <span className="text-white">{jobTitle}</span>. Our team reviews
+            every application and will get back to you within 5 business days if
+            your profile is a match.
           </p>
           <Link
             href="/careers"
@@ -196,18 +282,41 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
 
   return (
     <BlueFrame>
+      {pending && (
+        <div className="rounded-[26.5px] bg-[#0a0d16]/95 p-5 backdrop-blur-2xl sm:p-10">
+          <VerifyEmailStep
+            email={pending.email}
+            token={pending.token}
+            onTokenChange={(token) => setPending({ ...pending, token })}
+            onVerify={submitVerified}
+            onEdit={() => setPending(null)}
+            submitLabel="Verify & submit application"
+          />
+        </div>
+      )}
+      {/* Kept mounted (just hidden) during verification so "Edit details"
+          returns to the filled-in form */}
       <form
         onSubmit={onSubmit}
         noValidate
+        hidden={Boolean(pending)}
         className="relative space-y-10 rounded-[26.5px] bg-[#0a0d16]/95 p-5 backdrop-blur-2xl sm:p-10"
       >
         <input type="hidden" name="jobSlug" value={jobSlug} />
         <input type="hidden" name="jobTitle" value={jobTitle} />
         {/* Honeypot: real people never see or fill this */}
-        <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute -left-[9999px] h-px w-px overflow-hidden"
+        >
           <label>
             Leave this empty
-            <input type="text" name="company_website" tabIndex={-1} autoComplete="off" />
+            <input
+              type="text"
+              name="company_website"
+              tabIndex={-1}
+              autoComplete="off"
+            />
           </label>
         </div>
 
@@ -217,8 +326,12 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
             <Briefcase className="h-4 w-4 text-[#8fd0ff]" aria-hidden="true" />
           </span>
           <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-wider text-white/50">Applying For</p>
-            <p className="truncate text-sm font-semibold text-white">{jobTitle}</p>
+            <p className="text-[11px] uppercase tracking-wider text-white/50">
+              Applying For
+            </p>
+            <p className="truncate text-sm font-semibold text-white">
+              {jobTitle}
+            </p>
           </div>
         </div>
 
@@ -228,7 +341,14 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Full Name *
             </label>
             <IconField icon={User}>
-              <input id="fullName" name="fullName" autoComplete="name" placeholder="Your full name" className={controlClass(!!errors.fullName)} {...aria("fullName")} />
+              <input
+                id="fullName"
+                name="fullName"
+                autoComplete="name"
+                placeholder="Your full name"
+                className={controlClass(!!errors.fullName)}
+                {...aria("fullName")}
+              />
             </IconField>
             {fieldError("fullName")}
           </div>
@@ -238,7 +358,16 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Email *
             </label>
             <IconField icon={Mail}>
-              <input id="email" name="email" type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" className={controlClass(!!errors.email)} {...aria("email")} />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                className={controlClass(!!errors.email)}
+                {...aria("email")}
+              />
             </IconField>
             {fieldError("email")}
           </div>
@@ -247,9 +376,20 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
             <label htmlFor="phone" className={labelClass}>
               Phone *
             </label>
-            <IconField icon={Phone}>
-              <input id="phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+91 98765 43210" className={controlClass(!!errors.phone)} {...aria("phone")} />
-            </IconField>
+            <PhoneField
+              id="phone"
+              tone="dark"
+              value={phone}
+              onChange={(v) => {
+                setPhone(v);
+                if (errors.phone)
+                  setErrors((prev) => ({ ...prev, phone: undefined }));
+              }}
+              invalid={Boolean(errors.phone)}
+              describedBy={errors.phone ? "phone-error" : undefined}
+            />
+            {/* PhoneField is controlled; this carries the value into FormData */}
+            <input type="hidden" name="phone" value={phone ?? ""} />
             {fieldError("phone")}
           </div>
 
@@ -258,7 +398,14 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Current City *
             </label>
             <IconField icon={MapPin}>
-              <input id="location" name="location" autoComplete="address-level2" placeholder="e.g. Kochi, India" className={controlClass(!!errors.location)} {...aria("location")} />
+              <input
+                id="location"
+                name="location"
+                autoComplete="address-level2"
+                placeholder="e.g. Kochi, India"
+                className={controlClass(!!errors.location)}
+                {...aria("location")}
+              />
             </IconField>
             {fieldError("location")}
           </div>
@@ -270,7 +417,13 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Total Experience *
             </label>
             <IconField icon={Briefcase}>
-              <input id="experience" name="experience" placeholder="e.g. 4 years" className={controlClass(!!errors.experience)} {...aria("experience")} />
+              <input
+                id="experience"
+                name="experience"
+                placeholder="e.g. 4 years"
+                className={controlClass(!!errors.experience)}
+                {...aria("experience")}
+              />
             </IconField>
             {fieldError("experience")}
           </div>
@@ -280,7 +433,12 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Notice Period
             </label>
             <div className="relative">
-              <select id="noticePeriod" name="noticePeriod" defaultValue="" className={`${controlClass(false)} cursor-pointer appearance-none pr-10`}>
+              <select
+                id="noticePeriod"
+                name="noticePeriod"
+                defaultValue=""
+                className={`${controlClass(false)} cursor-pointer appearance-none pr-10`}
+              >
                 <option value="" className="bg-[#0a0d16]">
                   Select
                 </option>
@@ -290,8 +448,14 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
                   </option>
                 ))}
               </select>
-              <Clock aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35 transition-colors peer-focus:text-[#38bdf8]" />
-              <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50" />
+              <Clock
+                aria-hidden="true"
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35 transition-colors peer-focus:text-[#38bdf8]"
+              />
+              <ChevronDown
+                aria-hidden="true"
+                className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50"
+              />
             </div>
           </div>
 
@@ -300,7 +464,12 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Current CTC
             </label>
             <IconField icon={Wallet}>
-              <input id="currentCtc" name="currentCtc" placeholder="Optional" className={controlClass(false)} />
+              <input
+                id="currentCtc"
+                name="currentCtc"
+                placeholder="Optional"
+                className={controlClass(false)}
+              />
             </IconField>
           </div>
 
@@ -309,7 +478,12 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Expected CTC
             </label>
             <IconField icon={Wallet}>
-              <input id="expectedCtc" name="expectedCtc" placeholder="Optional" className={controlClass(false)} />
+              <input
+                id="expectedCtc"
+                name="expectedCtc"
+                placeholder="Optional"
+                className={controlClass(false)}
+              />
             </IconField>
           </div>
         </FormSection>
@@ -322,11 +496,18 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               <div className="flex items-center justify-between gap-3 rounded-xl border border-[#38bdf8]/40 bg-linear-to-r from-[#38bdf8]/12 to-transparent px-4 py-3.5">
                 <span className="flex min-w-0 items-center gap-3 text-sm text-white">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#38bdf8]/15">
-                    <FileText className="h-4.5 w-4.5 text-[#38bdf8]" aria-hidden="true" />
+                    <FileText
+                      className="h-4.5 w-4.5 text-[#38bdf8]"
+                      aria-hidden="true"
+                    />
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate font-medium">{resume.name}</span>
-                    <span className="block text-xs text-white/50">{(resume.size / 1024 / 1024).toFixed(1)} MB</span>
+                    <span className="block truncate font-medium">
+                      {resume.name}
+                    </span>
+                    <span className="block text-xs text-white/50">
+                      {(resume.size / 1024 / 1024).toFixed(1)} MB
+                    </span>
                   </span>
                 </span>
                 <button
@@ -356,13 +537,18 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
                 }`}
               >
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#38bdf8]/12 ring-1 ring-[#38bdf8]/30">
-                  <Upload className="h-5 w-5 text-[#38bdf8]" aria-hidden="true" />
+                  <Upload
+                    className="h-5 w-5 text-[#38bdf8]"
+                    aria-hidden="true"
+                  />
                 </span>
                 <span className="text-sm font-medium text-white">
                   <span className="text-[#8fd0ff]">Click to upload</span>
                   <span className="hidden sm:inline"> or drag and drop</span>
                 </span>
-                <span className="text-xs text-white/50">PDF or Word, up to 5 MB</span>
+                <span className="text-xs text-white/50">
+                  PDF or Word, up to 4 MB
+                </span>
                 <input
                   id="resume"
                   name="resume"
@@ -382,7 +568,15 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               LinkedIn Profile
             </label>
             <IconField icon={Link2}>
-              <input id="linkedin" name="linkedin" type="url" inputMode="url" placeholder="https://linkedin.com/in/…" className={controlClass(!!errors.linkedin)} {...aria("linkedin")} />
+              <input
+                id="linkedin"
+                name="linkedin"
+                type="url"
+                inputMode="url"
+                placeholder="https://linkedin.com/in/…"
+                className={controlClass(!!errors.linkedin)}
+                {...aria("linkedin")}
+              />
             </IconField>
             {fieldError("linkedin")}
           </div>
@@ -392,7 +586,14 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               Portfolio / Website
             </label>
             <IconField icon={Globe}>
-              <input id="portfolio" name="portfolio" type="url" inputMode="url" placeholder="Optional" className={controlClass(false)} />
+              <input
+                id="portfolio"
+                name="portfolio"
+                type="url"
+                inputMode="url"
+                placeholder="Optional"
+                className={controlClass(false)}
+              />
             </IconField>
           </div>
 
@@ -433,12 +634,20 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
                       : "border-white/30 group-hover:border-white/60"
                 }`}
               >
-                {consent && <Check className="h-3.5 w-3.5 text-[#0a0d16]" strokeWidth={3} />}
+                {consent && (
+                  <Check
+                    className="h-3.5 w-3.5 text-[#0a0d16]"
+                    strokeWidth={3}
+                  />
+                )}
               </span>
               <span>
-                I agree that Virtual Captains may store and use my details to process this
-                application, as described in the{" "}
-                <Link href="/privacy" className="text-[#8fd0ff] underline underline-offset-4 hover:text-[#38bdf8]">
+                I agree that Virtual Captains may store and use my details to
+                process this application, as described in the{" "}
+                <Link
+                  href="/privacy"
+                  className="text-[#8fd0ff] underline underline-offset-4 hover:text-[#38bdf8]"
+                >
                   Privacy Policy
                 </Link>
                 .
@@ -448,7 +657,10 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
           </div>
 
           {status === "error" && (
-            <p role="alert" className="rounded-xl border border-[#ff5c5c]/40 bg-[#ff5c5c]/10 px-4 py-3 text-sm text-[#ffb3b3]">
+            <p
+              role="alert"
+              className="rounded-xl border border-[#ff5c5c]/40 bg-[#ff5c5c]/10 px-4 py-3 text-sm text-[#ffb3b3]"
+            >
               {serverError} Please try again.
             </p>
           )}
@@ -462,8 +674,10 @@ export function CareerApplyForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
               disabled={status === "submitting"}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#e7ff3d] hover:bg-[#d8f030] px-8 py-3.5 text-sm font-bold text-[#0a0b0d] tracking-wide shadow-[0_0_24px_rgba(231,255,61,0.35)] transition-all duration-200 cursor-pointer hover:scale-102 active:scale-98 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
-              {status === "submitting" && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              {status === "submitting" ? "Submitting…" : "Submit Application"}
+              {status === "submitting" && (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              )}
+              {status === "submitting" ? "Sending code…" : "Submit Application"}
             </button>
           </div>
         </div>
