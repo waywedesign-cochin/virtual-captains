@@ -12,7 +12,7 @@ if (typeof window !== "undefined") {
 
 /**
  * Network layout (laptops+, see NETWORK_QUERY): the title sits at the hub, partners sit on two
- * elliptical orbits around it, joined by faint connection lines. Positions are
+ * elliptical orbits around it. Positions are
  * % of the stage so it scales with the container. The inner ring is offset by
  * half a step so its nodes fall between the outer ring's.
  */
@@ -24,9 +24,8 @@ const RINGS = {
 /** How far the rings turn over the pinned scroll (radians). Both rings turn
  *  by the same angle so they keep their interleaved spacing and never collide. */
 const SPIN = { inner: 0.55, outer: 0.55 };
-// Laptops from 1024px wide (incl. 125% / 150% zoom on common screens) get the
-// network; it needs ~620px of height so the rings clear the title.
-const NETWORK_QUERY = "(min-width: 1024px) and (min-height: 620px)";
+// Laptops from 1024px wide (incl. 125% / 150% zoom on common screens) get the network.
+const NETWORK_QUERY = "(min-width: 1024px)";
 
 type Node = { p: Partner; angle: number; ring: "inner" | "outer" };
 
@@ -50,30 +49,6 @@ function posAt(i: number, t = 0) {
   const a = n.angle + SPIN[n.ring] * t;
   return { x: round(50 + rx * Math.cos(a)), y: round(50 + ry * Math.sin(a)) };
 }
-
-/** Connection lines as node indices: hub (-1) → each inner node, and each
- *  outer node → its nearest inner node. */
-const LINKS: { from: number; to: number }[] = (() => {
-  const innerIdx = NODES.map((_, i) => i).filter((i) => NODES[i].ring === "inner");
-  const links = innerIdx.map((i) => ({ from: -1, to: i }));
-  NODES.forEach((n, o) => {
-    if (n.ring !== "outer") return;
-    const po = posAt(o);
-    const near = innerIdx.reduce((best, i) => {
-      const a = posAt(i);
-      const b = posAt(best);
-      return Math.hypot(a.x - po.x, a.y - po.y) < Math.hypot(b.x - po.x, b.y - po.y) ? i : best;
-    });
-    links.push({ from: near, to: o });
-  });
-  return links;
-})();
-
-const linkCoords = (l: { from: number; to: number }, t = 0) => {
-  const a = l.from === -1 ? { x: 50, y: 50 } : posAt(l.from, t);
-  const b = posAt(l.to, t);
-  return { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
-};
 
 function LogoGlass({ p, className = "" }: { p: Partner; className?: string }) {
   return (
@@ -99,8 +74,6 @@ export default function SalesXPartnerCloud() {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRefs = useRef<(HTMLHeadingElement | null)[]>([]);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const lineRefs = useRef<(SVGLineElement | null)[]>([]);
-  const linesRef = useRef<SVGSVGElement>(null);
   const cameraRef = useRef<HTMLDivElement>(null);
   const rigRef = useRef<HTMLDivElement>(null);
   const hubRef = useRef<HTMLDivElement>(null);
@@ -128,28 +101,18 @@ export default function SalesXPartnerCloud() {
       // ── Laptops+: pinned cinematic camera ──────────────────────────────────
       mm.add(NETWORK_QUERY, () => {
         const nodes = nodeRefs.current.filter(Boolean) as HTMLDivElement[];
-        const lines = lineRefs.current;
 
         // Depth: inner ring nearer the lens than the outer ring, so the rings
         // parallax against each other whenever the camera tilts.
         nodes.forEach((el, i) => gsap.set(el, { z: NODES[i].ring === "inner" ? 30 : -30 }));
 
-        // Ring rotation, driven by a proxy so nodes + lines move together
+        // Ring rotation, driven by a proxy so the nodes move together
         const orbit = { t: 0 };
         const placeOrbit = () => {
           nodes.forEach((el, i) => {
             const { x, y } = posAt(i, orbit.t);
             el.style.left = `${x}%`;
             el.style.top = `${y}%`;
-          });
-          LINKS.forEach((l, i) => {
-            const line = lines[i];
-            if (!line) return;
-            const c = linkCoords(l, orbit.t);
-            line.setAttribute("x1", `${c.x1}`);
-            line.setAttribute("y1", `${c.y1}`);
-            line.setAttribute("x2", `${c.x2}`);
-            line.setAttribute("y2", `${c.y2}`);
           });
         };
 
@@ -179,7 +142,6 @@ export default function SalesXPartnerCloud() {
             { opacity: 1, scale: 1, duration: 0.7, stagger: 0.02, ease: "power2.out" },
             0.25,
           )
-          .fromTo(linesRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.6)
           // 2. Rings turn together while the camera settles
           .to(orbit, { t: 1, duration: 2.2, ease: "sine.inOut", onUpdate: placeOrbit }, 0.4)
           // 3. Slow push-in with a gentle roll to close the shot
@@ -263,49 +225,14 @@ export default function SalesXPartnerCloud() {
       />
 
       <div className="w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
-        {/* ── LAPTOPS+: NETWORK — hub title, two orbits, connection lines ── */}
-        <div className="hidden perspective-[1800px] [@media(min-width:1024px)_and_(min-height:620px)]:block">
+        {/* ── LAPTOPS+: NETWORK — hub title, two orbits ── */}
+        <div className="hidden perspective-[1800px] lg:block">
         {/* camera = scroll dolly, rig = mouse tilt; both keep 3D for depth */}
         <div ref={cameraRef} className="transform-3d will-change-transform">
         <div
           ref={rigRef}
           className="relative w-full h-[min(760px,calc(100svh-140px))] 2xl:h-[min(800px,calc(100svh-140px))] transform-3d"
         >
-          <svg
-            ref={linesRef}
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-          >
-            {/* orbit guides */}
-            {(["inner", "outer"] as const).map((r) => (
-              <ellipse
-                key={r}
-                cx="50"
-                cy="50"
-                rx={RINGS[r].rx}
-                ry={RINGS[r].ry}
-                fill="none"
-                stroke="rgba(147,197,253,0.10)"
-                strokeDasharray="2 6"
-                vectorEffect="non-scaling-stroke"
-              />
-            ))}
-            {LINKS.map((l, i) => (
-              <line
-                key={i}
-                ref={(el) => {
-                  lineRefs.current[i] = el;
-                }}
-                {...linkCoords(l)}
-                stroke={l.from === -1 ? "rgba(56,189,248,0.22)" : "rgba(147,197,253,0.14)"}
-                strokeWidth="1"
-                vectorEffect="non-scaling-stroke"
-              />
-            ))}
-          </svg>
-
           {/* Hub */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center pointer-events-none">
             <div ref={hubRef}>
@@ -352,7 +279,7 @@ export default function SalesXPartnerCloud() {
         </div>
 
         {/* ── SMALLER SCREENS: title + responsive glass grid ── */}
-        <div className="flex flex-col items-center text-center [@media(min-width:1024px)_and_(min-height:620px)]:hidden">
+        <div className="flex flex-col items-center text-center lg:hidden">
           <h2
             ref={(el) => {
               headingRefs.current[1] = el;
