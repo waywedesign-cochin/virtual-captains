@@ -72,7 +72,16 @@ export function ProgramsHero() {
       <div className="min-w-0 flex-1">
         {/* eyebrow: line moved after the text so the text lines up with the heading */}
         <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
-          SalesX Programs
+          <span className="flex items-center gap-2 text-[15px] font-bold uppercase tracking-wide text-[#38bdf8]">
+            <Image
+              src="/salesx/salesx-logo.png"
+              alt="SalesX"
+              width={846}
+              height={232}
+              className="h-6 w-auto"
+            />
+            Programs
+          </span>
           <span
             aria-hidden
             className="h-px w-10 bg-linear-to-r from-[#38bdf8] to-transparent"
