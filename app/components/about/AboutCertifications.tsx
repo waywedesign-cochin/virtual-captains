@@ -8,18 +8,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface CertificationBadge {
-  id: string;
-  title: string;
-  track: string;
-}
-
-const CERTIFICATIONS: CertificationBadge[] = [
-  { id: "cert-1", title: "Certification", track: "Sales Simulation" },
-  { id: "cert-2", title: "Certification", track: "Objection Mastery" },
-  { id: "cert-3", title: "Certification", track: "Enterprise Closing" },
-  { id: "cert-4", title: "Certification", track: "Revenue Intelligence" },
-];
+import { CERTIFICATIONS } from "@/app/content/certifications";
 
 export default function AboutCertifications() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -78,7 +67,7 @@ export default function AboutCertifications() {
           duration: 1.1,
           ease: "power2.out",
         })
-          // 2. 4 Certification Badges bloom in over the marquee with staggered spring reveal
+          // 2. Certification badges bloom in over the marquee with staggered spring reveal
           .to(
             validBadges,
             {
@@ -144,46 +133,31 @@ export default function AboutCertifications() {
         </div>
       </div>
 
-      {/* ── FOREGROUND CONTAINER: 4 Serrated Rosette Badges Floating In Front ── */}
+      {/* ── FOREGROUND CONTAINER: Certificate Badges Floating In Front ── */}
       <div className="relative z-10 w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 lg:px-8 xl:px-12 flex flex-col items-center justify-center">
         <div
           ref={badgesContainerRef}
           className="relative z-10 w-full flex items-center justify-center"
         >
-          {/* Responsive Layout: 4 badges horizontal on desktop/tablet, 2x2 grid on mobile */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-16 items-center justify-items-center w-full max-w-5xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 lg:gap-20 w-full max-w-5xl mx-auto">
             {CERTIFICATIONS.map((item, idx) => (
               <div
                 key={item.id}
                 ref={(el) => {
                   badgeRefs.current[idx] = el;
                 }}
-                className="group relative flex flex-col items-center justify-center cursor-pointer will-change-transform"
+                className="group relative flex flex-col items-center justify-center will-change-transform"
               >
-                {/* 32-Point Serrated Rosette Seal Container */}
-                <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-38 md:h-38 lg:w-44 lg:h-44 xl:w-52 xl:h-52 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-2">
-                  {/* 32-Point Blue Serrated Rosette Star Badge */}
-                  {/* Star shape masked from Star.png and filled with the brand blue,
-                      so the badge colour lives here rather than in the image */}
-                  <div
-                    role="img"
-                    aria-label={`${item.title} — ${item.track}`}
-                    className="w-full h-full pointer-events-none"
-                  >
-                    <div className="w-full h-full bg-[#344E8F]" style={{ maskImage: "url(/salesx/Star.png)", WebkitMaskImage: "url(/salesx/Star.png)", maskSize: "contain", WebkitMaskSize: "contain", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: "center", WebkitMaskPosition: "center" }} />
-                  </div>
-
-                  {/* Center "Certification" + track name */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center px-[22%] text-center pointer-events-none select-none">
-                    <span className="text-white/70 text-[9px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.18em] font-medium font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                      {item.title}
-                    </span>
-                    <span className="mt-1 text-white text-[11px] sm:text-sm lg:text-base xl:text-lg font-semibold leading-tight font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] group-hover:text-cyan-100 transition-colors">
-                      {item.track}
-                    </span>
-                  </div>
-                </div>
-
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.image}
+                  alt={item.alt}
+                  width={item.width}
+                  height={item.height}
+                  loading="lazy"
+                  decoding="async"
+                  className={`${item.sizeClass} w-auto drop-shadow-[0_18px_40px_rgba(29,78,216,0.45)] transition-transform duration-300 group-hover:scale-105 group-hover:-translate-y-2`}
+                />
               </div>
             ))}
           </div>
