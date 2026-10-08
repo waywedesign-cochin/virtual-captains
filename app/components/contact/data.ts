@@ -49,7 +49,7 @@ export const offices: Office[] = [
     ],
     mapsHref: "https://www.google.com/maps/search/?api=1&query=Covspace+Coworking%2C+Kochi",
     mapEmbed:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3064.6726778701895!2d76.31464137503104!3d9.989583190115306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d2ee9c18baf%3A0xec3c610ff9ed0ee!2sCovspace%20Coworking!5e1!3m2!1sen!2sin!4v1791458194525!5m2!1sen!2sin",
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3064.6726778701895!2d76.31464137503104!3d9.989583190115306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d2ee9c18baf%3A0xec3c610ff9ed0ee!2sCovspace%20Coworking!5e0!3m2!1sen!2sin!4v1791458194525!5m2!1sen!2sin",
     pin: { top: "58%", left: "68%" },
   },
   {

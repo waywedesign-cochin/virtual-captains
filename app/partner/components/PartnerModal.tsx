@@ -18,6 +18,8 @@ import {
   requestCode,
   toVerifyResult,
 } from "@/app/components/common/EmailVerification";
+import PhoneField from "@/app/components/common/PhoneField";
+import { isValidPhoneNumber, type Value } from "react-phone-number-input";
 
 interface PartnerModalProps {
   model: PartnershipModel | null;
@@ -34,7 +36,8 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [organization, setOrganization] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState<Value | undefined>();
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
@@ -61,6 +64,11 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (sending) return;
+    // Phone is optional, but if given it must be valid for its country
+    if (phone && !isValidPhoneNumber(phone)) {
+      setPhoneError("That number doesn't look valid for the selected country.");
+      return;
+    }
     setSending(true);
     setError(null);
     try {
@@ -105,7 +113,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
       setFullName("");
       setEmail("");
       setOrganization("");
-      setPhone("");
+      setPhone(undefined);
       setMessage("");
       // Auto-close after showing success
       setTimeout(() => {
@@ -196,6 +204,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
                 onVerify={submitVerified}
                 onEdit={() => setVerify(null)}
                 submitLabel="Verify & submit"
+                fullWidth
               />
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -239,7 +248,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
                   </div>
                   <div>
                     <label className="text-[10px] uppercase font-bold tracking-wider text-zinc-400 block mb-1">
-                      Work Email *
+                      Email *
                     </label>
                     <input
                       type="email"
@@ -267,16 +276,34 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] uppercase font-bold tracking-wider text-zinc-400 block mb-1">
+                    <label
+                      htmlFor="partner-phone"
+                      className="text-[10px] uppercase font-bold tracking-wider text-zinc-400 block mb-1"
+                    >
                       Phone Number
                     </label>
-                    <input
-                      type="tel"
-                      placeholder="e.g. +91 98765 43210"
+                    {/* Same country-code picker as the other site forms */}
+                    <PhoneField
+                      id="partner-phone"
+                      tone="dark"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full bg-[#0d1428] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#38bdf8] transition-colors"
+                      onChange={(v) => {
+                        setPhone(v);
+                        if (phoneError) setPhoneError(null);
+                      }}
+                      invalid={Boolean(phoneError)}
+                      describedBy={
+                        phoneError ? "partner-phone-error" : undefined
+                      }
                     />
+                    {phoneError && (
+                      <p
+                        id="partner-phone-error"
+                        className="mt-1 text-[11px] text-[#ff6b6b]"
+                      >
+                        {phoneError}
+                      </p>
+                    )}
                   </div>
                 </div>
 

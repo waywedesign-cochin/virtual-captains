@@ -4,12 +4,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { isValidPhoneNumber, type Value } from "react-phone-number-input";
 import PhoneField from "../common/PhoneField";
-import {
-  VerifyEmailStep,
-  requestCode,
-  toVerifyResult,
-  type VerifyResult,
-} from "../common/EmailVerification";
 
 // ---------- Validation ----------
 type Audience = "individual" | "organisation";
@@ -155,10 +149,6 @@ function EnrollDialog({
   const [submitted, setSubmitted] = useState(false);
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
-  // Set while the "Verify your email" step is showing (payable programs)
-  const [verify, setVerify] = useState<{ email: string; token: string } | null>(
-    null,
-  );
   const [audience, setAudience] = useState<Audience>("individual");
   const [values, setValues] = useState<Values>({
     firstName: "",
@@ -250,20 +240,6 @@ function EnrollDialog({
     // Not payable online: just show the confirmation (wire to a leads API later)
     if (!payable) return setSubmitted(true);
 
-    // Payable: email a code first; payment starts from the verify step
-    setPaying(true);
-    try {
-      const email = values.email.trim();
-      setVerify({ email, token: await requestCode(email) });
-    } catch (err) {
-      setPayError(err instanceof Error ? err.message : "Something went wrong.");
-    } finally {
-      setPaying(false);
-    }
-  }
-
-  /** Runs once the code is entered: creates the order, then opens Checkout. */
-  async function pay(code: string, token: string): Promise<VerifyResult> {
     const firstName = values.firstName.trim();
     const lastName = values.lastName.trim();
     const email = values.email.trim();
@@ -272,13 +248,12 @@ function EnrollDialog({
 
     setPaying(true);
     try {
-      // 1. Create the order on the server (it checks the code)
+      // 1. Create the order on the server
       const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slug: programSlug,
-          programTitle,
           name: fullName,
           email,
           phone,
@@ -286,15 +261,10 @@ function EnrollDialog({
           role: isOrg ? values.role.trim() : "",
           employees: isOrg ? values.employees : "",
           message: values.message.trim(),
-          code,
-          token,
         }),
       });
-      if (!res.ok) {
-        setPaying(false);
-        return toVerifyResult(res);
-      }
       const order = await res.json();
+      if (!res.ok) throw new Error(order.error || "Could not start payment.");
 
       // 2. Load Checkout and open it
       const loaded = await loadRazorpay();
@@ -321,10 +291,8 @@ function EnrollDialog({
             });
             const data = await v.json();
             if (!v.ok || !data.verified) throw new Error();
-            setVerify(null);
             setSubmitted(true);
           } catch {
-            setVerify(null);
             setPayError(
               "Payment received but we couldn't confirm it. Please contact us with your payment ID: " +
                 payment.razorpay_payment_id,
@@ -336,21 +304,15 @@ function EnrollDialog({
         modal: { ondismiss: () => setPaying(false) },
       });
 
-      // Failed payment: back to the form with the reason (dismissing the
-      // window instead keeps the verify step, so "Pay" can be retried)
       rzp.on("payment.failed", (r) => {
-        setVerify(null);
         setPayError(r.error.description || "Payment failed. Please try again.");
         setPaying(false);
       });
 
       rzp.open();
-      return "ok";
     } catch (err) {
+      setPayError(err instanceof Error ? err.message : "Something went wrong.");
       setPaying(false);
-      return {
-        error: err instanceof Error ? err.message : "Something went wrong.",
-      };
     }
   }
 
@@ -416,18 +378,6 @@ function EnrollDialog({
                 ? `You're enrolled in ${programTitle}. We'll email you the next steps shortly.`
                 : "Our team will reach out to you shortly."}
             </p>
-          </div>
-        ) : verify ? (
-          <div className="relative">
-            <VerifyEmailStep
-              email={verify.email}
-              token={verify.token}
-              onTokenChange={(token) => setVerify({ ...verify, token })}
-              onVerify={pay}
-              onEdit={() => setVerify(null)}
-              submitLabel={paying ? "Processing…" : "Verify & pay"}
-              headingId="enroll-title"
-            />
           </div>
         ) : (
           <form className="relative" onSubmit={handleSubmit} noValidate>
@@ -647,9 +597,7 @@ function EnrollDialog({
               className="mt-6 w-full cursor-pointer rounded-full bg-[#2563eb] py-3 text-sm font-bold text-white shadow-[0_12px_30px_-10px_#2563eb] transition-colors hover:bg-[#1d4ed8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#38bdf8]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e14] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {paying
-                ? payable
-                  ? "Sending code…"
-                  : "Processing…"
+                ? "Processing…"
                 : payable
                   ? "Pay now"
                   : "Request callback"}

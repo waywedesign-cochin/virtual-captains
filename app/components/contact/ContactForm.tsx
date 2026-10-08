@@ -23,7 +23,7 @@ import {
 gsap.registerPlugin(ScrollTrigger);
 
 /* Same fields, order and rules as the "Book a Call" popup (BookACallModal):
-   audience toggle, first/last name, work email, phone with country code,
+   audience toggle, first/last name, email, phone with country code,
    organisation-only role + team size, message. */
 type Audience = "individual" | "organisation";
 
@@ -237,6 +237,14 @@ export default function ContactForm() {
       setStatus("success");
       setValues(initialState);
       setVerify(null);
+      // Bring the success panel into view (the card can be taller than the screen)
+      requestAnimationFrame(() => {
+        const card = rightCardRef.current;
+        if (!card) return;
+        const top = card.getBoundingClientRect().top + window.scrollY - 96;
+        if (window.__lenis) window.__lenis.scrollTo(top);
+        else window.scrollTo({ top, behavior: "smooth" });
+      });
     }
     return result;
   };
@@ -416,9 +424,42 @@ export default function ContactForm() {
               />
             )}
 
+            {status === "success" && (
+              <div
+                role="status"
+                aria-live="polite"
+                className="flex flex-col items-center gap-4 rounded-2xl border border-[#22c55e]/25 bg-[#22c55e]/6 px-6 py-12 text-center animate-in fade-in zoom-in-95 duration-300"
+              >
+                <span className="relative flex h-16 w-16 items-center justify-center">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-[#4ade80]/20" />
+                  <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#22c55e]/15 text-2xl font-bold text-[#4ade80]">
+                    ✓
+                  </span>
+                </span>
+                <h4 className="font-serif text-2xl font-bold text-white">
+                  Message Sent
+                </h4>
+                <p className="max-w-sm text-sm leading-relaxed text-white/65">
+                  Thanks for reaching out. A Captain will get back to you within
+                  1 business day. We&apos;ve also emailed you a confirmation.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setStatus("idle")}
+                  className="mt-2 cursor-pointer rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold text-white/85 transition-colors hover:border-[#38bdf8] hover:text-[#8fd0ff]"
+                >
+                  Send Another Message
+                </button>
+              </div>
+            )}
+
             {/* Kept mounted (just hidden) during verification so "Edit
                 details" returns to the filled-in form */}
-            <form onSubmit={handleSubmit} noValidate hidden={Boolean(verify)}>
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              hidden={Boolean(verify) || status === "success"}
+            >
               <div className="grid gap-5 sm:grid-cols-2">
                 {/* I am: Individual / Organisation (segmented, like the popup) */}
                 <fieldset className="sm:col-span-2 form-field-anim will-change-transform">
@@ -483,10 +524,10 @@ export default function ContactForm() {
                   {errorText("lastName")}
                 </div>
 
-                {/* Work email */}
+                {/* Email */}
                 <div className="sm:col-span-2 form-field-anim will-change-transform">
                   <label htmlFor="email" className={labelClass}>
-                    Work Email<span className="text-[#ffd60a]"> *</span>
+                    Email<span className="text-[#ffd60a]"> *</span>
                   </label>
                   <input
                     id="email"
@@ -611,14 +652,6 @@ export default function ContactForm() {
                 </button>
 
                 <div role="status" aria-live="polite" className="text-sm">
-                  {status === "success" && (
-                    <div className="flex items-center gap-2 rounded-lg border border-[#22c55e]/30 bg-[#22c55e]/10 px-3.5 py-2 text-xs sm:text-sm font-medium text-[#4ade80] animate-in fade-in duration-300">
-                      <span>✓</span>
-                      <span>
-                        Thanks — a Captain will reach out within 1 business day.
-                      </span>
-                    </div>
-                  )}
                   {status === "error" && (
                     <div className="flex items-center gap-2 rounded-lg border border-[#ef4444]/30 bg-[#ef4444]/10 px-3.5 py-2 text-xs sm:text-sm font-medium text-[#f87171] animate-in fade-in duration-300">
                       <span>⚠</span>

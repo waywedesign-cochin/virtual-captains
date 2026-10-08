@@ -27,6 +27,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { BlueFrame } from "./BlueFrame";
+import { isValidPhoneNumber, type Value } from "react-phone-number-input";
+import PhoneField from "../common/PhoneField";
 import {
   VerifyEmailStep,
   requestCode,
@@ -132,6 +134,8 @@ export function CareerApplyForm({
   const [resume, setResume] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [consent, setConsent] = useState(false);
+  // Phone in E.164 (e.g. +919876543210), same picker as the other site forms
+  const [phone, setPhone] = useState<Value | undefined>();
   // Filled form waiting on email verification (holds the resume file too)
   const [pending, setPending] = useState<{
     data: FormData;
@@ -157,8 +161,9 @@ export function CareerApplyForm({
     if (!get("fullName")) next.fullName = "Please enter your full name.";
     if (!emailPattern.test(get("email")))
       next.email = "Please enter a valid email address.";
-    if (get("phone").replace(/\D/g, "").length < 7)
-      next.phone = "Please enter a valid phone number.";
+    if (!phone) next.phone = "Please enter your phone number.";
+    else if (!isValidPhoneNumber(phone))
+      next.phone = "That number doesn't look valid for the selected country.";
     if (!get("location")) next.location = "Please enter your current city.";
     if (!get("experience"))
       next.experience = "Please add your years of experience.";
@@ -226,6 +231,7 @@ export function CareerApplyForm({
       setStatus("success");
       setPending(null);
       setResume(null);
+      setPhone(undefined);
       setConsent(false);
     }
     return result;
@@ -370,18 +376,20 @@ export function CareerApplyForm({
             <label htmlFor="phone" className={labelClass}>
               Phone *
             </label>
-            <IconField icon={Phone}>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                placeholder="+91 98765 43210"
-                className={controlClass(!!errors.phone)}
-                {...aria("phone")}
-              />
-            </IconField>
+            <PhoneField
+              id="phone"
+              tone="dark"
+              value={phone}
+              onChange={(v) => {
+                setPhone(v);
+                if (errors.phone)
+                  setErrors((prev) => ({ ...prev, phone: undefined }));
+              }}
+              invalid={Boolean(errors.phone)}
+              describedBy={errors.phone ? "phone-error" : undefined}
+            />
+            {/* PhoneField is controlled; this carries the value into FormData */}
+            <input type="hidden" name="phone" value={phone ?? ""} />
             {fieldError("phone")}
           </div>
 

@@ -84,6 +84,7 @@ export function VerifyEmailStep({
   tone = "dark",
   submitLabel = "Verify & submit",
   headingId,
+  fullWidth = false,
 }: {
   email: string;
   token: string;
@@ -95,7 +96,11 @@ export function VerifyEmailStep({
   tone?: keyof typeof TONES;
   submitLabel?: string;
   headingId?: string;
+  /** Stretch the code boxes and button to the full width (small popups). */
+  fullWidth?: boolean;
 }) {
+  // Compact: never wider than the 6 boxes (304px), but shrinks on small phones
+  const width = fullWidth ? "w-full" : "w-full max-w-76";
   const t = TONES[tone];
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
@@ -134,7 +139,7 @@ export function VerifyEmailStep({
       </h3>
       <p className={`mt-1.5 font-sans text-[13px] leading-relaxed ${t.text}`}>
         We sent a 6-digit code to{" "}
-        <span className={`font-medium ${t.strong}`}>{email}</span>. Enter it
+        <span className={`font-medium break-all ${t.strong}`}>{email}</span>. Enter it
         below to complete your submission.
       </p>
 
@@ -145,6 +150,7 @@ export function VerifyEmailStep({
         <OtpInput
           value={code}
           boxClass={t.box}
+          fullWidth={fullWidth}
           onChange={(v) => {
             setCode(v);
             if (error) setError(null);
@@ -166,12 +172,14 @@ export function VerifyEmailStep({
       <button
         type="submit"
         disabled={busy}
-        className={`mt-6 w-full cursor-pointer rounded-full py-3 text-[13.5px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${t.button}`}
+        className={`mt-6 ${width} cursor-pointer rounded-full py-3 text-[13.5px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${t.button}`}
       >
         {busy ? "Verifying…" : submitLabel}
       </button>
 
-      <div className="mt-4 flex items-center justify-between text-[12px]">
+      <div
+        className={`mt-4 flex items-center justify-between text-[12px] ${width}`}
+      >
         <button
           type="button"
           disabled={busy}
@@ -214,11 +222,13 @@ function OtpInput({
   value,
   onChange,
   boxClass,
+  fullWidth = false,
   length = 6,
 }: {
   value: string;
   onChange: (v: string) => void;
   boxClass: string;
+  fullWidth?: boolean;
   length?: number;
 }) {
   const refs = useRef<(HTMLInputElement | null)[]>([]);
@@ -228,7 +238,7 @@ function OtpInput({
     refs.current[Math.max(0, Math.min(length - 1, i))]?.focus();
 
   return (
-    <div className="flex w-full justify-between gap-2">
+    <div className={`flex w-full gap-1.5 sm:gap-2 ${fullWidth ? "" : "max-w-76"}`}>
       {digits.map((d, i) => (
         <input
           key={i}
@@ -274,7 +284,7 @@ function OtpInput({
             onChange(p);
             focus(p.length >= length ? length - 1 : p.length);
           }}
-          className={`h-12 w-full min-w-0 rounded-lg border text-center text-[20px] font-medium outline-none transition-colors ${boxClass}`}
+          className={`h-12 min-w-0 rounded-lg border text-center text-lg font-medium flex-1 outline-none transition-colors ${boxClass}`}
         />
       ))}
     </div>
