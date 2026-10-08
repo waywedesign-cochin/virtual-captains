@@ -39,7 +39,7 @@ export const HUB_SCATTER: ReadonlyArray<HubOffset> = [
 ];
 
 /** Scale a logo is compressed to while it is still inside the hub. */
-export const HUB_SCALE = 0.22;
+export const HUB_SCALE = 0.19;
 
 /**
  * How far each logo's travel is staggered, as a fraction of the scrubbed

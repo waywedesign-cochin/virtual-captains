@@ -27,6 +27,8 @@ export interface PartnerSlot {
   readonly name: string;
   /** Path to the logo image. */
   readonly image?: string;
+  /** width / height of the logo file — drives optical sizing */
+  readonly ratio?: number;
 }
 
 export interface AudienceSlide {

@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
 import { partner, partnerSlots } from "@/content/site";
+import { logoHeight } from "@/app/content/partners";
 import { gsap, useGSAP, ScrollTrigger } from "@/lib/animations/gsap";
 import { useHeadingZoom } from "@/components/about/useHeadingZoom";
 
@@ -27,7 +27,7 @@ export function PartnerNetworkCompact() {
       ScrollTrigger.batch(tiles, {
         start: "top 92%",
         onEnter: (batch) =>
-          gsap.to(batch, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: "power3.out" }),
+          gsap.to(batch, { opacity: 1, y: 0, duration: 0.6, stagger: 0.04, ease: "power3.out" }),
       });
     },
     { scope },
@@ -36,7 +36,7 @@ export function PartnerNetworkCompact() {
   return (
     <div
       ref={scope}
-      className="mx-auto w-full max-w-3xl px-4 py-12 text-center sm:px-8 sm:py-16"
+      className="mx-auto w-full max-w-372 px-4 py-12 text-center sm:px-8 sm:py-16"
     >
       <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1 shadow-[0_0_16px_rgba(56,189,248,0.15)] backdrop-blur-md">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#38bdf8] shadow-[0_0_6px_#38bdf8]" />
@@ -47,7 +47,7 @@ export function PartnerNetworkCompact() {
 
       <h2
         ref={headingRef}
-        className="mt-4 type-h2 font-light text-white"
+        className="mt-4 type-h2 font-medium text-white"
       >
         {partner.title.join(" ")}
       </h2>
@@ -59,21 +59,25 @@ export function PartnerNetworkCompact() {
         {partner.sideBody}
       </p>
 
-      <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+      <ul className="mt-10 grid grid-cols-3 gap-2.5 sm:grid-cols-4 sm:gap-3 md:grid-cols-6">
         {partnerSlots.map((slot) => (
           <li
             key={slot.id}
             data-partner-tile=""
-            className="relative flex aspect-3/2 items-center justify-center rounded-2xl border border-white/10 bg-white/4 backdrop-blur-xl"
+            className="relative flex h-14 items-center justify-center rounded-xl px-3 py-3 sm:h-16 border border-white/10 bg-white/4 backdrop-blur-xl"
           >
             {slot.image ? (
-              <Image
-                src={slot.image}
-                alt={slot.name}
-                fill
-                sizes="(max-width: 640px) 45vw, 22vw"
-                className="object-contain p-5"
-              />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src={slot.image}
+                    alt={slot.name}
+                    loading="lazy"
+                    draggable={false}
+                    style={{ height: `${logoHeight(slot.ratio ?? 2)}%` }}
+                    className="w-auto max-w-full object-contain opacity-80 brightness-0 invert"
+                  />
+              </>
             ) : (
               <span className="font-semibold text-white/80">{slot.name}</span>
             )}

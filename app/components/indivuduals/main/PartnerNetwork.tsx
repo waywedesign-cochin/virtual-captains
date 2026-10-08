@@ -2,7 +2,7 @@ import { partner, partnerSlots } from "@/content/site";
 import { PartnerLines } from "./PartnerLines";
 import { PartnerStage } from "./PartnerStage";
 import { PartnerNetworkCompact } from "./PartnerNetworkCompact";
-import Image from "next/image";
+import { logoHeight } from "@/app/content/partners";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
 export function PartnerNetwork() {
@@ -46,6 +46,11 @@ export function PartnerNetwork() {
         />
 
         {/* Hub for GSAP to measure the center coordinate, kept invisible so logos stack is visible */}
+        {/* Glowing core the logo halo circles before the release */}
+        <span className="partner__core" data-partner-core="" aria-hidden="true">
+          <span className="partner__core-ring" />
+        </span>
+
         <div className="partner__hub opacity-0 pointer-events-none" data-partner-hub="" aria-hidden="true" />
 
         {/* Each logo rests inside its own destination frame, so the settled
@@ -55,15 +60,19 @@ export function PartnerNetwork() {
         <ul className="partner__slots" data-partner-slots="">
           {partnerSlots.map((slot, index) => (
             <li className="partner__slot" key={slot.id} data-partner-slot={index}>
-              <span className="partner__logo relative w-full h-full flex items-center justify-center rounded-2xl border border-white/10 bg-white/4 backdrop-blur-xl transition-all duration-300 hover:border-white/25 hover:bg-white/8" data-partner-logo={index}>
+              <span className="partner__logo group absolute inset-0 flex items-center justify-center rounded-xl border border-[#0c8cf5]/35 bg-[#0d1530] px-5 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-[#38bdf8]/50 hover:bg-[#121d40] hover:shadow-[0_0_22px_-4px_rgba(56,189,248,0.45)]" data-partner-logo={index}>
                 {slot.image ? (
-                  <Image 
-                    src={slot.image} 
-                    alt={slot.name} 
-                    fill
-                    sizes="(max-width: 768px) 100vw, 20vw"
-                    className="object-contain p-4 md:p-6 hover:scale-110 transition-all duration-300"
+                  <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={slot.image}
+                    alt={slot.name}
+                    loading="lazy"
+                    draggable={false}
+                    style={{ height: `${logoHeight(slot.ratio ?? 2)}%` }}
+                    className="w-auto max-w-full object-contain opacity-75 brightness-0 invert transition-[transform,opacity] duration-300 group-hover:scale-105 group-hover:opacity-100"
                   />
+                  </>
                 ) : (
                   <span className="font-semibold text-white/80">{slot.name}</span>
                 )}

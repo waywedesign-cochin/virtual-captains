@@ -10,7 +10,7 @@ export function Curriculum() {
       aria-labelledby="curriculum-heading"
     >
       <CurriculumStage>
-        <div className="mx-auto w-full max-w-372 px-4 sm:px-8 lg:px-12 py-12 sm:py-16 lg:py-[clamp(4rem,10vw,8rem)]">
+        <div className="mx-auto w-full max-w-372 px-4 sm:px-8 lg:px-12 py-12 sm:py-16 lg:py-24">
           {/* Desktop Layout: Sticky Left, Scrolling Right */}
           <div className="hidden lg:flex lg:flex-row lg:items-start lg:justify-between lg:gap-20">
             {/* Left Side: Sticky Text */}

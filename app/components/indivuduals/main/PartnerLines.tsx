@@ -36,7 +36,7 @@ export function PartnerLines() {
           id="partnerContainerGradient"
           x1="665"
           y1="240"
-          x2="110"
+          x2="2"
           y2="520"
           gradientUnits="userSpaceOnUse"
         >
@@ -48,10 +48,10 @@ export function PartnerLines() {
 
         <linearGradient
           id="partnerFloorGradient"
-          x1="110"
-          y1="783"
-          x2="1080"
-          y2="783"
+          x1="2"
+          y1="759"
+          x2="1510"
+          y2="759"
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0%" stopColor="#1a9beb" stopOpacity="0.5" />
@@ -86,14 +86,14 @@ export function PartnerLines() {
         <path
           className="line--container"
           data-partner-line="container"
-          d="M665.5 222 V 290 Q 665.5 322.5 633 322.5 H 160 Q 112.5 322.5 112.5 370 V 727"
+          d="M665.5 222 V 298.5 Q 665.5 322.5 641.5 322.5 H 26 Q 2 322.5 2 346.5 V 735"
         />
 
         {/* The floor, carrying the bloom. */}
         <path
           className="line--floor"
           data-partner-line="floor"
-          d="M112.5 727 Q 112.5 782.5 167 782.5 H 1080"
+          d="M2 735 Q 2 759 26 759 H 1510"
         />
 
         <path
