@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -20,7 +21,12 @@ declare global {
  * steppy wheel deltas.
  */
 export default function SmoothScroll() {
+  // Sanity Studio scrolls inside its own panes; Lenis would swallow the
+  // wheel there (it only moves the window), so the Studio keeps native scroll.
+  const isStudio = usePathname()?.startsWith("/studio") ?? false;
+
   useEffect(() => {
+    if (isStudio) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
@@ -66,7 +72,7 @@ export default function SmoothScroll() {
       lenis.destroy();
       delete window.__lenis;
     };
-  }, []);
+  }, [isStudio]);
 
   return null;
 }
