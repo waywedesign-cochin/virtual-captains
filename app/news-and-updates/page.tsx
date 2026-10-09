@@ -61,13 +61,6 @@ function SectionHeader({
   );
 }
 
-const formatShortDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  });
-
 /** Big image-led story card for the overview. */
 function FeaturedStory({ item }: { item: NewsPost }) {
   return (
@@ -95,13 +88,6 @@ function FeaturedStory({ item }: { item: NewsPost }) {
       />
 
       <div className="relative space-y-4 p-6 sm:p-8 lg:max-w-[80%]">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-white/25 bg-black/30 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-white/85 backdrop-blur-md">
-            <time dateTime={item.publishedDate}>
-              {formatShortDate(item.publishedDate)}
-            </time>
-          </span>
-        </div>
         <h3 className="text-2xl sm:text-3xl lg:text-[34px] font-semibold leading-[1.15] tracking-tight text-white">
           <Link
             href={`/news-and-updates/${item.slug}`}
@@ -140,12 +126,7 @@ function StoryRow({ item }: { item: NewsPost }) {
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-[#38bdf8]">
-          <time dateTime={item.publishedDate}>
-            {formatShortDate(item.publishedDate)}
-          </time>
-        </p>
-        <h3 className="mt-1.5 line-clamp-2 text-sm sm:text-base font-medium leading-snug text-white transition-colors group-hover:text-[#8fd0ff]">
+        <h3 className="line-clamp-2 text-sm sm:text-base font-medium leading-snug text-white transition-colors group-hover:text-[#8fd0ff]">
           <Link
             href={`/news-and-updates/${item.slug}`}
             className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
@@ -205,16 +186,14 @@ const tileRatio = (item: NewsPost) => {
 
 /**
  * Image-led tile in the right-hand marquee (same look as the old gallery
- * block): number, date and title over the banner image.
+ * block): the title over the banner image.
  * `hidden`: a loop copy, so screen readers and the keyboard meet each story once.
  */
 function NewsTile({
   item,
-  number,
   hidden = false,
 }: {
   item: NewsPost;
-  number: number;
   hidden?: boolean;
 }) {
   return (
@@ -245,21 +224,12 @@ function NewsTile({
             className="absolute inset-0 bg-linear-to-br from-[#0c318f] via-[#071b5c] to-[#040507]"
           />
         )}
-        {/* readable bottom + subtle top shade for the number */}
+        {/* readable bottom shade for the title */}
         <span className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#030614]/95 via-[#030614]/35 to-[#030614]/30" />
-
-        <span className="absolute left-3 top-2.5 font-mono text-[10px] tracking-[0.2em] text-white/80 sm:left-4 sm:top-3 sm:text-xs">
-          {String(number).padStart(2, "0")}
-        </span>
 
         <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 sm:gap-3 sm:p-4">
           <div className="min-w-0">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-[#38bdf8]">
-              <time dateTime={item.publishedDate}>
-                {formatShortDate(item.publishedDate)}
-              </time>
-            </p>
-            <h3 className="mt-1 line-clamp-3 text-[13px] font-medium leading-snug text-white sm:mt-1.5 sm:text-base">
+            <h3 className="line-clamp-3 text-[13px] font-medium leading-snug text-white sm:mt-1.5 sm:text-base">
               <Link
                 href={`/news-and-updates/${item.slug}`}
                 tabIndex={hidden ? -1 : undefined}
@@ -290,25 +260,21 @@ function MarqueeColumn({
   items,
   direction,
 }: {
-  items: { item: NewsPost; number: number }[];
+  items: NewsPost[];
   direction: "up" | "down";
 }) {
   // One set must be taller than the box (~620px over a ~260px-wide column,
   // i.e. ≥ 2.7 column-widths of height); tile height = width / ratio.
-  const setHeight = items.reduce(
-    (sum, { item }) => sum + 1 / tileRatio(item),
-    0,
-  );
+  const setHeight = items.reduce((sum, item) => sum + 1 / tileRatio(item), 0);
   const repeats = Math.max(1, Math.ceil(2.7 / setHeight));
   const set = Array.from({ length: repeats }, () => items).flat();
   return (
     // Auto-drifts, and can be swiped / wheeled / dragged by hand
     <AutoScrollColumn direction={direction}>
-      {[...set, ...set].map(({ item, number }, i) => (
+      {[...set, ...set].map((item, i) => (
         <NewsTile
           key={`${i}-${item._id}`}
           item={item}
-          number={number}
           hidden={i >= items.length}
         />
       ))}
@@ -371,10 +337,7 @@ export default async function NewsAndUpdatesPage() {
                   where the right column is narrow): full-width tiles (short, wide crops
                   stay readable). Hover pauses; swipe / wheel / drag to scroll by hand. */}
               <div className="relative h-[460px] overflow-hidden min-[480px]:hidden lg:block lg:h-[620px] xl:hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
-                <MarqueeColumn
-                  direction="up"
-                  items={allNews.map((item, i) => ({ item, number: i + 1 }))}
-                />
+                <MarqueeColumn direction="up" items={allNews} />
               </div>
 
               {/* 480–1023px and 1280px+: two columns drifting in opposite directions */}
@@ -383,9 +346,9 @@ export default async function NewsAndUpdatesPage() {
                   <MarqueeColumn
                     key={col}
                     direction={col ? "down" : "up"}
-                    items={allNews
-                      .map((item, i) => ({ item, number: i + 1 }))
-                      .filter((_, i) => allNews.length === 1 || i % 2 === col)}
+                    items={allNews.filter(
+                      (_, i) => allNews.length === 1 || i % 2 === col,
+                    )}
                   />
                 ))}
               </div>
