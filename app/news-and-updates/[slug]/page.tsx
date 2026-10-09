@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Clock, Calendar, Mail } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Clock, Mail } from "lucide-react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Navbar from "../../components/home/Navbar";
 import SiteFooter from "../../components/home/SiteFooter";
@@ -112,14 +112,6 @@ export async function generateMetadata({
     title: `${item.seo?.metaTitle || item.title} | Virtual Captains`,
     description: item.seo?.metaDescription || item.summary,
   };
-}
-
-function formatMonthDay(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 
 function TitleWithGradientTail({ title }: { title: string }) {
@@ -250,10 +242,6 @@ export default async function NewsDetailPage({ params }: PageProps) {
                   <Clock className="w-3 h-3" />
                   {item.readTime}
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-xs text-white/60">
-                  <Calendar className="w-3 h-3" />
-                  {formatMonthDay(item.publishedDate)}
-                </span>
               </div>
 
               <TitleWithGradientTail title={item.title} />
@@ -270,9 +258,6 @@ export default async function NewsDetailPage({ params }: PageProps) {
                 </div>
                 <div className="h-8 w-px bg-linear-to-b from-transparent via-[#1d4ed8]/30 to-transparent" />
                 <div className="text-right">
-                  <p className="text-xs font-medium text-white/60">
-                    {formatMonthDay(item.publishedDate)}
-                  </p>
                   <p className="text-[11px] font-mono text-white/45 uppercase tracking-wider">
                     {item.readTime}
                   </p>
@@ -400,10 +385,6 @@ export default async function NewsDetailPage({ params }: PageProps) {
                   <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#1d4ed8] via-[#0ea5e9] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl sm:rounded-t-[26px]" />
 
                   <div className="flex flex-col">
-                    <span className="text-[11px] font-mono uppercase tracking-widest text-white/45">
-                      {formatMonthDay(n.publishedDate)}
-                    </span>
-
                     <h4 className="font-sans text-xl sm:text-[22px] font-normal text-white group-hover:text-[#8fd0ff] transition-colors leading-[1.24] tracking-tight mt-2.5 mb-1.5 line-clamp-2">
                       {n.title}
                     </h4>

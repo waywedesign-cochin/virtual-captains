@@ -10,7 +10,6 @@ import SalesXClimb from "../components/salesx/SalesXClimb";
 import SkillCardSection from "../components/salesx/SkillCardSection";
 import SalesXResultsHub from "../components/salesx/SalesXResultsHub";
 import SalesXTestimonials from "../components/salesx/SalesXTestimonials";
-import SalesXPartnerCloud from "../components/salesx/SalesXPartnerCloud";
 import SalesXCTA from "../components/salesx/SalesXCTA";
 import SiteFooter from "../components/home/SiteFooter";
 import SalesXCertifications from "../components/salesx/SalesXCertifications";
@@ -77,9 +76,6 @@ export default function SalesXPage() {
 
         {/* 6. Conversational Testimonials: Fixed Sticky Left & Real-Time Flowing Chat Bubbles */}
         <SalesXTestimonials />
-
-        {/* 7. Enterprise Partner Network: Dynamic Orbiting Ecosystem Cloud */}
-        <SalesXPartnerCloud />
 
         {/* 8. Ready to Redefine: High-Impact CTA with 5 Glowing Circular Metric Badges */}
         <SalesXCTA />
