@@ -77,17 +77,15 @@ export const quickContacts = [
   {
     id: "whatsapp",
     label: "Chat on WhatsApp",
-    value: "+91 85901 40169",
-    href: "https://wa.me/918590140169",
+    value: "+91 90377 98841",
+    href: "https://wa.me/919037798841",
     icon: "whatsapp" as const,
   },
   {
     id: "email",
     label: "Email us",
-    // PLACEHOLDER — no public email is listed on virtualcaptains.com; replace
-    // with a real monitored inbox before this page goes live.
-    value: "hello@virtualcaptains.com",
-    href: "mailto:hello@virtualcaptains.com",
+    value: "salesx@virtualcaptains.com",
+    href: "mailto:salesx@virtualcaptains.com",
     icon: "mail" as const,
   },
 ] as const;

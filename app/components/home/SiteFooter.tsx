@@ -35,9 +35,15 @@ interface SiteFooterProps {
   /** "white-blue": for light pages — starts white to flow out of the page
    *  above, then deepens to the home page's blue. */
   theme?: "default" | "subtle" | "dark" | "light-blue" | "white-blue";
+  /** false: hide the round "back to top" arrow (pages with their own, e.g. SalesX). */
+  showBackToTop?: boolean;
 }
 
-export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
+export default function SiteFooter({
+  showCTA = true,
+  theme,
+  showBackToTop = true,
+}: SiteFooterProps) {
   const pathname = usePathname();
   const isLightBlue =
     theme === "light-blue" ||
@@ -745,7 +751,9 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
             type="button"
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="absolute bottom-6 right-6 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-[#0a1c52] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:bottom-8 sm:right-8"
+            // kept in the DOM (the reveal animation targets it), just hidden
+            hidden={!showBackToTop}
+            className="absolute bottom-6 right-6 z-10 h-10 w-10 [&:not([hidden])]:flex cursor-pointer items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-[#0a1c52] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:bottom-8 sm:right-8"
           >
             <svg
               viewBox="0 0 24 24"

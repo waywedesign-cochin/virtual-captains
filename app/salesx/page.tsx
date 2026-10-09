@@ -84,7 +84,8 @@ export default function SalesXPage() {
         <SalesXCertifications />
 
         {/* 9. Common site footer (no Book a Call band) */}
-        <SiteFooter showCTA={false} theme="light-blue" />
+        {/* SalesX has its own scroll-to-top button, so the footer's is hidden */}
+        <SiteFooter showCTA={false} theme="light-blue" showBackToTop={false} />
       </div>
 
       {/* Floating back-to-top arrow */}
