@@ -188,12 +188,13 @@ function NewsShell({ children }: { children: React.ReactNode }) {
 /**
  * Option A (masonry) shapes: a tile keeps the proportions of the image as
  * cropped in the Sanity Studio, so it shows exactly that crop. Only extremes
- * are capped (taller than 4:5 / wider than 2:1). No image → 4:5.
+ * are capped (taller than 4:5 / wider than 1.6:1, so the text always fits).
+ * No image → 4:5.
  */
 const tileRatio = (item: NewsPost) => {
   if (!item.image) return 4 / 5;
   const { width: w, height: h } = croppedImage(item.image);
-  return w && h ? Math.min(2, Math.max(4 / 5, w / h)) : 4 / 5;
+  return w && h ? Math.min(1.6, Math.max(4 / 5, w / h)) : 4 / 5;
 };
 
 /**
@@ -215,7 +216,7 @@ function NewsTile({
     <div className="pb-3 sm:pb-4" aria-hidden={hidden || undefined}>
       <article
         style={{ aspectRatio: String(tileRatio(item)) }}
-        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0a0f1c] transition-colors duration-500 hover:border-[#38bdf8]/45"
+        className="group relative w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0a0f1c] transition-colors duration-500 hover:border-[#38bdf8]/45"
       >
         {item.image?.url ? (
           <img
@@ -241,18 +242,18 @@ function NewsTile({
         {/* readable bottom + subtle top shade for the number */}
         <span className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#030614]/95 via-[#030614]/35 to-[#030614]/30" />
 
-        <span className="absolute left-4 top-3 font-mono text-xs tracking-[0.2em] text-white/80">
+        <span className="absolute left-3 top-2.5 font-mono text-[10px] tracking-[0.2em] text-white/80 sm:left-4 sm:top-3 sm:text-xs">
           {String(number).padStart(2, "0")}
         </span>
 
-        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 sm:gap-3 sm:p-4">
           <div className="min-w-0">
             <p className="font-mono text-[9px] uppercase tracking-widest text-[#38bdf8]">
               <time dateTime={item.publishedDate}>
                 {formatShortDate(item.publishedDate)}
               </time>
             </p>
-            <h3 className="mt-1.5 line-clamp-3 text-sm sm:text-base font-medium leading-snug text-white">
+            <h3 className="mt-1 line-clamp-3 text-[13px] font-medium leading-snug text-white sm:mt-1.5 sm:text-base">
               <Link
                 href={`/news-and-updates/${item.slug}`}
                 tabIndex={hidden ? -1 : undefined}
@@ -262,7 +263,7 @@ function NewsTile({
               </Link>
             </h3>
           </div>
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/40 text-white transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-black">
+          <span className="hidden h-8 w-8 shrink-0 place-items-center rounded-full border border-white/40 text-white transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-black sm:grid">
             <ArrowUpRight
               className="h-4 w-4 transition-transform duration-300 group-hover:rotate-45"
               aria-hidden="true"
@@ -296,7 +297,7 @@ function MarqueeColumn({
   const set = Array.from({ length: repeats }, () => items).flat();
   return (
     <div
-      className={`vc-marquee-track flex flex-col ${direction === "down" ? "vc-marquee-down" : ""}`}
+      className={`vc-marquee-track flex min-w-0 flex-col ${direction === "down" ? "vc-marquee-down" : ""}`}
       style={{ animationDuration: `${Math.max(24, set.length * 7)}s` }}
     >
       {[...set, ...set].map(({ item, number }, i) => (
@@ -361,19 +362,30 @@ export default async function NewsAndUpdatesPage() {
             }
           />
           {allNews.length > 0 ? (
-            /* Two columns drifting in opposite directions, forever.
-               Hover pauses; reduced-motion stops it. */
-            <div className="vc-marquee relative grid h-[560px] grid-cols-2 gap-3 overflow-hidden sm:h-[620px] sm:gap-4 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
-              {(allNews.length > 1 ? [0, 1] : [0]).map((col) => (
+            <>
+              {/* One column on small phones (<480px) and small laptops (1024–1279px,
+                  where the right column is narrow): full-width tiles (short, wide crops
+                  stay readable). Hover pauses; reduced-motion stops it. */}
+              <div className="vc-marquee relative h-[520px] overflow-hidden min-[480px]:hidden lg:block lg:h-[620px] xl:hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
                 <MarqueeColumn
-                  key={col}
-                  direction={col ? "down" : "up"}
-                  items={allNews
-                    .map((item, i) => ({ item, number: i + 1 }))
-                    .filter((_, i) => allNews.length === 1 || i % 2 === col)}
+                  direction="up"
+                  items={allNews.map((item, i) => ({ item, number: i + 1 }))}
                 />
-              ))}
-            </div>
+              </div>
+
+              {/* 480–1023px and 1280px+: two columns drifting in opposite directions */}
+              <div className="vc-marquee relative hidden h-[560px] grid-cols-2 gap-3 overflow-hidden min-[480px]:grid sm:h-[620px] sm:gap-4 lg:hidden xl:grid [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+                {(allNews.length > 1 ? [0, 1] : [0]).map((col) => (
+                  <MarqueeColumn
+                    key={col}
+                    direction={col ? "down" : "up"}
+                    items={allNews
+                      .map((item, i) => ({ item, number: i + 1 }))
+                      .filter((_, i) => allNews.length === 1 || i % 2 === col)}
+                  />
+                ))}
+              </div>
+            </>
           ) : (
             <p className="rounded-2xl border border-white/10 bg-white/4 py-16 text-center text-sm text-white/60">
               News is on its way.
