@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { NewsHero } from "../components/news/NewsHero";
 import { MilestonesStrip } from "../components/news/MilestonesStrip";
+import { AutoScrollColumn } from "../components/news/AutoScrollColumn";
 import { getAllNews } from "@/sanity/queries";
 import { croppedImage, type NewsPost } from "@/sanity/lib/types";
 import { MILESTONES } from "@/app/content/milestones";
@@ -73,7 +74,12 @@ function FeaturedStory({ item }: { item: NewsPost }) {
     <article className="group relative flex min-h-[340px] sm:min-h-[370px] flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-[#0a0f1c] transition-colors duration-500 hover:border-[#38bdf8]/45">
       {item.image?.url ? (
         <img
-          src={item.image.url}
+          // the part cropped in Sanity, not the full upload
+          src={croppedImage(item.image, 1400).src}
+          srcSet={[700, 1000, 1400, 1800]
+            .map((w) => `${croppedImage(item.image!, w).src} ${w}w`)
+            .join(", ")}
+          sizes="(min-width: 1024px) 55vw, 100vw"
           alt={item.image.alt ?? item.title}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
         />
@@ -126,7 +132,7 @@ function StoryRow({ item }: { item: NewsPost }) {
       <div className="relative h-16 w-24 sm:h-[72px] sm:w-40 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-[#0a0f1c]">
         {item.image?.url && (
           <img
-            src={item.image.url}
+            src={croppedImage(item.image, 320).src}
             alt=""
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -296,10 +302,8 @@ function MarqueeColumn({
   const repeats = Math.max(1, Math.ceil(2.7 / setHeight));
   const set = Array.from({ length: repeats }, () => items).flat();
   return (
-    <div
-      className={`vc-marquee-track flex min-w-0 flex-col ${direction === "down" ? "vc-marquee-down" : ""}`}
-      style={{ animationDuration: `${Math.max(24, set.length * 7)}s` }}
-    >
+    // Auto-drifts, and can be swiped / wheeled / dragged by hand
+    <AutoScrollColumn direction={direction}>
       {[...set, ...set].map(({ item, number }, i) => (
         <NewsTile
           key={`${i}-${item._id}`}
@@ -308,7 +312,7 @@ function MarqueeColumn({
           hidden={i >= items.length}
         />
       ))}
-    </div>
+    </AutoScrollColumn>
   );
 }
 
@@ -365,8 +369,8 @@ export default async function NewsAndUpdatesPage() {
             <>
               {/* One column on small phones (<480px) and small laptops (1024–1279px,
                   where the right column is narrow): full-width tiles (short, wide crops
-                  stay readable). Hover pauses; reduced-motion stops it. */}
-              <div className="vc-marquee relative h-[520px] overflow-hidden min-[480px]:hidden lg:block lg:h-[620px] xl:hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
+                  stay readable). Hover pauses; swipe / wheel / drag to scroll by hand. */}
+              <div className="relative h-[460px] overflow-hidden min-[480px]:hidden lg:block lg:h-[620px] xl:hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
                 <MarqueeColumn
                   direction="up"
                   items={allNews.map((item, i) => ({ item, number: i + 1 }))}
@@ -374,7 +378,7 @@ export default async function NewsAndUpdatesPage() {
               </div>
 
               {/* 480–1023px and 1280px+: two columns drifting in opposite directions */}
-              <div className="vc-marquee relative hidden h-[560px] grid-cols-2 gap-3 overflow-hidden min-[480px]:grid sm:h-[620px] sm:gap-4 lg:hidden xl:grid [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+              <div className="relative hidden h-[560px] grid-cols-2 gap-3 overflow-hidden min-[480px]:grid sm:h-[620px] sm:gap-4 lg:hidden xl:grid [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
                 {(allNews.length > 1 ? [0, 1] : [0]).map((col) => (
                   <MarqueeColumn
                     key={col}
