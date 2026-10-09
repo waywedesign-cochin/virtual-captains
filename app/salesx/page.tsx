@@ -13,6 +13,7 @@ import SalesXTestimonials from "../components/salesx/SalesXTestimonials";
 import SalesXPartnerCloud from "../components/salesx/SalesXPartnerCloud";
 import SalesXCTA from "../components/salesx/SalesXCTA";
 import SiteFooter from "../components/home/SiteFooter";
+import SalesXCertifications from "../components/salesx/SalesXCertifications";
 import SalesXScrollTop from "../components/salesx/SalesXScrollTop";
 
 export const metadata: Metadata = pageMetadata({
@@ -82,6 +83,9 @@ export default function SalesXPage() {
 
         {/* 8. Ready to Redefine: High-Impact CTA with 5 Glowing Circular Metric Badges */}
         <SalesXCTA />
+
+        {/* Certificate badges (from the old SalesX footer), fading into the site footer */}
+        <SalesXCertifications />
 
         {/* 9. Common site footer (no Book a Call band) */}
         <SiteFooter showCTA={false} theme="light-blue" />

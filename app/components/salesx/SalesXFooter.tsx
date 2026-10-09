@@ -12,7 +12,12 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-import { CERTIFICATIONS } from "@/app/content/certifications";
+import {
+  CARD_BADGE_CLASS,
+  CARD_CERTIFICATIONS,
+  ROUND_BADGE_CLASS,
+  ROUND_CERTIFICATIONS,
+} from "@/app/content/certifications";
 
 const FOOTER_COLUMNS = [
   {
@@ -68,7 +73,6 @@ const COSMIC_STARS = [
 
 export default function SalesXFooter() {
   const footerRef = useRef<HTMLElement>(null);
-  const certBadgesRef = useRef<(HTMLDivElement | null)[]>([]);
   const logoBoxRef = useRef<HTMLDivElement>(null);
   const linksColRef = useRef<HTMLDivElement>(null);
   const centerLogoRef = useRef<HTMLDivElement>(null);
@@ -95,12 +99,7 @@ export default function SalesXFooter() {
     if (prefersReducedMotion || !footerRef.current) return;
 
     const ctx = gsap.context(() => {
-      const badges = certBadgesRef.current.filter(Boolean) as HTMLDivElement[];
-
       // Initial states (safe opacity that transitions smoothly without staying hidden)
-      if (badges.length > 0) {
-        gsap.set(badges, { scale: 0.6, opacity: 0, y: 30, rotation: -12 });
-      }
       if (logoBoxRef.current) {
         gsap.set(logoBoxRef.current, { opacity: 0, y: 30, scale: 0.96 });
       }
@@ -124,35 +123,6 @@ export default function SalesXFooter() {
         once: true,
         onEnter: () => {
           const tl = gsap.timeline();
-
-          // 1. Certification badges pop-in
-          if (badges.length > 0) {
-            tl.to(
-              badges,
-              {
-                scale: 1,
-                opacity: 1,
-                y: 0,
-                rotation: 0,
-                duration: 0.85,
-                stagger: 0.1,
-                ease: "back.out(1.5)",
-                onComplete: () => {
-                  // Ambient zero-gravity float
-                  badges.forEach((b, i) => {
-                    gsap.to(b, {
-                      y: i % 2 === 0 ? -6 : 6,
-                      duration: 3.0 + (i % 3) * 0.4,
-                      repeat: -1,
-                      yoyo: true,
-                      ease: "sine.inOut",
-                    });
-                  });
-                },
-              },
-              0
-            );
-          }
 
           // 2. Framed SalesX Logo Box un-scales & fades in
           if (logoBoxRef.current) {
@@ -230,7 +200,6 @@ export default function SalesXFooter() {
       const visibilityTimer = setTimeout(() => {
         gsap.to(
           [
-            ...badges,
             logoBoxRef.current,
             linksColRef.current,
             centerLogoRef.current,
@@ -288,24 +257,33 @@ export default function SalesXFooter() {
       {/* Standardized Max-Width Container Matching All Sections Above */}
       <div className="relative z-10 w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12">
         {/* ── 1. CERTIFICATION BADGES ROW ── */}
-        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 lg:gap-20 mb-10 sm:mb-16 lg:mb-20">
-          {CERTIFICATIONS.map((item, idx) => (
-            <div
-              key={item.id}
-              ref={(el) => {
-                certBadgesRef.current[idx] = el;
-              }}
-              className="relative flex items-center justify-center will-change-transform"
-            >
+        <div className="mb-10 flex flex-col items-center gap-8 sm:mb-16 sm:gap-10 lg:mb-20">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 lg:gap-14">
+            {ROUND_CERTIFICATIONS.map((item) => (
               <Image
+                key={item.id}
                 src={item.image}
                 alt={item.alt}
                 width={item.width}
                 height={item.height}
-                className={`${item.sizeClass} w-auto drop-shadow-[0_18px_40px_rgba(29,78,216,0.45)]`}
+                className={`${ROUND_BADGE_CLASS} drop-shadow-[0_18px_40px_rgba(29,78,216,0.45)]`}
               />
+            ))}
+          </div>
+          {CARD_CERTIFICATIONS.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+              {CARD_CERTIFICATIONS.map((item) => (
+                <Image
+                  key={item.id}
+                  src={item.image}
+                  alt={item.alt}
+                  width={item.width}
+                  height={item.height}
+                  className={`${CARD_BADGE_CLASS} drop-shadow-[0_18px_40px_rgba(29,78,216,0.45)]`}
+                />
+              ))}
             </div>
-          ))}
+          )}
         </div>
 
         {/* ── 2. SALESX CENTER LOGO (Clean borderless presentation) ── */}
