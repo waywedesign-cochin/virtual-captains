@@ -1,63 +1,17 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import ZoomHeading from "@/components/common/ZoomHeading";
+import { PARTNERS, logoHeight, type Partner } from "@/app/content/partners";
 
-interface PartnerItem {
-  id: string;
-  name: string;
-  logoSrc: string;
-  width: number;
-  height: number;
-}
-
-const PARTNER_LOGOS: PartnerItem[] = [
-  {
-    id: "jsr",
-    name: "JSR",
-    logoSrc: "/partners/JSR.png",
-    width: 140,
-    height: 40,
-  },
-  {
-    id: "skylark",
-    name: "Skylark",
-    logoSrc: "/partners/SKYLARK.png",
-    width: 140,
-    height: 40,
-  },
-  {
-    id: "ahad",
-    name: "AHAD",
-    logoSrc: "/partners/AHAD.png",
-    width: 130,
-    height: 38,
-  },
-  {
-    id: "moonhive",
-    name: "MoonHive",
-    logoSrc: "/partners/MOONHIV.png",
-    width: 140,
-    height: 40,
-  },
-  {
-    id: "unifirm",
-    name: "Unifirm",
-    logoSrc: "/partners/UNIFIRM.png",
-    width: 135,
-    height: 38,
-  },  {
-    id: "bbc",
-    name: "Bangalore Bioinnovation Centre",
-    logoSrc: "/partners/bbc-logo.png",
-    width: 120,
-    height: 48,
-  },
-];
+// Shared list (24 logos) — the same one the home, About and SalesX pages use.
+// Split across the two rows so every logo shows.
+const HALF = Math.ceil(PARTNERS.length / 2);
+const ROW_A = PARTNERS.slice(0, HALF);
+const ROW_B = PARTNERS.slice(HALF);
 
 interface MarqueeRowProps {
-  items: PartnerItem[];
+  items: Partner[];
   direction?: "left" | "right";
   speedSeconds?: number;
 }
@@ -90,7 +44,7 @@ function MarqueeRow({ items, direction = "left", speedSeconds = 28 }: MarqueeRow
         <div className={`anim-${animKey} flex gap-4 sm:gap-6 w-max will-change-transform`}>
           {looped.map((partner, idx) => (
             <div
-              key={`${partner.id}-${idx}`}
+              key={`${partner.name}-${idx}`}
               className="group relative shrink-0 h-17 sm:h-20 w-35 xs:w-[155px] sm:w-46.25 rounded-2xl
                 bg-slate-900/50 backdrop-blur-xl border border-white/12 hover:border-[#38bdf8]/50
                 flex items-center justify-center px-4 sm:px-6 overflow-hidden
@@ -103,9 +57,10 @@ function MarqueeRow({ items, direction = "left", speedSeconds = 28 }: MarqueeRow
               <Image
                 src={partner.logoSrc}
                 alt={partner.name}
-                width={partner.width}
-                height={partner.height}
-                className="max-h-7 sm:max-h-8 w-auto object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(56,189,248,0.7)] pointer-events-none"
+                width={Math.round(40 * partner.ratio)}
+                height={40}
+                style={{ height: `${(40 * logoHeight(partner.ratio)) / 100}px` }}
+                className="max-w-full w-auto object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(56,189,248,0.7)] pointer-events-none"
                 draggable={false}
               />
             </div>
@@ -157,10 +112,10 @@ export function PartnerLogos() {
         />
 
         {/* Row 1: Scrolling Left */}
-        <MarqueeRow items={PARTNER_LOGOS} direction="left" speedSeconds={28} />
+        <MarqueeRow items={ROW_A} direction="left" speedSeconds={60} />
 
         {/* Row 2: Scrolling Right */}
-        <MarqueeRow items={PARTNER_LOGOS} direction="right" speedSeconds={34} />
+        <MarqueeRow items={ROW_B} direction="right" speedSeconds={70} />
       </div>
     </section>
   );

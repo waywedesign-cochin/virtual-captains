@@ -5,12 +5,10 @@ const groupedTypes = [
   "category",
   "author",
   "newsPost",
-  "newsCategory",
   "youtubeVideo",
   "program",
   "career",
   "careerDepartment",
-  "galleryPhoto",
 ];
 
 export const structure: StructureResolver = (S) =>
@@ -34,18 +32,7 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.list()
             .title("News")
-            .items([
-              S.documentTypeListItem("newsPost").title("News Posts"),
-              S.documentTypeListItem("newsCategory").title("News Categories"),
-              S.listItem()
-                .title("Gallery Photos")
-                .schemaType("galleryPhoto")
-                .child(
-                  S.documentTypeList("galleryPhoto")
-                    .title("Gallery Photos")
-                    .defaultOrdering([{ field: "date", direction: "desc" }]),
-                ),
-            ]),
+            .items([S.documentTypeListItem("newsPost").title("News Posts")]),
         ),
 
       S.listItem()
@@ -69,7 +56,9 @@ export const structure: StructureResolver = (S) =>
                 .child(
                   S.documentTypeList("career")
                     .title("Job Openings")
-                    .defaultOrdering([{ field: "postedDate", direction: "desc" }]),
+                    .defaultOrdering([
+                      { field: "postedDate", direction: "desc" },
+                    ]),
                 ),
               S.listItem()
                 .title("Departments")

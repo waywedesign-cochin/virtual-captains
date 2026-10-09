@@ -8,7 +8,7 @@ import SiteFooter from "../../components/home/SiteFooter";
 import DotGridSpotlight from "../../components/common/DotGridSpotlight";
 import { NewsShareRow } from "../../components/news/NewsShareRow";
 import { getAllNews, getNewsBySlug } from "@/sanity/queries";
-import { getNewsCategoryDot, type NewsPost } from "@/sanity/lib/types";
+import type { NewsPost } from "@/sanity/lib/types";
 
 const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38bdf8]";
@@ -241,9 +241,6 @@ export default async function NewsDetailPage({ params }: PageProps) {
           <div className="min-w-0 flex-1">
             <div className="space-y-6">
               <div className="flex items-center gap-3 flex-wrap">
-                <span className="inline-flex items-center px-4 py-1 rounded-full text-xs font-semibold bg-linear-to-r from-[#1d4ed8] to-[#0369a1] text-white shadow-[0_2px_10px_rgba(29,78,216,0.25)]">
-                  {item.category.title}
-                </span>
                 <span className="inline-flex items-center gap-1.5 text-xs text-white/60">
                   <Clock className="w-3 h-3" />
                   {item.readTime}
@@ -336,16 +333,11 @@ export default async function NewsDetailPage({ params }: PageProps) {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span
-                          className={`h-2.5 w-2.5 rounded-full ${getNewsCategoryDot(n.category.slug)}`}
-                        />
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#38bdf8]" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                       <div>
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/8 text-white/65 inline-block mb-1">
-                          {n.category.title}
-                        </span>
                         <h4 className="text-[13px] font-semibold text-white leading-snug line-clamp-2 group-hover:text-[#8fd0ff] transition-colors">
                           {n.title}
                         </h4>
@@ -415,13 +407,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
                       {n.summary}
                     </p>
 
-                    <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full text-[11px] font-medium bg-white/8 text-white">
-                        <span
-                          className={`h-1.5 w-1.5 rounded-full ${getNewsCategoryDot(n.category.slug)}`}
-                        />
-                        {n.category.title}
-                      </span>
+                    <div className="flex items-center justify-end">
                       <span className="text-[11px] font-mono text-white/45">
                         {n.readTime}
                       </span>

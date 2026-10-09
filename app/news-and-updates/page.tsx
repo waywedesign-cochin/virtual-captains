@@ -4,16 +4,12 @@ import Navbar from "../components/home/Navbar";
 import SiteFooter from "../components/home/SiteFooter";
 import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { NewsHero } from "../components/news/NewsHero";
-import { GalleryGrid } from "../components/news/GalleryGrid";
-import {
-  GALLERY_PAGE_SIZE,
-  getAllNews,
-  getGalleryPage,
-  getNewsCategories,
-} from "@/sanity/queries";
-import { getNewsCategoryDot } from "@/sanity/lib/types";
+import { MilestonesStrip } from "../components/news/MilestonesStrip";
+import { getAllNews } from "@/sanity/queries";
+import { croppedImage, type NewsPost } from "@/sanity/lib/types";
+import { MILESTONES } from "@/app/content/milestones";
 
 export const metadata: Metadata = pageMetadata({
   title: "News & Updates",
@@ -27,150 +23,139 @@ const FOCUS_RING =
 
 const CONTAINER = "w-full max-w-372 mx-auto px-4 sm:px-8 lg:px-12";
 
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex items-center gap-3 mb-5">
-    <span className="font-mono text-[11px] font-semibold tracking-[0.25em] uppercase text-[#38bdf8]">
-      {children}
-    </span>
-    <div className="flex-1 h-px bg-linear-to-r from-[#38bdf8]/35 to-transparent" />
-  </div>
-);
-
-type View = "gallery" | "news";
-
-/** Gallery / News switch. Plain links, so each view has its own shareable URL. */
-function ViewToggle({ view }: { view: View }) {
-  const options: { value: View; label: string; href: string }[] = [
-    { value: "gallery", label: "Gallery", href: "/news-and-updates" },
-    { value: "news", label: "News", href: "?view=news" },
-  ];
-  return (
-    <nav
-      aria-label="Choose what to show"
-      className={`${CONTAINER} mb-12 flex justify-center`}
-    >
-      <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/4 p-1 backdrop-blur-md">
-        {options.map((o) => {
-          const isActive = o.value === view;
-          return (
-            <Link
-              key={o.value}
-              href={o.href}
-              scroll={false}
-              aria-current={isActive ? "page" : undefined}
-              className={`inline-flex min-h-11 min-w-28 items-center justify-center rounded-full px-6 text-sm font-semibold transition-colors select-none ${FOCUS_RING} ${
-                isActive
-                  ? "bg-white text-black shadow-[0_0_20px_rgba(143,208,255,0.35)]"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              {o.label}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
-  );
-}
-
-/**
- * Page numbers to show: always the first, last and current ±1, with `null`
- * marking a gap (…). 1 … 4 5 6 … 12
- */
-function pageList(page: number, totalPages: number): (number | null)[] {
-  const keep = new Set([1, totalPages, page - 1, page, page + 1]);
-  const out: (number | null)[] = [];
-  for (let n = 1; n <= totalPages; n++) {
-    if (!keep.has(n)) continue;
-    const prev = out[out.length - 1];
-    // a single hidden page is shown rather than replaced by "…"
-    if (typeof prev === "number" && n - prev === 2) out.push(n - 1);
-    else if (typeof prev === "number" && n - prev > 2) out.push(null);
-    out.push(n);
-  }
-  return out;
-}
-
-/** Numbered pages for the gallery: ← 1 … 4 5 6 … 12 → */
-function GalleryPagination({
-  page,
-  totalPages,
+/** Editorial section header: dot · spaced title · hairline · optional link. */
+function SectionHeader({
+  title,
+  href,
+  linkLabel,
+  aside,
 }: {
-  page: number;
-  totalPages: number;
+  title: string;
+  href?: string;
+  linkLabel?: string;
+  aside?: React.ReactNode;
 }) {
-  if (totalPages <= 1) return null;
-  const href = (n: number) => (n === 1 ? "/news-and-updates" : `?page=${n}`);
-  const arrow = `inline-flex h-11 min-w-11 items-center justify-center rounded-full border border-white/10 px-4 text-sm font-medium transition-colors ${FOCUS_RING}`;
   return (
-    <nav
-      aria-label="Gallery pages"
-      className="mt-12 flex items-center justify-center gap-2"
-    >
-      {page > 1 ? (
+    <div className="mb-6 flex items-center gap-4">
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#38bdf8] shadow-[0_0_10px_#38bdf8]" />
+      <h2 className="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.35em] text-white sm:text-sm">
+        {title}
+      </h2>
+      <span className="h-px flex-1 bg-linear-to-r from-white/20 to-white/5" />
+      {aside}
+      {href && linkLabel && (
         <Link
-          href={href(page - 1)}
+          href={href}
           scroll={false}
-          className={`${arrow} text-white/80 hover:border-white/25 hover:text-white`}
+          className={`group inline-flex shrink-0 items-center gap-1.5 text-xs sm:text-sm text-white/75 transition-colors hover:text-white ${FOCUS_RING}`}
         >
-          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-          <span className="sr-only">Previous page</span>
+          {linkLabel}
+          <ArrowRight
+            className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
         </Link>
-      ) : (
-        <span aria-hidden="true" className={`${arrow} text-white/20`}>
-          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        </span>
       )}
-
-      <ol className="flex items-center gap-1.5">
-        {pageList(page, totalPages).map((n, i) =>
-          n === null ? (
-            <li
-              key={`gap-${i}`}
-              aria-hidden="true"
-              className="inline-flex h-11 min-w-6 items-center justify-center text-sm text-white/35"
-            >
-              …
-            </li>
-          ) : (
-          <li key={n}>
-            <Link
-              href={href(n)}
-              scroll={false}
-              aria-current={n === page ? "page" : undefined}
-              aria-label={`Page ${n}`}
-              className={`inline-flex h-11 min-w-11 items-center justify-center rounded-full text-sm font-semibold transition-colors ${FOCUS_RING} ${
-                n === page
-                  ? "bg-white text-black"
-                  : "text-white/60 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              {n}
-            </Link>
-          </li>
-          ),
-        )}
-      </ol>
-
-      {page < totalPages ? (
-        <Link
-          href={href(page + 1)}
-          scroll={false}
-          className={`${arrow} text-white/80 hover:border-white/25 hover:text-white`}
-        >
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
-          <span className="sr-only">Next page</span>
-        </Link>
-      ) : (
-        <span aria-hidden="true" className={`${arrow} text-white/20`}>
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
-        </span>
-      )}
-    </nav>
+    </div>
   );
 }
 
-/** Page chrome shared by both views: navbar, glow, dot grid, hero and footer. */
+const formatShortDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+
+/** Big image-led story card for the overview. */
+function FeaturedStory({ item }: { item: NewsPost }) {
+  return (
+    <article className="group relative flex min-h-[340px] sm:min-h-[370px] flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-[#0a0f1c] transition-colors duration-500 hover:border-[#38bdf8]/45">
+      {item.image?.url ? (
+        <img
+          src={item.image.url}
+          alt={item.image.alt ?? item.title}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+        />
+      ) : (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-linear-to-br from-[#0c318f] via-[#071b5c] to-[#040507]"
+        />
+      )}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-linear-to-t from-[#030614] via-[#030614]/70 to-transparent"
+      />
+
+      <div className="relative space-y-4 p-6 sm:p-8 lg:max-w-[80%]">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full border border-white/25 bg-black/30 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-white/85 backdrop-blur-md">
+            <time dateTime={item.publishedDate}>
+              {formatShortDate(item.publishedDate)}
+            </time>
+          </span>
+        </div>
+        <h3 className="text-2xl sm:text-3xl lg:text-[34px] font-semibold leading-[1.15] tracking-tight text-white">
+          <Link
+            href={`/news-and-updates/${item.slug}`}
+            className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
+          >
+            {item.title}
+          </Link>
+        </h3>
+        <p className="line-clamp-2 text-sm sm:text-[15px] leading-relaxed text-white/70">
+          {item.summary}
+        </p>
+        <span className="inline-flex items-center gap-2 text-sm font-medium text-white">
+          Read story
+          <ArrowRight
+            className="h-4 w-4 transition-transform group-hover:translate-x-1"
+            aria-hidden="true"
+          />
+        </span>
+      </div>
+    </article>
+  );
+}
+
+/** Compact row: thumbnail · date · title · arrow. */
+function StoryRow({ item }: { item: NewsPost }) {
+  return (
+    <article className="group relative flex items-center gap-4 sm:gap-5 border-b border-white/10 py-3 sm:py-4">
+      <div className="relative h-16 w-24 sm:h-[72px] sm:w-40 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-[#0a0f1c]">
+        {item.image?.url && (
+          <img
+            src={item.image.url}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-[#38bdf8]">
+          <time dateTime={item.publishedDate}>
+            {formatShortDate(item.publishedDate)}
+          </time>
+        </p>
+        <h3 className="mt-1.5 line-clamp-2 text-sm sm:text-base font-medium leading-snug text-white transition-colors group-hover:text-[#8fd0ff]">
+          <Link
+            href={`/news-and-updates/${item.slug}`}
+            className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
+          >
+            {item.title}
+          </Link>
+        </h3>
+      </div>
+      <span className="hidden sm:grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/30 text-white transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-black">
+        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+      </span>
+    </article>
+  );
+}
+
+/** Page chrome: navbar, glow, dot grid, hero and footer. */
 function NewsShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="relative min-h-screen bg-[#040507] text-white flex flex-col selection:bg-[#38bdf8] selection:text-black antialiased font-sans overflow-x-clip">
@@ -200,253 +185,220 @@ function NewsShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function formatMonthYear(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
+/**
+ * Option A (masonry) shapes: a tile keeps the proportions of the image as
+ * cropped in the Sanity Studio, so it shows exactly that crop. Only extremes
+ * are capped (taller than 4:5 / wider than 1.6:1, so the text always fits).
+ * No image → 4:5.
+ */
+const tileRatio = (item: NewsPost) => {
+  if (!item.image) return 4 / 5;
+  const { width: w, height: h } = croppedImage(item.image);
+  return w && h ? Math.min(1.6, Math.max(4 / 5, w / h)) : 4 / 5;
+};
+
+/**
+ * Image-led tile in the right-hand marquee (same look as the old gallery
+ * block): number, date and title over the banner image.
+ * `hidden`: a loop copy, so screen readers and the keyboard meet each story once.
+ */
+function NewsTile({
+  item,
+  number,
+  hidden = false,
+}: {
+  item: NewsPost;
+  number: number;
+  hidden?: boolean;
+}) {
+  return (
+    // padding (not gap) so the track's height is exactly 2 × one set
+    <div className="pb-3 sm:pb-4" aria-hidden={hidden || undefined}>
+      <article
+        style={{ aspectRatio: String(tileRatio(item)) }}
+        className="group relative w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0a0f1c] transition-colors duration-500 hover:border-[#38bdf8]/45"
+      >
+        {item.image?.url ? (
+          <img
+            // only the part cropped in Sanity, resized on the CDN
+            src={croppedImage(item.image, 900).src}
+            srcSet={[600, 900, 1200]
+              .map((w) => `${croppedImage(item.image!, w).src} ${w}w`)
+              .join(", ")}
+            sizes="(min-width: 1024px) 20vw, 50vw"
+            alt=""
+            width={croppedImage(item.image).width || undefined}
+            height={croppedImage(item.image).height || undefined}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-linear-to-br from-[#0c318f] via-[#071b5c] to-[#040507]"
+          />
+        )}
+        {/* readable bottom + subtle top shade for the number */}
+        <span className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#030614]/95 via-[#030614]/35 to-[#030614]/30" />
+
+        <span className="absolute left-3 top-2.5 font-mono text-[10px] tracking-[0.2em] text-white/80 sm:left-4 sm:top-3 sm:text-xs">
+          {String(number).padStart(2, "0")}
+        </span>
+
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 sm:gap-3 sm:p-4">
+          <div className="min-w-0">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-[#38bdf8]">
+              <time dateTime={item.publishedDate}>
+                {formatShortDate(item.publishedDate)}
+              </time>
+            </p>
+            <h3 className="mt-1 line-clamp-3 text-[13px] font-medium leading-snug text-white sm:mt-1.5 sm:text-base">
+              <Link
+                href={`/news-and-updates/${item.slug}`}
+                tabIndex={hidden ? -1 : undefined}
+                className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
+              >
+                {item.title}
+              </Link>
+            </h3>
+          </div>
+          <span className="hidden h-8 w-8 shrink-0 place-items-center rounded-full border border-white/40 text-white transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-black sm:grid">
+            <ArrowUpRight
+              className="h-4 w-4 transition-transform duration-300 group-hover:rotate-45"
+              aria-hidden="true"
+            />
+          </span>
+        </div>
+      </article>
+    </div>
+  );
 }
 
-export default async function NewsAndUpdatesPage({
-  searchParams,
+/**
+ * One marquee column. The set is repeated until it's taller than the box
+ * (so a short list never leaves a gap), then rendered twice for a seamless
+ * -50% loop. Only the very first copy of each story is visible to assistive tech.
+ */
+function MarqueeColumn({
+  items,
+  direction,
 }: {
-  searchParams: Promise<{ category?: string; view?: string; page?: string }>;
+  items: { item: NewsPost; number: number }[];
+  direction: "up" | "down";
 }) {
-  const params = await searchParams;
-  // Gallery is the default view; a category filter implies the news view.
-  const view: View =
-    params.view === "news" || params.category ? "news" : "gallery";
+  // One set must be taller than the box (~620px over a ~260px-wide column,
+  // i.e. ≥ 2.7 column-widths of height); tile height = width / ratio.
+  const setHeight = items.reduce(
+    (sum, { item }) => sum + 1 / tileRatio(item),
+    0,
+  );
+  const repeats = Math.max(1, Math.ceil(2.7 / setHeight));
+  const set = Array.from({ length: repeats }, () => items).flat();
+  return (
+    <div
+      className={`vc-marquee-track flex min-w-0 flex-col ${direction === "down" ? "vc-marquee-down" : ""}`}
+      style={{ animationDuration: `${Math.max(24, set.length * 7)}s` }}
+    >
+      {[...set, ...set].map(({ item, number }, i) => (
+        <NewsTile
+          key={`${i}-${item._id}`}
+          item={item}
+          number={number}
+          hidden={i >= items.length}
+        />
+      ))}
+    </div>
+  );
+}
 
-  if (view === "gallery") {
-    const page = Math.max(1, Math.floor(Number(params.page)) || 1);
-    const { total, photos } = await getGalleryPage(page);
-    const totalPages = Math.max(1, Math.ceil(total / GALLERY_PAGE_SIZE));
-    return (
-      <NewsShell>
-        <ViewToggle view="gallery" />
-        <section className={`${CONTAINER} mb-24`} aria-label="Photo gallery">
-          <SectionLabel>Gallery</SectionLabel>
-          {photos.length === 0 ? (
-            <div className="flex flex-col items-center text-center py-16 bg-white/4 rounded-3xl border border-white/10 space-y-2">
-              <ImageOff className="mb-2 h-8 w-8 text-white/30" aria-hidden="true" />
-              <p className="text-white/60 text-sm">
-                {page > 1
-                  ? "There are no photos on this page."
-                  : "Photos are on their way."}
-              </p>
-              {page > 1 && (
-                <Link
-                  href="/news-and-updates"
-                  className="text-xs font-semibold text-white underline hover:text-[#8fd0ff]"
-                >
-                  Back to the first page
-                </Link>
-              )}
-            </div>
-          ) : (
-            <GalleryGrid key={page} photos={photos} priority={page === 1} />
-          )}
-          <GalleryPagination
-            page={Math.min(page, totalPages)}
-            totalPages={totalPages}
-          />
-        </section>
-      </NewsShell>
-    );
-  }
-
-  const [allNews, categories] = await Promise.all([
-    getAllNews(),
-    getNewsCategories(),
-  ]);
-
-  const tabs = [
-    { label: "All", slug: "all" },
-    ...categories.map((c) => ({ label: c.title, slug: c.slug })),
-  ];
-  const active = tabs.find((c) => c.slug === params.category)?.slug ?? "all";
-
-  // Featured is always the newest item (independent of filter, like the blog),
-  // or whichever post is marked `featured` in Sanity, if any.
+export default async function NewsAndUpdatesPage() {
+  const allNews = await getAllNews();
   const featured = allNews.find((n) => n.featured) ?? allNews[0];
+  const more = allNews.filter((n) => n._id !== featured?._id).slice(0, 2);
 
-  const filtered =
-    active === "all"
-      ? allNews
-      : allNews.filter((n) => n.category.slug === active);
-  const gridItems =
-    active === "all"
-      ? filtered.filter((n) => n._id !== featured?._id)
-      : filtered;
   return (
     <NewsShell>
-      <ViewToggle view="news" />
-
-      {/* 2. Featured card */}
-      {featured && (
-        <section className={`${CONTAINER} mb-16`}>
-          <SectionLabel>Featured</SectionLabel>
-          <article
-            className={`group relative grid grid-cols-1 ${
-              featured.image?.url ? "lg:grid-cols-12" : ""
-            } gap-8 items-center rounded-[28px] sm:rounded-[36px] lg:rounded-[40px] p-5 sm:p-8 lg:p-10 border border-white/10 bg-linear-to-br from-white/[0.07] via-white/3 to-transparent backdrop-blur-xl shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7)] hover:border-white/20 hover:shadow-[0_28px_70px_-20px_rgba(29,78,216,0.45)] transition-all duration-500`}
-          >
-            {/* Left column */}
-            <div
-              className={`${
-                featured.image?.url ? "lg:col-span-6" : ""
-              } flex flex-col justify-between space-y-6`}
-            >
-              <div className="space-y-4">
-                <span className="font-mono text-[11px] uppercase tracking-widest text-white/50">
-                  <time dateTime={featured.publishedDate}>
-                    {formatMonthYear(featured.publishedDate)}
-                  </time>
-                </span>
-
-                <h2 className="font-sans text-2xl sm:text-3xl lg:text-4xl font-medium text-white group-hover:text-[#8fd0ff] transition-colors leading-[1.18] tracking-tight">
-                  <Link
-                    href={`/news-and-updates/${featured.slug}`}
-                    className={`after:absolute after:inset-0 after:content-[''] after:rounded-[inherit] rounded-sm ${FOCUS_RING}`}
-                  >
-                    {featured.title}
-                  </Link>
-                </h2>
-
-                <p className="text-[15px] sm:text-base text-white/65 leading-relaxed line-clamp-3">
-                  {featured.summary}
-                </p>
-
-                <div>
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium border border-white/15 bg-white/5 text-white/85">
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${getNewsCategoryDot(featured.category.slug)}`}
-                    />
-                    {featured.category.title}
-                  </span>
+      <div
+        className={`${CONTAINER} mb-20 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-0`}
+      >
+        {/* Latest updates */}
+        <section
+          aria-label="Latest updates"
+          className="lg:col-span-7 lg:border-r lg:border-white/10 lg:pr-8 xl:pr-10"
+        >
+          <SectionHeader title="Latest Updates" />
+          {featured ? (
+            <>
+              <FeaturedStory item={featured} />
+              {more.length > 0 && (
+                <div className="mt-2">
+                  {more.map((item) => (
+                    <StoryRow key={item._id} item={item} />
+                  ))}
                 </div>
-              </div>
+              )}
+            </>
+          ) : (
+            <p className="rounded-2xl border border-white/10 bg-white/4 py-16 text-center text-sm text-white/60">
+              Updates are on their way.
+            </p>
+          )}
+        </section>
 
-              <div className="flex items-center justify-between pt-6 border-t border-white/10">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#e7ff3d] px-5 py-2 text-xs font-bold text-black transition-transform group-hover:translate-x-0.5">
-                  Read announcement
-                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+        {/* All news: endless vertical marquee (hover pauses, reduced-motion stops) */}
+        <section
+          aria-label="All news"
+          className="lg:col-span-5 lg:pl-8 xl:pl-10"
+        >
+          <SectionHeader
+            title="All News"
+            aside={
+              allNews.length > 0 ? (
+                <span className="shrink-0 font-mono text-[11px] uppercase tracking-widest text-white/50">
+                  {allNews.length} {allNews.length === 1 ? "story" : "stories"}
                 </span>
-                <span className="text-xs font-mono text-white/50 uppercase tracking-wider">
-                  {featured.readTime}
-                </span>
-              </div>
-            </div>
-
-            {/* Right column: banner image only */}
-            {featured.image?.url && (
-              <div className="lg:col-span-6 overflow-hidden rounded-[20px] sm:rounded-3xl aspect-16/10 relative ring-1 ring-white/10 bg-white/5">
-                <img
-                  src={featured.image.url}
-                  alt={featured.image.alt ?? featured.title}
-                  className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              ) : undefined
+            }
+          />
+          {allNews.length > 0 ? (
+            <>
+              {/* One column on small phones (<480px) and small laptops (1024–1279px,
+                  where the right column is narrow): full-width tiles (short, wide crops
+                  stay readable). Hover pauses; reduced-motion stops it. */}
+              <div className="vc-marquee relative h-[520px] overflow-hidden min-[480px]:hidden lg:block lg:h-[620px] xl:hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
+                <MarqueeColumn
+                  direction="up"
+                  items={allNews.map((item, i) => ({ item, number: i + 1 }))}
                 />
               </div>
-            )}
-          </article>
+
+              {/* 480–1023px and 1280px+: two columns drifting in opposite directions */}
+              <div className="vc-marquee relative hidden h-[560px] grid-cols-2 gap-3 overflow-hidden min-[480px]:grid sm:h-[620px] sm:gap-4 lg:hidden xl:grid [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+                {(allNews.length > 1 ? [0, 1] : [0]).map((col) => (
+                  <MarqueeColumn
+                    key={col}
+                    direction={col ? "down" : "up"}
+                    items={allNews
+                      .map((item, i) => ({ item, number: i + 1 }))
+                      .filter((_, i) => allNews.length === 1 || i % 2 === col)}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <p className="rounded-2xl border border-white/10 bg-white/4 py-16 text-center text-sm text-white/60">
+              News is on its way.
+            </p>
+          )}
+        </section>
+      </div>
+
+      {MILESTONES.length > 0 && (
+        <section aria-label="Milestones" className={`${CONTAINER} mb-24`}>
+          <MilestonesStrip milestones={MILESTONES} />
         </section>
       )}
-
-      {/* 3. Category filter tabs (same look as blog) */}
-      <section className={`${CONTAINER} mb-12`}>
-        <nav
-          aria-label="Filter news by category"
-          className="flex overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
-        >
-          <div className="flex w-max shrink-0 items-center gap-1.5 p-1 bg-white/4 rounded-full border border-white/10">
-            {tabs.map((c) => {
-              const isActive = c.slug === active;
-              return (
-                <Link
-                  key={c.slug}
-                  href={
-                    c.slug === "all"
-                      ? "?view=news"
-                      : `?view=news&category=${c.slug}`
-                  }
-                  scroll={false}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`shrink-0 inline-flex items-center min-h-10 px-4 rounded-full text-[13px] sm:text-sm font-medium transition-colors select-none ${FOCUS_RING} ${
-                    isActive
-                      ? "bg-white text-black shadow-[0_0_20px_rgba(143,208,255,0.35)]"
-                      : "text-white/60 hover:text-white"
-                  }`}
-                >
-                  {c.label}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-      </section>
-
-      {/* 4. Grid of updates */}
-      <section className={`${CONTAINER} mb-24`}>
-        <SectionLabel>All Updates</SectionLabel>
-
-        {gridItems.length === 0 ? (
-          <div className="text-center py-16 bg-white/4 rounded-3xl border border-white/10 space-y-2">
-            <p className="text-white/60 text-sm">
-              No updates found in this category.
-            </p>
-            <Link
-              href="?view=news"
-              className="text-xs font-semibold text-white underline hover:text-[#8fd0ff]"
-            >
-              Reset filters
-            </Link>
-          </div>
-        ) : (
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {gridItems.map((item) => (
-              <li key={item._id} className="flex">
-                <article className="group relative w-full rounded-3xl sm:rounded-[26px] p-4 sm:p-5 border border-white/10 bg-linear-to-b from-white/6 to-white/2 backdrop-blur-xl shadow-[0_16px_40px_-18px_rgba(0,0,0,0.7)] hover:border-white/20 hover:shadow-[0_24px_50px_-18px_rgba(29,78,216,0.45)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-                  {/* Blue gradient accent top border on hover */}
-                  <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#38bdf8] via-[#8fd0ff] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-mono uppercase tracking-widest text-white/45">
-                      <time dateTime={item.publishedDate}>
-                        {formatMonthYear(item.publishedDate)}
-                      </time>
-                    </span>
-
-                    <h3 className="font-sans text-xl sm:text-[22px] font-medium text-white group-hover:text-[#8fd0ff] transition-colors leading-[1.24] tracking-tight mt-2.5 mb-1.5 line-clamp-2">
-                      <Link
-                        href={`/news-and-updates/${item.slug}`}
-                        className={`after:absolute after:inset-0 after:content-[''] rounded-sm ${FOCUS_RING}`}
-                      >
-                        {item.title}
-                      </Link>
-                    </h3>
-
-                    <p className="text-sm text-white/60 leading-relaxed line-clamp-3 mb-4">
-                      {item.summary}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                    <span className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full text-[11px] font-medium border border-white/12 bg-white/5 text-white/80">
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${getNewsCategoryDot(item.category.slug)}`}
-                      />
-                      {item.category.title}
-                    </span>
-                    <span className="text-[11px] font-mono text-white/45">
-                      {item.readTime}
-                    </span>
-                  </div>
-                </article>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
     </NewsShell>
   );
 }

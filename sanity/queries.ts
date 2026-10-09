@@ -1,5 +1,5 @@
 import { groq } from "next-sanity";
-import type { Career, CareerSummary, NewsCategory, NewsPost } from "./lib/types";
+import type { Career, CareerSummary, NewsPost } from "./lib/types";
 import { client } from "./lib/client";
 
 // Fragment for consistent post shape across queries
@@ -90,18 +90,16 @@ const newsPostProjection = /* groq */ `{
   _id,
   title,
   "slug": slug.current,
-  category->{
-    _id,
-    title,
-    "slug": slug.current
-  },
   summary,
   publishedDate,
   readTime,
   featured,
   image{
     "url": asset->url,
-    "alt": coalesce(alt, ^.title)
+    "alt": coalesce(alt, ^.title),
+    "width": asset->metadata.dimensions.width,
+    "height": asset->metadata.dimensions.height,
+    crop
   },
   content{
     lead,
@@ -117,21 +115,8 @@ export const allNewsQuery = groq`
   *[_type == "newsPost"] | order(publishedDate desc) ${newsPostProjection}
 `;
 
-export const newsByCategoryQuery = groq`
-  *[_type == "newsPost" && category->slug.current == $categorySlug]
-    | order(publishedDate desc) ${newsPostProjection}
-`;
-
 export const newsBySlugQuery = groq`
   *[_type == "newsPost" && slug.current == $slug][0] ${newsPostProjection}
-`;
-
-export const newsCategoriesQuery = groq`
-  *[_type == "newsCategory"] | order(title asc) {
-    _id,
-    title,
-    "slug": slug.current
-  }
 `;
 
 // --- Fetch helpers -----------------------------------------------------
@@ -140,18 +125,8 @@ export async function getAllNews(): Promise<NewsPost[]> {
   return client.fetch(allNewsQuery);
 }
 
-export async function getNewsByCategory(
-  categorySlug: string,
-): Promise<NewsPost[]> {
-  return client.fetch(newsByCategoryQuery, { categorySlug });
-}
-
 export async function getNewsBySlug(slug: string): Promise<NewsPost | null> {
   return client.fetch(newsBySlugQuery, { slug });
-}
-
-export async function getNewsCategories(): Promise<NewsCategory[]> {
-  return client.fetch(newsCategoriesQuery);
 }
 
 // ── YouTube videos (About page "Recent & Upcoming Videos") ──
@@ -311,7 +286,11 @@ const CAREER_FETCH = { next: { revalidate: 60, tags: ["career"] } };
 
 export async function getAllCareers(): Promise<CareerSummary[]> {
   try {
-    return await client.fetch<CareerSummary[]>(allCareersQuery, {}, CAREER_FETCH);
+    return await client.fetch<CareerSummary[]>(
+      allCareersQuery,
+      {},
+      CAREER_FETCH,
+    );
   } catch {
     return [];
   }
@@ -319,49 +298,4 @@ export async function getAllCareers(): Promise<CareerSummary[]> {
 
 export async function getCareerBySlug(slug: string): Promise<Career | null> {
   return client.fetch<Career | null>(careerBySlugQuery, { slug }, CAREER_FETCH);
-}
-
-// ── Gallery photos (News & Updates page, "Gallery" view) ──
-export const GALLERY_PAGE_SIZE = 6;
-
-export type GalleryPhoto = {
-  _id: string;
-  url: string;
-  alt: string;
-  caption?: string;
-  date: string;
-  width: number;
-  height: number;
-  lqip?: string;
-};
-
-export const GALLERY_PAGE_QUERY = groq`{
-  "total": count(*[_type == "galleryPhoto" && defined(image.asset)]),
-  "photos": *[_type == "galleryPhoto" && defined(image.asset)]
-    | order(date desc, _createdAt desc) [$start...$end] {
-      _id,
-      "url": image.asset->url,
-      "alt": coalesce(image.alt, caption, "Virtual Captains photo"),
-      caption,
-      date,
-      "width": image.asset->metadata.dimensions.width,
-      "height": image.asset->metadata.dimensions.height,
-      "lqip": image.asset->metadata.lqip
-    }
-}`;
-
-// One page of photos, newest first. `page` is 1-based.
-export async function getGalleryPage(
-  page: number,
-): Promise<{ total: number; photos: GalleryPhoto[] }> {
-  const start = (page - 1) * GALLERY_PAGE_SIZE;
-  try {
-    return await client.fetch(
-      GALLERY_PAGE_QUERY,
-      { start, end: start + GALLERY_PAGE_SIZE },
-      { next: { revalidate: 60, tags: ["galleryPhoto"] } },
-    );
-  } catch {
-    return { total: 0, photos: [] };
-  }
 }

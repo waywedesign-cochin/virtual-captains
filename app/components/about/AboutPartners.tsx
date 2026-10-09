@@ -5,61 +5,19 @@ import Image from "next/image";
 import gsap from "gsap";
 import { useHeadingZoom } from "./useHeadingZoom";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { PARTNERS, logoHeight, type Partner } from "@/app/content/partners";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface Partner {
-  id: string;
-  name: string;
-  logoSrc: string;
-  width: number;
-  height: number;
-}
-
-const PARTNERS: Partner[] = [
-  {
-    id: "jsr",
-    name: "JSR",
-    logoSrc: "/partners/JSR.png",
-    width: 140,
-    height: 40,
-  },
-  {
-    id: "skylark",
-    name: "Skylark",
-    logoSrc: "/partners/SKYLARK.png",
-    width: 140,
-    height: 40,
-  },
-  {
-    id: "ahad",
-    name: "AHAD",
-    logoSrc: "/partners/AHAD.png",
-    width: 130,
-    height: 38,
-  },
-  {
-    id: "moonhive",
-    name: "MoonHive",
-    logoSrc: "/partners/MOONHIV.png",
-    width: 140,
-    height: 40,
-  },
-  {
-    id: "unifirm",
-    name: "Unifirm",
-    logoSrc: "/partners/UNIFIRM.png",
-    width: 135,
-    height: 38,
-  },  {
-    id: "bbc",
-    name: "Bangalore Bioinnovation Centre",
-    logoSrc: "/partners/bbc-logo.png",
-    width: 120,
-    height: 48,
-  },
+// Shared list (24 logos) — the same one the home page and SalesX use.
+// Split into three rows so every logo shows, not the same few repeated.
+const ROW_SIZE = Math.ceil(PARTNERS.length / 3);
+const ROWS = [
+  PARTNERS.slice(0, ROW_SIZE),
+  PARTNERS.slice(ROW_SIZE, ROW_SIZE * 2),
+  PARTNERS.slice(ROW_SIZE * 2),
 ];
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -121,7 +79,7 @@ function TickerRow({
         <div className={`vc-tk-${uk} flex gap-6 w-max will-change-transform py-1.5`}>
           {looped.map((p, i) => (
             <div
-              key={`${p.id}-${i}`}
+              key={`${p.name}-${i}`}
               className="relative shrink-0 h-20 w-40 rounded-xl
                 bg-linear-to-b from-white/10 via-white/5 to-white/2 backdrop-blur-xl
                 border border-white/12
@@ -130,8 +88,9 @@ function TickerRow({
             >
               <Image
                 src={p.logoSrc} alt={p.name}
-                width={p.width} height={p.height}
-                className="max-h-11 max-w-full w-auto object-contain brightness-0 invert opacity-90 pointer-events-none"
+                width={Math.round(44 * p.ratio)} height={44}
+                className="max-w-full w-auto object-contain brightness-0 invert opacity-90 pointer-events-none"
+                style={{ height: `${(44 * logoHeight(p.ratio)) / 100}px` }}
                 draggable={false}
               />
             </div>
@@ -237,11 +196,11 @@ export default function AboutPartners() {
             className="lg:col-span-7 flex flex-col gap-3 will-change-transform overflow-hidden"
           >
             {/* Row 1 – left, dimmed */}
-            <TickerRow items={PARTNERS} direction="left" speed={22} rowOpacity={0.35} />
+            <TickerRow items={ROWS[0]} direction="left" speed={34} rowOpacity={0.35} />
             {/* Row 2 – right, full brightness + spotlight mask (featured) */}
-            <TickerRow items={[...PARTNERS].reverse()} direction="right" speed={28} rowOpacity={1} spotlight />
+            <TickerRow items={ROWS[1]} direction="right" speed={40} rowOpacity={1} spotlight />
             {/* Row 3 – left, dimmed */}
-            <TickerRow items={PARTNERS} direction="left" speed={20} rowOpacity={0.35} />
+            <TickerRow items={ROWS[2]} direction="left" speed={30} rowOpacity={0.35} />
           </div>
 
         </div>

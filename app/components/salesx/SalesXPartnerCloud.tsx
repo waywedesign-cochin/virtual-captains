@@ -70,7 +70,15 @@ function LogoGlass({ p, className = "" }: { p: Partner; className?: string }) {
   );
 }
 
-export default function SalesXPartnerCloud() {
+/**
+ * `background`: section fill. SalesX uses its own canvas colour; the About
+ * page passes "bg-transparent" so its navy + dot grid run through.
+ */
+export default function SalesXPartnerCloud({
+  background = "bg-salesx-bg",
+}: {
+  background?: string;
+} = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRefs = useRef<(HTMLHeadingElement | null)[]>([]);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -209,7 +217,7 @@ export default function SalesXPartnerCloud() {
       ref={sectionRef}
       role="region"
       aria-label="SalesX Partner Network and Ecosystem"
-      className="relative bg-salesx-bg overflow-hidden py-14 sm:py-20 lg:py-24 select-none"
+      className={`relative ${background} overflow-hidden py-14 sm:py-20 lg:py-24 select-none`}
     >
       {/* Central ambient glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[1100px] h-[350px] sm:h-[450px] lg:h-[600px] bg-radial from-[#1e40af]/12 via-[#0a1740]/8 to-transparent blur-[140px] pointer-events-none -z-10" />
