@@ -8,7 +8,7 @@ import SiteFooter from "../../components/home/SiteFooter";
 import DotGridSpotlight from "../../components/common/DotGridSpotlight";
 import { NewsShareRow } from "../../components/news/NewsShareRow";
 import { getAllNews, getNewsBySlug } from "@/sanity/queries";
-import type { NewsPost } from "@/sanity/lib/types";
+import { croppedImage, type NewsPost } from "@/sanity/lib/types";
 
 const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38bdf8]";
@@ -143,7 +143,12 @@ function UpdateVisual({ item }: { item: NewsPost }) {
   if (item.image?.url) {
     return (
       <img
-        src={item.image.url}
+        // the part cropped in Sanity, not the full upload
+        src={croppedImage(item.image, 1600).src}
+        srcSet={[800, 1200, 1600, 2000]
+          .map((w) => `${croppedImage(item.image!, w).src} ${w}w`)
+          .join(", ")}
+        sizes="(min-width: 1280px) 900px, 100vw"
         alt={item.image.alt}
         className="absolute inset-0 h-full w-full object-cover"
       />
@@ -328,7 +333,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
                     <div className="shrink-0 w-20 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
                       {n.image?.url ? (
                         <img
-                          src={n.image.url}
+                          src={croppedImage(n.image, 240).src}
                           alt={n.image.alt}
                           className="w-full h-full object-cover"
                         />

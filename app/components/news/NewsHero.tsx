@@ -34,11 +34,10 @@ export function NewsHero() {
       >
         <motion.div
           variants={wordVariants}
-          className="inline-flex items-center gap-3 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.3em] text-white/80"
+          className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#38bdf8]/30 bg-linear-to-r from-[#1d4ed8]/30 to-[#38bdf8]/10 text-[11px] font-semibold tracking-widest uppercase text-[#7dd3fc]"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-[#38bdf8] shadow-[0_0_10px_#38bdf8]" />
-          Insights That Drive Progress
-          <span className="hidden h-px w-10 bg-[#38bdf8]/60 sm:block" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8] animate-pulse" />
+          Virtual Captains News
         </motion.div>
 
         <h1 className="font-sans font-bold text-[40px] sm:text-6xl lg:text-7xl xl:text-[84px] tracking-[-0.03em] leading-[1.05]">

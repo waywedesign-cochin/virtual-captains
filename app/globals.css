@@ -194,26 +194,3 @@ body {
     font-size: 16px !important;
   }
 }
-
-/* News page "All News": vertical marquee (news-and-updates/page.tsx).
-   Each track holds its photos twice; -50% moves exactly one set → seamless. */
-@keyframes vc-marquee-up {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
-}
-.vc-marquee-track {
-  animation: vc-marquee-up linear infinite;
-  will-change: transform;
-}
-.vc-marquee-down {
-  animation-direction: reverse;
-}
-.vc-marquee:hover .vc-marquee-track,
-.vc-marquee:focus-within .vc-marquee-track {
-  animation-play-state: paused;
-}
-@media (prefers-reduced-motion: reduce) {
-  .vc-marquee-track {
-    animation: none;
-  }
-}
