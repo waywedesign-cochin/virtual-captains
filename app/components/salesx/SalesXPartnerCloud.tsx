@@ -212,7 +212,7 @@ export default function SalesXPartnerCloud() {
       className="relative bg-salesx-bg overflow-hidden py-14 sm:py-20 lg:py-24 select-none"
     >
       {/* Central ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[1100px] h-[350px] sm:h-[450px] lg:h-[600px] bg-radial from-[#1e40af]/25 via-[#0a1740]/15 to-transparent blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[750px] lg:w-[1100px] h-[350px] sm:h-[450px] lg:h-[600px] bg-radial from-[#1e40af]/12 via-[#0a1740]/8 to-transparent blur-[140px] pointer-events-none -z-10" />
 
       {/* Starfield dot grid */}
       <div
@@ -296,8 +296,8 @@ export default function SalesXPartnerCloud() {
               rim and soft blue glows behind it (no per-logo cards) */}
           <div className="relative mt-10 w-full max-w-3xl">
             {/* side glows */}
-            <div aria-hidden className="pointer-events-none absolute -left-6 top-1/4 h-1/2 w-24 rounded-full bg-[#1d4ed8]/45 blur-[60px]" />
-            <div aria-hidden className="pointer-events-none absolute -right-6 bottom-1/5 h-1/2 w-24 rounded-full bg-[#38bdf8]/35 blur-[60px]" />
+            <div aria-hidden className="pointer-events-none absolute -left-6 top-1/4 h-1/2 w-24 rounded-full bg-[#1d4ed8]/20 blur-[60px]" />
+            <div aria-hidden className="pointer-events-none absolute -right-6 bottom-1/5 h-1/2 w-24 rounded-full bg-[#38bdf8]/15 blur-[60px]" />
             {/* sparkles */}
             <svg aria-hidden viewBox="0 0 24 24" className="pointer-events-none absolute -right-1 top-6 h-5 w-5 text-[#93c5fd]">
               <path fill="currentColor" d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z" />
@@ -307,7 +307,7 @@ export default function SalesXPartnerCloud() {
             </svg>
 
             {/* gradient rim */}
-            <div className="relative rounded-[28px] bg-linear-to-br from-[#1d4ed8]/55 via-white/8 to-[#38bdf8]/45 p-[1.5px] shadow-[0_30px_80px_-30px_rgba(29,78,216,0.55)]">
+            <div className="relative rounded-[28px] bg-linear-to-br from-[#1d4ed8]/30 via-white/8 to-[#38bdf8]/25 p-[1.5px] shadow-[0_30px_80px_-30px_rgba(29,78,216,0.3)]">
               <div className="rounded-[26.5px] bg-[#071233]/90 p-2 backdrop-blur-xl sm:p-3">
                 <div className="rounded-[22px] border border-white/6 bg-linear-to-b from-white/4 to-transparent px-3 py-6 sm:px-6 sm:py-8">
                   <ul className="flex flex-wrap justify-center gap-y-6 sm:gap-y-8">
