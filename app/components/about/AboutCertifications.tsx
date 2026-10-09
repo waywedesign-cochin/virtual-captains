@@ -9,10 +9,8 @@ if (typeof window !== "undefined") {
 }
 
 import {
-  CARD_BADGE_CLASS,
-  CARD_CERTIFICATIONS,
-  ROUND_BADGE_CLASS,
-  ROUND_CERTIFICATIONS,
+  ABOUT_CERTIFICATIONS,
+  badgeClass,
   type Certification,
 } from "@/app/content/certifications";
 
@@ -26,7 +24,7 @@ function Badge({ item, className }: { item: Certification; className: string }) 
       height={item.height}
       loading="lazy"
       decoding="async"
-      className={`${className} drop-shadow-[0_18px_40px_rgba(29,78,216,0.45)]`}
+      className={className}
     />
   );
 }
@@ -103,18 +101,16 @@ export default function AboutCertifications() {
       {/* ── FOREGROUND CONTAINER: Certificate Badges Floating In Front ── */}
       <div className="relative z-10 w-full max-w-372 mx-auto px-4 sm:px-6 md:px-8 lg:px-8 xl:px-12 flex flex-col items-center justify-center">
         <div className="relative z-10 flex w-full flex-col items-center gap-8 sm:gap-10">
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 lg:gap-14">
-            {ROUND_CERTIFICATIONS.map((item) => (
-              <Badge key={item.id} item={item} className={ROUND_BADGE_CLASS} />
-            ))}
-          </div>
-          {CARD_CERTIFICATIONS.length > 0 && (
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-              {CARD_CERTIFICATIONS.map((item) => (
-                <Badge key={item.id} item={item} className={CARD_BADGE_CLASS} />
+                    {[ABOUT_CERTIFICATIONS].map((row, r) => (
+            <div
+              key={r}
+              className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 lg:gap-14"
+            >
+              {row.map((item) => (
+                <Badge key={item.id} item={item} className={badgeClass(item)} />
               ))}
             </div>
-          )}
+          ))}
         </div>
       </div>
 

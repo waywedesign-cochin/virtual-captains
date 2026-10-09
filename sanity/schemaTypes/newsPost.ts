@@ -25,14 +25,6 @@ export const newsPost = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "category",
-      title: "Category",
-      type: "reference",
-      to: [{ type: "newsCategory" }],
-      group: "content",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
       name: "summary",
       title: "Summary",
       type: "text",
@@ -129,13 +121,13 @@ export const newsPost = defineType({
   preview: {
     select: {
       title: "title",
-      category: "category.title",
+      date: "publishedDate",
       media: "image",
     },
-    prepare({ title, category, media }) {
+    prepare({ title, date, media }) {
       return {
         title,
-        subtitle: category,
+        subtitle: date ? new Date(date).toLocaleDateString("en-GB") : undefined,
         media,
       };
     },

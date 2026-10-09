@@ -65,3 +65,10 @@ export const SOCIAL_PROFILES = [
   { id: "instagram", label: "Instagram", href: "https://www.instagram.com/virtualcaptains/" },
   { id: "youtube", label: "YouTube", href: "https://www.youtube.com/@VirtualCaptains" },
 ] as const;
+
+/** Discord community invite. Kept apart from SOCIAL_PROFILES: an invite link isn't a profile for `sameAs`. */
+export const COMMUNITY_LINK = {
+  label: "Join Our Community",
+  platform: "Discord",
+  href: "https://discord.gg/dycRSSmC5p",
+} as const;

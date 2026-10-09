@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import BookACallModal from "../home/BookACallModal";
-import SocialLinks from "../common/SocialLinks";
+import FooterConnect from "../common/FooterConnect";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -398,31 +398,8 @@ export default function ContactFooter() {
                   </Link>
                 </div>
 
-                {/* Styled Cool Micro-Pills */}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-1.5">
-                  {[
-                    { text: "Practical Support", dot: "#38bdf8", glow: "rgba(56,189,248,0.7)" },
-                    { text: "Real-World Experience", dot: "#e7ff3d", glow: "rgba(231,255,61,0.7)" },
-                    { text: "Measurable Impact", dot: "#8fd0ff", glow: "rgba(143,208,255,0.7)" },
-                  ].map((item) => (
-                    <div
-                      key={item.text}
-                      className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/4 backdrop-blur-md px-3.5 py-1.5 text-[11px] sm:text-xs font-medium text-white/85 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:border-white/35 hover:bg-white/10 hover:text-white hover:scale-105 select-none"
-                    >
-                      <span
-                        className="h-1.5 w-1.5 rounded-full transition-transform duration-300 group-hover:scale-125"
-                        style={{
-                          backgroundColor: item.dot,
-                          boxShadow: `0 0 8px ${item.glow}`,
-                        }}
-                      />
-                      <span className="tracking-wide">{item.text}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Social profiles */}
-                <SocialLinks className="pt-2 sm:pt-3" />
+                {/* Pillars, social profiles and the Discord community card */}
+                <FooterConnect className="pt-2 sm:pt-3" />
               </div>
             </div>
           </div>

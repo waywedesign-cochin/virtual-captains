@@ -38,12 +38,6 @@ export interface Category {
 // Add these alongside your existing BlogPost / Category types,
 // e.g. in @/sanity/lib/types.ts
 
-export type NewsCategory = {
-  _id: string;
-  title: string;
-  slug: string;
-};
-
 export type NewsSeo = {
   metaTitle?: string;
   metaDescription?: string;
@@ -53,12 +47,21 @@ export type NewsPost = {
   _id: string;
   title: string;
   slug: string;
-  category: NewsCategory;
   summary: string;
   publishedDate: string; // ISO datetime
   readTime: string;
   featured: boolean;
-  image?: { url: string; alt: string };
+  /**
+   * width/height: original pixel size. crop: the editor's crop in the Studio
+   * (fractions trimmed from each side) — use `croppedImage()` to apply it.
+   */
+  image?: {
+    url: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    crop?: { top: number; bottom: number; left: number; right: number };
+  };
   content: {
     lead?: string;
     body: unknown[]; // Portable Text blocks
@@ -66,28 +69,10 @@ export type NewsPost = {
   seo?: NewsSeo;
 };
 
-// Frontend-owned design decision, not content: which dot color each
-// category renders with. Add a case here whenever a new newsCategory
-// is created in the Studio. Falls back to sky if a category is missing.
-export const NEWS_CATEGORY_DOT: Record<string, string> = {
-  "product-release": "bg-[#38bdf8]",
-  partnership: "bg-emerald-400",
-  milestone: "bg-[#e7ff3d]",
-  company: "bg-fuchsia-400",
-};
-
-export function getNewsCategoryDot(categorySlug: string): string {
-  return NEWS_CATEGORY_DOT[categorySlug] ?? "bg-[#38bdf8]";
-}
-
 // CAREER TYPES
 
 export type EmploymentType =
-  | "FULL_TIME"
-  | "PART_TIME"
-  | "CONTRACTOR"
-  | "INTERN"
-  | "TEMPORARY";
+  "FULL_TIME" | "PART_TIME" | "CONTRACTOR" | "INTERN" | "TEMPORARY";
 
 export type WorkplaceType = "onsite" | "hybrid" | "remote";
 
@@ -144,3 +129,36 @@ export const WORKPLACE_TYPE_LABEL: Record<WorkplaceType, string> = {
   hybrid: "Hybrid",
   remote: "Remote",
 };
+
+/**
+ * The news image as cropped in the Sanity Studio: a CDN URL showing only the
+ * crop rectangle (`rect=` + resize), and the cropped size for aspect ratios.
+ * Without a crop (or without known dimensions) it's the full image.
+ */
+export function croppedImage(
+  image: NonNullable<NewsPost["image"]>,
+  width = 900,
+) {
+  const { url, crop } = image;
+  const w = image.width ?? 0;
+  const h = image.height ?? 0;
+  if (!w || !h)
+    return { src: `${url}?w=${width}&fm=webp&q=80`, width: w, height: h };
+
+  const left = Math.round(w * (crop?.left ?? 0));
+  const top = Math.round(h * (crop?.top ?? 0));
+  const cw = Math.max(
+    1,
+    Math.round(w * (1 - (crop?.left ?? 0) - (crop?.right ?? 0))),
+  );
+  const ch = Math.max(
+    1,
+    Math.round(h * (1 - (crop?.top ?? 0) - (crop?.bottom ?? 0))),
+  );
+  const rect = crop ? `rect=${left},${top},${cw},${ch}&` : "";
+  return {
+    src: `${url}?${rect}w=${width}&fm=webp&q=80`,
+    width: cw,
+    height: ch,
+  };
+}

@@ -7,7 +7,7 @@ import AboutHero from "../components/about/AboutHero";
 import AboutInsideWorld from "../components/about/AboutInsideWorld";
 import AboutFounder from "../components/about/AboutFounder";
 import AboutMetrics from "../components/about/AboutMetrics";
-import AboutPartners from "../components/about/AboutPartners";
+import SalesXPartnerCloud from "../components/salesx/SalesXPartnerCloud";
 import AboutCertifications from "../components/about/AboutCertifications";
 import AboutVideoCTA from "../components/about/AboutVideoCTA";
 import { getYouTubeVideos } from "@/sanity/queries";
@@ -54,8 +54,8 @@ export default async function AboutPage() {
         {/* 4. Global Impact: bento grid of stat cards */}
         <AboutMetrics />
 
-        {/* 5. Partner Network Section: 5 Real Partners Cluster & Narrative */}
-        <AboutPartners />
+        {/* 5. Partner Network: same section as the SalesX page, on the About navy */}
+        <SalesXPartnerCloud background="bg-transparent" />
 
         {/* 6. Certifications Section: Giant Watermark Title & 4 Rosette Star Badges */}
         <AboutCertifications />

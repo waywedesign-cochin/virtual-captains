@@ -57,7 +57,11 @@ export function PartnerNetwork() {
             composition is real layout at every breakpoint. Phase 5 measures
             these rects, throws the logos back into the hub, and scrubs them
             out again — no coordinate table to keep in sync. */}
-        <ul className="partner__slots" data-partner-slots="">
+        <ul
+          className="partner__slots"
+          data-partner-slots=""
+          style={{ "--partner-rows": Math.ceil(partnerSlots.length / 6) } as React.CSSProperties}
+        >
           {partnerSlots.map((slot, index) => (
             <li className="partner__slot" key={slot.id} data-partner-slot={index}>
               <span className="partner__logo group absolute inset-0 flex items-center justify-center rounded-xl border border-[#0c8cf5]/35 bg-[#0d1530] px-5 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-[#38bdf8]/50 hover:bg-[#121d40] hover:shadow-[0_0_22px_-4px_rgba(56,189,248,0.45)]" data-partner-logo={index}>

@@ -42,6 +42,7 @@ export const PARTNERS: Partner[] = [
   { name: "Riyada SME", logoSrc: "/network/riyada.webp", ratio: 1.55 },
   { name: "Startup Park", logoSrc: "/network/startup_park.webp", ratio: 3.8 },
   { name: "WOI India", logoSrc: "/network/woi.webp", ratio: 2.51 },
+  { name: "WOI.eco", logoSrc: "/network/woi-eco.webp", ratio: 2.5 },
   { name: "KLBuild", logoSrc: "/network/klbuild.webp", ratio: 1.04 },
   { name: "KMEA", logoSrc: "/network/kmea.webp", ratio: 1.88 },
   { name: "SAFI Institute of Advanced Study", logoSrc: "/network/safi.webp", ratio: 5.85 },

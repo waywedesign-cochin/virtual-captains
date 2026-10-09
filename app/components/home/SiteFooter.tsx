@@ -12,7 +12,7 @@ import DottedBackground from "./DottedBackground";
 import { NO_PIN_QUERY, PIN_QUERY } from "./pinQuery";
 
 import { HEADING_REVEAL, HEADING_REVEAL_FROM } from "@/lib/animations/headingReveal";
-import SocialLinks from "../common/SocialLinks";
+import FooterConnect from "../common/FooterConnect";
 gsap.registerPlugin(ScrollTrigger);
 
 /**
@@ -689,43 +689,8 @@ export default function SiteFooter({ showCTA = true, theme }: SiteFooterProps) {
                   </Link>
                 </div>
 
-                {/* Styled Glowing Jewel Micro-Capsules: Practical Support | Real-World Experience | Measurable Impact */}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-1.5 max-w-2xl mx-auto">
-                  {[
-                    {
-                      text: "Practical Support",
-                      dot: "#38bdf8",
-                      glow: "rgba(56,189,248,0.75)",
-                    },
-                    {
-                      text: "Real-World Experience",
-                      dot: "#e5ff00",
-                      glow: "rgba(229,255,0,0.75)",
-                    },
-                    {
-                      text: "Measurable Impact",
-                      dot: "#8fd0ff",
-                      glow: "rgba(143,208,255,0.75)",
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.text}
-                      className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs md:text-[12.5px] font-medium text-slate-200 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:border-white/40 hover:bg-white/12 hover:text-white hover:scale-105 select-none"
-                    >
-                      <span
-                        className="h-1.5 w-1.5 rounded-full transition-transform duration-300 group-hover:scale-125"
-                        style={{
-                          backgroundColor: item.dot,
-                          boxShadow: `0 0 8px ${item.glow}`,
-                        }}
-                      />
-                      <span className="tracking-wide">{item.text}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Social profiles */}
-                <SocialLinks className="pt-2 sm:pt-3" />
+                {/* Pillars, social profiles and the Discord community card */}
+                <FooterConnect className="pt-2 sm:pt-3" />
               </div>
             </div>
           </div>
