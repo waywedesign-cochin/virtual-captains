@@ -15,7 +15,8 @@ const byIp = makeLimiter("newsletter:ip", 5, 10 * MIN);
 
 /**
  * Blog "Get more insights in your inbox" signup. Saves the email to the
- * RESEND_AUDIENCE_NEWSLETTER audience so the team can send broadcasts.
+ * RESEND_AUDIENCE_NEWSLETTER audience and opts it into the
+ * RESEND_NEWSLETTER_TOPIC_ID topic so the team can send broadcasts.
  */
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -43,6 +44,11 @@ export async function POST(req: Request) {
     console.error("RESEND_AUDIENCE_NEWSLETTER is not set");
     return misconfigured();
   }
+  const topicId = process.env.RESEND_NEWSLETTER_TOPIC_ID;
+  if (!topicId) {
+    console.error("RESEND_NEWSLETTER_TOPIC_ID is not set");
+    return misconfigured();
+  }
 
   try {
     const { error } = await resend.contacts.create({
@@ -52,6 +58,15 @@ export async function POST(req: Request) {
     });
     if (error) {
       console.error("Resend newsletter contact error:", error);
+      return NextResponse.json({ error: "Failed" }, { status: 500 });
+    }
+
+    const { error: topicError } = await resend.contacts.topics.update({
+      email,
+      topics: [{ id: topicId, subscription: "opt_in" }],
+    });
+    if (topicError) {
+      console.error("Resend newsletter topic error:", topicError);
       return NextResponse.json({ error: "Failed" }, { status: 500 });
     }
     return NextResponse.json({ ok: true });
