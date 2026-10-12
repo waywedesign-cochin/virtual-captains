@@ -91,7 +91,7 @@ const newsPostProjection = /* groq */ `{
   title,
   "slug": slug.current,
   summary,
-  publishedDate,
+  order,
   readTime,
   featured,
   image{
@@ -112,7 +112,7 @@ const newsPostProjection = /* groq */ `{
 }`;
 
 export const allNewsQuery = groq`
-  *[_type == "newsPost"] | order(publishedDate desc) ${newsPostProjection}
+  *[_type == "newsPost"] | order(coalesce(order, 999) asc, _createdAt desc) ${newsPostProjection}
 `;
 
 export const newsBySlugQuery = groq`

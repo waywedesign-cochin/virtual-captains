@@ -32,7 +32,20 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.list()
             .title("News")
-            .items([S.documentTypeListItem("newsPost").title("News Posts")]),
+            .items([
+              S.listItem()
+                .title("News Posts")
+                .schemaType("newsPost")
+                .child(
+                  // same order as the website: Display Order, lowest first
+                  S.documentTypeList("newsPost")
+                    .title("News Posts")
+                    .defaultOrdering([
+                      { field: "order", direction: "asc" },
+                      { field: "_createdAt", direction: "desc" },
+                    ]),
+                ),
+            ]),
         ),
 
       S.listItem()
