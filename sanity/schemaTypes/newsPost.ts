@@ -35,11 +35,14 @@ export const newsPost = defineType({
       validation: (Rule) => Rule.required().max(240),
     }),
     defineField({
-      name: "publishedDate",
-      title: "Published Date",
-      type: "datetime",
+      name: "order",
+      title: "Display Order",
+      type: "number",
       group: "content",
-      validation: (Rule) => Rule.required(),
+      description:
+        "Controls where this post appears on the News & Updates page. Lower numbers show first (1 = top). Posts with the same number fall back to newest-created first.",
+      initialValue: 10,
+      validation: (Rule) => Rule.required().integer().min(0),
     }),
     defineField({
       name: "readTime",
@@ -118,16 +121,23 @@ export const newsPost = defineType({
       ],
     }),
   ],
+  orderings: [
+    {
+      title: "Display Order",
+      name: "orderAsc",
+      by: [{ field: "order", direction: "asc" }],
+    },
+  ],
   preview: {
     select: {
       title: "title",
-      date: "publishedDate",
+      order: "order",
       media: "image",
     },
-    prepare({ title, date, media }) {
+    prepare({ title, order, media }) {
       return {
         title,
-        subtitle: date ? new Date(date).toLocaleDateString("en-GB") : undefined,
+        subtitle: `Order ${order ?? "–"}`,
         media,
       };
     },

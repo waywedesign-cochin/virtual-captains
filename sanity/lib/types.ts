@@ -48,7 +48,8 @@ export type NewsPost = {
   title: string;
   slug: string;
   summary: string;
-  publishedDate: string; // ISO datetime
+  /** Display Order from the Studio: lower shows first */
+  order?: number;
   readTime: string;
   featured: boolean;
   /**
