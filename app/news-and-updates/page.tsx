@@ -6,11 +6,9 @@ import DotGridSpotlight from "../components/common/DotGridSpotlight";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { NewsHero } from "../components/news/NewsHero";
-import { MilestonesStrip } from "../components/news/MilestonesStrip";
 import { AutoScrollColumn } from "../components/news/AutoScrollColumn";
 import { getAllNews } from "@/sanity/queries";
 import { croppedImage, type NewsPost } from "@/sanity/lib/types";
-import { MILESTONES } from "@/app/content/milestones";
 
 export const metadata: Metadata = pageMetadata({
   title: "News & Updates",
@@ -264,9 +262,10 @@ function MarqueeColumn({
   direction: "up" | "down";
 }) {
   // One set must be taller than the box (~620px over a ~260px-wide column,
-  // i.e. ≥ 2.7 column-widths of height); tile height = width / ratio.
+  // i.e. ≥ 3.8 column-widths of height on the 820px desktop box); tile
+  // height = width / ratio.
   const setHeight = items.reduce((sum, item) => sum + 1 / tileRatio(item), 0);
-  const repeats = Math.max(1, Math.ceil(2.7 / setHeight));
+  const repeats = Math.max(1, Math.ceil(3.8 / setHeight));
   const set = Array.from({ length: repeats }, () => items).flat();
   return (
     // Auto-drifts, and can be swiped / wheeled / dragged by hand
@@ -285,7 +284,8 @@ function MarqueeColumn({
 export default async function NewsAndUpdatesPage() {
   const allNews = await getAllNews();
   const featured = allNews.find((n) => n.featured) ?? allNews[0];
-  const more = allNews.filter((n) => n._id !== featured?._id).slice(0, 2);
+  // featured + the next 4 = 5 posts in Latest Updates
+  const more = allNews.filter((n) => n._id !== featured?._id).slice(0, 4);
 
   return (
     <NewsShell>
@@ -336,12 +336,12 @@ export default async function NewsAndUpdatesPage() {
               {/* One column on small phones (<480px) and small laptops (1024–1279px,
                   where the right column is narrow): full-width tiles (short, wide crops
                   stay readable). Hover pauses; swipe / wheel / drag to scroll by hand. */}
-              <div className="relative h-[460px] overflow-hidden min-[480px]:hidden lg:block lg:h-[620px] xl:hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
+              <div className="relative h-[460px] overflow-hidden min-[480px]:hidden lg:block lg:h-[820px] xl:hidden [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)]">
                 <MarqueeColumn direction="up" items={allNews} />
               </div>
 
               {/* 480–1023px and 1280px+: two columns drifting in opposite directions */}
-              <div className="relative hidden h-[560px] grid-cols-2 gap-3 overflow-hidden min-[480px]:grid sm:h-[620px] sm:gap-4 lg:hidden xl:grid [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+              <div className="relative hidden h-[560px] grid-cols-2 gap-3 overflow-hidden min-[480px]:grid sm:h-[620px] sm:gap-4 lg:hidden xl:grid xl:h-[820px] [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
                 {(allNews.length > 1 ? [0, 1] : [0]).map((col) => (
                   <MarqueeColumn
                     key={col}
@@ -361,11 +361,6 @@ export default async function NewsAndUpdatesPage() {
         </section>
       </div>
 
-      {MILESTONES.length > 0 && (
-        <section aria-label="Milestones" className={`${CONTAINER} mb-24`}>
-          <MilestonesStrip milestones={MILESTONES} />
-        </section>
-      )}
     </NewsShell>
   );
 }

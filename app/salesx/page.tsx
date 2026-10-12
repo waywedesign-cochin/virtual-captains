@@ -12,6 +12,7 @@ import SalesXResultsHub from "../components/salesx/SalesXResultsHub";
 import SalesXTestimonials from "../components/salesx/SalesXTestimonials";
 import SalesXCTA from "../components/salesx/SalesXCTA";
 import SiteFooter from "../components/home/SiteFooter";
+import { FaqSection } from "../components/common/FaqSection";
 import SalesXCertifications from "../components/salesx/SalesXCertifications";
 import SalesXScrollTop from "../components/salesx/SalesXScrollTop";
 
@@ -79,6 +80,9 @@ export default function SalesXPage() {
 
         {/* 8. Ready to Redefine: High-Impact CTA with 5 Glowing Circular Metric Badges */}
         <SalesXCTA />
+
+        {/* FAQ (SalesX questions), on the page background */}
+        <FaqSection group="salesx" />
 
         {/* Certificate badges (from the old SalesX footer), fading into the site footer */}
         <SalesXCertifications />
