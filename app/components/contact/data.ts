@@ -43,7 +43,7 @@ export const offices: Office[] = [
     tag: "Headquarters",
     city: "Kochi, Kerala",
     addressLines: [
-      "Covspace Coworking, G K Tower,",
+      "2nd Floor, G K Tower,",
       "Chakkaraparambu Junction, Thammanam,",
       "Kochi, Kerala 682032, India",
     ],
