@@ -1,7 +1,7 @@
 // Central content for the Contact page.
 //
 // Sourced from Virtual Captains' own public site (virtualcaptains.com) as of
-// Sep 2026: the two office addresses and the India map coordinates come from
+// Sep 2026: the India and UAE office addresses and the India map coordinates come from
 // their live /contact/ page, and the WhatsApp number from their /about/
 // page. No public email address was found anywhere on their site — swap in
 // a real inbox before shipping (search for "PLACEHOLDER" below).
@@ -34,6 +34,9 @@ export type Office = {
 
 const UAE_QUERY =
   "Techno Hub, A5 Building, Dubai Digital Park, Dubai Silicon Oasis, Dubai";
+
+const MALAYSIA_QUERY =
+  "Dua Sentral, Jalan Tun Sambanthan, Kampung Attap, 50470 Kuala Lumpur";
 
 export const offices: Office[] = [
   {
@@ -70,6 +73,23 @@ export const offices: Office[] = [
       encodeURIComponent(UAE_QUERY),
     mapEmbed: `https://maps.google.com/maps?q=${encodeURIComponent(UAE_QUERY)}&z=17&output=embed`,
     pin: { top: "46%", left: "56%" },
+  },
+  {
+    id: "malaysia",
+    flag: "🇲🇾",
+    country: "Malaysia",
+    tag: "Regional Office",
+    city: "Kuala Lumpur",
+    addressLines: [
+      "Dua Sentral, #1-02,",
+      "Jalan Tun Sambanthan, Kampung Attap,",
+      "50470 Kuala Lumpur, Wilayah Persekutuan Kuala Lumpur, Malaysia",
+    ],
+    mapsHref:
+      "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent(MALAYSIA_QUERY),
+    mapEmbed: `https://maps.google.com/maps?q=${encodeURIComponent(MALAYSIA_QUERY)}&z=17&output=embed`,
+    pin: { top: "66%", left: "79%" },
   },
 ];
 
