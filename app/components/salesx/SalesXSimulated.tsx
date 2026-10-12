@@ -151,7 +151,7 @@ export default function SalesXSimulated() {
             start: "top top",
             end: () => "+=" + window.innerHeight * 2.4,
             pin: true,
-            scrub: 0.8,
+            scrub: 0.5,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },

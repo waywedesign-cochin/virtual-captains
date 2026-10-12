@@ -90,7 +90,7 @@ export default function RoleplayToConversation() {
             end: () => "+=" + (3600 + (typeof window !== "undefined" ? window.innerHeight : 900)),
             pin: true,
             anticipatePin: 1,
-            scrub: 1,
+            scrub: 0.5,
             // Organisations → Individuals is a quick (~0.5s) switch at one
             // point in the scroll, like a slide change, instead of a crossfade
             // smeared over thousands of pixels. Scrolling back switches back.

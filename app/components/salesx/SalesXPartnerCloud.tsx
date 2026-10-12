@@ -132,7 +132,7 @@ export default function SalesXPartnerCloud({
             start: "top top",
             end: "+=220%",
             pin: true,
-            scrub: 1,
+            scrub: 0.5,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },

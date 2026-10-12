@@ -167,7 +167,7 @@ export default function GroomStudio() {
           start: "top top",
           end: "+=380%",
           pin: pinEl,
-          scrub: 0.8,
+          scrub: 0.5,
           anticipatePin: 1,
           onUpdate: (self) => {
             // Active tab flips at the moment each slide swaps in

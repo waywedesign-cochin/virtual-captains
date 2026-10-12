@@ -32,8 +32,10 @@ export default function SmoothScroll() {
     }
 
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Silky exponential momentum decay
+      // lerp (not a fixed 1.2s duration): the page follows the wheel closely
+      // and only softly settles, so it no longer feels like it drags behind
+      // the hand. 0.12 ≈ Lenis' recommended responsive-but-smooth range.
+      lerp: 0.12,
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,

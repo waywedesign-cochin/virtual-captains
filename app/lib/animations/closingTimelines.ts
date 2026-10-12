@@ -53,7 +53,7 @@ export function buildCareerTimeline(scope: HTMLElement): void {
           end: "+=150%", // Keep it pinned for 1.5x screen height
           pin: true,
           pinSpacing: true,
-          scrub: 1,
+          scrub: 0.5,
         },
       });
 

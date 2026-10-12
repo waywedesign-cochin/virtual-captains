@@ -58,7 +58,7 @@ export default function OrgCTA() {
             trigger: containerRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.2,
+            scrub: 0.5,
           },
         }
       );
@@ -73,7 +73,7 @@ export default function OrgCTA() {
             trigger: containerRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.2,
+            scrub: 0.5,
           },
         }
       );
