@@ -159,7 +159,9 @@ export function CareerCta() {
   return (
     <section
       id="career"
-      className="relative w-full bg-white text-center text-slate-900 py-12 sm:py-16 lg:py-0 lg:min-h-screen flex items-center justify-center overflow-hidden"
+      // -mt-px: overlap the white section above by 1px so the page's dark
+      // background never shows through as a thin line between them
+      className="relative -mt-px w-full bg-white text-center text-slate-900 py-12 sm:py-16 lg:py-0 lg:min-h-screen flex items-center justify-center overflow-hidden"
       aria-labelledby="career-heading"
       ref={scope}
     >

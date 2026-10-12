@@ -16,15 +16,13 @@ export function HomeSections() {
       </DarkAtmosphere>
       <WhoThisIsFor />
       <CareerCta />
-      {/* FAQ (Individuals questions): light, continuing the white CareerCta
-          above, then fading into the footer's near-black below the cards */}
-      <FaqSection
-        group="individuals"
-        tone="light"
-        background="linear-gradient(to bottom, #ffffff 0%, #ffffff 84%, #040507 100%)"
-      />
+      {/* FAQ (Individuals questions): light, on white, continuing the
+          white CareerCta above into the white → blue footer below */}
+      <FaqSection group="individuals" tone="light" background="#ffffff" />
       {/* Same footer as the home page, without its "Book a Call" CTA band */}
-      <SiteFooter showCTA={false} theme="light-blue" />
+      {/* white → blue footer (same as Organisations) so the light sections
+          above flow into it */}
+      <SiteFooter showCTA={false} theme="white-blue" />
     </>
   );
 }
