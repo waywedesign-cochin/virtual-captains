@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { partner, partnerSlots } from "@/content/site";
 import { logoHeight } from "@/app/content/partners";
 import { gsap, useGSAP, ScrollTrigger } from "@/lib/animations/gsap";
@@ -14,7 +14,7 @@ import { useHeadingZoom } from "@/components/about/useHeadingZoom";
  * centred intro, then the logos in a tidy grid that rises in as it scrolls
  * into view — no pinning, nothing to collide, fine in any orientation.
  */
-export function PartnerNetworkCompact() {
+export function PartnerNetworkCompact({ intro }: { intro?: ReactNode } = {}) {
   const scope = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   useHeadingZoom(headingRef);
@@ -38,6 +38,8 @@ export function PartnerNetworkCompact() {
       ref={scope}
       className="mx-auto w-full max-w-372 px-4 py-12 text-center sm:px-8 sm:py-16"
     >
+      {intro ?? (
+      <>
       <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1 shadow-[0_0_16px_rgba(56,189,248,0.15)] backdrop-blur-md">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#38bdf8] shadow-[0_0_6px_#38bdf8]" />
         <span className="type-eyebrow text-[#38bdf8]">
@@ -58,6 +60,8 @@ export function PartnerNetworkCompact() {
       <p className="mx-auto mt-3 max-w-xl type-body text-white/70 text-justify hyphens-auto [text-align-last:center]">
         {partner.sideBody}
       </p>
+      </>
+      )}
 
       <ul className="mt-10 grid grid-cols-3 gap-2.5 sm:grid-cols-4 sm:gap-3 md:grid-cols-6">
         {partnerSlots.map((slot) => (

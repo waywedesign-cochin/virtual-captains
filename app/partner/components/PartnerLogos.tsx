@@ -1,122 +1,113 @@
 "use client";
 
-import Image from "next/image";
 import ZoomHeading from "@/components/common/ZoomHeading";
-import { PARTNERS, logoHeight, type Partner } from "@/app/content/partners";
+import { PartnerNetwork } from "@/components/indivuduals/main/PartnerNetwork";
+import { PARTNERS } from "@/app/content/partners";
 
-// Shared list (24 logos) — the same one the home, About and SalesX pages use.
-// Split across the two rows so every logo shows.
-const HALF = Math.ceil(PARTNERS.length / 2);
-const ROW_A = PARTNERS.slice(0, HALF);
-const ROW_B = PARTNERS.slice(HALF);
+/**
+ * Partner page "Trusted by Forward-Thinking Organisations": the Individuals
+ * page's logo animation (logos burst out of a glowing core into a grid as you
+ * scroll), with this page's own copy. Logos come from the shared
+ * PARTNERS list, so new logos show up here automatically.
+ */
+const EYEBROW = "Join Our Growing Ecosystem";
 
-interface MarqueeRowProps {
-  items: Partner[];
-  direction?: "left" | "right";
-  speedSeconds?: number;
+/** The subtitle, with its key phrases picked out (same words as SUBTITLE). */
+function Subtitle({ className = "" }: { className?: string }) {
+  return (
+    <p className={`leading-relaxed text-slate-400 ${className}`}>
+      From <span className="text-white">premier universities</span> and
+      vocational hubs to{" "}
+      <span className="text-white">rapid-scaling corporate enterprises</span>,
+      our network creates{" "}
+      <span className="bg-linear-to-r from-[#7dd3fc] to-[#38bdf8] bg-clip-text font-medium text-transparent">
+        unfair revenue and hiring advantages
+      </span>
+      .
+    </p>
+  );
 }
 
-function MarqueeRow({ items, direction = "left", speedSeconds = 28 }: MarqueeRowProps) {
-  // Quadruple loop to guarantee seamless infinite loop without gaps across wide screens
-  const looped = [...items, ...items, ...items, ...items];
-  const animKey = `partner-marquee-${direction}-${speedSeconds}`;
-
+/** Desktop side panel next to the glowing core. */
+function SidePanel() {
+  const stats = [
+    { value: `${PARTNERS.length}+`, label: "Partners" },
+    { value: "Universities", label: "& Institutes" },
+    { value: "Enterprises", label: "& Startups" },
+  ];
   return (
-    <>
-      <style>{`
-        @keyframes ${animKey}-L {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes ${animKey}-R {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
-        }
-        .anim-${animKey} {
-          animation: ${direction === "left" ? `${animKey}-L` : `${animKey}-R`} ${speedSeconds}s linear infinite;
-        }
-        .anim-${animKey}:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
+    <div className="relative">
+      {/* soft glow so the panel balances the core on the left */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-6 -z-10 rounded-[32px] bg-[radial-gradient(ellipse_at_30%_20%,rgba(29,78,216,0.22),transparent_70%)] blur-xl"
+      />
+      <div className="rounded-2xl border border-white/10 bg-linear-to-br from-white/[0.06] to-white/[0.015] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md xl:p-7">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#38bdf8]/30 bg-[#1d4ed8]/15 px-3 py-1">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#38bdf8] shadow-[0_0_6px_#38bdf8]" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7dd3fc]">
+            Partner Network
+          </span>
+        </div>
 
-      <div className="relative overflow-hidden w-full py-2">
-        <div className={`anim-${animKey} flex gap-4 sm:gap-6 w-max will-change-transform`}>
-          {looped.map((partner, idx) => (
-            <div
-              key={`${partner.name}-${idx}`}
-              className="group relative shrink-0 h-17 sm:h-20 w-35 xs:w-[155px] sm:w-46.25 rounded-2xl
-                bg-slate-900/50 backdrop-blur-xl border border-white/12 hover:border-[#38bdf8]/50
-                flex items-center justify-center px-4 sm:px-6 overflow-hidden
-                shadow-[0_8px_30px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)]
-                transition-all duration-300 hover:scale-103 hover:bg-slate-900/80 cursor-default"
-            >
-              {/* Subtle inner hover glow */}
-              <div className="absolute inset-0 bg-linear-to-r from-transparent via-[#38bdf8]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        <Subtitle className="text-base xl:text-lg" />
 
-              <Image
-                src={partner.logoSrc}
-                alt={partner.name}
-                width={Math.round(40 * partner.ratio)}
-                height={40}
-                style={{ height: `${(40 * logoHeight(partner.ratio)) / 100}px` }}
-                className="max-w-full w-auto object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(56,189,248,0.7)] pointer-events-none"
-                draggable={false}
-              />
+        {/* stats only where there's room above the connector line (≥1400px) */}
+        <div className="mt-5 hidden grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-4 min-[1400px]:grid">
+          {stats.map((s) => (
+            <div key={s.label} className="px-3 first:pl-0 last:pr-0">
+              <p className="text-sm font-semibold text-white xl:text-base">
+                {s.value}
+              </p>
+              <p className="mt-0.5 text-[11px] text-white/45">{s.label}</p>
             </div>
           ))}
         </div>
       </div>
-    </>
+    </div>
+  );
+}
+
+function Heading({ className = "" }: { className?: string }) {
+  return (
+    <ZoomHeading
+      className={`font-sans font-medium text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight ${className}`}
+    >
+      Trusted by{" "}
+      <span className="whitespace-nowrap">Forward-Thinking</span>{" "}
+      <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8]">
+        Organisations
+      </span>
+    </ZoomHeading>
   );
 }
 
 export function PartnerLogos() {
   return (
-    <section className="relative w-full bg-[#020B25] py-16 sm:py-20 md:py-24 overflow-hidden select-none">
-      {/* Background ambient lighting */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-175 sm:w-225 h-87.5 bg-linear-to-r from-[#1d4ed8]/10 via-[#38bdf8]/10 to-[#1d4ed8]/10 blur-[130px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center mb-8 sm:mb-12">
-        {/* Eyebrow Pill */}
-        <p className="mb-3 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
-          Join Our Growing Ecosystem
-        </p>
-
-        {/* Section Heading */}
-        <ZoomHeading className="font-sans font-medium text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
-          Trusted by Forward-Thinking{" "}
-          <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8]">
-            Organisations
-          </span>
-        </ZoomHeading>
-
-        {/* Subtitle */}
-        <p className="mt-4 max-w-xl text-slate-400 text-sm font-normal leading-relaxed px-2">
-          From premier universities and vocational hubs to rapid-scaling corporate enterprises, our network creates unfair revenue and hiring advantages.
-        </p>
-      </div>
-
-      {/* Marquee Container with edge fading masks */}
-      <div className="relative w-full overflow-hidden flex flex-col gap-3 sm:gap-4">
-        {/* Left & Right gradient fade masks */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-36 md:w-56 z-20 bg-linear-to-r from-[#020B25] via-[#020B25]/90 to-transparent"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-36 md:w-56 z-20 bg-linear-to-l from-[#020B25] via-[#020B25]/90 to-transparent"
-        />
-
-        {/* Row 1: Scrolling Left */}
-        <MarqueeRow items={ROW_A} direction="left" speedSeconds={60} />
-
-        {/* Row 2: Scrolling Right */}
-        <MarqueeRow items={ROW_B} direction="right" speedSeconds={70} />
-      </div>
-    </section>
+    <PartnerNetwork
+      ariaLabel="Our partner and hiring network"
+      className="bg-[#020B25]"
+      /* Desktop stage: eyebrow + heading top-left (clear of the core) */
+      heading={
+        <div className="absolute left-0 top-[8.7%] z-3 max-w-[37%]">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
+            {EYEBROW}
+          </p>
+          <Heading />
+        </div>
+      }
+      /* Desktop stage: subtitle to the right of the core */
+      aside={<SidePanel />}
+      /* Phones & tablets: centred intro above the logo grid */
+      compactIntro={
+        <>
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8] sm:text-[11px]">
+            {EYEBROW}
+          </p>
+          <Heading />
+          <Subtitle className="mx-auto mt-4 max-w-xl px-2 text-sm" />
+        </>
+      }
+    />
   );
 }

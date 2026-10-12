@@ -4,7 +4,6 @@ import { CareerCta } from "./CareerCta";
 import { Curriculum } from "./Curriculum";
 
 import { Hero } from "./Hero";
-import { PartnerNetwork } from "./PartnerNetwork";
 import { WhoThisIsFor } from "./WhoThisIsFor";
 
 export function HomeSections() {
@@ -13,7 +12,6 @@ export function HomeSections() {
       <DarkAtmosphere>
         <Hero />
         <Curriculum />
-        <PartnerNetwork />
       </DarkAtmosphere>
       <WhoThisIsFor />
       <CareerCta />

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { partner, partnerSlots } from "@/content/site";
 import { PartnerLines } from "./PartnerLines";
 import { PartnerStage } from "./PartnerStage";
@@ -5,25 +6,51 @@ import { PartnerNetworkCompact } from "./PartnerNetworkCompact";
 import { logoHeight } from "@/app/content/partners";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
-export function PartnerNetwork() {
+/**
+ * Partner Network: logos burst out of a glowing core and settle into a grid,
+ * scrubbed by a pinned scroll stage (desktop) / a rising grid (< 1024px).
+ *
+ * The text is swappable so other pages can reuse the logo animation with
+ * their own copy (e.g. the Partner page's "Trusted by…" section):
+ *  - `heading`: top-left of the stage (default: the Individuals title)
+ *  - `aside`:   right of the core (default: the "Hiring Network" side copy)
+ *  - `compactIntro`: text above the grid on phones/tablets
+ */
+export function PartnerNetwork({
+  heading,
+  aside,
+  compactIntro,
+  ariaLabel = "Partner Network",
+  className = "",
+}: {
+  heading?: ReactNode;
+  aside?: ReactNode;
+  compactIntro?: ReactNode;
+  ariaLabel?: string;
+  className?: string;
+} = {}) {
   return (
-    <section className="section partner" aria-label="Partner Network">
+    <section className={`section partner ${className}`} aria-label={ariaLabel}>
       {/* Phones & tablets: flowing layout, no pinned stage */}
       <div className="lg:hidden">
-        <PartnerNetworkCompact />
+        <PartnerNetworkCompact intro={compactIntro} />
       </div>
 
       {/* Desktop: the pinned, percentage-positioned stage */}
       <div className="hidden h-full lg:block">
       <PartnerStage>
-        <ZoomHeading className="partner__title type-h2" id="partner-heading">
-          {partner.title.map((line) => (
-            <span key={line}>{line}</span>
-          ))}
-        </ZoomHeading>
+        {heading ?? (
+          <ZoomHeading className="partner__title type-h2" id="partner-heading">
+            {partner.title.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </ZoomHeading>
+        )}
 
         {/* Right side text */}
         <div className="absolute top-[8.7%] md:left-[55%] left-[8.47%] max-md:top-[25%] z-3 max-w-lg pr-4 md:pr-8">
+          {aside ?? (
+          <>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md px-3.5 py-1 shadow-[0_0_16px_rgba(56,189,248,0.15)] mb-3">
             <span className="h-1.5 w-1.5 rounded-full bg-[#38bdf8] animate-pulse shadow-[0_0_6px_#38bdf8]" />
             <span className="type-eyebrow text-[#38bdf8]">
@@ -36,6 +63,8 @@ export function PartnerNetwork() {
           <p className="type-body text-white/70 text-justify hyphens-auto">
             {partner.sideBody}
           </p>
+          </>
+          )}
         </div>
 
         <PartnerLines />
