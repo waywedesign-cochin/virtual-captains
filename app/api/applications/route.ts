@@ -169,6 +169,13 @@ export async function POST(req: Request) {
   }
 
   const isCall = type === "call";
+  // Book a Call → CALL_TO_EMAIL; eligibility / waitlist → PROGRAMS_TO_EMAIL.
+  // Either falls back to APPLICATIONS_TO_EMAIL when not set.
+  const teamTo =
+    process.env[isCall ? "CALL_TO_EMAIL" : "PROGRAMS_TO_EMAIL"]
+      ?.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean) || to;
   const label =
     type === "eligibility"
       ? "Application"
@@ -181,7 +188,7 @@ export async function POST(req: Request) {
   try {
     const { error } = await resend.emails.send({
       from,
-      to,
+      to: teamTo,
       replyTo: email,
       subject: `New ${label}: ${isCall ? "" : `${heading} – `}${firstName} ${lastName}`,
       html: layout(
@@ -240,7 +247,7 @@ export async function POST(req: Request) {
     await resend.emails.send({
       from,
       to: email,
-      replyTo: to[0],
+      replyTo: teamTo[0],
       subject: isCall
         ? "We've received your call request"
         : isApplication
