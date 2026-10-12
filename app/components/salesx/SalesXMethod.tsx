@@ -192,7 +192,7 @@ export default function SalesXMethod() {
           start: "top top",
           end: "+=1300",
           pin: stageRef.current,
-          scrub: 0.5,
+          scrub: 0.8,
           anticipatePin: 1,
           onUpdate: (self) => {
             const p = self.progress;

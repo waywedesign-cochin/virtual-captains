@@ -159,7 +159,7 @@ export default function SalesXHero() {
             start: "top top",
             end: () => "+=" + window.innerHeight * 2.2,
             pin: true,
-            scrub: 0.5,
+            scrub: 0.8,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },

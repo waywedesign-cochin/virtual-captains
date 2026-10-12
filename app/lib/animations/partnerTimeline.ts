@@ -62,7 +62,7 @@ export function buildPartnerTimeline(scope: HTMLElement): void {
           trigger: section,
           start: "top top",
           end: "+=120%",
-          scrub: 0.5,
+          scrub: 1,
           pin: true,
           pinSpacing: true,
           anticipatePin: 1,

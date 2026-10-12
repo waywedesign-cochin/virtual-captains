@@ -70,7 +70,7 @@ export function CareerCta() {
               end: "+=200%",
               pin: true,
               pinSpacing: true,
-              scrub: 0.5,
+              scrub: 1,
             },
           });
 

@@ -258,7 +258,7 @@ export default function SalesXAudience() {
           start: "top top",
           end: "+=4200",
           pin: stageRef.current,
-          scrub: 0.5,
+          scrub: 0.8,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => update(self.progress),
