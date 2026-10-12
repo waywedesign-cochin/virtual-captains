@@ -1,12 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { audienceSlides, whoThisIsFor } from "@/content/site";
 import { gsap, useGSAP, ScrollTrigger } from "@/lib/animations/gsap";
 import { useHeadingZoom } from "@/components/about/useHeadingZoom";
 
 export function WhoThisIsFor() {
+  // The wave video sits mid-page: only fetch it once the section is near
+  const [loadVideo, setLoadVideo] = useState(false);
+  const watchVideo = (video: HTMLVideoElement | null) => {
+    if (!video || loadVideo) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoadVideo(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "400px 0px" },
+    );
+    io.observe(video);
+    return () => io.disconnect();
+  };
   const containerRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
   const copyContainerRef = useRef<HTMLDivElement>(null);
@@ -209,12 +225,13 @@ export function WhoThisIsFor() {
               }
             >
               <video
-                src="/inidividuals/1212.mp4"
+                ref={watchVideo}
+                src={loadVideo ? "/inidividuals/1212.mp4" : undefined}
                 autoPlay
                 loop
                 muted
                 playsInline
-                preload="auto"
+                preload={loadVideo ? "auto" : "none"}
                 disablePictureInPicture
                 aria-hidden="true"
                 tabIndex={-1}

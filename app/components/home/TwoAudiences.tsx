@@ -407,8 +407,13 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
               <div className="pointer-events-none absolute top-1/2 -translate-y-1/2 -right-6 pin-xl:-right-2 w-[140%] pin-xl:w-[150%] h-[135%] pin-xl:h-[145%] flex items-center justify-end">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/home/Vector1.png"
-                  alt="Wedge background"
+                  // WebP (was a 1.1 MB PNG). lazy: phones hide this wedge, and
+                  // a lazy image inside a hidden block is never downloaded
+                  src="/home/Vector1.webp"
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-auto max-w-none object-contain opacity-35 mix-blend-screen select-none"
                 />
               </div>
