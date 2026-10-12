@@ -121,12 +121,16 @@ export const newsBySlugQuery = groq`
 
 // --- Fetch helpers -----------------------------------------------------
 
+// Re-checked at most every 60s, so a post published in the Studio shows up
+// on the live site within about a minute (no redeploy needed)
+const NEWS_FETCH = { next: { revalidate: 60, tags: ["newsPost"] } };
+
 export async function getAllNews(): Promise<NewsPost[]> {
-  return client.fetch(allNewsQuery);
+  return client.fetch(allNewsQuery, {}, NEWS_FETCH);
 }
 
 export async function getNewsBySlug(slug: string): Promise<NewsPost | null> {
-  return client.fetch(newsBySlugQuery, { slug });
+  return client.fetch(newsBySlugQuery, { slug }, NEWS_FETCH);
 }
 
 // ── YouTube videos (About page "Recent & Upcoming Videos") ──
