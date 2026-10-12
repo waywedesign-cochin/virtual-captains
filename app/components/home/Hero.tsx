@@ -53,15 +53,16 @@ export default function Hero() {
       if (prefersReducedMotion) return;
 
       // ---------- REPEATING TORCH COLOR SYSTEM ----------
-      // Smooth continuous chromatic cycle: Yellow -> Orange -> Red -> Violet -> Blue -> Cyan -> Lime -> Yellow
+      // Smooth chromatic cycle: Yellow -> Orange -> Lime -> Cyan -> Blue -> Violet, then back
+      // No red: ordered so neighbouring colours never blend through red/pink,
+      // and the cycle plays forward then back (violet returns via blue).
       const TORCH_PALETTE = [
         { r: 255, g: 214, b: 10 }, // Radiant Golden Yellow (#ffd60a)
         { r: 255, g: 120, b: 18 }, // Sunset Orange (#ff7812)
-        { r: 255, g: 42, b: 68 }, // Electric Coral Red (#ff2a44)
-        { r: 218, g: 60, b: 240 }, // Neon Magenta / Violet (#da3cf0)
-        { r: 42, g: 130, b: 255 }, // Electric Royal Blue (#2a82ff)
-        { r: 0, g: 228, b: 255 }, // Vivid Cyan (#00e4ff)
         { r: 175, g: 255, b: 35 }, // Electric Lime (#afff23)
+        { r: 0, g: 228, b: 255 }, // Vivid Cyan (#00e4ff)
+        { r: 42, g: 130, b: 255 }, // Electric Royal Blue (#2a82ff)
+        { r: 218, g: 60, b: 240 }, // Neon Magenta / Violet (#da3cf0)
       ];
 
       const currentColor = { ...TORCH_PALETTE[0] };
@@ -90,9 +91,8 @@ export default function Hero() {
 
       updateTorchStyles();
 
-      const colorTl = gsap.timeline({ repeat: -1 });
-      TORCH_PALETTE.forEach((_, i) => {
-        const next = TORCH_PALETTE[(i + 1) % TORCH_PALETTE.length];
+      const colorTl = gsap.timeline({ repeat: -1, yoyo: true });
+      TORCH_PALETTE.slice(1).forEach((next) => {
         colorTl.to(currentColor, {
           r: next.r,
           g: next.g,

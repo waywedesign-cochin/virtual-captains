@@ -42,7 +42,7 @@ export function FaqSection({
         eyebrow: "border-[#1d4ed8]/20 bg-[#1d4ed8]/8 text-[#1d4ed8]",
         dot: "bg-[#2563eb]",
         title: "text-[#0b1530]",
-        card: "border-white/70 bg-white/70 shadow-[0_10px_30px_-12px_rgba(15,40,110,0.18)]",
+        card: "border-white/70 bg-white/70 shadow-[0_10px_30px_-12px_rgba(15,40,110,0.18)] hover:border-[#2563eb]/45 hover:bg-white hover:shadow-[0_0_0_1px_rgba(37,99,235,0.18),0_14px_34px_-14px_rgba(37,99,235,0.4)]",
         cardOpen: "border-[#2563eb]/25 bg-white shadow-[0_18px_40px_-14px_rgba(29,78,216,0.28)]",
         num: "text-[#0b1530]/55",
         numOpen: "text-[#1d4ed8]",
@@ -50,14 +50,14 @@ export function FaqSection({
         q: "text-[#0b1530]",
         a: "text-[#0b1530]/65",
         answerBox: "bg-[#f1f5ff]",
-        btn: "border-[#0b1530]/10 bg-white text-[#1d4ed8]",
+        btn: "border-[#0b1530]/10 bg-white text-[#1d4ed8] group-hover:border-[#2563eb]/50 group-hover:bg-[#eef3ff]",
         btnOpen: "bg-linear-to-br from-[#1d4ed8] to-[#2563eb] text-white shadow-[0_6px_18px_-4px_rgba(37,99,235,0.6)]",
       }
     : {
         eyebrow: "border-[#38bdf8]/30 bg-[#1d4ed8]/15 text-[#7dd3fc]",
         dot: "bg-[#38bdf8] shadow-[0_0_6px_#38bdf8]",
         title: "text-white",
-        card: "border-white/10 bg-white/[0.04]",
+        card: "border-white/10 bg-white/[0.04] hover:border-[#38bdf8]/55 hover:bg-white/[0.06] hover:shadow-[0_0_0_1px_rgba(56,189,248,0.2),0_14px_34px_-14px_rgba(56,189,248,0.5)]",
         cardOpen: "border-[#38bdf8]/35 bg-white/[0.07] shadow-[0_20px_45px_-20px_rgba(29,78,216,0.55)]",
         num: "text-white/45",
         numOpen: "text-[#38bdf8]",
@@ -65,7 +65,7 @@ export function FaqSection({
         q: "text-white",
         a: "text-white/65",
         answerBox: "bg-white/[0.04]",
-        btn: "border-white/15 bg-white/5 text-white",
+        btn: "border-white/15 bg-white/5 text-white group-hover:border-[#38bdf8]/60 group-hover:text-[#7dd3fc]",
         btnOpen: "bg-linear-to-br from-[#1d4ed8] to-[#38bdf8] text-white shadow-[0_6px_18px_-4px_rgba(56,189,248,0.6)]",
       };
 
@@ -105,7 +105,7 @@ export function FaqSection({
             return (
               <li
                 key={it.q}
-                className={`rounded-2xl border backdrop-blur-md transition-all duration-300 ${isOpen ? t.cardOpen : t.card}`}
+                className={`group rounded-2xl border backdrop-blur-md transition-all duration-300 ${isOpen ? t.cardOpen : t.card}`}
               >
                 <h3>
                   <button
