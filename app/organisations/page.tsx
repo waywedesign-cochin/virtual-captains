@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FaqSection } from "../components/common/FaqSection";
 import { pageMetadata } from "@/lib/seo";
 import Navbar from "../components/home/Navbar";
 import OrgHero from "../components/organisations/OrgHero";
@@ -21,6 +22,8 @@ export default function OrganisationsPage() {
         <OrgHero />
         <GroomStudio />
         <OrgCTA />
+        {/* FAQ (Organisations questions), light version for this white page */}
+        <FaqSection group="organisations" tone="light" />
         {/* Home-page footer, white → blue to flow out of this light page */}
         <SiteFooter showCTA={false} theme="white-blue" />
       </main>
