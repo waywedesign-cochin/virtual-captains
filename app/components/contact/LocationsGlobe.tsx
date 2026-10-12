@@ -98,7 +98,7 @@ export default function LocationsGlobe() {
         </div>
 
         {/* Office cards — each carries its own compact map window */}
-        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
+        <div className="mt-12 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {offices.map((office, i) => (
             <div
               key={office.id}

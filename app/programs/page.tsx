@@ -242,9 +242,9 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     room: "Founder",
-    result: "10 first customers",
+    result: "Pipeline built",
     quote:
-      "I had a great product and no pipeline. Within a month I had my first ten customers.",
+      "I had a great product and no pipeline. Within a month I'd built a pipeline of potential customers.",
     name: "Neha S.",
     detail: "Founder · Early-stage startup",
   },

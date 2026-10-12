@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -38,6 +38,61 @@ const keepMuted = (v: HTMLVideoElement | null) => {
 const onVolumeChange = (e: React.SyntheticEvent<HTMLVideoElement>) => {
   if (!e.currentTarget.muted) e.currentTarget.muted = true;
 };
+
+// True once the page (HTML, images, scripts) has finished loading
+const subscribeLoad = (cb: () => void) => {
+  window.addEventListener("load", cb);
+  return () => window.removeEventListener("load", cb);
+};
+const pageLoaded = () => document.readyState === "complete";
+
+/**
+ * Hero background video that only downloads when it's actually shown:
+ *  - the file is attached only if `media` matches, so a phone never fetches
+ *    the desktop video (and vice versa) — CSS-hidden videos still download;
+ *  - it waits for the page's `load` event, so the video doesn't compete with
+ *    the page's own text, images and scripts;
+ *  - `poster` (a still frame) shows instantly until the video is ready.
+ */
+function HeroVideo({
+  src,
+  poster,
+  media,
+  className,
+}: {
+  src: string;
+  poster: string;
+  media: string;
+  className: string;
+}) {
+  const matches = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia(media);
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => window.matchMedia(media).matches,
+    () => false,
+  );
+  const loaded = useSyncExternalStore(subscribeLoad, pageLoaded, () => false);
+  const active = matches && loaded;
+
+  return (
+    <video
+      src={active ? src : undefined}
+      poster={poster}
+      autoPlay
+      loop
+      muted
+      ref={keepMuted}
+      onVolumeChange={onVolumeChange}
+      playsInline
+      preload={active ? "auto" : "none"}
+      aria-hidden="true"
+      className={className}
+    />
+  );
+}
 
 export default function SalesXHero() {
   const [selectedBrand, setSelectedBrand] = useState<"salesx" | "captains">("salesx");
@@ -137,14 +192,10 @@ export default function SalesXHero() {
 
       {/* ── Layer 1: video (fades to transparent as the image rises) ── */}
       <div ref={videoLayerRef} className="absolute inset-0 will-change-[opacity,transform] max-lg:hidden">
-        <video
+        <HeroVideo
           src="/salesx/m.mp4"
-          autoPlay
-          loop
-          muted
-          ref={keepMuted}
-          onVolumeChange={onVolumeChange}
-          playsInline
+          poster="/salesx/hero-poster.webp"
+          media="(min-width: 1024px)"
           className="absolute inset-0 h-full w-full object-cover object-bottom pointer-events-none"
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_45%,rgba(2,5,20,0.55)_100%)] pointer-events-none" />
@@ -153,15 +204,10 @@ export default function SalesXHero() {
       {/* ── Phones & tablets: portrait video fills the first screen, then the
           stacked image + copy follow. (Desktop uses the landscape video above.) */}
       <div className="relative -mb-16 h-svh w-full shrink-0 overflow-hidden lg:hidden">
-        <video
+        <HeroVideo
           src="/salesx/hero-mobile.mp4"
-          autoPlay
-          loop
-          muted
-          ref={keepMuted}
-          onVolumeChange={onVolumeChange}
-          playsInline
-          preload="auto"
+          poster="/salesx/hero-mobile-poster.webp"
+          media="(max-width: 1023px)"
           className="absolute inset-0 h-full w-full object-cover pointer-events-none"
         />
         <div className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-b from-transparent via-[#030614]/70 to-[#030614] pointer-events-none" />
