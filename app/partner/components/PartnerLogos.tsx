@@ -1,6 +1,5 @@
 "use client";
 
-import ZoomHeading from "@/components/common/ZoomHeading";
 import { PartnerNetwork } from "@/components/indivuduals/main/PartnerNetwork";
 import { PARTNERS } from "@/app/content/partners";
 
@@ -70,7 +69,9 @@ function SidePanel() {
 
 function Heading({ className = "" }: { className?: string }) {
   return (
-    <ZoomHeading
+    // Plain heading (no scroll zoom): it must be the first thing visible in
+    // the section, before the logo ring and the side panel
+    <h2
       className={`font-sans font-medium text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight ${className}`}
     >
       Trusted by{" "}
@@ -78,7 +79,7 @@ function Heading({ className = "" }: { className?: string }) {
       <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-[#7dd3fc] to-[#38bdf8]">
         Organisations
       </span>
-    </ZoomHeading>
+    </h2>
   );
 }
 
@@ -86,7 +87,9 @@ export function PartnerLogos() {
   return (
     <PartnerNetwork
       ariaLabel="Our partner and hiring network"
-      className="bg-[#020B25]"
+      // navy, then fades into the footer's near-black (#040507) at the
+      // bottom so the section hands over to the footer with no hard edge
+      className="bg-[linear-gradient(to_bottom,#020B25_0%,#020B25_72%,#040507_100%)]"
       /* Desktop stage: eyebrow + heading top-left (clear of the core) */
       heading={
         <div className="absolute left-0 top-[8.7%] z-3 max-w-[37%]">
