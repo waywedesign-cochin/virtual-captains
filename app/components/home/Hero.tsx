@@ -40,6 +40,7 @@ export default function Hero() {
   const dotsRef = useRef<HTMLDivElement>(null);
   const dotsGlowRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLHeadingElement>(null);
+  const accentRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -47,14 +48,9 @@ export default function Hero() {
     ).matches;
 
     const ctx = gsap.context(() => {
-      if (prefersReducedMotion) {
-        gsap.set(".hero-word-base, .hero-word-highlight, .hero-cta-pill", {
-          opacity: 1,
-          y: 0,
-          clearProps: "all",
-        });
-        return;
-      }
+      // The word/button intro is pure CSS (globals.css, "Home hero intro"),
+      // so the headline paints immediately instead of waiting for JS.
+      if (prefersReducedMotion) return;
 
       // ---------- REPEATING TORCH COLOR SYSTEM ----------
       // Smooth continuous chromatic cycle: Yellow -> Orange -> Red -> Violet -> Blue -> Cyan -> Lime -> Yellow
@@ -71,21 +67,25 @@ export default function Hero() {
       const currentColor = { ...TORCH_PALETTE[0] };
       const hero = heroRef.current;
 
+      // Set the colours only on the two elements that use them (the accent
+      // word + the hover highlight layer). Setting them on the whole hero made
+      // the browser restyle everything inside it ~60 times a second.
+      const torchTargets = [accentRef.current, highlightRef.current].filter(
+        (el): el is HTMLSpanElement | HTMLHeadingElement => Boolean(el),
+      );
       const updateTorchStyles = () => {
-        if (!hero) return;
         const r = Math.round(currentColor.r);
         const g = Math.round(currentColor.g);
         const b = Math.round(currentColor.b);
-
-        hero.style.setProperty("--torch-color", `rgb(${r}, ${g}, ${b})`);
-        hero.style.setProperty("--torch-core", `rgba(${r}, ${g}, ${b}, 0.38)`);
-        hero.style.setProperty("--torch-mid", `rgba(${r}, ${g}, ${b}, 0.18)`);
-        hero.style.setProperty("--torch-dim", `rgba(${r}, ${g}, ${b}, 0.04)`);
-        hero.style.setProperty("--torch-glow", `rgba(${r}, ${g}, ${b}, 0.65)`);
-        hero.style.setProperty(
-          "--torch-glow-soft",
-          `rgba(${r}, ${g}, ${b}, 0.32)`,
-        );
+        for (const el of torchTargets) {
+          el.style.setProperty("--torch-color", `rgb(${r}, ${g}, ${b})`);
+          el.style.setProperty("--torch-core", `rgba(${r}, ${g}, ${b}, 0.38)`);
+          el.style.setProperty("--torch-glow", `rgba(${r}, ${g}, ${b}, 0.65)`);
+          el.style.setProperty(
+            "--torch-glow-soft",
+            `rgba(${r}, ${g}, ${b}, 0.32)`,
+          );
+        }
       };
 
       updateTorchStyles();
@@ -103,35 +103,14 @@ export default function Hero() {
         });
       });
 
-      // ---------- INTRO TIMELINE ----------
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      tl.from(
-        ".hero-word-base, .hero-word-highlight",
-        {
-          opacity: 0,
-          y: 36,
-          rotateX: 25,
-          transformOrigin: "50% 100%",
-          stagger: 0.045,
-          duration: 1.1,
-          ease: "expo.out",
-          clearProps: "all",
-        },
-        "+=0.1",
-      ).from(
-        ".hero-cta-pill",
-        {
-          opacity: 0,
-          y: 22,
-          scale: 0.85,
-          stagger: 0.14,
-          duration: 0.9,
-          ease: "back.out(1.6)",
-          clearProps: "all",
-        },
-        "-=0.5",
-      );
+      // Don't cycle colours while the hero is scrolled out of view
+      const torchObserver = hero
+        ? new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) colorTl.play();
+            else colorTl.pause();
+          })
+        : null;
+      if (hero && torchObserver) torchObserver.observe(hero);
 
       // ---------- CURSOR TRACKING & SPOTLIGHT ----------
       const highlightLayer = highlightRef.current;
@@ -182,9 +161,26 @@ export default function Hero() {
           onUpdate: applyDotGlow,
         });
 
-        // Keep the mask glued to the grid while the parallax settles.
+        // Keep the mask glued to the grid while the parallax settles — only
+        // while the mouse is over the hero (and briefly after it leaves), so
+        // touch devices never run it.
         const dotGlowTicker = () => applyDotGlow();
-        gsap.ticker.add(dotGlowTicker);
+        let tickerOn = false;
+        let tickerOff: gsap.core.Tween | null = null;
+        const startTicker = () => {
+          tickerOff?.kill();
+          if (!tickerOn) {
+            gsap.ticker.add(dotGlowTicker);
+            tickerOn = true;
+          }
+        };
+        const stopTickerSoon = () => {
+          tickerOff?.kill();
+          tickerOff = gsap.delayedCall(1.8, () => {
+            gsap.ticker.remove(dotGlowTicker);
+            tickerOn = false;
+          });
+        };
         applyDotGlow();
 
         // Spotlight setup for central text reveal — only activates when hovering near/on text
@@ -222,6 +218,7 @@ export default function Hero() {
         }
 
         const handleEnter = (e: MouseEvent) => {
+          startTicker();
           const r = hero.getBoundingClientRect();
           const cx = e.clientX - r.left;
           const cy = e.clientY - r.top;
@@ -236,6 +233,7 @@ export default function Hero() {
         };
 
         const handleMove = (e: MouseEvent) => {
+          startTicker();
           const r = hero.getBoundingClientRect();
           const cx = e.clientX - r.left;
           const cy = e.clientY - r.top;
@@ -271,6 +269,7 @@ export default function Hero() {
         };
 
         const handleLeave = () => {
+          stopTickerSoon();
           dotsX(0);
           dotsY(0);
           dotGlowOpacity(0);
@@ -286,6 +285,8 @@ export default function Hero() {
         // (Removed scroll-driven exit parallax curtain effect)
 
         return () => {
+          tickerOff?.kill();
+          torchObserver?.disconnect();
           gsap.ticker.remove(dotGlowTicker);
           hero.removeEventListener("mouseenter", handleEnter);
           hero.removeEventListener("mousemove", handleMove);
@@ -357,12 +358,18 @@ export default function Hero() {
           {/* MAIN TEXT */}
           <h1 className="max-w-5xl font-sans text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none px-4 py-2 -mx-4 -my-2">
             <span className="hero-line block px-2 -mx-2 py-0.5">
-              <span className="hero-word-base inline-block">Turn</span>{" "}
-              <span className="hero-word-base inline-block">Sales</span>
+              <span className="hero-word-base inline-block" data-i="0">
+                Turn
+              </span>{" "}
+              <span className="hero-word-base inline-block" data-i="1">
+                Sales
+              </span>
             </span>
             <span className="hero-line block px-2 -mx-2 py-0.5">
               <span
+                ref={accentRef}
                 className="hero-word-base hero-accent-base inline-block text-[#8fd0ff] italic px-2 -mx-2"
+                data-i="2"
                 style={{
                   textShadow:
                     "0 0 20px var(--torch-glow-soft, rgba(143,208,255,0.45))",
@@ -370,11 +377,17 @@ export default function Hero() {
               >
                 Uncertainty
               </span>{" "}
-              <span className="hero-word-base inline-block">Into</span>
+              <span className="hero-word-base inline-block" data-i="3">
+                Into
+              </span>
             </span>
             <span className="hero-line block px-2 -mx-2 py-0.5">
-              <span className="hero-word-base inline-block">Sales</span>{" "}
-              <span className="hero-word-base inline-block">Readiness</span>
+              <span className="hero-word-base inline-block" data-i="4">
+                Sales
+              </span>{" "}
+              <span className="hero-word-base inline-block" data-i="5">
+                Readiness
+              </span>
             </span>
           </h1>
 
@@ -395,12 +408,17 @@ export default function Hero() {
             }}
           >
             <span className="hero-line block px-2 -mx-2 py-0.5">
-              <span className="hero-word-highlight inline-block">Turn</span>{" "}
-              <span className="hero-word-highlight inline-block">Sales</span>
+              <span className="hero-word-highlight inline-block" data-i="0">
+                Turn
+              </span>{" "}
+              <span className="hero-word-highlight inline-block" data-i="1">
+                Sales
+              </span>
             </span>
             <span className="hero-line block px-2 -mx-2 py-0.5">
               <span
                 className="hero-word-highlight hero-accent-highlight inline-block italic px-2 -mx-2 transition-colors duration-200"
+                data-i="2"
                 style={{
                   color: "var(--torch-color, #ffd60a)",
                   textShadow:
@@ -409,11 +427,15 @@ export default function Hero() {
               >
                 Uncertainty
               </span>{" "}
-              <span className="hero-word-highlight inline-block">Into</span>
+              <span className="hero-word-highlight inline-block" data-i="3">
+                Into
+              </span>
             </span>
             <span className="hero-line block px-2 -mx-2 py-0.5">
-              <span className="hero-word-highlight inline-block">Sales</span>{" "}
-              <span className="hero-word-highlight inline-block">
+              <span className="hero-word-highlight inline-block" data-i="4">
+                Sales
+              </span>{" "}
+              <span className="hero-word-highlight inline-block" data-i="5">
                 Readiness
               </span>
             </span>
@@ -504,6 +526,7 @@ function IndividualButton() {
     <Link
       href="/individuals"
       ref={btnRef}
+      data-i="0"
       className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-3 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] cursor-pointer select-none"
     >
       <span
@@ -628,6 +651,7 @@ function OrganisationButton() {
     <Link
       href="/organisations"
       ref={btnRef}
+      data-i="1"
       className="hero-cta-pill group relative isolate inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-white/30 bg-white/3 px-5 py-3 text-[12.5px] font-medium text-white sm:px-6 sm:py-3 sm:text-[13.5px] select-none cursor-pointer"
     >
       <span
@@ -667,4 +691,3 @@ function Logo({ className }: { className?: string }) {
     />
   );
 }
-
