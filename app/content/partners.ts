@@ -46,5 +46,9 @@ export const PARTNERS: Partner[] = [
   { name: "KLBuild", logoSrc: "/network/klbuild.webp", ratio: 1.04 },
   { name: "KMEA", logoSrc: "/network/kmea.webp", ratio: 1.88 },
   { name: "SAFI Institute of Advanced Study", logoSrc: "/network/safi.webp", ratio: 5.85 },
+  { name: "H2 Productions", logoSrc: "/network/h2.webp", ratio: 1.08 },
+  { name: "Maps & Routes", logoSrc: "/network/maps-and-routes.webp", ratio: 5.34 },
+  { name: "Invokhr", logoSrc: "/network/invokhr.webp", ratio: 2.95 },
+  { name: "Ruby Investment and Development", logoSrc: "/network/ruby.webp", ratio: 3.39 },
 ];
 

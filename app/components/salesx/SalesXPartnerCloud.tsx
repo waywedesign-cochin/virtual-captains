@@ -16,7 +16,8 @@ if (typeof window !== "undefined") {
  * % of the stage so it scales with the container. The inner ring is offset by
  * half a step so its nodes fall between the outer ring's.
  */
-const INNER_COUNT = 10;
+// 29 logos → 12 inner + 17 outer keeps both rings evenly spaced
+const INNER_COUNT = 12;
 const RINGS = {
   inner: { rx: 29, ry: 26 }, // % of stage width / height
   outer: { rx: 45.5, ry: 44 },

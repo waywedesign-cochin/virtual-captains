@@ -10,7 +10,7 @@ const FOCUS_RING =
 const ARROW = `grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/25 text-white transition hover:border-white hover:bg-white hover:text-black ${FOCUS_RING}`;
 
 /**
- * Horizontal timeline: dot + year on a hairline, title and place below.
+ * Horizontal timeline: dot on a hairline, title and place below.
  * Scrolls sideways (swipe or the arrow buttons) when it doesn't fit.
  */
 export function MilestonesStrip({ milestones }: { milestones: Milestone[] }) {
@@ -41,12 +41,9 @@ export function MilestonesStrip({ milestones }: { milestones: Milestone[] }) {
           >
             <div className="flex items-center gap-3">
               <span className="h-2 w-2 shrink-0 rounded-full bg-[#38bdf8] shadow-[0_0_12px_#38bdf8]" />
-              <span className="text-base font-semibold text-white">
-                {m.year}
-              </span>
               <span className="h-px flex-1 bg-white/12" />
             </div>
-            <p className="mt-3 pl-5 text-sm leading-relaxed text-white/75">
+            <p className="mt-3 pl-5 text-base font-medium leading-relaxed text-white">
               {m.title}
               {m.place && (
                 <span className="block text-white/45">{m.place}</span>
