@@ -5,6 +5,7 @@ import {
   C,
   FONT,
   badge,
+  logoAttachment,
   cap,
   esc,
   getIp,
@@ -104,6 +105,7 @@ export async function POST(req: Request) {
     try {
       const { error } = await resend.emails.send({
         from,
+        attachments: [logoAttachment],
         to: email,
         subject: `${newCode} is your ${BRAND} verification code`,
         html: layout(
@@ -188,6 +190,7 @@ export async function POST(req: Request) {
   try {
     const { error } = await resend.emails.send({
       from,
+      attachments: [logoAttachment],
       to: teamTo,
       replyTo: email,
       subject: `New ${label}: ${isCall ? "" : `${heading} – `}${firstName} ${lastName}`,
@@ -246,6 +249,7 @@ export async function POST(req: Request) {
 
     await resend.emails.send({
       from,
+      attachments: [logoAttachment],
       to: email,
       replyTo: teamTo[0],
       subject: isCall

@@ -44,6 +44,15 @@ export async function POST(req: Request) {
     );
   }
 
+  const topicId = process.env.RESEND_PROGRAM_ANNOUNCEMENT_TOPIC_ID;
+  if (!topicId) {
+    console.error("RESEND_PROGRAM_ANNOUNCEMENT_TOPIC_ID is not set");
+    return NextResponse.json(
+      { error: "Server misconfigured" },
+      { status: 500 },
+    );
+  }
+
   try {
     const { error } = await resend.contacts.create({
       email,
@@ -53,6 +62,15 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("Resend contact error:", error);
+      return NextResponse.json({ error: "Failed" }, { status: 500 });
+    }
+
+    const { error: topicError } = await resend.contacts.topics.update({
+      email,
+      topics: [{ id: topicId, subscription: "opt_in" }],
+    });
+    if (topicError) {
+      console.error("Resend topic error:", topicError);
       return NextResponse.json({ error: "Failed" }, { status: 500 });
     }
 

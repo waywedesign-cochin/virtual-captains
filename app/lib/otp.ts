@@ -10,6 +10,7 @@ import {
   C,
   FONT,
   badge,
+  logoAttachment,
   footnote,
   heading,
   layout,
@@ -76,6 +77,7 @@ export async function sendCode(email: string, from: string) {
         ${footnote("This code expires in 10 minutes. If you didn't request it, you can ignore this email.")}
         `,
       ),
+      attachments: [logoAttachment],
     });
     if (error) throw error;
   } catch (err) {
