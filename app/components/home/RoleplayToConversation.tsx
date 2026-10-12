@@ -85,25 +85,25 @@ export default function RoleplayToConversation() {
             id: "roleplay-pin",
             trigger: sectionRef.current,
             start: "top top",
-            // ~4.5k px of scroll (was ~6.3k): the intro text keeps its pace,
-            // the audience switch below is a quick step, not a long scrub
-            end: () => "+=" + (3600 + (typeof window !== "undefined" ? window.innerHeight : 900)),
+            end: () => "+=" + (5400 + (typeof window !== "undefined" ? window.innerHeight : 900)),
             pin: true,
             anticipatePin: 1,
             scrub: 1,
-            // Organisations → Individuals is a quick (~0.5s) switch at one
-            // point in the scroll, like a slide change, instead of a crossfade
-            // smeared over thousands of pixels. Scrolling back switches back.
             onUpdate: (self) => {
-              const audiences = twoAudiencesRef.current;
-              if (!audiences) return;
-              const tl = self.animation as gsap.core.Timeline | undefined;
-              const roomStart =
-                tl && tl.duration() ? (tl.labels.audiences ?? 0) / tl.duration() : 0.6;
-              // switch a little before the middle of the audiences stretch,
-              // so each audience gets a similar dwell
-              const switchAt = roomStart + (1 - roomStart) * 0.42;
-              audiences.showAudience(self.progress >= switchAt ? "individuals" : "orgs");
+              if (twoAudiencesRef.current) {
+                if (self.progress > 0.48 && self.progress <= 0.86) {
+                  const nestedProgress = gsap.utils.normalize(
+                    0.48,
+                    0.86,
+                    self.progress,
+                  );
+                  twoAudiencesRef.current.jumpToProgress(nestedProgress);
+                } else if (self.progress > 0.86) {
+                  twoAudiencesRef.current.jumpToProgress(1);
+                } else {
+                  twoAudiencesRef.current.jumpToProgress(0);
+                }
+              }
             },
           },
         });
@@ -155,9 +155,8 @@ export default function RoleplayToConversation() {
           );
         }
 
-        // 5. Dwell on the audiences: Organisations, then (switch) Individuals
-        masterTl.addLabel("audiences");
-        masterTl.to({}, { duration: 2.2 });
+        // 5. Give TwoAudiences room to scroll/scrub
+        masterTl.to({}, { duration: 3.2 });
       });
 
       /*
