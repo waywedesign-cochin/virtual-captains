@@ -3,6 +3,7 @@
 // from a client component (it reads the Resend API key).
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { LOGO_PNG_BASE64 } from "./email-logo";
 
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -112,10 +113,16 @@ export const tooMany = () =>
 
 // ---- Email theme (blue + black) ----
 export const BRAND = "Virtual Captains";
-const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://your-domain.com"
-).replace(/\/$/, "");
-const LOGO_URL = `${SITE_URL}/home/logo.png`;
+// The logo travels with the email as an inline attachment (cid:) instead of a
+// remote URL, so it renders even when the client blocks remote images or the
+// site URL isn't set. Add `logoAttachment` to every email that uses `layout`.
+const LOGO_CID = "vc-logo";
+export const logoAttachment = {
+  filename: "logo.png",
+  content: Buffer.from(LOGO_PNG_BASE64, "base64"),
+  contentType: "image/png",
+  contentId: LOGO_CID,
+};
 export const C = {
   pageBg: "#05070d",
   cardBg: "#0b1020",
@@ -150,7 +157,7 @@ export const layout = (preheader: string, title: string, content: string) => `
           <!-- Header -->
           <tr>
             <td align="center" style="padding:0 0 20px 0;text-align:center;font-family:${FONT};font-size:13px;font-weight:700;color:${C.blue};">
-              <img src="${LOGO_URL}" alt="${esc(BRAND)}" width="140" style="display:block;margin:0 auto;width:140px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;" />
+              <img src="cid:${LOGO_CID}" alt="${esc(BRAND)}" width="140" style="display:block;margin:0 auto;width:140px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;" />
             </td>
           </tr>
           <!-- Card -->
@@ -256,7 +263,12 @@ export async function sendLeadEmails({
   confirmation?: { to: string; subject: string; html: string };
 }) {
   try {
-    const { error } = await resend.emails.send({ from, to, ...team });
+    const { error } = await resend.emails.send({
+      from,
+      to,
+      ...team,
+      attachments: [logoAttachment, ...(team.attachments ?? [])],
+    });
     if (error) throw error;
   } catch (err) {
     console.error("Resend team email error:", err);
@@ -269,6 +281,7 @@ export async function sendLeadEmails({
         from,
         replyTo: to[0],
         ...confirmation,
+        attachments: [logoAttachment],
       });
       if (error) throw error;
     } catch (err) {
