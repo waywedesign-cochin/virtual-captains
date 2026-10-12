@@ -21,6 +21,13 @@ type NavTheme = "light" | "dark";
 const activeColor = (_theme?: NavTheme) => "#ffffff";
 const restingColor = (_theme?: NavTheme) => "rgba(255,255,255,0.45)";
 
+
+/** Where (0–1) the "audiences" stage starts inside the RoleplayToConversation pin. */
+const audiencesAt = (pin: ScrollTrigger) => {
+  const tl = pin.animation as gsap.core.Timeline | undefined;
+  return tl && tl.duration() ? (tl.labels?.audiences ?? 0) / tl.duration() : 0.6;
+};
+
 /**
  * Fixed left-edge navigation on desktop (lg and up).
  * Smoothly tracks the user's progress through each section without gaps or flickering,
@@ -75,8 +82,10 @@ export default function SideNav() {
 
       const rpStart = roleplayTrigger.start;
       const rpEnd = roleplayTrigger.end;
-      // The black hole consumes the screen at ~0.57 of the timeline
-      const choosePathThreshold = rpStart + (rpEnd - rpStart) * 0.57;
+      // "Choose Your Path" fades in just before the timeline's "audiences"
+      // label (read live, so changing the pin length can't desync the nav)
+      const choosePathThreshold =
+        rpStart + (rpEnd - rpStart) * Math.max(0, audiencesAt(roleplayTrigger) - 0.16);
 
       // 1. Above RoleplayToConversation (Hero & ScrollText3D): hide nav
       if (scrollY < rpStart - vh * 0.3) {
@@ -240,7 +249,8 @@ export default function SideNav() {
 
       case 1: // Choose Your Path (TwoAudiences inside RoleplayToConversation)
         if (rpPin) {
-          targetY = rpPin.start + (rpPin.end - rpPin.start) * 0.68;
+          // land just inside the audiences stretch (Organisations showing)
+          targetY = rpPin.start + (rpPin.end - rpPin.start) * (audiencesAt(rpPin) + 0.03);
         } else {
           const el = document.querySelector<HTMLElement>("#salesx");
           if (el) targetY = el.getBoundingClientRect().top + currentScroll + 1400;

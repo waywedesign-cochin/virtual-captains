@@ -47,9 +47,11 @@ const INDIVIDUAL_ITEMS = [
 export interface TwoAudiencesRef {
   getTimeline: () => gsap.core.Timeline;
   jumpToProgress: (progress: number) => void;
+  /** Animate (~0.5s) to one audience; no-op if it's already showing. */
+  showAudience: (target: "orgs" | "individuals") => void;
 }
 
-const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
+const TwoAudiences = forwardRef<TwoAudiencesRef, object>((props, ref) => {
   const sectionRef = useRef<HTMLElement>(null);
 
   const topTitleRef = useRef<HTMLParagraphElement>(null);
@@ -74,13 +76,18 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
     "orgs",
   );
 
+  // Which audience the crossfade is heading to, so repeated scroll updates
+  // don't restart the tween every frame
+  const shownRef = useRef<"orgs" | "individuals">("orgs");
+
   const toggleAudience = (target: "orgs" | "individuals") => {
+    shownRef.current = target;
     setActiveAudience(target);
     if (scrubTimelineRef.current) {
       gsap.to(scrubTimelineRef.current, {
         progress: target === "orgs" ? 0 : 1,
-        duration: 0.45,
-        ease: "power2.out",
+        duration: 0.55,
+        ease: "power2.inOut",
         overwrite: "auto",
       });
     }
@@ -211,8 +218,12 @@ const TwoAudiences = forwardRef<TwoAudiencesRef, {}>((props, ref) => {
     getTimeline: () => {
       return scrubTimelineRef.current || gsap.timeline();
     },
+    showAudience: (target) => {
+      if (shownRef.current !== target) toggleAudience(target);
+    },
     jumpToProgress: (progress: number) => {
       const clamped = Math.max(0, Math.min(1, progress));
+      shownRef.current = clamped >= 0.5 ? "individuals" : "orgs";
       if (scrubTimelineRef.current) {
         scrubTimelineRef.current.progress(clamped);
       }
