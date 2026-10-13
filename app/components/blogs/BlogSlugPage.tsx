@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { PortableImage } from "../common/PortableImage";
 import { motion } from "motion/react";
 import {
   ArrowLeft,
@@ -96,23 +97,7 @@ const portableTextComponents: PortableTextComponents = {
     ),
   },
   types: {
-    image: ({ value }) =>
-      value?.url ? (
-        <figure className="my-6">
-          <img
-            // resized + WebP/AVIF from Sanity's CDN instead of the raw upload
-            src={`${value.url}?w=1400&fit=max&auto=format&q=80`}
-            srcSet={[700, 1000, 1400, 2000]
-              .map((w) => `${value.url}?w=${w}&fit=max&auto=format&q=80 ${w}w`)
-              .join(", ")}
-            sizes="(min-width: 1024px) 760px, 100vw"
-            alt={value.alt || ""}
-            loading="lazy"
-            decoding="async"
-            className="w-full rounded-2xl border border-white/10"
-          />
-        </figure>
-      ) : null,
+    image: ({ value }) => <PortableImage value={value} />,
   },
 };
 

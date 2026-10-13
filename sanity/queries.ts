@@ -42,7 +42,10 @@ export const POST_BY_SLUG_QUERY = groq`
         ...,
         _type == "image" => {
           ...,
-          "url": asset->url
+          "url": asset->url,
+          // real size, so the page reserves the space before the image loads
+          "width": asset->metadata.dimensions.width,
+          "height": asset->metadata.dimensions.height
         }
       }
     }
@@ -108,7 +111,10 @@ const newsPostProjection = /* groq */ `{
       ...,
       _type == "image" => {
         ...,
-        "url": asset->url
+        "url": asset->url,
+        // real size, so the page reserves the space before the image loads
+        "width": asset->metadata.dimensions.width,
+        "height": asset->metadata.dimensions.height
       }
     }
   },
