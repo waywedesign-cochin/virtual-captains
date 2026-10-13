@@ -85,12 +85,12 @@ export default function LocationsGlobe() {
       <div className="relative z-10 w-full max-w-372 mx-auto">
         <div ref={headerRef} className="mx-auto max-w-6xl text-center will-change-transform">
           <span className="font-sans text-[10px] sm:text-xs font-semibold uppercase tracking-[0.35em] text-[#38bdf8]">
-            Our Global Footprint
+            Where To Find Us
           </span>
           <ZoomHeading className="mt-4 font-sans text-3xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.1] text-white">
-            Local Presence.{" "}
+            Our Global{" "}
             <span className="italic bg-linear-to-r from-[#38bdf8] to-[#7dd3fc] bg-clip-text text-transparent">
-              Global Sales Perspective.
+              Footprint
             </span>
           </ZoomHeading>
           <p className="mx-auto mt-5 max-w-4xl text-sm sm:text-lg leading-relaxed text-white/75 font-sans">
