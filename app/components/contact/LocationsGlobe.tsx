@@ -83,17 +83,19 @@ export default function LocationsGlobe() {
 
       {/* Container aligned with Navbar */}
       <div className="relative z-10 w-full max-w-372 mx-auto">
-        <div ref={headerRef} className="mx-auto max-w-2xl text-center will-change-transform">
-          <span className="font-sans text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-[#38bdf8]">
-            Where To Find Us · Global Presence
+        <div ref={headerRef} className="mx-auto max-w-6xl text-center will-change-transform">
+          <span className="font-sans text-[10px] sm:text-xs font-semibold uppercase tracking-[0.35em] text-[#38bdf8]">
+            Our Global Footprint
           </span>
-          <ZoomHeading className="mt-3 font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white">
-            Two Offices,{" "}
-            <span className="italic text-[#8fd0ff]">One Sales Floor</span>
+          <ZoomHeading className="mt-4 font-sans text-3xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.1] text-white">
+            Local Presence.{" "}
+            <span className="italic bg-linear-to-r from-[#38bdf8] to-[#7dd3fc] bg-clip-text text-transparent">
+              Global Sales Perspective.
+            </span>
           </ZoomHeading>
-          <p className="mt-4 text-sm sm:text-base leading-relaxed text-white/70 font-sans">
-            Rooted in India, active across the Gulf, and working with high-growth
-            sales teams across 8+ countries in between.
+          <p className="mx-auto mt-5 max-w-4xl text-sm sm:text-lg leading-relaxed text-white/75 font-sans">
+            With teams across India, the UAE and Malaysia, we support sales
+            organisations across 8+ countries.
           </p>
         </div>
 
