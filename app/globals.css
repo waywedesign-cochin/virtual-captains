@@ -226,6 +226,7 @@ body {
   animation: hero-pill-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 750ms backwards;
 }
 .hero-cta-pill[data-i="1"] { animation-delay: 890ms; }
+.hero-cta-pill[data-i="2"] { animation-delay: 1030ms; }
 @media (prefers-reduced-motion: reduce) {
   .hero-word-base,
   .hero-word-highlight,

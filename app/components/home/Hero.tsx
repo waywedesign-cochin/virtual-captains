@@ -447,6 +447,11 @@ export default function Hero() {
           <IndividualButton />
           <OrganisationButton />
         </div>
+
+        {/* ---------- FOUNDERS BATCH: next intake, links to Programs ---------- */}
+        <div className="mt-5 sm:mt-6 flex justify-center relative z-10">
+          <FoundersBatchLink />
+        </div>
       </div>
     </section>
   );
@@ -674,6 +679,51 @@ function OrganisationButton() {
 
       <span ref={textRef} className="relative z-10 transition-colors">
         For Organisations
+      </span>
+    </Link>
+  );
+}
+
+/**
+ * Pill under the CTAs announcing the next intake. Links to /programs.
+ */
+function FoundersBatchLink() {
+  return (
+    <Link
+      href="/programs"
+      data-i="2"
+      aria-label="Founders Batch, starts 1 Nov 2026 in Kochi. View programs"
+      className="hero-cta-pill group relative inline-flex items-center gap-3 sm:gap-4 rounded-full border border-[#e7ff3d]/25 bg-white/3 py-2 pl-3 pr-2 sm:py-2.5 sm:pl-4 sm:pr-2.5 shadow-[0_0_30px_-8px_rgba(231,255,61,0.35)] backdrop-blur-md transition-all duration-300 hover:border-[#e7ff3d]/60 hover:shadow-[0_0_38px_-6px_rgba(231,255,61,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e7ff3d]/70 select-none"
+    >
+      {/* overlapping discs */}
+      <span aria-hidden="true" className="flex items-center">
+        <span className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#e7ff3d] shadow-[0_0_14px_rgba(231,255,61,0.6)]" />
+        <span className="-ml-3 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#9aa82a]/80" />
+        <span className="-ml-3 h-7 w-7 sm:h-8 sm:w-8 rounded-full border border-white/15 bg-[#14161c]" />
+      </span>
+
+      <span aria-hidden="true" className="h-8 w-px bg-white/15" />
+
+      <span className="flex flex-col text-left leading-tight">
+        <span className="font-mono text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.35em] text-white/75">
+          Founders Batch
+        </span>
+        <span className="mt-1 text-[13px] sm:text-[15px] uppercase tracking-wide text-white">
+          1 Nov 2026
+          <span className="mx-2 sm:mx-3 inline-block h-1 w-1 rounded-full bg-[#e7ff3d] align-middle" />
+          Kochi
+        </span>
+      </span>
+
+      <span aria-hidden="true" className="h-8 w-px bg-white/15" />
+
+      <span
+        aria-hidden="true"
+        className="grid h-9 w-9 sm:h-10 sm:w-10 place-items-center rounded-full bg-[#e7ff3d] text-black transition-transform duration-300 group-hover:translate-x-0.5"
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
       </span>
     </Link>
   );
