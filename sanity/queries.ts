@@ -103,7 +103,14 @@ const newsPostProjection = /* groq */ `{
   },
   content{
     lead,
-    body
+    // images inside the body need their URL resolved, or the page can't show them
+    body[]{
+      ...,
+      _type == "image" => {
+        ...,
+        "url": asset->url
+      }
+    }
   },
   seo{
     metaTitle,
