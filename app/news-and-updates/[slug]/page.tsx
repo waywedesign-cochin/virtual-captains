@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { PortableImage } from "../../components/common/PortableImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -95,14 +96,16 @@ export async function generateMetadata({
   const { slug } = await params;
   const item = await getNewsBySlug(slug);
 
-  if (!item) {
-    return { title: "News & Updates | Virtual Captains" };
-  }
+  if (!item) return { title: "News & Updates" };
 
-  return {
-    title: `${item.seo?.metaTitle || item.title} | Virtual Captains`,
+  // shared helper: the root layout adds " | Virtual Captains" once
+  return pageMetadata({
+    title: item.seo?.metaTitle || item.title,
     description: item.seo?.metaDescription || item.summary,
-  };
+    path: `/news-and-updates/${slug}`,
+    image: item.image ? croppedImage(item.image, 1200).src : undefined,
+    type: "article",
+  });
 }
 
 function TitleWithGradientTail({ title }: { title: string }) {

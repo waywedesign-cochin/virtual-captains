@@ -2,6 +2,24 @@ import { groq } from "next-sanity";
 import type { Career, CareerSummary, NewsPost } from "./lib/types";
 import { client } from "./lib/client";
 
+// ── Image crop helpers (GROQ) ─────────────────────────────────────────────
+// The Studio's crop tool stores fractions trimmed from each side. These build
+// the Sanity CDN URL that shows ONLY the cropped area (`rect=x,y,w,h` in
+// pixels), plus the cropped size, right inside the query, so every component
+// gets a ready-to-use, cropped (and optionally resized) image URL.
+// `f` is the path to the image object: "image." or "" inside an array item.
+const W = (f: string) => `${f}asset->metadata.dimensions.width`;
+const H = (f: string) => `${f}asset->metadata.dimensions.height`;
+const cropUrl = (f: string, w?: number) => {
+  const size = w ? `&w=${w}&fit=max&auto=format&q=80` : "";
+  const bare = w ? `?w=${w}&fit=max&auto=format&q=80` : "";
+  return `select(defined(${f}crop) => ${f}asset->url + "?rect=" + string(round(${W(f)} * ${f}crop.left)) + "," + string(round(${H(f)} * ${f}crop.top)) + "," + string(round(${W(f)} * (1 - ${f}crop.left - ${f}crop.right))) + "," + string(round(${H(f)} * (1 - ${f}crop.top - ${f}crop.bottom))) + "${size}", ${f}asset->url + "${bare}")`;
+};
+const cropWidth = (f: string) =>
+  `select(defined(${f}crop) => round(${W(f)} * (1 - ${f}crop.left - ${f}crop.right)), ${W(f)})`;
+const cropHeight = (f: string) =>
+  `select(defined(${f}crop) => round(${H(f)} * (1 - ${f}crop.top - ${f}crop.bottom)), ${H(f)})`;
+
 // Fragment for consistent post shape across queries
 const postFields = groq`
   _id,
@@ -12,12 +30,12 @@ const postFields = groq`
   publishedDate,
   readTime,
   featured,
-  "image": image.asset->url,
-  "bannerImage": bannerImage.asset->url,
+  "image": ${cropUrl("image.", 1200)},
+  "bannerImage": ${cropUrl("bannerImage.", 2000)},
   author->{
     name,
     role,
-    "avatar": avatar.asset->url
+    "avatar": ${cropUrl("avatar.", 160)}
   }
 `;
 
@@ -42,10 +60,10 @@ export const POST_BY_SLUG_QUERY = groq`
         ...,
         _type == "image" => {
           ...,
-          "url": asset->url,
-          // real size, so the page reserves the space before the image loads
-          "width": asset->metadata.dimensions.width,
-          "height": asset->metadata.dimensions.height
+          "url": ${cropUrl("")},
+          // cropped size, so the page reserves the space before the image loads
+          "width": ${cropWidth("")},
+          "height": ${cropHeight("")}
         }
       }
     }
@@ -111,10 +129,10 @@ const newsPostProjection = /* groq */ `{
       ...,
       _type == "image" => {
         ...,
-        "url": asset->url,
-        // real size, so the page reserves the space before the image loads
-        "width": asset->metadata.dimensions.width,
-        "height": asset->metadata.dimensions.height
+        "url": ${cropUrl("")},
+        // cropped size, so the page reserves the space before the image loads
+        "width": ${cropWidth("")},
+        "height": ${cropHeight("")}
       }
     }
   },
@@ -214,7 +232,7 @@ export const PROGRAMS_QUERY = groq`
     duration,
     format,
     priceInr,
-    "image": select(defined(image.asset) => { "url": image.asset->url, "alt": image.alt }),
+    "image": select(defined(image.asset) => { "url": ${cropUrl("image.", 900)}, "alt": image.alt }),
     highlights,
     outcome,
     featured
@@ -275,7 +293,7 @@ const careerCardFields = /* groq */ `
 
 const careerBody = /* groq */ `[]{
   ...,
-  _type == "image" => { ..., "url": asset->url }
+  _type == "image" => { ..., "url": ${cropUrl("")} }
 }`;
 
 export const allCareersQuery = groq`

@@ -14,7 +14,9 @@ export function PortableImage({
   value: { url?: string; alt?: string; width?: number; height?: number };
 }) {
   if (!value?.url) return null;
-  const src = (w: number) => `${value.url}?w=${w}&fit=max&auto=format&q=80`;
+  // the URL may already carry the Studio crop (?rect=…), so append with & then
+  const sep = value.url.includes("?") ? "&" : "?";
+  const src = (w: number) => `${value.url}${sep}w=${w}&fit=max&auto=format&q=80`;
   return (
     <figure className="my-6">
       {/* eslint-disable-next-line @next/next/no-img-element */}

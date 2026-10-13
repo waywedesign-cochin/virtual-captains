@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { pageMetadata } from "@/lib/seo";
 import { clientFetch } from "@/sanity/lib/client";
 import {
   POST_BY_SLUG_QUERY,
@@ -19,6 +21,27 @@ export async function generateStaticParams() {
   });
 
   return slugs.map((slug) => ({ slug }));
+}
+
+/** Title / description from the post's SEO fields in Sanity (with fallbacks). */
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await clientFetch<BlogPost | null>({
+    query: POST_BY_SLUG_QUERY,
+    params: { slug },
+    tags: ["post"],
+  });
+  if (!post) return { title: "Blog" };
+
+  return pageMetadata({
+    title: post.seo?.metaTitle || post.title,
+    description: post.seo?.metaDescription || post.summary,
+    path: `/blogs/${slug}`,
+    image: post.bannerImage || post.image,
+    type: "article",
+  });
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
