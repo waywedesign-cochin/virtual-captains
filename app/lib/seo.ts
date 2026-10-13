@@ -27,13 +27,18 @@ type PageSeo = {
   keywords?: string[];
   /** Keep the page out of search results (thin or utility pages). */
   noIndex?: boolean;
+  /** Share-card image (absolute URL), e.g. a post's banner. Default: site image. */
+  image?: string;
+  /** "article" for blog/news posts; default "website". */
+  type?: "website" | "article";
 };
 
 /**
  * Full SEO metadata for a page: title, description, canonical URL, Open
  * Graph + Twitter share cards and robots. Use in every page's `metadata`.
  */
-export function pageMetadata({ title, description, path, absoluteTitle, keywords, noIndex }: PageSeo): Metadata {
+export function pageMetadata({ title, description, path, absoluteTitle, keywords, noIndex, image, type = "website" }: PageSeo): Metadata {
+  const ogImage = image ? { url: image, width: 1200, height: 630, alt: title } : DEFAULT_OG_IMAGE;
   const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -41,19 +46,19 @@ export function pageMetadata({ title, description, path, absoluteTitle, keywords
     keywords,
     alternates: { canonical: path },
     openGraph: {
-      type: "website",
+      type,
       siteName: SITE_NAME,
       locale: "en_IN",
       url: path,
       title: fullTitle,
       description,
-      images: [DEFAULT_OG_IMAGE],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: [DEFAULT_OG_IMAGE.url],
+      images: [ogImage.url],
     },
     robots: noIndex ? { index: false, follow: true } : undefined,
   };
