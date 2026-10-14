@@ -1,9 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import "./styles/index.css";
 import SmoothScroll from "./components/SmoothScroll";
-import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL, SOCIAL_PROFILES } from "./lib/seo";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_PROFILES,
+} from "./lib/seo";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -58,7 +64,12 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   formatDetection: { telephone: false },
 };
@@ -77,7 +88,11 @@ const ORG_JSON_LD = {
   sameAs: SOCIAL_PROFILES.map((p) => p.href),
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
@@ -92,6 +107,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SmoothScroll />
         {children}
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }
