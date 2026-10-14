@@ -178,7 +178,7 @@ function OfflinePanel() {
               <p className="text-xs font-semibold uppercase tracking-wider text-white/50">
                 Batch starts
               </p>
-              <p className="mt-2 font-serif text-3xl text-white">1 Nov</p>
+              <p className="mt-2 font-serif text-3xl text-white">Nov</p>
               <p className="text-sm text-white/55">2026</p>
             </div>
 

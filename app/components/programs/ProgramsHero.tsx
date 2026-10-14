@@ -137,7 +137,7 @@ export function ProgramsHero() {
 
           <span className="font-semibold text-white">
             Founders batch starts{" "}
-            <span className="text-[#e7ff3d]">1 November 2026</span>
+            <span className="text-[#e7ff3d]">November 2026</span>
           </span>
 
           {BATCH_FACTS.map((f) => (
