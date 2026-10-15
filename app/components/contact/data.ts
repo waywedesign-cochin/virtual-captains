@@ -1,3 +1,5 @@
+import type { FlagCode } from "../common/CountryFlag";
+
 // Central content for the Contact page.
 //
 // Sourced from Virtual Captains' own public site (virtualcaptains.com) as of
@@ -19,7 +21,7 @@ export const siteNavLinks = [
 
 export type Office = {
   id: string;
-  flag: string;
+  flag: FlagCode;
   country: string;
   tag: string;
   /** Short place label shown on the map window */
@@ -41,7 +43,7 @@ const MALAYSIA_QUERY =
 export const offices: Office[] = [
   {
     id: "india",
-    flag: "🇮🇳",
+    flag: "IN",
     country: "India",
     tag: "Headquarters",
     city: "Kochi, Kerala",
@@ -57,7 +59,7 @@ export const offices: Office[] = [
   },
   {
     id: "uae",
-    flag: "🇦🇪",
+    flag: "AE",
     country: "United Arab Emirates",
     tag: "Regional Office",
     city: "Dubai Silicon Oasis",
@@ -76,7 +78,7 @@ export const offices: Office[] = [
   },
   {
     id: "malaysia",
-    flag: "🇲🇾",
+    flag: "MY",
     country: "Malaysia",
     tag: "Regional Office",
     city: "Kuala Lumpur",

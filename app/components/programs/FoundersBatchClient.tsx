@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { CheckEligibilityButton, NotifyButton } from "../home/BookACallModal";
+import CountryFlag, { type FlagCode } from "../common/CountryFlag";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
@@ -174,14 +175,15 @@ type City = {
   note?: string;
 };
 
-type Location = { id: string; name: string; flag: string; cities: City[] };
+// flag: null shows a globe (no single country)
+type Location = { id: string; name: string; flag: FlagCode | null; cities: City[] };
 
 // Edit here when the client confirms countries and cities.
 const LOCATIONS: Location[] = [
   {
     id: "india",
     name: "India",
-    flag: "🇮🇳",
+    flag: "IN",
     cities: [
       {
         name: "Kochi",
@@ -193,9 +195,9 @@ const LOCATIONS: Location[] = [
       { name: "Hyderabad", status: "soon", note: "Dates to be announced" },
     ],
   },
-  { id: "malaysia", name: "Malaysia", flag: "🇲🇾", cities: [] },
-  { id: "oman", name: "Oman", flag: "🇴🇲", cities: [] },
-  { id: "other", name: "Other locations", flag: "🌍", cities: [] },
+  { id: "malaysia", name: "Malaysia", flag: "MY", cities: [] },
+  { id: "oman", name: "Oman", flag: "OM", cities: [] },
+  { id: "other", name: "Other locations", flag: null, cities: [] },
 ];
 
 const notifyBtnClass =
@@ -244,9 +246,13 @@ export function OfflineLocations({
                   : "border-white/10 bg-white/5 text-white/60 hover:text-white"
               }`}
             >
-              <span aria-hidden className="text-base leading-none">
-                {l.flag}
-              </span>
+              {l.flag ? (
+                <CountryFlag code={l.flag} className="h-3.5 w-auto" />
+              ) : (
+                <span aria-hidden className="text-base leading-none">
+                  🌍
+                </span>
+              )}
               {l.name}
             </button>
           );
