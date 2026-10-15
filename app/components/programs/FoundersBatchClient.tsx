@@ -188,7 +188,7 @@ const LOCATIONS: Location[] = [
       {
         name: "Kochi",
         status: "open",
-        date: "1 Nov 2026",
+        date: "Nov 2026",
         note: "50 founders only",
       },
       { name: "Bangalore", status: "soon", note: "Dates to be announced" },
