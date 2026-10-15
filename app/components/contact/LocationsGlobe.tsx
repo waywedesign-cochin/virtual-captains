@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { offices } from "./data";
+import CountryFlag from "../common/CountryFlag";
 import ZoomHeading from "@/components/common/ZoomHeading";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -131,7 +132,7 @@ export default function LocationsGlobe() {
 
               <div className="flex items-start gap-4 px-3 pb-3 pt-5 sm:px-4 sm:pb-4">
                 <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-white/15 bg-white/5 text-2xl shadow-inner">
-                  {office.flag}
+                  <CountryFlag code={office.flag} className="h-5 w-auto" />
                 </span>
 
                 <div className="min-w-0 flex-1">
