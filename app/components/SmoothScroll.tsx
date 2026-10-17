@@ -8,6 +8,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Mobile browsers resize the viewport whenever the address bar shows/hides
+// (e.g. on every scroll-direction change). By default ScrollTrigger refreshes
+// on that, which re-measures every section mid-scroll and can stall the page
+// or snap it back to the hero. Set globally so it covers every route.
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 declare global {
   interface Window {
     __lenis?: Lenis;
