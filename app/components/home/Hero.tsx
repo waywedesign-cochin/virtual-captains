@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
+import HeroLaunchSlide from "./HeroLaunchSlide";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -35,12 +36,31 @@ gsap.registerPlugin(ScrollTrigger);
  * Requires: `npm install gsap`
  */
 
+/** How long the main headline shows before the launch slide takes over (ms). */
+const INTRO_DURATION = 1500;
+const SLIDE_COUNT = 2;
+
 export default function Hero() {
+  const [slide, setSlide] = useState(0);
+  // The hero plays once: main headline -> launch slide, then stays put.
+  const [introDone, setIntroDone] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
   const dotsGlowRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLHeadingElement>(null);
   const accentRef = useRef<HTMLSpanElement>(null);
+
+  // Advance to the launch slide once, then stop — no looping. It always
+  // fires (hover doesn't hold it) so every visitor reaches the launch slide;
+  // using the dots ends it early.
+  useEffect(() => {
+    if (introDone) return;
+    const t = window.setTimeout(() => {
+      setSlide(1);
+      setIntroDone(true);
+    }, INTRO_DURATION);
+    return () => window.clearTimeout(t);
+  }, [introDone]);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -302,6 +322,7 @@ export default function Hero() {
     <section
       id="home"
       ref={heroRef}
+      aria-roledescription="carousel"
       className="relative z-0 mx-auto flex min-h-svh w-full max-w-[1920px] flex-col justify-center overflow-hidden bg-[#040507] border border-transparent pt-[clamp(110px,13vh,150px)] pb-[clamp(40px,6vh,75px)] origin-center will-change-[transform,opacity,border-radius]"
       style={{ borderRadius: "0px" }}
     >
@@ -353,7 +374,11 @@ export default function Hero() {
       </div>
 
       {/* ---------- HEADLINE (fills remaining space, vertically centered) ---------- */}
-      <div className="relative z-3 flex flex-1 flex-col items-center justify-center px-5 py-6 text-center sm:px-8">
+      <div
+        aria-hidden={slide !== 0}
+        inert={slide !== 0}
+        className={`relative z-3 flex flex-1 flex-col items-center justify-center px-5 py-6 text-center transition-[opacity,transform] duration-900 ease-[cubic-bezier(0.65,0,0.35,1)] will-change-[opacity,transform] sm:px-8 ${slide === 0 ? "" : "-translate-x-[3%] scale-[0.97] opacity-0"}`}
+      >
         <div className="relative group">
           {/* MAIN TEXT */}
           <h1 className="max-w-5xl font-sans text-[clamp(2rem,3.8vw+3.8vh,7rem)] font-medium leading-[1.14] tracking-[-0.01em] text-white select-none px-4 py-2 -mx-4 -my-2">
@@ -452,6 +477,47 @@ export default function Hero() {
         <div className="mt-5 sm:mt-6 flex justify-center relative z-10">
           <FoundersBatchLink />
         </div>
+      </div>
+
+      {/* ---------- SLIDE 2: SalesX launch announcement ---------- */}
+      <div
+        aria-hidden={slide !== 1}
+        inert={slide !== 1}
+        className="absolute inset-0 z-4"
+        style={{ pointerEvents: slide === 1 ? "auto" : "none" }}
+      >
+        <HeroLaunchSlide active={slide === 1} />
+      </div>
+
+      {/* ---------- SLIDE CONTROLS ---------- */}
+      <div className="absolute inset-x-0 bottom-[clamp(16px,3vh,28px)] z-20 flex justify-center gap-2.5">
+        {Array.from({ length: SLIDE_COUNT }, (_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => {
+              setSlide(i);
+              setIntroDone(true);
+            }}
+            aria-label={i === 0 ? "Show main slide" : "Show SalesX launch slide"}
+            aria-current={slide === i}
+            className={`relative h-1.5 overflow-hidden rounded-full bg-white/25 transition-[width] duration-500 ${slide === i ? "w-10" : "w-4 hover:bg-white/45"}`}
+          >
+            {slide === i && (
+              <span
+                key={`${slide}-${introDone}`}
+                className="absolute inset-0 origin-left rounded-full bg-[#e7ff3d]"
+                style={{
+                  animation:
+                    introDone
+                      ? "none"
+                      : `hero-progress ${INTRO_DURATION}ms linear forwards`,
+                  transform: introDone ? "scaleX(1)" : undefined,
+                }}
+              />
+            )}
+          </button>
+        ))}
       </div>
     </section>
   );
