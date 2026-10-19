@@ -50,8 +50,7 @@ const PERSONAL_DOMAINS = new Set([
   "yopmail.com",
 ]);
 
-export const WORK_EMAIL_ERROR =
-  "Please use your work email. Personal addresses like Gmail or Yahoo aren't accepted.";
+export const WORK_EMAIL_ERROR = "Please use your work email.";
 
 /** True when the address is on a personal/free provider. */
 export function isPersonalEmail(email: string) {
