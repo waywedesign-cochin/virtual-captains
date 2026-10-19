@@ -4,6 +4,7 @@ import CrossCountry from "./components/home/CrossCountry";
 // import Endorsement from "./components/home/Endorsement";
 import Hero from "./components/home/Hero";
 import HiringPartners from "./components/home/HiringPartners";
+import LaunchEventPopup from "./components/home/LaunchEventPopup";
 import Navbar from "./components/home/Navbar";
 import OurApproach from "./components/home/OurApproach";
 import RoleplayToConversation from "./components/home/RoleplayToConversation";
@@ -35,6 +36,7 @@ export default function Page() {
       <TheImpact />
       <HiringPartners />
       <SiteFooter />
+      <LaunchEventPopup />
     </main>
   );
 }

@@ -4,8 +4,9 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { isValidPhoneNumber, type Value } from "react-phone-number-input";
 import PhoneField from "../common/PhoneField";
+import { WORK_EMAIL_ERROR, isPersonalEmail } from "@/app/lib/workEmail";
 
-type ModalMode = "call" | "eligibility" | "waitlist" | "notify";
+type ModalMode = "call" | "eligibility" | "waitlist" | "notify" | "event";
 
 /**
  * Dialog with four modes:
@@ -16,6 +17,8 @@ type ModalMode = "call" | "eligibility" | "waitlist" | "notify";
  *  - "waitlist": same fields, for programs that haven't opened yet.
  *  - "notify": email-only signup. Submits to /api/notify, which saves the
  *    email to a Resend Audience so the client can send a broadcast later.
+ *  - "event": SalesX launch invite request (home-page popup). Submits
+ *    straight to /api/event — no email verification.
  *
  * call / eligibility / waitlist are email-verified: after the form is filled,
  * a 6-digit code is emailed and must be entered before the submission is sent.
@@ -45,6 +48,7 @@ export default function BookACallModal({
   const isEligibility = mode === "eligibility";
   const isWaitlist = mode === "waitlist";
   const isNotify = mode === "notify";
+  const isEvent = mode === "event";
   const isApplication = isEligibility || isWaitlist; // program forms (not general call)
 
   const [submitted, setSubmitted] = useState(false);
@@ -56,6 +60,7 @@ export default function BookACallModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   const [phone, setPhone] = useState<Value | undefined>();
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   // Email verification
   const [step, setStep] = useState<"form" | "verify">("form");
@@ -99,6 +104,7 @@ export default function BookACallModal({
       setAudience(defaultAudience);
       setPhone(undefined);
       setPhoneError(null);
+      setEmailError(null);
       setStep("form");
       setPending(null);
       setToken(null);
@@ -110,25 +116,33 @@ export default function BookACallModal({
 
   if (!open) return null;
 
-  const title = isEligibility
+  const title = isEvent
+    ? "Join the SalesX Launch"
+    : isEligibility
     ? "Check Eligibility"
     : isWaitlist
       ? "Join the Waitlist"
       : "Book a Call";
 
-  const subtitle = isEligibility
+  const subtitle = isEvent
+    ? "Only 40 invites for founders. Submit your details to join us on 24 October 2026 in Calicut."
+    : isEligibility
     ? `Apply for ${programTitle ?? "this program"}. We review every application and get back to you with the next steps.`
     : isWaitlist
       ? `Be the first to know when ${programTitle ?? "this program"} opens. Leave your details and we'll reach out.`
       : "Leave your details and our team will get back to you shortly.";
 
-  const messagePlaceholder = isEligibility
+  const messagePlaceholder = isEvent
+    ? "Anything you'd like us to know? (optional)"
+    : isEligibility
     ? "Tell us a bit about yourself and your startup"
     : isWaitlist
       ? "Anything you'd like us to know? (optional)"
       : "What would you like to talk about?";
 
-  const submitLabel = isEligibility
+  const submitLabel = isEvent
+    ? "Submit Details"
+    : isEligibility
     ? "Submit application"
     : isWaitlist
       ? "Join waitlist"
@@ -205,7 +219,17 @@ export default function BookACallModal({
                 />
               </svg>
             </span>
-            {isNotify ? (
+            {isEvent ? (
+              <>
+                <h3 className="mt-5 font-sans text-2xl text-[#101010]">
+                  Request received
+                </h3>
+                <p className="mt-2 max-w-80 font-sans text-[13px] leading-relaxed text-black/55">
+                  Thanks for your interest. Our team will reach out to confirm
+                  your invite.
+                </p>
+              </>
+            ) : isNotify ? (
               <>
                 <h3 className="mt-5 font-sans text-2xl text-[#101010]">
                   You&apos;re on the list
@@ -380,6 +404,12 @@ export default function BookACallModal({
           <form
             onSubmit={async (e) => {
               e.preventDefault();
+              if (isEvent) {
+                const email = String(
+                  new FormData(e.currentTarget).get("email") ?? "",
+                );
+                if (isPersonalEmail(email)) return setEmailError(WORK_EMAIL_ERROR);
+              }
               if (!phone)
                 return setPhoneError("Please enter your phone number.");
               if (!isValidPhoneNumber(phone))
@@ -387,8 +417,44 @@ export default function BookACallModal({
                   "That number doesn't look valid for the selected country.",
                 );
 
-              // Capture the form now; it's sent after the email is verified
               const data = new FormData(e.currentTarget);
+
+              // Event invite: no email verification, submit straight away
+              if (isEvent) {
+                setSubmitting(true);
+                setSubmitError(null);
+                try {
+                  const res = await fetch("/api/event", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      firstName: data.get("firstName"),
+                      lastName: data.get("lastName"),
+                      email: data.get("email"),
+                      phone,
+                      company: data.get("company"),
+                      message: data.get("message"),
+                      website: data.get("website"), // honeypot
+                    }),
+                  });
+                  if (res.status === 429) return setSubmitError(RATE_LIMIT_MSG);
+                  if (res.status === 400) {
+                    const json = await res.json().catch(() => null);
+                    return setSubmitError(
+                      json?.error ?? "Please check your details and try again.",
+                    );
+                  }
+                  if (!res.ok) throw new Error("Request failed");
+                  setSubmitted(true);
+                } catch {
+                  setSubmitError("Something went wrong. Please try again.");
+                } finally {
+                  setSubmitting(false);
+                }
+                return;
+              }
+
+              // Capture the form now; it's sent after the email is verified
               const payload = {
                 type: isApplication ? mode : "call", // "eligibility" | "waitlist" | "call"
                 programTitle,
@@ -436,7 +502,7 @@ export default function BookACallModal({
 
             <div className="mt-6 flex flex-col gap-4">
               {/* Radio Group: Individual vs Organisation (call mode only) */}
-              {!isApplication && (
+              {!isApplication && !isEvent && (
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -501,7 +567,7 @@ export default function BookACallModal({
 
               <label className="flex flex-col gap-1.5 w-full">
                 <span className="text-[12px] font-medium text-black/70">
-                  Email
+                  {isEvent ? "Work Email" : "Email"}
                   <Req />
                 </span>
                 <input
@@ -510,8 +576,21 @@ export default function BookACallModal({
                   required
                   defaultValue={String(pending?.email ?? "")}
                   placeholder="jane@company.com"
-                  className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
+                  onChange={() => emailError && setEmailError(null)}
+                  aria-invalid={Boolean(emailError)}
+                  aria-describedby={emailError ? "book-call-email-error" : undefined}
+                  className={`w-full min-w-0 rounded-lg border px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5] ${
+                    emailError ? "border-red-500" : "border-black/15"
+                  }`}
                 />
+                {emailError && (
+                  <span
+                    id="book-call-email-error"
+                    className="text-[12px] text-red-600"
+                  >
+                    {emailError}
+                  </span>
+                )}
               </label>
 
               {/* Phone — every country, flag + dialling code, validated */}
@@ -543,6 +622,30 @@ export default function BookACallModal({
                 )}
               </div>
 
+              {/* Event only: company name (optional) + honeypot */}
+              {isEvent && (
+                <>
+                  <label className="flex flex-col gap-1.5 w-full">
+                    <span className="text-[12px] font-medium text-black/70">
+                      Company Name
+                    </span>
+                    <input
+                      type="text"
+                      name="company"
+                      placeholder="e.g. Acme Labs"
+                      className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
+                    />
+                  </label>
+                  <input
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
+                  />
+                </>
+              )}
+
               {/* Eligibility only: startup name */}
               {isEligibility && (
                 <label className="flex flex-col gap-1.5 w-full">
@@ -560,7 +663,7 @@ export default function BookACallModal({
               )}
 
               {/* Conditional: Fields Only for Organisation (call mode only) */}
-              {!isApplication && audience === "organisation" && (
+              {!isApplication && !isEvent && audience === "organisation" && (
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
                   <label className="flex flex-col gap-1.5 w-full">
                     <span className="text-[12px] font-medium text-black/70">
@@ -627,7 +730,11 @@ export default function BookACallModal({
               disabled={submitting}
               className="mt-6 w-full cursor-pointer rounded-full bg-[#3478e5] py-3 text-[13.5px] font-medium text-white shadow-[0_8px_20px_-8px_rgba(52,120,229,0.6)] transition-colors hover:bg-[#2563eb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3478e5]/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {submitting ? "Sending code…" : submitLabel}
+              {submitting
+                ? isEvent
+                  ? "Submitting…"
+                  : "Sending code…"
+                : submitLabel}
             </button>
           </form>
         )}
