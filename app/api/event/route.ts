@@ -37,7 +37,7 @@ const clean = (v: unknown, max: number) =>
 /**
  * SalesX launch invite requests from the home-page popup. No email
  * verification (unlike the other lead forms); rate limits + honeypot only.
- * Only the team (CONTACT_TO_EMAIL) is emailed — no confirmation to the sender.
+ * Only the team (APPLICATIONS_TO_EMAIL) is emailed — no confirmation to the sender.
  */
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     return tooMany();
   }
 
-  const mail = getMailConfig("CONTACT_TO_EMAIL");
+  const mail = getMailConfig();
   if (!mail) return misconfigured();
 
   const ok = await sendLeadEmails({
