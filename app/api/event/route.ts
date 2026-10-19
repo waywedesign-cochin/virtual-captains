@@ -21,11 +21,13 @@ import {
   telLink,
   tooMany,
 } from "@/app/lib/email";
+import { WORK_EMAIL_ERROR, isPersonalEmail } from "@/app/lib/workEmail";
 
 const byIp = makeLimiter("event:ip", 5, 10 * MIN);
 const byEmail = makeLimiter("event:email", 3, 10 * MIN);
 
 const EVENT = "SalesX Platform Launch";
+const EVENT_DETAILS = "24 October 2026, Calicut";
 
 const clean = (v: unknown, max: number) =>
   String(v ?? "")
@@ -61,6 +63,10 @@ export async function POST(request: Request) {
     );
   }
 
+  if (isPersonalEmail(email)) {
+    return NextResponse.json({ error: WORK_EMAIL_ERROR }, { status: 400 });
+  }
+
   if (
     await isLimited([
       [byIp, getIp(request)],
@@ -77,15 +83,16 @@ export async function POST(request: Request) {
     ...mail,
     team: {
       replyTo: email,
-      subject: `New Launch Invite Request: ${name}`,
+      subject: `SalesX Launch Event: ${name} wants to join`,
       html: layout(
-        `New ${EVENT} invite request from ${name}`,
-        "New Invite Request",
+        `${name} wants to join the ${EVENT} (${EVENT_DETAILS})`,
+        "New Event Join Request",
         `
         ${badge(EVENT)}
         ${heading(esc(name), "16px 0 4px 0")}
-        ${para(`Requested an invite from the home-page popup.`, "#8b97b5")}
+        ${para(`Wants to join the <strong>${EVENT}</strong> on ${EVENT_DETAILS}. Submitted through the launch poster popup on the website home page.`, "#8b97b5")}
         ${rows(`
+          ${row("Event", `${EVENT} (${EVENT_DETAILS})`)}
           ${row("Name", esc(name))}
           ${row("Email", mailtoLink(email))}
           ${row("Phone", telLink(phone))}

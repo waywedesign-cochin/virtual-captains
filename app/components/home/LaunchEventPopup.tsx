@@ -5,6 +5,9 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import BookACallModal from "./BookACallModal";
 
+// Pre-sized WebP (864px = 2x the max display width, ~45 KB)
+const POSTER = "/home/salesx-launch-poster.webp";
+
 /**
  * SalesX launch poster popup for the home page.
  *
@@ -18,6 +21,18 @@ export default function LaunchEventPopup() {
   const [visible, setVisible] = useState(false); // drives the enter transition
   const [formOpen, setFormOpen] = useState(false);
   const shown = useRef(false);
+
+  // Warm the cache once the page has loaded, so the poster is already
+  // there when the popup opens instead of loading in front of the visitor.
+  useEffect(() => {
+    const preload = () => {
+      const img = new window.Image();
+      img.src = POSTER;
+    };
+    if (document.readyState === "complete") preload();
+    else window.addEventListener("load", preload, { once: true });
+    return () => window.removeEventListener("load", preload);
+  }, []);
 
   // Trigger: hero has scrolled up out of the viewport
   useEffect(() => {
@@ -99,11 +114,12 @@ export default function LaunchEventPopup() {
               </button>
 
               <Image
-                src="/home/salesx-launch-poster.jpeg"
+                src={POSTER}
                 alt="Launching SalesX Platform: the AI-enabled human engine. Inaugurated by Shri. P. K. Kunhalikutty. Only 40 invites for founders. 24 October 2026, Calicut."
-                width={1080}
-                height={1350}
-                sizes="(max-width: 640px) 90vw, 416px"
+                width={864}
+                height={1080}
+                // Already optimised; served as-is so it matches the preload
+                unoptimized
                 className="h-auto w-full rounded-2xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)]"
                 priority
               />

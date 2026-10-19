@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { isValidPhoneNumber, type Value } from "react-phone-number-input";
 import PhoneField from "../common/PhoneField";
+import { WORK_EMAIL_ERROR, isPersonalEmail } from "@/app/lib/workEmail";
 
 type ModalMode = "call" | "eligibility" | "waitlist" | "notify" | "event";
 
@@ -59,6 +60,7 @@ export default function BookACallModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   const [phone, setPhone] = useState<Value | undefined>();
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   // Email verification
   const [step, setStep] = useState<"form" | "verify">("form");
@@ -102,6 +104,7 @@ export default function BookACallModal({
       setAudience(defaultAudience);
       setPhone(undefined);
       setPhoneError(null);
+      setEmailError(null);
       setStep("form");
       setPending(null);
       setToken(null);
@@ -401,6 +404,12 @@ export default function BookACallModal({
           <form
             onSubmit={async (e) => {
               e.preventDefault();
+              if (isEvent) {
+                const email = String(
+                  new FormData(e.currentTarget).get("email") ?? "",
+                );
+                if (isPersonalEmail(email)) return setEmailError(WORK_EMAIL_ERROR);
+              }
               if (!phone)
                 return setPhoneError("Please enter your phone number.");
               if (!isValidPhoneNumber(phone))
@@ -429,6 +438,12 @@ export default function BookACallModal({
                     }),
                   });
                   if (res.status === 429) return setSubmitError(RATE_LIMIT_MSG);
+                  if (res.status === 400) {
+                    const json = await res.json().catch(() => null);
+                    return setSubmitError(
+                      json?.error ?? "Please check your details and try again.",
+                    );
+                  }
                   if (!res.ok) throw new Error("Request failed");
                   setSubmitted(true);
                 } catch {
@@ -552,7 +567,7 @@ export default function BookACallModal({
 
               <label className="flex flex-col gap-1.5 w-full">
                 <span className="text-[12px] font-medium text-black/70">
-                  Email
+                  {isEvent ? "Work Email" : "Email"}
                   <Req />
                 </span>
                 <input
@@ -560,9 +575,22 @@ export default function BookACallModal({
                   name="email"
                   required
                   defaultValue={String(pending?.email ?? "")}
-                  placeholder={isEvent ? "jane@example.com" : "jane@company.com"}
-                  className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
+                  placeholder="jane@company.com"
+                  onChange={() => emailError && setEmailError(null)}
+                  aria-invalid={Boolean(emailError)}
+                  aria-describedby={emailError ? "book-call-email-error" : undefined}
+                  className={`w-full min-w-0 rounded-lg border px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5] ${
+                    emailError ? "border-red-500" : "border-black/15"
+                  }`}
                 />
+                {emailError && (
+                  <span
+                    id="book-call-email-error"
+                    className="text-[12px] text-red-600"
+                  >
+                    {emailError}
+                  </span>
+                )}
               </label>
 
               {/* Phone — every country, flag + dialling code, validated */}
