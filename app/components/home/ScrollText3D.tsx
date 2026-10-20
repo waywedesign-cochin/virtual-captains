@@ -218,7 +218,11 @@ export default function ScrollText3D() {
           isMobile: "(max-width: 767px)",
           isTablet: "(min-width: 768px) and (max-width: 1023px)",
           isDesktop: "(min-width: 1024px)",
-          isShort: "(max-height: 699px)",
+          // Width-gated on purpose: isShort is only used off-mobile, and on
+          // phones a bare height query flips whenever the browser toolbars
+          // show/hide (e.g. the Google app on iPhone), which made matchMedia
+          // tear down and rebuild this pin mid-scroll and snap to the top.
+          isShort: "(min-width: 768px) and (max-height: 699px)",
           reduceMotion: "(prefers-reduced-motion: reduce)",
         },
         (context) => {
