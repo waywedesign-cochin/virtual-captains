@@ -14,6 +14,23 @@ gsap.registerPlugin(ScrollTrigger);
 // or snap it back to the hero. Set globally so it covers every route.
 ScrollTrigger.config({ ignoreMobileResize: true });
 
+// ignoreMobileResize still refreshes when the height changes by more than
+// 25%. In-app browsers with tall toolbars (e.g. the Google app on iPhone)
+// cross that when their bars reappear on scroll-up, which snapped the page
+// back to the top. On touch screens, drop resize from the auto-refresh events
+// entirely and only refresh when the width really changes (rotation).
+if (typeof window !== "undefined" && ScrollTrigger.isTouch === 1) {
+  ScrollTrigger.config({
+    autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+  });
+  let lastWidth = window.innerWidth;
+  window.addEventListener("resize", () => {
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    ScrollTrigger.refresh();
+  });
+}
+
 declare global {
   interface Window {
     __lenis?: Lenis;
