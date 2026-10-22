@@ -180,7 +180,7 @@ function OfflinePanel() {
 
             <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
               <p className="text-xs font-semibold uppercase tracking-wider text-white/50">
-                Founders only
+                Sellers only
               </p>
               <p className="mt-2 font-serif text-3xl text-white">50 seats</p>
               <div aria-hidden className="mt-3 grid w-fit grid-cols-10 gap-1">
