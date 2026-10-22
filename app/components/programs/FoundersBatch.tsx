@@ -11,7 +11,7 @@ const FOUNDERS_BATCH = {
   title: "SalesX Founders Batch",
   slug: "salesx-founders-batch",
   description:
-    "AI + human coaching for founders who want to sell their own product, from first contact to signed deal.",
+    "AI + human coaching for anyone who want to sell, from first contact to signed deal.",
   modules: [
     "Prospecting",
     "Pre-sales",
@@ -207,7 +207,7 @@ function OfflinePanel() {
             />
             <p className="max-w-xs text-xs leading-relaxed text-white/50">
               We review every application and share next steps with selected
-              founders.
+              candidates.
             </p>
           </div>
         </div>
