@@ -161,11 +161,7 @@ function OfflinePanel() {
         {/* Left: pitch, key facts, CTA */}
         <div className="flex flex-col">
           <h3 className="font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
-            SalesX{" "}
-            <span className="bg-linear-to-r from-[#38bdf8] to-[#8b9cff] bg-clip-text italic text-transparent">
-              Founders
-            </span>{" "}
-            Batch
+            SalesX Batch
           </h3>
 
           <p className="mt-5 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
