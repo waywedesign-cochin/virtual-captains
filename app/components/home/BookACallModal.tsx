@@ -844,6 +844,8 @@ function ModalButton({
   programSlug,
   location,
   className,
+  autoOpenParam,
+  scrollTargetId,
 }: {
   mode: ModalMode;
   label: ReactNode;
@@ -851,8 +853,44 @@ function ModalButton({
   programSlug?: string;
   location?: string;
   className?: string;
+  /** Open on load when this query param is in the URL (e.g. "apply" → ?apply=1). */
+  autoOpenParam?: string;
+  /** Element scrolled into view before the auto-open. */
+  scrollTargetId?: string;
 }) {
   const [open, setOpen] = useState(false);
+
+  // Deep link (used for QR codes): scroll to the section, then open the form.
+  // Without the param the button behaves exactly as before.
+  useEffect(() => {
+    if (!autoOpenParam) return;
+    if (!new URLSearchParams(window.location.search).has(autoOpenParam)) return;
+
+    let timer: number | undefined;
+    const openForm = () => setOpen(true);
+    // Wait for the page's entrance animations and layout to settle
+    const start = window.setTimeout(() => {
+      const target = scrollTargetId
+        ? document.getElementById(scrollTargetId)
+        : null;
+      if (!target) return openForm();
+      const lenis = window.__lenis;
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -96, duration: 1.2, onComplete: openForm });
+        // Fallback in case the scroll is interrupted
+        timer = window.setTimeout(openForm, 1800);
+      } else {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        timer = window.setTimeout(openForm, 900);
+      }
+    }, 600);
+
+    return () => {
+      window.clearTimeout(start);
+      window.clearTimeout(timer);
+    };
+  }, [autoOpenParam, scrollTargetId]);
+
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className={className}>
@@ -871,6 +909,8 @@ function ModalButton({
 }
 
 type ProgramButtonProps = {
+  autoOpenParam?: string;
+  scrollTargetId?: string;
   programTitle?: string;
   programSlug?: string;
   location?: string;

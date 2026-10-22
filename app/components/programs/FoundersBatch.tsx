@@ -199,6 +199,9 @@ function OfflinePanel() {
             <CheckEligibilityButton
               programTitle={FOUNDERS_BATCH.title}
               programSlug={FOUNDERS_BATCH.slug}
+              // /programs?apply=1 (QR code link) scrolls here and opens the form
+              autoOpenParam="apply"
+              scrollTargetId="founders-batch-card"
               className="cursor-pointer rounded-full bg-[#e7ff3d] px-7 py-3.5 text-sm font-bold text-[#0b0e14] shadow-[0_10px_30px_-10px_#e7ff3d] transition hover:bg-white"
             />
             <p className="max-w-xs text-xs leading-relaxed text-white/50">
