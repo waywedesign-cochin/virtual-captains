@@ -692,7 +692,7 @@ function FoundersBatchLink() {
     <Link
       href="/programs"
       data-i="2"
-      aria-label="Founders Batch, starts Nov 2026 in Kochi. View programs"
+      aria-label="First batch of SalesX, starts Nov 2026 in Kochi. View programs"
       className="hero-cta-pill group relative inline-flex items-center gap-3 sm:gap-4 rounded-full border border-[#e7ff3d]/25 bg-white/3 py-2 pl-3 pr-2 sm:py-2.5 sm:pl-4 sm:pr-2.5 shadow-[0_0_30px_-8px_rgba(231,255,61,0.35)] backdrop-blur-md transition-all duration-300 hover:border-[#e7ff3d]/60 hover:shadow-[0_0_38px_-6px_rgba(231,255,61,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e7ff3d]/70 select-none"
     >
       {/* overlapping discs */}
@@ -706,7 +706,7 @@ function FoundersBatchLink() {
 
       <span className="flex flex-col text-left leading-tight">
         <span className="font-mono text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.35em] text-white/75">
-          Founders Batch
+          First batch of SalesX
         </span>
         <span className="mt-1 text-[13px] sm:text-[15px] uppercase tracking-wide text-white">
           Nov 2026
