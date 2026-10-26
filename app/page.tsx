@@ -3,6 +3,7 @@ import { pageMetadata } from "@/lib/seo";
 import CrossCountry from "./components/home/CrossCountry";
 // import Endorsement from "./components/home/Endorsement";
 import Hero from "./components/home/Hero";
+import AcceleratorPopup from "./components/home/AcceleratorPopup";
 import HiringPartners from "./components/home/HiringPartners";
 import Navbar from "./components/home/Navbar";
 import OurApproach from "./components/home/OurApproach";
@@ -35,6 +36,7 @@ export default function Page() {
       <TheImpact />
       <HiringPartners />
       <SiteFooter />
+      <AcceleratorPopup />
     </main>
   );
 }
