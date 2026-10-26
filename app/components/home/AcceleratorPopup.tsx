@@ -37,7 +37,7 @@ const OPEN_DELAY_MS = 2000;
  * Opens OPEN_DELAY_MS after the page has loaded (so it lands on the hero
  * once the hero's own intro has played), or straight away if the visitor
  * scrolls past the hero first. At most once per page load — after closing it
- * stays closed until a refresh. Enroll goes to the
+ * stays closed until a refresh. Check Eligibility goes to the
  * programs page. Hidden entirely once the batch has started.
  */
 export default function AcceleratorPopup() {
@@ -194,7 +194,7 @@ export default function AcceleratorPopup() {
           <div className="sx-cta sx-in" style={{ "--d": 5 } as Style}>
             <span className="sx-reg">Registration open</span>
             <Link href={ENROLL_HREF} onClick={close} className="sx-enroll">
-              Enroll
+              Check Eligibility
             </Link>
           </div>
         </div>
@@ -401,7 +401,7 @@ const STYLES = `
   }
   .sx-side { flex-direction: column; align-self: start; margin-top: 30px; }
   /* "Registration open" sits above the button, so push the bar down by the
-     label's height: bar and Enroll then share one centre line */
+     label's height: bar and the button then share one centre line */
   .sx-progress { align-self: start; padding-top: calc(var(--reg-h) + 8px); }
   .sx-card { border-radius: 30px; }
 }
@@ -519,7 +519,8 @@ const STYLES = `
 .sx-enroll {
   position: relative; overflow: hidden;
   display: grid; place-items: center; height: 44px; border-radius: 999px;
-  font-size: 21px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; color: #0b0e14;
+  padding: 0 16px; white-space: nowrap;
+  font-size: 14px; font-weight: 900; letter-spacing: .03em; text-transform: uppercase; color: #0b0e14;
   background: linear-gradient(90deg, var(--lime-a), var(--lime-b));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 14px 34px -12px rgba(160,230,80,.75);
   transition: transform .25s cubic-bezier(.2,.9,.3,1.3), box-shadow .25s;
