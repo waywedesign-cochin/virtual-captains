@@ -845,6 +845,7 @@ function ModalButton({
   location,
   className,
   autoOpenParam,
+  readFirstParam,
   scrollTargetId,
 }: {
   mode: ModalMode;
@@ -855,19 +856,33 @@ function ModalButton({
   className?: string;
   /** Open on load when this query param is in the URL (e.g. "apply" → ?apply=1). */
   autoOpenParam?: string;
+  /** Same, but give the visitor READ_FIRST_MS to read the section before the form opens. */
+  readFirstParam?: string;
   /** Element scrolled into view before the auto-open. */
   scrollTargetId?: string;
 }) {
   const [open, setOpen] = useState(false);
 
-  // Deep link (used for QR codes): scroll to the section, then open the form.
-  // Without the param the button behaves exactly as before.
+  // Deep links: scroll to the section, then open the form — straight away
+  // (autoOpenParam, used for QR codes) or after a pause to read
+  // (readFirstParam, used by the home-page popup's Enroll).
+  // Without either param the button behaves exactly as before.
   useEffect(() => {
-    if (!autoOpenParam) return;
-    if (!new URLSearchParams(window.location.search).has(autoOpenParam)) return;
+    const params = new URLSearchParams(window.location.search);
+    const immediate = !!autoOpenParam && params.has(autoOpenParam);
+    const readFirst = !!readFirstParam && params.has(readFirstParam);
+    if (!immediate && !readFirst) return;
+    const openDelay = immediate ? 0 : READ_FIRST_MS;
 
     let timer: number | undefined;
-    const openForm = () => setOpen(true);
+    let fallback: number | undefined;
+    let opened = false;
+    // Once only: the scroll callback and its fallback can both fire
+    const openForm = () => {
+      if (opened) return;
+      opened = true;
+      timer = window.setTimeout(() => setOpen(true), openDelay);
+    };
     // Wait for the page's entrance animations and layout to settle
     const start = window.setTimeout(() => {
       const target = scrollTargetId
@@ -878,18 +893,19 @@ function ModalButton({
       if (lenis) {
         lenis.scrollTo(target, { offset: -96, duration: 1.2, onComplete: openForm });
         // Fallback in case the scroll is interrupted
-        timer = window.setTimeout(openForm, 1800);
+        fallback = window.setTimeout(openForm, 1800);
       } else {
         target.scrollIntoView({ behavior: "smooth", block: "start" });
-        timer = window.setTimeout(openForm, 900);
+        fallback = window.setTimeout(openForm, 900);
       }
     }, 600);
 
     return () => {
       window.clearTimeout(start);
+      window.clearTimeout(fallback);
       window.clearTimeout(timer);
     };
-  }, [autoOpenParam, scrollTargetId]);
+  }, [autoOpenParam, readFirstParam, scrollTargetId]);
 
   return (
     <>
@@ -908,8 +924,12 @@ function ModalButton({
   );
 }
 
+/** How long a readFirstParam deep link waits on the section before the form opens. */
+const READ_FIRST_MS = 5000;
+
 type ProgramButtonProps = {
   autoOpenParam?: string;
+  readFirstParam?: string;
   scrollTargetId?: string;
   programTitle?: string;
   programSlug?: string;

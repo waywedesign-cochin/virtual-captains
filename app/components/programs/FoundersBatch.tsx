@@ -157,7 +157,10 @@ function OfflinePanel() {
     <article id="founders-batch-card" className={`${panelClass} scroll-mt-24`}>
       {" "}
       <Glows />
-      <div className="relative grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+      {/* Desktop: both columns capped and the pair centred (like w-fit +
+          mx-auto), so spare width goes equally to the outer left and right
+          instead of opening a gap between the columns */}
+      <div className="relative grid gap-12 lg:grid-cols-[minmax(0,32rem)_minmax(0,30rem)] lg:justify-center lg:gap-16">
         {/* Left: pitch, key facts, CTA */}
         <div className="flex flex-col">
           <h3 className="font-serif text-4xl leading-[1.1] text-white sm:text-5xl">
@@ -199,8 +202,10 @@ function OfflinePanel() {
             <CheckEligibilityButton
               programTitle={FOUNDERS_BATCH.title}
               programSlug={FOUNDERS_BATCH.slug}
-              // /programs?apply=1 (QR code link) scrolls here and opens the form
+              // /programs?apply=1 (QR code) scrolls here and opens the form;
+              // /programs?enroll=1 (home popup) scrolls here, waits 5s, opens it
               autoOpenParam="apply"
+              readFirstParam="enroll"
               scrollTargetId="founders-batch-card"
               className="cursor-pointer rounded-full bg-[#e7ff3d] px-7 py-3.5 text-sm font-bold text-[#0b0e14] shadow-[0_10px_30px_-10px_#e7ff3d] transition hover:bg-white"
             />
