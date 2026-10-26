@@ -40,8 +40,8 @@ const OPEN_DELAY_MS = 2000;
  * stays closed until a refresh. Check Eligibility goes to the
  * programs page. Hidden entirely once the batch has started.
  */
-export default function AcceleratorPopup({ forceOpen = false }: { forceOpen?: boolean }) {
-  const [open, setOpen] = useState(forceOpen);
+export default function AcceleratorPopup() {
+  const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const shown = useRef(false);
 
