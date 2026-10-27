@@ -8,7 +8,7 @@ import { ProgramsHero } from "./ProgramsHero";
 
 // Static content (not from Sanity). Edit here when the client changes details.
 const FOUNDERS_BATCH = {
-  title: "SalesX Founders Batch",
+  title: "SalesX Batch",
   slug: "salesx-founders-batch",
   description:
     "AI + human coaching for anyone who want to sell, from first contact to signed deal.",
