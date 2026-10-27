@@ -155,8 +155,8 @@ export default function AcceleratorPopup() {
             <div className="sx-row sx-in" style={{ "--d": 3 } as Style}>
               <Countdown />
               <p className="sx-copy">
-                Be among the first to experience SalesX and take your sales
-                career to the next level.
+                Be among the first to experience SalesX, a new way to
+                practise, evaluate, and elevate your sales performance.
               </p>
             </div>
           </div>
