@@ -17,6 +17,12 @@ import {
   row,
   tooMany,
 } from "@/app/lib/email";
+import {
+  ELIGIBILITY_ROLES,
+  LETTERS,
+  QUIZ,
+  isValidAnswers,
+} from "@/app/content/eligibilityQuiz";
 
 const sendCodeByIp = makeLimiter("send:ip", 5, 10 * MIN);
 const sendCodeByEmail = makeLimiter("send:email", 3, 10 * MIN);
@@ -66,6 +72,8 @@ export async function POST(req: Request) {
     audience,
     role,
     employees,
+    // "eligibility" only: option index per quiz question
+    answers,
   } = body;
 
   const validEmail =
@@ -148,7 +156,9 @@ export async function POST(req: Request) {
     !firstName ||
     !lastName ||
     !validEmail ||
-    !phone
+    !phone ||
+    (type === "eligibility" &&
+      (!ELIGIBILITY_ROLES.includes(role) || !isValidAnswers(answers)))
   ) {
     return NextResponse.json({ error: "Invalid data" }, { status: 400 });
   }
@@ -210,11 +220,24 @@ export async function POST(req: Request) {
           ${row("Email", `<a href="mailto:${esc(email)}" style="color:${C.blue};text-decoration:none;">${esc(email)}</a> (verified)`)}
           ${row("Phone", `<a href="tel:${esc(phone)}" style="color:${C.blue};text-decoration:none;">${esc(phone)}</a>`)}
           ${isCall && audience ? row("Type", esc(cap(audience))) : ""}
-          ${isCall && role ? row("Role", esc(role)) : ""}
+          ${role ? row("Role", esc(role)) : ""}
           ${isCall && employees ? row("Employees", esc(employees)) : ""}
-          ${startup ? row("Startup", esc(startup)) : ""}
+          ${startup ? row("Company", esc(startup)) : ""}
           ${row("Message", esc(message).replace(/\n/g, "<br/>") || "—")}
         </table>
+        ${
+          type === "eligibility"
+            ? `<h2 style="margin:28px 0 12px 0;font-family:${FONT};font-size:17px;line-height:24px;font-weight:700;color:#ffffff;">Insight Exercise</h2>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.rowBg}" style="background:${C.rowBg};border:1px solid ${C.border};border-radius:12px;border-collapse:separate;">
+          ${QUIZ.map((q, i) =>
+            row(
+              `Q${i + 1}. ${esc(q.title)}`,
+              `<strong>${LETTERS[answers[i]]}.</strong> ${esc(q.options[answers[i]])}`,
+            ),
+          ).join("")}
+        </table>`
+            : ""
+        }
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;">
           <tr>
             <td bgcolor="${C.blue}" style="background:${C.blue};border-radius:10px;">
@@ -244,7 +267,7 @@ export async function POST(req: Request) {
     const confirmText = isCall
       ? "Thanks for reaching out. Our team will contact you shortly to schedule your call."
       : isApplication
-        ? "Thanks for applying. If you're selected, we'll send a payment link to this email."
+        ? "Thank you for your application. We will get in touch with you."
         : "Thanks for joining. We'll email you as soon as the program opens.";
 
     await resend.emails.send({

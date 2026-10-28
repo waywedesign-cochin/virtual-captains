@@ -5,6 +5,12 @@ import { createPortal } from "react-dom";
 import { isValidPhoneNumber, type Value } from "react-phone-number-input";
 import PhoneField from "../common/PhoneField";
 import { WORK_EMAIL_ERROR, isPersonalEmail } from "@/app/lib/workEmail";
+import {
+  ELIGIBILITY_ROLES,
+  LETTERS,
+  QUIZ,
+  QUIZ_INTRO,
+} from "@/app/content/eligibilityQuiz";
 
 type ModalMode = "call" | "eligibility" | "waitlist" | "notify" | "event";
 
@@ -135,7 +141,7 @@ export default function BookACallModal({
   const messagePlaceholder = isEvent
     ? "Anything you'd like us to know? (optional)"
     : isEligibility
-      ? "Tell us a bit about yourself and your startup"
+      ? "Tell us a bit about yourself and your company"
       : isWaitlist
         ? "Anything you'd like us to know? (optional)"
         : "What would you like to talk about?";
@@ -189,7 +195,8 @@ export default function BookACallModal({
         // text-[#101010]: the dialog sets its own text colour — on dark pages
         // it used to inherit white, making typed text and the country-code
         // select invisible on the white card
-        className="relative z-10 w-full max-w-110 overflow-y-auto overscroll-contain text-[#101010] rounded-2xl border border-black/10 bg-white p-6 sm:p-9 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.45)]"
+        // Eligibility is wider to give the quiz options room
+        className={`relative z-10 w-full ${isEligibility ? "max-w-150" : "max-w-110"} overflow-y-auto overscroll-contain text-[#101010] rounded-2xl border border-black/10 bg-white p-6 sm:p-9 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.45)]`}
       >
         <button
           type="button"
@@ -242,7 +249,7 @@ export default function BookACallModal({
             ) : isEligibility ? (
               <>
                 <h3 className="mt-5 font-sans text-2xl text-[#101010]">
-                  Application received
+                  Application Received
                 </h3>
                 <p className="mt-2 max-w-80 font-sans text-[13px] leading-relaxed text-black/55">
                   Thank you for your application. We will get in touch with you.
@@ -468,6 +475,10 @@ export default function BookACallModal({
                 audience: isApplication ? undefined : audience,
                 role: data.get("role"),
                 employees: data.get("employees"),
+                // Option index per question; radios are `required`, so all set
+                answers: isEligibility
+                  ? QUIZ.map((_, i) => Number(data.get(`q${i}`)))
+                  : undefined,
               };
 
               setSubmitting(true);
@@ -648,20 +659,43 @@ export default function BookACallModal({
                 </>
               )}
 
-              {/* Eligibility only: startup name */}
+              {/* Eligibility only: company name + role */}
               {isEligibility && (
-                <label className="flex flex-col gap-1.5 w-full">
-                  <span className="text-[12px] font-medium text-black/70">
-                    Startup / Company Name
-                  </span>
-                  <input
-                    type="text"
-                    name="startup"
-                    defaultValue={String(pending?.startup ?? "")}
-                    placeholder="e.g. Acme Labs"
-                    className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
-                  />
-                </label>
+                <>
+                  <label className="flex flex-col gap-1.5 w-full">
+                    <span className="text-[12px] font-medium text-black/70">
+                      Company Name
+                    </span>
+                    <input
+                      type="text"
+                      name="startup"
+                      defaultValue={String(pending?.startup ?? "")}
+                      placeholder="e.g. Acme Labs"
+                      className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5 w-full">
+                    <span className="text-[12px] font-medium text-black/70">
+                      Role / Designation
+                      <Req />
+                    </span>
+                    <select
+                      name="role"
+                      required
+                      defaultValue={String(pending?.role ?? "")}
+                      className="w-full min-w-0 rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors focus:border-[#3478e5] bg-white cursor-pointer"
+                    >
+                      <option value="" disabled>
+                        Select your role
+                      </option>
+                      {ELIGIBILITY_ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {r}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </>
               )}
 
               {/* Conditional: Fields Only for Organisation (call mode only) */}
@@ -719,6 +753,56 @@ export default function BookACallModal({
                   className="w-full min-w-0 resize-none rounded-lg border border-black/15 px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5]"
                 />
               </label>
+
+              {/* Eligibility only: 5-question insight exercise, one answer each */}
+              {isEligibility && (
+                <div className="mt-2 flex flex-col gap-5 border-t border-black/10 pt-5">
+                  <div>
+                    <h4 className="font-sans text-[17px] font-medium text-[#101010]">
+                      Insight Exercise
+                      <Req />
+                    </h4>
+                    <p className="mt-1 text-[12.5px] leading-relaxed text-black/55">
+                      {QUIZ_INTRO} Choose one answer for each question.
+                    </p>
+                  </div>
+                  {QUIZ.map((q, qi) => (
+                    <fieldset key={qi} className="flex flex-col gap-2 min-w-0">
+                      <legend className="mb-2 text-[13px] leading-snug text-black/80">
+                        <span className="block font-medium text-[#101010]">
+                          Q{qi + 1}. {q.title}
+                        </span>
+                        <span className="mt-1 block text-black/60">
+                          {q.question}
+                        </span>
+                      </legend>
+                      {q.options.map((opt, oi) => (
+                        <label
+                          key={oi}
+                          className="flex cursor-pointer items-start gap-3 rounded-lg border border-black/15 px-3.5 py-2.5 text-[13px] leading-snug text-black/75 transition-colors hover:border-black/30 has-checked:border-[#3478e5] has-checked:bg-[#3478e5]/5 has-checked:text-[#101010]"
+                        >
+                          <input
+                            type="radio"
+                            name={`q${qi}`}
+                            value={oi}
+                            required
+                            defaultChecked={
+                              (pending?.answers as number[] | undefined)?.[
+                                qi
+                              ] === oi
+                            }
+                            className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#3478e5]"
+                          />
+                          <span>
+                            <span className="font-medium">{LETTERS[oi]}.</span>{" "}
+                            {opt}
+                          </span>
+                        </label>
+                      ))}
+                    </fieldset>
+                  ))}
+                </div>
+              )}
             </div>
 
             {submitError && (
