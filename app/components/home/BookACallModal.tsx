@@ -13,7 +13,7 @@ type ModalMode = "call" | "eligibility" | "waitlist" | "notify" | "event";
  *  - "call" (default): general "Book a Call" enquiry. Submits to
  *    /api/applications with type "call"; the team follows up to schedule.
  *  - "eligibility": program application. Submits to /api/applications; the
- *    team reviews applications and sends a payment link only to selected ones.
+ *
  *  - "waitlist": same fields, for programs that haven't opened yet.
  *  - "notify": email-only signup. Submits to /api/notify, which saves the
  *    email to a Resend Audience so the client can send a broadcast later.
@@ -119,34 +119,34 @@ export default function BookACallModal({
   const title = isEvent
     ? "Join the SalesX Launch"
     : isEligibility
-    ? "Check Eligibility"
-    : isWaitlist
-      ? "Join the Waitlist"
-      : "Book a Call";
+      ? "Check Eligibility"
+      : isWaitlist
+        ? "Join the Waitlist"
+        : "Book a Call";
 
   const subtitle = isEvent
     ? "Only 40 invites for founders. Submit your details to join us on 24 October 2026 in Calicut."
     : isEligibility
-    ? `Apply for ${programTitle ?? "this program"}. We review every application and get back to you with the next steps.`
-    : isWaitlist
-      ? `Be the first to know when ${programTitle ?? "this program"} opens. Leave your details and we'll reach out.`
-      : "Leave your details and our team will get back to you shortly.";
+      ? `Apply for ${programTitle ?? "this program"}. We review every application and get back to you with the next steps.`
+      : isWaitlist
+        ? `Be the first to know when ${programTitle ?? "this program"} opens. Leave your details and we'll reach out.`
+        : "Leave your details and our team will get back to you shortly.";
 
   const messagePlaceholder = isEvent
     ? "Anything you'd like us to know? (optional)"
     : isEligibility
-    ? "Tell us a bit about yourself and your startup"
-    : isWaitlist
-      ? "Anything you'd like us to know? (optional)"
-      : "What would you like to talk about?";
+      ? "Tell us a bit about yourself and your startup"
+      : isWaitlist
+        ? "Anything you'd like us to know? (optional)"
+        : "What would you like to talk about?";
 
   const submitLabel = isEvent
     ? "Submit Details"
     : isEligibility
-    ? "Submit application"
-    : isWaitlist
-      ? "Join waitlist"
-      : "Submit";
+      ? "Submit application"
+      : isWaitlist
+        ? "Join waitlist"
+        : "Submit";
 
   const RATE_LIMIT_MSG =
     "Too many attempts. Please wait a few minutes and try again.";
@@ -245,8 +245,7 @@ export default function BookACallModal({
                   Application received
                 </h3>
                 <p className="mt-2 max-w-80 font-sans text-[13px] leading-relaxed text-black/55">
-                  Thanks for applying. If you&apos;re selected, we&apos;ll send
-                  a payment link to your email to confirm your seat.
+                  Thank you for your application. We will get in touch with you.
                 </p>
               </>
             ) : isWaitlist ? (
@@ -408,7 +407,8 @@ export default function BookACallModal({
                 const email = String(
                   new FormData(e.currentTarget).get("email") ?? "",
                 );
-                if (isPersonalEmail(email)) return setEmailError(WORK_EMAIL_ERROR);
+                if (isPersonalEmail(email))
+                  return setEmailError(WORK_EMAIL_ERROR);
               }
               if (!phone)
                 return setPhoneError("Please enter your phone number.");
@@ -578,7 +578,9 @@ export default function BookACallModal({
                   placeholder="jane@company.com"
                   onChange={() => emailError && setEmailError(null)}
                   aria-invalid={Boolean(emailError)}
-                  aria-describedby={emailError ? "book-call-email-error" : undefined}
+                  aria-describedby={
+                    emailError ? "book-call-email-error" : undefined
+                  }
                   className={`w-full min-w-0 rounded-lg border px-3.5 py-2.5 text-[14px] outline-none transition-colors placeholder:text-slate-400 focus:border-[#3478e5] ${
                     emailError ? "border-red-500" : "border-black/15"
                   }`}
@@ -891,7 +893,11 @@ function ModalButton({
       if (!target) return openForm();
       const lenis = window.__lenis;
       if (lenis) {
-        lenis.scrollTo(target, { offset: -96, duration: 1.2, onComplete: openForm });
+        lenis.scrollTo(target, {
+          offset: -96,
+          duration: 1.2,
+          onComplete: openForm,
+        });
         // Fallback in case the scroll is interrupted
         fallback = window.setTimeout(openForm, 1800);
       } else {
