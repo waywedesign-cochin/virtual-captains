@@ -267,7 +267,7 @@ export async function POST(req: Request) {
     const confirmText = isCall
       ? "Thanks for reaching out. Our team will contact you shortly to schedule your call."
       : isApplication
-        ? "Thank you for your application. We will get in touch with you."
+        ? "Thank you for your response. We will review your application and get in touch with you."
         : "Thanks for joining. We'll email you as soon as the program opens.";
 
     await resend.emails.send({
