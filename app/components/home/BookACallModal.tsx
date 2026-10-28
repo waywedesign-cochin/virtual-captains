@@ -149,9 +149,9 @@ export default function BookACallModal({
   const submitLabel = isEvent
     ? "Submit Details"
     : isEligibility
-      ? "Submit application"
+      ? "Submit Application"
       : isWaitlist
-        ? "Join waitlist"
+        ? "Join Waitlist"
         : "Submit";
 
   const RATE_LIMIT_MSG =
@@ -252,7 +252,8 @@ export default function BookACallModal({
                   Application Received
                 </h3>
                 <p className="mt-2 max-w-80 font-sans text-[13px] leading-relaxed text-black/55">
-                  Thank you for your application. We will get in touch with you.
+                  Thank you for your response. We will review your application
+                  and get in touch with you.
                 </p>
               </>
             ) : isWaitlist ? (
