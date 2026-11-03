@@ -13,7 +13,7 @@ const lato = Lato({ subsets: ["latin"], weight: ["300", "400", "700", "900"] });
 /** First batch start, IST. The countdown runs to this moment. */
 const BATCH_START = new Date("2026-11-15T09:30:00+05:30");
 const SLOTS_TOTAL = 50;
-const SLOTS_TAKEN = 8;
+const SLOTS_TAKEN = 20;
 /** Scrolls to the batch card, then opens Check Eligibility after 5s. */
 const ENROLL_HREF = "/programs?enroll=1";
 /* ----------------------------------------------- */
