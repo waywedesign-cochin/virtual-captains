@@ -250,7 +250,7 @@ const STYLES = `
 .sx-card {
   container: sx / inline-size;
   position: relative; isolation: isolate;
-  width: 100%; max-width: 1000px; min-width: 0;
+  width: 100%; max-width: 820px; min-width: 0;
   max-height: calc(100dvh - 32px);
   overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
   scrollbar-width: none;
@@ -315,11 +315,11 @@ const STYLES = `
   box-shadow: 0 10px 30px -10px rgba(255,80,60,.7);
 }
 .sx-ribbon-label { font-size: 10.5px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; line-height: 1.1; }
-.sx-ribbon-month { font-size: 20px; font-weight: 900; letter-spacing: .01em; text-transform: uppercase; line-height: 1.05; }
+.sx-ribbon-month { font-size: 18px; font-weight: 900; letter-spacing: .01em; text-transform: uppercase; line-height: 1.05; }
 
 .sx-grid {
   position: relative; z-index: 2;
-  display: grid; gap: 20px; padding: 18px 22px 24px;
+  display: grid; gap: 16px; padding: 14px 20px 20px;
   grid-template-areas: "main" "thanks" "note" "cta";
 }
 .sx-main { grid-area: main; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -328,10 +328,10 @@ const STYLES = `
 .sx-cta { grid-area: cta; }
 
 .sx-eyebrow { font-size: 12px; font-weight: 400; letter-spacing: .03em; text-transform: uppercase; }
-.sx-logo { margin-top: 14px; width: 140px; height: auto; }
+.sx-logo { margin-top: 12px; width: 120px; height: auto; }
 .sx-title {
   margin-top: 6px; font-weight: 300; line-height: 1; letter-spacing: .01em; text-transform: uppercase;
-  font-size: clamp(32px, 9.4vw, 40px); white-space: nowrap; color: #196cd6;
+  font-size: clamp(28px, 8.4vw, 34px); white-space: nowrap; color: #196cd6;
 }
 .sx-status { margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; color: #a6e36a; text-align: left; }
 .sx-spinner {
@@ -341,11 +341,11 @@ const STYLES = `
 }
 
 .sx-thanks-big {
-  font-size: clamp(34px, 10vw, 44px); font-weight: 400; line-height: 1; text-transform: uppercase; white-space: nowrap;
+  font-size: clamp(30px, 9vw, 38px); font-weight: 400; line-height: 1; text-transform: uppercase; white-space: nowrap;
   background: linear-gradient(90deg, var(--hot-a), var(--hot-b));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.sx-thanks-sub { margin-top: 4px; font-size: 20px; font-weight: 400; }
+.sx-thanks-sub { margin-top: 4px; font-size: 18px; font-weight: 400; }
 .sx-thanks-rule { margin-top: 12px; width: 120px; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); }
 
 /* Glass note with chevrons */
@@ -367,9 +367,9 @@ const STYLES = `
 .sx-reg { text-align: center; font-size: 11px; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; color: rgba(255,255,255,.9); }
 .sx-enroll {
   position: relative; overflow: hidden;
-  display: grid; place-items: center; height: 52px; border-radius: 999px;
+  display: grid; place-items: center; height: 46px; border-radius: 999px;
   padding: 0 24px; white-space: nowrap;
-  font-size: 18px; font-weight: 900; letter-spacing: .02em; text-transform: uppercase; color: #0b0e14;
+  font-size: 16px; font-weight: 900; letter-spacing: .02em; text-transform: uppercase; color: #0b0e14;
   background: linear-gradient(90deg, var(--lime-a), var(--lime-b));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 14px 34px -12px rgba(160,230,80,.75);
   transition: transform .25s cubic-bezier(.2,.9,.3,1.3), box-shadow .25s;
