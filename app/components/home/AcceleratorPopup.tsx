@@ -6,39 +6,28 @@ import Image from "next/image";
 import Link from "next/link";
 import { Lato } from "next/font/google";
 
-// The design is set in Lato: Light title, Black "NOVEMBER 15"
+// The design is set in Lato: Light "ACCELERATOR" / "THANK YOU", Black CTA
 const lato = Lato({ subsets: ["latin"], weight: ["300", "400", "700", "900"] });
 
 /* ---------- Edit these for each batch ---------- */
-/** First batch start, IST. The countdown runs to this moment. */
-const BATCH_START = new Date("2026-11-15T09:30:00+05:30");
-const SLOTS_TOTAL = 50;
-const SLOTS_TAKEN = 20;
+/** Shown on the corner ribbon: "First batch starts <MONTH>". */
+const BATCH_MONTH = "November";
 /** Scrolls to the batch card, then opens Check Eligibility after 5s. */
 const ENROLL_HREF = "/programs?enroll=1";
 /* ----------------------------------------------- */
 
-const PERCENT = Math.round((SLOTS_TAKEN / SLOTS_TOTAL) * 100);
-const MONTH = BATCH_START.toLocaleString("en-US", {
-  month: "long",
-  timeZone: "Asia/Kolkata",
-}).toUpperCase();
-const DAY = BATCH_START.toLocaleString("en-US", {
-  day: "numeric",
-  timeZone: "Asia/Kolkata",
-});
 const EXIT_MS = 320;
 /** Opens this long after the page loads, even if the visitor stays on the hero. */
 const OPEN_DELAY_MS = 2000;
 
 /**
- * SalesX Accelerator popup for the home page.
+ * SalesX Accelerator popup for the home page ("Thank you for your interest",
+ * registrations under review, last window to check eligibility).
  *
  * Opens OPEN_DELAY_MS after the page has loaded (so it lands on the hero
  * once the hero's own intro has played), or straight away if the visitor
  * scrolls past the hero first. At most once per page load — after closing it
- * stays closed until a refresh. Check Eligibility goes to the
- * programs page. Hidden entirely once the batch has started.
+ * stays closed until a refresh. Check Eligibility goes to the programs page.
  */
 export default function AcceleratorPopup() {
   const [open, setOpen] = useState(false);
@@ -46,8 +35,6 @@ export default function AcceleratorPopup() {
   const shown = useRef(false);
 
   useEffect(() => {
-    if (Date.now() >= BATCH_START.getTime()) return;
-
     let timer: number | undefined;
     let io: IntersectionObserver | undefined;
     const show = () => {
@@ -134,8 +121,14 @@ export default function AcceleratorPopup() {
           </svg>
         </button>
 
+        {/* Corner ribbon, flush to the card's right edge */}
+        <div className="sx-ribbon sx-in" style={{ "--d": 1 } as Style}>
+          <span className="sx-ribbon-label">First batch starts</span>
+          <span className="sx-ribbon-month">{BATCH_MONTH}</span>
+        </div>
+
         <div className="sx-grid">
-          {/* ---- Left ---- */}
+          {/* ---- Top left ---- */}
           <div className="sx-main">
             <p className="sx-eyebrow sx-in" style={{ "--d": 0 } as Style}>
               Online &amp; Offline
@@ -151,48 +144,31 @@ export default function AcceleratorPopup() {
             <h2 id="sx-title" className="sx-title sx-in" style={{ "--d": 2 } as Style}>
               Accelerator
             </h2>
-
-            <div className="sx-row sx-in" style={{ "--d": 3 } as Style}>
-              <Countdown />
-              <p className="sx-copy">
-                Be among the first to experience SalesX, a new way to
-                practise, evaluate, and elevate your sales performance.
-              </p>
-            </div>
+            <p className="sx-status sx-in" style={{ "--d": 3 } as Style}>
+              <Spinner />
+              Registrations are currently under review
+            </p>
           </div>
 
-          {/* ---- Right ---- */}
-          <div className="sx-side">
-            <div className="sx-date sx-tile sx-in" style={{ "--d": 2 } as Style}>
-              <span className="sx-date-label">First batch starts</span>
-              <span className="sx-date-month">{MONTH}</span>
-              <span className="sx-date-day">{DAY}</span>
-            </div>
-            <span className="sx-hot sx-in" style={{ "--d": 3 } as Style}>
-              <svg viewBox="0 0 24 24" aria-hidden>
-                <path
-                  fill="#fff"
-                  d="M12.6 1.5c.4 3-1.2 4.6-2.7 6.3C8.3 9.6 6.5 11.5 6.5 14.6a5.5 5.5 0 0 0 11 0c0-2.4-1-4.4-2.2-5.9-.2 1.3-.9 2.3-1.9 2.6.6-3.4-.2-7.1-.8-9.8Z"
-                />
-                <path
-                  fill="#ff5a36"
-                  d="M12 21.2a2.9 2.9 0 0 1-2.9-2.9c0-1.7 1.3-2.7 2.3-4 .3 1 .9 1.6 1.7 1.8.1-.8.6-1.4 1.2-1.7.4.9.6 1.9.6 2.9A2.9 2.9 0 0 1 12 21.2Z"
-                />
-              </svg>
-              Limited slots
-            </span>
+          {/* ---- Top right ---- */}
+          <div className="sx-thanks sx-in" style={{ "--d": 3 } as Style}>
+            <p className="sx-thanks-big">Thank you</p>
+            <p className="sx-thanks-sub">for your interest!</p>
+            <span className="sx-thanks-rule" aria-hidden />
           </div>
 
-          {/* ---- Bottom ---- */}
-          <div className="sx-progress sx-in" style={{ "--d": 4 } as Style}>
-            <LiquidBar />
-            <span className="sx-slots-note">
-              {SLOTS_TAKEN}/{SLOTS_TOTAL} Slots
-            </span>
+          {/* ---- Bottom left ---- */}
+          <div className="sx-note sx-in" style={{ "--d": 4 } as Style}>
+            <p>
+              You can still check your eligibility for the programme, and
+              shortlisted applicants will be placed in a queue
+            </p>
+            <Chevrons />
           </div>
 
+          {/* ---- Bottom right ---- */}
           <div className="sx-cta sx-in" style={{ "--d": 5 } as Style}>
-            <span className="sx-reg">Registration open</span>
+            <span className="sx-reg">Last window to join</span>
             <Link href={ENROLL_HREF} onClick={close} className="sx-enroll">
               Check Eligibility
             </Link>
@@ -206,102 +182,58 @@ export default function AcceleratorPopup() {
 
 type Style = React.CSSProperties & Record<`--${string}`, string | number>;
 
-/** Live days / hours / minutes to BATCH_START. Each digit box rolls on change. */
-function Countdown() {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const total = Math.max(0, Math.floor((BATCH_START.getTime() - now) / 1000));
-  const parts = [
-    { label: "Days", value: Math.floor(total / 86400) },
-    { label: "Hours", value: Math.floor((total % 86400) / 3600) },
-    { label: "Min", value: Math.floor((total % 3600) / 60) },
-  ];
-
+/** Lime "loading" ring of 12 ticks that steps round, like the design's icon. */
+function Spinner() {
   return (
-    <div
-      className="sx-count"
-      role="timer"
-      aria-label={`${parts[0].value} days, ${parts[1].value} hours, ${parts[2].value} minutes until the first batch`}
-    >
-      {parts.map((p, i) => (
-        <div key={p.label} className="sx-count-cell">
-          <span className="sx-count-label">{p.label}</span>
-          <div className="sx-count-wrap">
-            {i > 0 && <span className="sx-colon" aria-hidden>:</span>}
-            <span className="sx-count-box sx-tile">
-              {/* key change re-mounts the number → roll-in animation */}
-              <span key={p.value} className="sx-count-num">
-                {p.value}
-              </span>
-            </span>
-          </div>
-        </div>
+    <svg className="sx-spinner" viewBox="0 0 24 24" aria-hidden>
+      {Array.from({ length: 12 }, (_, i) => (
+        <line
+          key={i}
+          x1="12"
+          y1="2.5"
+          x2="12"
+          y2="7"
+          transform={`rotate(${i * 30} 12 12)`}
+          opacity={0.3 + (i / 11) * 0.7}
+        />
       ))}
-    </div>
+    </svg>
   );
 }
 
-/**
- * Slots bar: a glossy tube that fills like liquid — the front edge is a
- * moving wave, and the % counts up in step with the fill.
- */
-function LiquidBar() {
-  // Reduced motion: start full, skip the fill animation
-  const [reduce] = useState(
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
-  const [shown, setShown] = useState(reduce ? PERCENT : 0);
-
-  useEffect(() => {
-    if (reduce) return;
-    let raf = 0;
-    const startAt = performance.now() + 550; // after the card lands
-    const dur = 1600;
-    const tick = (t: number) => {
-      const p = Math.min(1, Math.max(0, (t - startAt) / dur));
-      const eased = 1 - Math.pow(1 - p, 4);
-      setShown(eased * PERCENT);
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [reduce]);
-
+/** Three green chevrons that light up in sequence, pointing at the CTA. */
+function Chevrons() {
   return (
-    <div
-      className="sx-bar"
-      role="progressbar"
-      aria-valuemin={0}
-      aria-valuemax={SLOTS_TOTAL}
-      aria-valuenow={SLOTS_TAKEN}
-      aria-label={`${SLOTS_TAKEN} of ${SLOTS_TOTAL} slots filled`}
-    >
-      {/* Liquid front: the fill's right edge is masked into a rolling wave,
-          so its shading runs through the wave with no seam */}
-      <div className="sx-fill" style={{ width: `calc(${shown}% + 9px)` }}>
-        <span className="sx-fill-pct">{Math.round(shown)}%</span>
-      </div>
-      <span className="sx-bar-total">{SLOTS_TOTAL} slots</span>
-    </div>
+    <svg className="sx-chevrons" viewBox="0 0 64 40" aria-hidden>
+      <defs>
+        <linearGradient id="sx-chev" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stopColor="#16c25a" />
+          <stop offset="1" stopColor="#b8ec5c" />
+        </linearGradient>
+      </defs>
+      {[0, 1, 2].map((i) => (
+        <path
+          key={i}
+          d={`M${4 + i * 16} 4 L${20 + i * 16} 20 L${4 + i * 16} 36`}
+          style={{ animationDelay: `${i * 0.18}s` }}
+        />
+      ))}
+    </svg>
   );
 }
 
 const STYLES = `
 .sx-root {
   --lime-a: #8fdb58; --lime-b: #c8e361;
+  --hot-a: #ff3a33; --hot-b: #ff8a4c;
   --glass-edge: rgba(255,255,255,.55);
-  --reg-h: 14px;
   position: fixed; inset: 0; z-index: 100;
   display: grid; grid-template-columns: minmax(0, 1fr); place-items: center;
   padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
   color: #fff;
 }
 
-/* Backdrop: deep tint that eases in with a growing blur */
+/* Backdrop: deep tint that eases in */
 .sx-backdrop {
   position: absolute; inset: 0;
   background: radial-gradient(120% 90% at 50% 40%, rgba(10,28,70,.55), rgba(2,6,18,.82));
@@ -311,26 +243,27 @@ const STYLES = `
   animation: sx-fade .6s cubic-bezier(.22,1,.36,1) both;
 }
 
-/* ---- Premium glass card ---- */
+/* ---- Premium glass card ----
+   The card is a size container: on desktop every measurement is a share of
+   the card's width (cqi), taken from the design, so it keeps the design's
+   exact proportions at any screen size. */
 .sx-card {
+  container: sx / inline-size;
   position: relative; isolation: isolate;
-  width: 100%; max-width: 740px; min-width: 0;
+  width: 100%; max-width: 1000px; min-width: 0;
   max-height: calc(100dvh - 32px);
-  overflow-y: auto; overscroll-behavior: contain;
+  overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
   scrollbar-width: none;
-  border-radius: 26px;
-  padding: clamp(18px, 3.4vw, 30px);
+  border-radius: 28px;
   background:
-    radial-gradient(90% 70% at 0% 0%, rgba(78,140,255,.20), transparent 60%),
-    radial-gradient(70% 60% at 100% 100%, rgba(139,224,78,.10), transparent 60%),
-    linear-gradient(145deg, rgba(38,52,80,.72), rgba(14,20,34,.78));
+    radial-gradient(90% 70% at 0% 0%, rgba(78,140,255,.16), transparent 60%),
+    linear-gradient(145deg, rgba(34,46,70,.80), rgba(16,24,40,.84));
   backdrop-filter: blur(28px) saturate(170%);
   -webkit-backdrop-filter: blur(28px) saturate(170%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.28),
     inset 0 -1px 0 rgba(255,255,255,.06),
     inset 0 0 40px rgba(120,170,255,.08),
-    0 0 0 1px rgba(255,255,255,.04),
     0 30px 80px -20px rgba(0,0,0,.7),
     0 0 90px -10px rgba(60,120,255,.35);
   animation: sx-pop 1s linear(0, .22 9%, .66 20%, .98 31%, 1.07 38%, 1.08 43%, 1.04 52%, .99 64%, 1) both;
@@ -338,13 +271,13 @@ const STYLES = `
   will-change: transform, opacity;
 }
 .sx-card::-webkit-scrollbar { display: none; }
-/* Light-catching rim: bright top-left & bottom-right, fading between */
+/* Light-catching rim */
 .sx-card::before {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
-  background: linear-gradient(135deg, var(--glass-edge), rgba(255,255,255,.08) 30%, rgba(255,255,255,.04) 60%, rgba(255,255,255,.45));
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+  background: linear-gradient(135deg, var(--glass-edge), rgba(255,255,255,.10) 30%, rgba(255,255,255,.06) 60%, rgba(255,255,255,.5));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
-  pointer-events: none; z-index: 1;
+  pointer-events: none; z-index: 4;
 }
 /* Fine grain so the glass doesn't look like flat plastic */
 .sx-card::after {
@@ -352,10 +285,7 @@ const STYLES = `
   opacity: .07; mix-blend-mode: overlay; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-/* One light sweep across the glass as it lands */
-.sx-sheen {
-  position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 0;
-}
+.sx-sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 0; }
 .sx-sheen::before {
   content: ""; position: absolute; top: -20%; bottom: -20%; width: 35%; left: 0;
   background: linear-gradient(100deg, transparent, rgba(255,255,255,.10), transparent);
@@ -363,16 +293,8 @@ const STYLES = `
   animation: sx-sweep 1.6s .45s cubic-bezier(.45,0,.2,1) both;
 }
 
-/* Small glass tiles (date card, countdown boxes) */
-.sx-tile {
-  position: relative;
-  background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), inset 0 0 0 1px rgba(255,255,255,.12), 0 10px 24px -12px rgba(0,0,0,.6);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-
 .sx-close {
-  position: absolute; top: 10px; right: 10px; z-index: 3;
+  position: absolute; top: 12px; right: 12px; z-index: 5;
   width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center;
   background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
   color: rgba(255,255,255,.75); cursor: pointer; transition: background .2s, color .2s, transform .2s;
@@ -381,146 +303,73 @@ const STYLES = `
 .sx-close:focus-visible { outline: 2px solid var(--lime-b); outline-offset: 2px; }
 .sx-close svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
 
-/* ---- Layout: stacked on phones, two columns from tablet up ---- */
+/* ================= Phones (card narrower than 640px) =================
+   One centred column; the ribbon sits on top, flush to the right edge. */
+.sx-ribbon {
+  position: relative; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  width: fit-content; margin: 0 auto;
+  padding: 12px 22px 24px;
+  background: linear-gradient(180deg, var(--hot-a), var(--hot-b));
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), 50% 100%, 0 calc(100% - 14px));
+  box-shadow: 0 10px 30px -10px rgba(255,80,60,.7);
+}
+.sx-ribbon-label { font-size: 10.5px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; line-height: 1.1; }
+.sx-ribbon-month { font-size: 20px; font-weight: 900; letter-spacing: .01em; text-transform: uppercase; line-height: 1.05; }
+
 .sx-grid {
   position: relative; z-index: 2;
-  display: grid; gap: 16px;
-  grid-template-areas: "main" "side" "progress" "cta";
+  display: grid; gap: 20px; padding: 18px 22px 24px;
+  grid-template-areas: "main" "thanks" "note" "cta";
 }
-.sx-main { grid-area: main; min-width: 0; }
-.sx-side { grid-area: side; display: flex; align-items: stretch; gap: 12px; }
-.sx-progress { grid-area: progress; min-width: 0; }
-.sx-cta { grid-area: cta; display: flex; flex-direction: column; gap: 8px; align-self: start; }
+.sx-main { grid-area: main; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.sx-thanks { grid-area: thanks; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.sx-note { grid-area: note; }
+.sx-cta { grid-area: cta; }
 
-@media (min-width: 720px) {
-  .sx-grid {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "main side" "progress cta";
-    column-gap: 24px; row-gap: 18px;
-    align-items: end;
-  }
-  .sx-side { flex-direction: column; align-self: start; margin-top: 30px; }
-  /* "Registration open" sits above the button, so push the bar down by the
-     label's height: bar and the button then share one centre line */
-  .sx-progress { align-self: start; padding-top: calc(var(--reg-h) + 8px); }
-  .sx-card { border-radius: 30px; }
-}
-
-.sx-eyebrow { font-size: 11.5px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: #fff; }
-.sx-logo { margin-top: 14px; width: clamp(118px, 18vw, 150px); height: auto; }
+.sx-eyebrow { font-size: 12px; font-weight: 400; letter-spacing: .03em; text-transform: uppercase; }
+.sx-logo { margin-top: 14px; width: 140px; height: auto; }
 .sx-title {
-  margin-top: 4px; font-weight: 300; line-height: 1; letter-spacing: .01em; text-transform: uppercase;
-  font-size: clamp(30px, 8.6vw, 54px); white-space: nowrap;
-  color: #196cd6;
+  margin-top: 6px; font-weight: 300; line-height: 1; letter-spacing: .01em; text-transform: uppercase;
+  font-size: clamp(32px, 9.4vw, 40px); white-space: nowrap; color: #196cd6;
+}
+.sx-status { margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; color: #a6e36a; text-align: left; }
+.sx-spinner {
+  width: 24px; height: 24px; flex: none;
+  stroke: #a6e36a; stroke-width: 2.4; stroke-linecap: round;
+  animation: sx-spin 1.2s steps(12) infinite;
 }
 
-.sx-row { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
-.sx-copy { flex: 1 1 180px; max-width: 230px; margin-top: 18px; font-size: 13px; line-height: 1.5; color: #fff; }
-@media (max-width: 719px) { .sx-copy { margin-top: 0; } }
-
-/* Countdown */
-.sx-count { display: flex; gap: 0; }
-.sx-count-cell { display: flex; flex-direction: column; align-items: center; }
-.sx-count-cell:not(:first-child) { margin-left: 4px; }
-.sx-count-label { font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: #fff; margin-bottom: 6px; padding-left: 12px; }
-.sx-count-cell:first-child .sx-count-label { padding-left: 0; }
-.sx-count-wrap { display: flex; align-items: center; }
-.sx-colon { width: 12px; text-align: center; color: var(--lime-a); font-weight: 700; }
-.sx-count-box {
-  display: grid; place-items: center; overflow: hidden;
-  width: clamp(52px, 15vw, 60px); height: clamp(52px, 15vw, 60px); border-radius: 10px;
-}
-.sx-count-num {
-  font-size: clamp(24px, 6.6vw, 30px); font-weight: 300; font-variant-numeric: tabular-nums;
-  animation: sx-roll .5s cubic-bezier(.2,.9,.25,1.2) both;
-}
-
-/* Date card */
-.sx-date {
-  flex: 1; border-radius: 18px; padding: 14px 18px 8px;
-  display: flex; flex-direction: column; align-items: flex-start;
-}
-.sx-date-label {
-  font-size: 10.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: #fff;
-  padding-bottom: 6px; width: fit-content;
-  background: linear-gradient(90deg, var(--lime-a), transparent) bottom left / 100% 1.5px no-repeat;
-}
-.sx-date-month { margin-top: 8px; font-size: clamp(17px, 4.6vw, 22px); font-weight: 900; letter-spacing: .01em; line-height: 1; }
-.sx-date-day {
-  font-size: clamp(60px, 17vw, 108px); font-weight: 900; line-height: .9; letter-spacing: -.05em;
-  margin-right: -.05em; /* undo the trailing letter-spacing so it centres true */
-  background: linear-gradient(120deg, var(--lime-a), var(--lime-b));
+.sx-thanks-big {
+  font-size: clamp(34px, 10vw, 44px); font-weight: 400; line-height: 1; text-transform: uppercase; white-space: nowrap;
+  background: linear-gradient(90deg, var(--hot-a), var(--hot-b));
   -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.sx-thanks-sub { margin-top: 4px; font-size: 20px; font-weight: 400; }
+.sx-thanks-rule { margin-top: 12px; width: 120px; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); }
 
+/* Glass note with chevrons */
+.sx-note {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 18px; border-radius: 20px;
+  background: linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.12)), rgba(40,54,78,.55);
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.28), inset 0 1px 0 rgba(255,255,255,.3), 0 14px 30px -16px rgba(0,0,0,.6);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
-.sx-hot {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  border-radius: 12px; padding: 10px; align-self: center;
-  font-size: 14px; font-weight: 900; letter-spacing: .03em; text-transform: uppercase; white-space: nowrap;
-  background: linear-gradient(90deg, #ff3530, #fe8f4a);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 10px 30px -10px rgba(255,80,60,.7);
-  animation: sx-in .7s both, sx-pulse 2.4s 1.6s ease-in-out infinite;
-  animation-delay: calc(var(--d, 0) * 70ms + 300ms), 1.6s;
-}
-.sx-hot svg { width: 18px; height: 18px; flex: none; }
-@media (min-width: 720px) { .sx-hot { align-self: stretch; } }
-/* Phones: date tile + slots chip sit side by side, chip stacked text */
-/* Phones: one centred column */
-@media (max-width: 719px) {
-  .sx-main { display: flex; flex-direction: column; align-items: center; text-align: center; }
-  .sx-row { flex-direction: column; align-items: center; }
-  .sx-copy { flex: none; max-width: 300px; }
-  .sx-side { flex-direction: column; }
-  .sx-hot { align-self: stretch; }
-  .sx-slots-note { padding-left: 0; text-align: center; }
-
-  /* Date card: centred label, then a compact "NOVEMBER 15" on one line */
-  .sx-date {
-    flex: none; flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: baseline;
-    column-gap: 10px; padding: 12px 16px 12px; text-align: center;
-  }
-  .sx-date-label { flex-basis: 100%; width: auto; padding-bottom: 8px; background-position: bottom center; background-size: 64px 1.5px; }
-  .sx-date-label { background-image: linear-gradient(90deg, transparent, var(--lime-a), transparent); }
-  .sx-date-month { margin-top: 10px; font-size: 22px; line-height: 1; }
-  .sx-date-day { margin-top: 10px; font-size: 22px; line-height: 1; letter-spacing: .01em; margin-right: 0; }
-}
-
-/* ---- Liquid slots bar ---- */
-.sx-bar {
-  position: relative; height: 44px; border-radius: 999px; overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(255,255,255,0) 70%, rgba(255,255,255,.08)),
-    linear-gradient(180deg, #323f52, #3d4a5b);
-  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.32), 0 8px 24px -12px rgba(0,0,0,.5);
-}
-.sx-fill {
-  position: absolute; inset: 0 auto 0 0; min-width: 44px;
-  border-radius: 999px 0 0 999px;
-  background: linear-gradient(90deg, var(--lime-a), var(--lime-b));
-  display: flex; align-items: center;
-  --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 100' preserveAspectRatio='none'%3E%3Cpath d='M0 0H9C17 12.5 17 37.5 9 50C1 62.5 1 87.5 9 100H0Z'/%3E%3C/svg%3E");
-  -webkit-mask: linear-gradient(#000 0 0) left / calc(100% - 17px) 100% no-repeat, var(--wave) right 0 top 0 / 18px 100% repeat-y;
-  mask: linear-gradient(#000 0 0) left / calc(100% - 17px) 100% no-repeat, var(--wave) right 0 top 0 / 18px 100% repeat-y;
-  animation: sx-wave 1.1s linear infinite;
-}
-.sx-fill-pct {
-  position: relative; z-index: 2; width: 100%; text-align: center; padding-right: 10px;
-  font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums; color: #fff;
-  text-shadow: 0 1px 4px rgba(40,90,0,.3);
-}
-.sx-bar-total {
-  position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
-  font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.55);
-}
-.sx-slots-note { display: block; margin-top: 6px; padding-left: 16px; font-size: 12px; font-style: italic; color: rgba(255,255,255,.8); }
+.sx-note p { flex: 1; font-size: 13px; line-height: 1.5; }
+/* Phones: arrows point down at the button below */
+.sx-chevrons { transform: rotate(90deg); }
+.sx-chevrons { width: 46px; height: 30px; flex: none; fill: none; stroke: url(#sx-chev); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.sx-chevrons path { animation: sx-chev 1.5s ease-in-out infinite; }
 
 /* CTA */
-.sx-reg { height: var(--reg-h); line-height: var(--reg-h); text-align: center; font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.85); }
+.sx-cta { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+.sx-reg { text-align: center; font-size: 11px; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; color: rgba(255,255,255,.9); }
 .sx-enroll {
   position: relative; overflow: hidden;
-  display: grid; place-items: center; height: 44px; border-radius: 999px;
-  padding: 0 16px; white-space: nowrap;
-  font-size: 14px; font-weight: 900; letter-spacing: .03em; text-transform: uppercase; color: #0b0e14;
+  display: grid; place-items: center; height: 52px; border-radius: 999px;
+  padding: 0 24px; white-space: nowrap;
+  font-size: 18px; font-weight: 900; letter-spacing: .02em; text-transform: uppercase; color: #0b0e14;
   background: linear-gradient(90deg, var(--lime-a), var(--lime-b));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 14px 34px -12px rgba(160,230,80,.75);
   transition: transform .25s cubic-bezier(.2,.9,.3,1.3), box-shadow .25s;
@@ -534,8 +383,51 @@ const STYLES = `
 .sx-enroll:active { transform: scale(.98); }
 .sx-enroll:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
+/* ================= Tablet & desktop: the design, to scale =================
+   Sizes are the design's pixels ÷ its 1120px card width, as cqi. */
+@container sx (min-width: 640px) {
+  .sx-ribbon {
+    position: absolute; right: 0; top: 4.9cqi; margin: 0;
+    padding: 1.9cqi 2.6cqi 1.6cqi 4.4cqi;
+    display: flex; align-items: flex-end; text-align: right; width: auto;
+    background: linear-gradient(100deg, var(--hot-a), var(--hot-b));
+    clip-path: polygon(3cqi 0, 100% 0, 100% 100%, 3cqi 100%, 0 50%);
+  }
+  .sx-ribbon-label { font-size: max(10px, 1.32cqi); }
+  .sx-ribbon-month { font-size: max(18px, 2.5cqi); }
+
+  .sx-grid {
+    padding: 5.4cqi 6.6cqi 5.8cqi;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-areas: "main thanks" "note cta";
+    column-gap: 7cqi; row-gap: 2.8cqi;
+  }
+  .sx-main { align-items: flex-start; text-align: left; }
+  .sx-thanks { align-self: end; align-items: flex-end; text-align: right; padding-bottom: 2.2cqi; }
+  .sx-cta { align-self: center; }
+
+  .sx-eyebrow { font-size: max(11px, 1.36cqi); }
+  .sx-logo { margin-top: 7.2cqi; width: 18.4cqi; }
+  .sx-title { margin-top: .6cqi; font-size: 5.9cqi; }
+  .sx-status { margin-top: 3.4cqi; gap: 1.2cqi; font-size: max(13px, 1.95cqi); }
+  .sx-spinner { width: 3.1cqi; height: 3.1cqi; }
+
+  .sx-thanks-big { font-size: 5.6cqi; }
+  .sx-thanks-sub { margin-top: .4cqi; font-size: 2.9cqi; }
+  .sx-thanks-rule { margin-top: 1.4cqi; width: 13.5cqi; background: rgba(255,255,255,.55); }
+
+  .sx-note { flex-direction: row; text-align: left; gap: 2cqi; padding: 2.4cqi 3cqi; border-radius: 2.2cqi; }
+  .sx-note p { font-size: max(12px, 1.5cqi); }
+  .sx-chevrons { width: 7.8cqi; height: 5cqi; transform: none; margin: 0; }
+
+  .sx-cta { gap: 1.6cqi; }
+  .sx-reg { font-size: max(10px, 1.36cqi); letter-spacing: .45em; margin-right: -.45em; }
+  .sx-enroll { height: 6.4cqi; padding: 0 2.6cqi; font-size: 2.45cqi; }
+}
+
 /* ---- Entrance / exit ---- */
 .sx-in { animation: sx-in .8s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(var(--d, 0) * 60ms + 280ms); }
+.sx-ribbon.sx-in { animation-name: sx-slide; }
 
 .is-closing .sx-backdrop { animation: sx-fade .3s ease-in reverse both; }
 .is-closing .sx-card { animation: sx-out .3s cubic-bezier(.4,0,1,1) both; }
@@ -544,14 +436,11 @@ const STYLES = `
 @keyframes sx-pop { from { opacity: 0; transform: translate3d(0, 36px, 0) scale(.92); } 30% { opacity: 1; } }
 @keyframes sx-out { to { opacity: 0; transform: translate3d(0, 14px, 0) scale(.96); } }
 @keyframes sx-in { from { opacity: 0; transform: translate3d(0, 12px, 0); } }
+@keyframes sx-slide { from { opacity: 0; transform: translate3d(40px, 0, 0); } }
 @keyframes sx-sweep { to { transform: translateX(420%) skewX(-18deg); } }
-@keyframes sx-roll { from { transform: translateY(70%); opacity: 0; filter: blur(3px); } }
-@keyframes sx-wave {
-  from { -webkit-mask-position: left, right 0 top 0; mask-position: left, right 0 top 0; }
-  to { -webkit-mask-position: left, right 0 top 44px; mask-position: left, right 0 top 44px; }
-}
+@keyframes sx-spin { to { transform: rotate(360deg); } }
+@keyframes sx-chev { 0%, 100% { opacity: .35; } 40% { opacity: 1; } }
 @keyframes sx-shine { 0%, 60% { transform: translateX(-120%) skewX(-20deg); } 100% { transform: translateX(220%) skewX(-20deg); } }
-@keyframes sx-pulse { 0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 10px 30px -10px rgba(255,80,60,.7); } 50% { box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 10px 40px -6px rgba(255,80,60,.95); } }
 
 @media (prefers-reduced-motion: reduce) {
   .sx-root *, .sx-root *::before, .sx-root *::after { animation: none !important; transition: none !important; }
